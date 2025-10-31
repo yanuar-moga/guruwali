@@ -1,46 +1,25 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Guru - SPENSAMO</title>
+  <title>Dashboard Guru</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <header>
-    <img src="asset/logo.png" alt="Logo SMPN 1 Moga">
+<body class="light">
+  <div class="topbar">
+    <img src="assets/logo.png" class="toplogo">
     <h1>Dashboard Guru</h1>
-  </header>
-
-  <div class="container">
-    <div class="dashboard">
-      <div class="card">
-        <img src="asset/icon-pengumuman.png" alt="Pengumuman">
-        <h3><a href="pengumuman.html">Kelola Pengumuman</a></h3>
-      </div>
-      <div class="card">
-        <img src="asset/icon-curhat.png" alt="Curhat Siswa">
-        <h3><a href="curhatsiswa.html">Curhat Siswa</a></h3>
-      </div>
-      <div class="card">
-        <img src="asset/icon-notulen.png" alt="Notulen">
-        <h3><a href="notulen.html">Notulen Kelas</a></h3>
-      </div>
-      <div class="card">
-        <img src="asset/icon-pembinaan.png" alt="Pembinaan">
-        <h3><a href="pembinaan.html">Pembinaan</a></h3>
-      </div>
-      <div class="card">
-        <img src="asset/icon-masalah.png" alt="Masalah">
-        <h3><a href="masalahsiswa.html">Masalah Siswa</a></h3>
-      </div>
-    </div>
   </div>
 
-  <nav>
-    <a href="guru.html" class="active"><img src="asset/home.png" alt="Home">Home</a>
-    <a href="pengumuman.html"><img src="asset/megaphone.png" alt="Pengumuman">Info</a>
-    <a href="curhatsiswa.html"><img src="asset/chat.png" alt="Curhat">Curhat</a>
-  </nav>
+  <div class="menu-container">
+    <a href="pengumuman.html" class="menu-btn">📢 Pengumuman</a>
+    <a href="curhatsiswa.html" class="menu-btn">💬 Curhat</a>
+    <a href="notulen.html" class="menu-btn">📝 Notulen</a>
+    <a href="pembinaan.html" class="menu-btn">🏫 Pembinaan</a>
+    <a href="masalahsiswa.html" class="menu-btn">⚠️ Masalah Siswa</a>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
