@@ -1,21 +1,19 @@
 body.light {
   font-family: "Poppins", sans-serif;
   background-color: #f9fbff;
-  color: #333;
   margin: 0;
-  padding: 0;
+  color: #333;
 }
 
-/* TOPBAR */
 .topbar {
-  background: linear-gradient(90deg, #dbe9ff, #a4c8ff);
+  background: linear-gradient(90deg, #b8dcff, #a4c8ff);
   border-bottom: 4px solid #ffd84c;
-  color: #002855;
   text-align: center;
-  padding: 12px;
+  color: #002855;
+  padding: 10px;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   gap: 10px;
 }
 
@@ -25,7 +23,6 @@ body.light {
   border-radius: 50%;
 }
 
-/* LOGIN */
 .login-container {
   width: 90%;
   max-width: 360px;
@@ -35,39 +32,52 @@ body.light {
   border-radius: 16px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   border-top: 4px solid #ffd84c;
-  text-align: center;
 }
 
-.logo {
+.menu-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 40px;
+  gap: 15px;
+}
+
+.menu-btn {
   display: block;
-  width: 100px;
-  margin: 0 auto 10px;
+  width: 80%;
+  text-align: center;
+  background: linear-gradient(90deg, #4da3ff, #007bff);
+  color: white;
+  padding: 12px 0;
   border-radius: 16px;
+  text-decoration: none;
+  font-size: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: 0.3s;
 }
 
-/* FORM */
-input, textarea {
-  width: 100%;
-  padding: 10px;
-  margin: 8px 0;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  font-size: 14px;
+.menu-btn:hover {
+  transform: scale(1.03);
+  background: linear-gradient(90deg, #007bff, #005ecb);
 }
 
-textarea {
-  resize: none;
+.show-pass {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
 }
 
-/* BUTTONS */
 .btn {
   display: inline-block;
-  padding: 10px 14px;
+  padding: 8px 12px;
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
+  text-decoration: none;
   cursor: pointer;
-  font-weight: bold;
   transition: 0.3s;
+  font-weight: bold;
 }
 
 .btn.primary {
@@ -77,69 +87,4 @@ textarea {
 
 .btn.primary:hover {
   background-color: #1c7ff0;
-}
-
-.btn.secondary {
-  background-color: #ffd84c;
-  color: #002855;
-}
-
-.row {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-/* DASHBOARD MENU */
-.menu-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  gap: 15px;
-  max-width: 400px;
-  margin: 20px auto;
-  text-align: center;
-}
-
-.menu-card {
-  background: white;
-  border-radius: 16px;
-  padding: 20px 0;
-  font-size: 16px;
-  color: #003f7f;
-  font-weight: 600;
-  border: 2px solid #dbe9ff;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-  transition: 0.3s;
-}
-
-.menu-card:hover {
-  transform: scale(1.05);
-  background-color: #f0f8ff;
-}
-
-/* MAIN CARD */
-.main-content {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 15px;
-}
-
-.card {
-  background: white;
-  border-radius: 16px;
-  padding: 15px;
-  margin-bottom: 15px;
-  border-left: 5px solid #ffd84c;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-}
-
-h3 {
-  color: #003f7f;
-  margin-top: 0;
-}
-
-.smallmuted {
-  color: #777;
-  font-size: 12px;
 }
