@@ -15,29 +15,39 @@ body.light {
   background: linear-gradient(90deg, #b8dcff, #a4c8ff);
   border-bottom: 4px solid #ffd84c;
   color: #002855;
-  text-align: center;
-  padding: 10px 0;
+  padding: 8px 15px;
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
   position: sticky;
   top: 0;
   z-index: 1000;
 }
 
+.top-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .toplogo {
-  width: 34px;
-  height: 34px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   object-fit: cover;
 }
 
 .topbar h2 {
-  font-size: 18px;
+  font-size: 17px;
   margin: 0;
   color: #003f7f;
   font-weight: 600;
+}
+
+#clock {
+  font-size: 14px;
+  font-weight: bold;
+  color: #002855;
 }
 
 /* ====== Kontainer Menu ====== */
@@ -162,7 +172,7 @@ textarea:focus, input:focus {
   font-size: 12px;
 }
 
-/* ====== Footer / Catatan Bawah ====== */
+/* ====== Footer ====== */
 footer {
   text-align: center;
   padding: 15px;
@@ -170,6 +180,40 @@ footer {
   color: #555;
   background-color: #f0f7ff;
   border-top: 2px solid #ffd84c;
+  margin-top: auto;
+}
+
+/* ====== Navbar Bawah (Mobile Style) ====== */
+.navbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 2px solid #ffd84c;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 8px 0;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+}
+
+.navbar a {
+  text-decoration: none;
+  color: #003f7f;
+  text-align: center;
+  font-size: 13px;
+  transition: 0.3s;
+}
+
+.navbar a:hover {
+  color: #007bff;
+  transform: scale(1.05);
+}
+
+.navbar i {
+  display: block;
+  font-size: 18px;
 }
 
 /* ====== Responsif Mobile ====== */
@@ -184,6 +228,10 @@ footer {
   }
 
   .topbar h2 {
-    font-size: 16px;
+    font-size: 15px;
+  }
+
+  #clock {
+    font-size: 12px;
   }
 }
