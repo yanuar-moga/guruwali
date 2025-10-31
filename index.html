@@ -2,31 +2,27 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - Guru Wali Bayu</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body class="light">
   <div class="topbar">
-    <img src="assets/logo.png" class="toplogo" alt="Logo">
-    <h2>Guru Wali Bayu</h2>
+    <img src="assets/logo.png" class="toplogo" alt="Logo Sekolah">
+    <h1>Guru Wali Bayu</h1>
   </div>
 
   <div class="login-container">
-    <img src="assets/logo.png" class="logo" alt="Logo Sekolah" />
-    <h2>Login Aplikasi</h2>
-
     <form id="loginForm">
-      <input type="text" id="username" placeholder="NISN / Username" required />
-      <input type="password" id="password" placeholder="Password" required />
+      <input id="username" placeholder="Username / NISN" required>
+      <input id="password" type="password" placeholder="Password" required>
       <div class="show-pass">
-        <input type="checkbox" id="showPassword" />
-        <label for="showPassword">Tampilkan Password</label>
+        <input type="checkbox" id="showPassword"><label for="showPassword">Tampilkan Password</label>
       </div>
-      <button class="btn primary" type="submit">Masuk</button>
+      <button type="submit" class="btn primary">Masuk</button>
     </form>
   </div>
 
-  <script src="app.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
