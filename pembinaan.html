@@ -5,19 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pembinaan - Guru Wali Bayu</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    #clock {font-weight: bold;color: #003f7f;margin-left: auto;margin-right: 12px;}
+    .logout-btn {background: #ffd84c;color: #002855;border: none;border-radius: 8px;padding: 6px 10px;margin-right: 10px;cursor: pointer;font-weight: 600;transition: 0.3s;}
+    .logout-btn:hover {background: #ffca2c;}
+    .navbar {position: fixed;bottom: 0;left: 0;width: 100%;background: linear-gradient(90deg, #b8dcff, #a4c8ff);border-top: 3px solid #ffd84c;display: flex;justify-content: space-around;padding: 8px 0;box-shadow: 0 -2px 6px rgba(0,0,0,0.1);z-index: 999;}
+    .navbar a {color: #003f7f;text-decoration: none;text-align: center;font-size: 13px;display: flex;flex-direction: column;align-items: center;}
+    .navbar i {font-size: 18px;}
+    body {padding-bottom: 70px;}
+  </style>
 </head>
 <body class="light">
   <div class="topbar">
-    <img src="assets/logo.png" class="toplogo" alt="Logo Sekolah">
+    <img src="assets/logo.png" alt="Logo" class="toplogo">
     <h2>Pembinaan</h2>
+    <div id="clock">00:00:00</div>
+    <button class="logout-btn" onclick="logout()">Logout</button>
   </div>
-
-  <div class="card">
-    <h3>🏫 Catatan Pembinaan</h3>
-    <div id="pembList">Belum ada catatan pembinaan.</div>
+  <main class="menu-container">
+    <div class="card">
+      <h3>🏫 Pembinaan</h3>
+      <div id="pembinaanArea">Belum ada catatan pembinaan.</div>
+    </div>
+  </main>
+  <div class="navbar">
+    <a href="pengumuman.html"><i>📢</i><span>Pengumuman</span></a>
+    <a href="curhatsiswa.html"><i>💬</i><span>Curhat</span></a>
+    <a href="notulen.html"><i>📝</i><span>Notulen</span></a>
+    <a href="pembinaan.html"><i>🏫</i><span>Pembinaan</span></a>
+    <a href="masalahsiswa.html"><i>⚠️</i><span>Masalah</span></a>
   </div>
-
-  <footer>© 2025 SMP Negeri 1 Moga — Guru Wali Bayu</footer>
-  <script src="script.js"></script>
+  <script>
+    function updateClock() {const now = new Date();const jam = String(now.getHours()).padStart(2,'0');const menit = String(now.getMinutes()).padStart(2,'0');const detik = String(now.getSeconds()).padStart(2,'0');document.getElementById("clock").textContent = `${jam}:${menit}:${detik}`;}
+    setInterval(updateClock, 1000);updateClock();
+    function logout() {localStorage.removeItem('gw_ann_session_v3');alert('Anda telah logout.');window.location.href='index.html';}
+  </script>
 </body>
 </html>
