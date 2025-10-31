@@ -29,6 +29,7 @@
       height: 90px;
       border-radius: 50%;
       margin-bottom: 1rem;
+      object-fit: cover;
     }
     h2 {
       color: #333;
@@ -63,28 +64,39 @@
     button:hover {
       background: #47A8F0;
     }
-    .footer {
-      font-size: 0.85rem;
-      color: #777;
-      margin-top: 1.5rem;
+    .show-password {
+      margin-top: 0.5rem;
+      text-align: left;
+      font-size: 0.9rem;
+      color: #555;
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
   </style>
 </head>
 <body>
   <div class="login-container">
-    <img src="assets/logo.jpg" alt="Logo Sekolah" />
+    <img src="assets/logo.png" alt="Logo Sekolah" />
     <h2>Guru Wali Bayu</h2>
     <form id="loginForm">
       <input type="text" id="username" placeholder="Username / NISN" required />
       <input type="password" id="password" placeholder="Password" required />
+      <div class="show-password">
+        <input type="checkbox" id="showPassword" />
+        <label for="showPassword">Tampilkan Password</label>
+      </div>
       <button type="submit">Masuk</button>
     </form>
-    <div class="footer">
-      SMP Negeri 1 Moga<br>
-      <small>Aplikasi Guru Wali Bayu</small>
-    </div>
   </div>
 
+  <script>
+    // Toggle tampilkan password
+    document.getElementById("showPassword").addEventListener("change", function() {
+      const passwordField = document.getElementById("password");
+      passwordField.type = this.checked ? "text" : "password";
+    });
+  </script>
   <script src="script.js"></script>
 </body>
 </html>
