@@ -1,189 +1,162 @@
-/* === STYLE UMUM === */
-* {
+/* === STYLE MOBILE APP === */
+body {
+  font-family: "Poppins", sans-serif;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
-}
-
-body {
-  background: linear-gradient(to bottom, #f9fbff, #e6f0ff);
-  color: #333;
+  background-color: #f9fbff;
+  color: #002855;
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
 }
 
-/* === HEADER === */
 header {
-  background-color: #3b82f6;
-  color: white;
-  padding: 1rem 1.2rem;
+  background: linear-gradient(90deg, #dbe9ff, #a4c8ff);
+  padding: 12px 16px;
+  border-bottom: 4px solid #ffd84c;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  border-bottom: 4px solid #facc15;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  gap: 10px;
+  justify-content: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 header img {
-  height: 48px;
-  width: 48px;
-  border-radius: 12px;
-  object-fit: cover;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
 }
 
 header h1 {
-  font-size: 1.2rem;
+  font-size: 18px;
   font-weight: 600;
-  text-align: center;
-  flex-grow: 1;
+  color: #002855;
+  margin: 0;
 }
 
-/* === CONTAINER UTAMA === */
+/* Container utama */
 .container {
-  padding: 1rem;
+  flex: 1;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
 }
 
-/* === KARTU MENU / DASHBOARD === */
+/* Login card */
+.login-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 25px;
+  width: 90%;
+  max-width: 360px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-top: 4px solid #ffd84c;
+}
+
+.login-card input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid #ccd;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.login-card button {
+  width: 100%;
+  background: #4da3ff;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 12px;
+  margin-top: 10px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.login-card button:hover {
+  background: #1c7ff0;
+}
+
+/* Dashboard grid */
 .dashboard {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 16px;
+  width: 100%;
+  max-width: 600px;
 }
 
 .card {
   background: white;
   border-radius: 20px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-  padding: 1rem;
+  padding: 18px;
   text-align: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  border: 2px solid #facc15;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  border-bottom: 5px solid #ffd84c;
+  transition: 0.3s;
 }
 
 .card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+  transform: translateY(-5px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.08);
 }
 
 .card img {
-  width: 48px;
-  height: 48px;
-  margin-bottom: 0.5rem;
+  width: 60px;
+  height: 60px;
+  margin-bottom: 8px;
 }
 
 .card h3 {
-  font-size: 0.95rem;
-  color: #1e3a8a;
-  font-weight: 600;
+  font-size: 14px;
+  color: #003f7f;
+  margin: 5px 0 0 0;
 }
 
-/* === TOMBOL UTAMA === */
-button, .btn {
-  display: inline-block;
-  background-color: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  padding: 0.6rem 1.2rem;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-button:hover, .btn:hover {
-  background-color: #2563eb;
-}
-
-/* === INPUT FORM === */
-input, textarea, select {
-  width: 100%;
-  padding: 0.7rem;
-  margin-top: 0.4rem;
-  border-radius: 10px;
-  border: 2px solid #cbd5e1;
-  outline: none;
-  transition: border-color 0.2s ease;
-  font-size: 0.95rem;
-}
-
-input:focus, textarea:focus {
-  border-color: #3b82f6;
-  background-color: #f0f9ff;
-}
-
-/* === PENGUMUMAN / KONTEN === */
-.section {
-  background: white;
-  border-radius: 20px;
-  padding: 1rem;
-  margin-top: 1rem;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-  border-left: 6px solid #facc15;
-}
-
-.section h2 {
-  color: #1d4ed8;
-  font-size: 1.1rem;
-  margin-bottom: 0.5rem;
-}
-
-.section p {
-  font-size: 0.95rem;
-  line-height: 1.5;
-}
-
-/* === FOOTER NAV (seperti aplikasi HP) === */
+/* Navbar bawah */
 nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: white;
-  border-top: 3px solid #facc15;
   display: flex;
   justify-content: space-around;
-  align-items: center;
-  padding: 0.6rem 0;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+  background: white;
+  border-top: 2px solid #dbe9ff;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.05);
 }
 
 nav a {
+  flex: 1;
+  text-align: center;
+  padding: 6px;
   text-decoration: none;
-  color: #3b82f6;
-  font-size: 0.85rem;
+  color: #555;
+  font-size: 13px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 nav a img {
-  width: 28px;
-  height: 28px;
-  margin-bottom: 4px;
+  width: 24px;
+  height: 24px;
 }
 
 nav a.active {
-  color: #1d4ed8;
+  color: #1c7ff0;
   font-weight: 600;
 }
 
-/* === RESPONSIF MOBILE === */
-@media (max-width: 600px) {
-  header h1 {
-    font-size: 1rem;
-  }
-
-  .dashboard {
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  }
-
-  .card {
-    padding: 0.8rem;
-  }
-
-  nav a img {
-    width: 24px;
-    height: 24px;
-  }
+/* Scroll & efek halus */
+* {
+  scroll-behavior: smooth;
+  transition: 0.2s;
 }
