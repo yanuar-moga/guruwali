@@ -35,7 +35,8 @@
       color: #333;
       margin-bottom: 1.5rem;
     }
-    input {
+    input[type="text"],
+    input[type="password"] {
       width: 100%;
       padding: 0.8rem;
       margin: 0.4rem 0;
@@ -65,13 +66,23 @@
       background: #47A8F0;
     }
     .show-password {
-      margin-top: 0.5rem;
-      text-align: left;
-      font-size: 0.9rem;
-      color: #555;
       display: flex;
       align-items: center;
-      gap: 5px;
+      justify-content: flex-start;
+      width: 100%;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: #555;
+    }
+    .show-password input[type="checkbox"] {
+      margin-right: 8px;
+      transform: scale(1.1);
+      cursor: pointer;
+    }
+    .show-password label {
+      cursor: pointer;
+      flex: 1;
+      text-align: left;
     }
   </style>
 </head>
