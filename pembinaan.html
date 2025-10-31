@@ -6,39 +6,73 @@
   <title>Pembinaan - Guru Wali Bayu</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    #clock {font-weight: bold;color: #003f7f;margin-left: auto;margin-right: 12px;}
-    .logout-btn {background: #ffd84c;color: #002855;border: none;border-radius: 8px;padding: 6px 10px;margin-right: 10px;cursor: pointer;font-weight: 600;transition: 0.3s;}
-    .logout-btn:hover {background: #ffca2c;}
-    .navbar {position: fixed;bottom: 0;left: 0;width: 100%;background: linear-gradient(90deg, #b8dcff, #a4c8ff);border-top: 3px solid #ffd84c;display: flex;justify-content: space-around;padding: 8px 0;box-shadow: 0 -2px 6px rgba(0,0,0,0.1);z-index: 999;}
-    .navbar a {color: #003f7f;text-decoration: none;text-align: center;font-size: 13px;display: flex;flex-direction: column;align-items: center;}
-    .navbar i {font-size: 18px;}
-    body {padding-bottom: 70px;}
+    body { padding-bottom: 70px; } /* ruang untuk navbar bawah */
+    #clock { font-weight: bold; color: #003f7f; }
+    .logout-btn {
+      background: #ffd84c;
+      color: #002855;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+    .logout-btn:hover { background: #ffca2c; }
   </style>
 </head>
 <body class="light">
+
+  <!-- ====== Topbar ====== -->
   <div class="topbar">
-    <img src="assets/logo.png" alt="Logo" class="toplogo">
-    <h2>Pembinaan</h2>
-    <div id="clock">00:00:00</div>
-    <button class="logout-btn" onclick="logout()">Logout</button>
+    <div class="top-left">
+      <img src="assets/logo.png" alt="Logo" class="toplogo">
+      <h2>Pembinaan</h2>
+    </div>
+    <div class="top-right" style="display:flex;align-items:center;gap:10px;">
+      <span id="clock">00:00:00</span>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
   </div>
+
+  <!-- ====== Konten Utama ====== -->
   <main class="menu-container">
     <div class="card">
-      <h3>🏫 Pembinaan</h3>
+      <h3>Pembinaan</h3>
       <div id="pembinaanArea">Belum ada catatan pembinaan.</div>
     </div>
   </main>
+
+  <!-- ====== Navbar Bawah ====== -->
   <div class="navbar">
-    <a href="pengumuman.html"><i>📢</i><span>Pengumuman</span></a>
-    <a href="curhatsiswa.html"><i>💬</i><span>Curhat</span></a>
-    <a href="notulen.html"><i>📝</i><span>Notulen</span></a>
-    <a href="pembinaan.html"><i>🏫</i><span>Pembinaan</span></a>
-    <a href="masalahsiswa.html"><i>⚠️</i><span>Masalah</span></a>
+    <a href="siswa.html">Beranda</a>
+    <a href="pengumuman.html">Pengumuman</a>
+    <a href="curhatsiswa.html">Curhat</a>
+    <a href="notulen.html">Notulen</a>
+    <a href="masalahsiswa.html">Masalah</a>
   </div>
+
+  <!-- ====== Script ====== -->
   <script>
-    function updateClock() {const now = new Date();const jam = String(now.getHours()).padStart(2,'0');const menit = String(now.getMinutes()).padStart(2,'0');const detik = String(now.getSeconds()).padStart(2,'0');document.getElementById("clock").textContent = `${jam}:${menit}:${detik}`;}
-    setInterval(updateClock, 1000);updateClock();
-    function logout() {localStorage.removeItem('gw_ann_session_v3');alert('Anda telah logout.');window.location.href='index.html';}
+    // Jam digital real-time
+    function updateClock() {
+      const now = new Date();
+      const jam = String(now.getHours()).padStart(2, '0');
+      const menit = String(now.getMinutes()).padStart(2, '0');
+      const detik = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById("clock").textContent = `${jam}:${menit}:${detik}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Logout
+    function logout() {
+      if (confirm("Yakin ingin logout?")) {
+        localStorage.removeItem('gw_ann_session_v3');
+        window.location.href = 'index.html';
+      }
+    }
   </script>
+
 </body>
 </html>
