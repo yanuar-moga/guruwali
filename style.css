@@ -1,172 +1,102 @@
-/* === STYLE MOBILE APP GURU WALI BAYU === */
+/* ======== GLOBAL STYLE ======== */
 body {
-  font-family: "Poppins", sans-serif;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(180deg, #E3F2FD, #FFFFFF);
+  color: #333;
   margin: 0;
   padding: 0;
-  background-color: #f9fbff;
-  color: #002855;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   min-height: 100vh;
 }
 
-/* === HEADER (logo di tengah) === */
-header {
-  background: linear-gradient(90deg, #dbe9ff, #a4c8ff);
-  border-bottom: 4px solid #ffd84c;
-  padding: 10px 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-header img {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-/* === CONTAINER UTAMA === */
+/* ======== CARD / DASHBOARD ======== */
 .container {
-  flex: 1;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-}
-
-/* === CARD / TILE === */
-.card {
-  background: white;
-  border-radius: 18px;
-  padding: 16px;
-  text-align: center;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
-  border-bottom: 5px solid #ffd84c;
-  transition: 0.3s;
-  width: 100%;
-  max-width: 320px;
-}
-
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.08);
-}
-
-.card img {
-  width: 55px;
-  height: 55px;
-  margin-bottom: 8px;
-}
-
-.card h3 {
-  font-size: 15px;
-  color: #003f7f;
-  margin: 0;
-}
-
-/* === LOGIN CARD === */
-.login-card {
-  background: white;
-  border-radius: 20px;
-  padding: 25px;
+  background: #fff;
+  border-radius: 25px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
   width: 90%;
-  max-width: 360px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  border-top: 4px solid #ffd84c;
-}
-
-.login-card input {
-  width: 100%;
-  padding: 10px;
-  margin: 8px 0;
-  border: 1px solid #ccd;
-  border-radius: 12px;
-  font-size: 14px;
-}
-
-.login-card button {
-  width: 100%;
-  background: #4da3ff;
-  color: white;
-  border: none;
-  padding: 10px;
-  border-radius: 12px;
-  margin-top: 10px;
-  font-weight: 600;
-  font-size: 15px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.login-card button:hover {
-  background: #1c7ff0;
-}
-
-/* === DASHBOARD GRID === */
-.dashboard {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 16px;
-  width: 100%;
-  max-width: 600px;
-}
-
-/* === NAVBAR BAWAH === */
-nav {
-  background: white;
-  border-top: 2px solid #dbe9ff;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  height: 65px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
-}
-
-nav ul {
-  list-style: none;
-  display: flex;
-  gap: 25px;
-  margin: 0;
-  padding: 0;
-}
-
-nav li {
+  max-width: 400px;
   text-align: center;
+  padding: 30px 20px;
+  border-top: 5px solid #FFD54F;
 }
 
-nav a {
-  text-decoration: none;
-  color: #555;
-  font-size: 13px;
+/* ======== LOGO ======== */
+.logo {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  margin-bottom: 10px;
+  animation: floatLogo 3s ease-in-out infinite;
+}
+
+@keyframes floatLogo {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* ======== JUDUL ======== */
+h1 {
+  color: #1565C0;
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+}
+
+/* ======== MENU TENGAH ======== */
+.menu {
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-weight: 500;
-  transition: 0.3s;
+  justify-content: center;
+  gap: 15px;
 }
 
-nav a img {
-  width: 26px;
-  height: 26px;
-  margin-bottom: 2px;
-}
-
-nav a.active {
-  color: #1c7ff0;
+.menu button {
+  width: 85%;
+  background: linear-gradient(90deg, #42A5F5, #64B5F6);
+  color: white;
+  font-size: 1rem;
   font-weight: 600;
+  border: none;
+  border-radius: 15px;
+  padding: 12px 0;
+  box-shadow: 0 4px 10px rgba(33,150,243,0.2);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.3s;
 }
 
-/* === SCROLL & SMOOTH EFFECT === */
-* {
-  scroll-behavior: smooth;
-  transition: 0.25s;
+.menu button:hover {
+  transform: scale(1.03);
+  box-shadow: 0 6px 12px rgba(33,150,243,0.35);
+}
+
+.menu button:active {
+  transform: scale(0.97);
+}
+
+/* ======== FOOTER ======== */
+footer {
+  margin-top: 25px;
+  font-size: 0.8rem;
+  color: #777;
+  text-align: center;
+}
+
+/* ======== RESPONSIVE ======== */
+@media (max-width: 480px) {
+  .container {
+    width: 95%;
+    padding: 25px 10px;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+  }
+
+  .menu button {
+    font-size: 0.95rem;
+  }
 }
