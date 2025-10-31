@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Dashboard Siswa - Guru Wali Bayu</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body class="mobile">
+<header class="appbar">
+  <img src="assets/logo.svg" class="logo" alt="logo"/>
+  <div class="title">Guru Wali Bayu</div>
+  <a href="index.html" class="iconbtn">⟲</a>
+</header>
+
+<main class="page">
+  <section class="card">
+    <div class="greeting" id="greeting">Hai, Siswa!</div>
+    <div class="muted" id="nisnDisplay"></div>
+    <div class="row" style="margin-top:12px">
+      <a id="curhatBtn" class="btn primary" target="_blank">💬 Curhat via WhatsApp</a>
+      <button id="logoutBtn" class="btn ghost">Logout</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>Pengumuman</h3>
+    <div id="announcements"></div>
+  </section>
+
+  <section class="card">
+    <h3>Kesepakatan Kelas</h3>
+    <div id="agreementBox"></div>
+    <div id="agreeActions" style="margin-top:8px"></div>
+  </section>
+
+  <section class="card">
+    <h3>Notulen Pembinaan</h3>
+    <div id="notulenBox"></div>
+  </section>
+
+</main>
+
+<footer class="foot"><small class="muted">Aplikasi untuk wali & siswa — Pak Bayu</small></footer>
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Guru Wali Bayu</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body class="mobile">
+<header class="appbar">
+  <img src="assets/logo.svg" class="logo" alt="logo"/>
+  <div class="title">Guru Wali Bayu</div>
+</header>
+
+<main class="page">
+  <section class="card login-card">
+    <h2>Masuk</h2>
+    <form id="loginForm">
+      <label class="field"><input id="username" placeholder="bayu atau NISN" required /></label>
+      <label class="field"><input id="password" type="password" placeholder="password" required /></label>
+      <div class="row">
+        <button class="btn primary" type="submit">Masuk</button>
+        <button id="demoBtn" class="btn ghost" type="button">Demo Siswa</button>
+      </div>
+      <p class="muted">Guru: <b>bayu</b>/<b>binapustaka</b> — Siswa: <b>NISN</b>/<b>siswa</b></p>
+    </form>
+  </section>
+
+  <section class="card">
+    <h3>Fitur Utama</h3>
+    <ul>
+      <li>Pengumuman</li>
+      <li>Curhat via WhatsApp</li>
+      <li>Pencatatan login & durasi sesi</li>
+      <li>Kesepakatan kelas & Notulen pembinaan</li>
+      <li>Download log aktivitas</li>
+    </ul>
+  </section>
+</main>
+
+<footer class="foot">© Guru Wali Bayu — SMP Negeri 1 Moga</footer>
+<script src="script.js"></script>
+</body>
+</html>

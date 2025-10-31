@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Dashboard Guru - Guru Wali Bayu</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body class="mobile">
+<header class="appbar">
+  <img src="assets/logo.svg" class="logo" alt="logo"/>
+  <div class="title">Guru Wali Bayu — Admin</div>
+  <a href="index.html" class="iconbtn">⟲</a>
+</header>
+
+<main class="page">
+  <section class="card">
+    <h2>Selamat datang, Pak Bayu</h2>
+    <div class="muted">Nomor Curhat: <b>+62 852-2939-9579</b></div>
+  </section>
+
+  <section class="card">
+    <h3>Tambah Pengumuman</h3>
+    <form id="announceForm">
+      <textarea id="announceText" rows="3" placeholder="Tulis pengumuman..." required></textarea>
+      <div class="row">
+        <button class="btn primary" type="submit">Simpan</button>
+        <button id="clearAnn" class="btn ghost" type="button">Hapus Semua</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="card">
+    <h3>Kesepakatan Kelas</h3>
+    <div id="agreementEditBox"></div>
+    <div class="row" style="margin-top:8px">
+      <button id="lockAgreement" class="btn primary">Kunci</button>
+      <button id="unlockAgreement" class="btn ghost">Buka</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>Notulen Pembinaan</h3>
+    <textarea id="notulenText" rows="4" placeholder="Tulis notulen..."></textarea>
+    <div class="row" style="margin-top:8px">
+      <button id="saveNotulen" class="btn primary">Simpan Notulen</button>
+      <button id="clearNotulen" class="btn ghost">Hapus Notulen</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>Log Aktivitas Siswa</h3>
+    <div id="logs"></div>
+    <div class="row" style="margin-top:8px">
+      <button id="downloadLogs" class="btn primary">Download CSV</button>
+      <button id="clearLogs" class="btn ghost">Hapus Log</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>Data Siswa</h3>
+    <div id="studentsList"></div>
+  </section>
+
+</main>
+
+<footer class="foot"><small class="muted">Kelola pengumuman, notulen, dan log siswa</small></footer>
+<script src="script.js"></script>
+</body>
+</html>
