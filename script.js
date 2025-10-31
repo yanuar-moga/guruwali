@@ -1,4 +1,4 @@
-// Guru Wali Bayu - enhanced client logic
+// Guru Wali Bayu - fixed version (login + logs + whatsapp curhat)
 const WA_NUMBER = '6285229399579';
 const STUDENTS = {
   '0122942217':'Fathan Gustomy',
@@ -57,7 +57,6 @@ function renderAgreementForStudent(){
     if(btn) btn.addEventListener('click', ()=>{
       const p = document.getElementById('agreeProposal').value.trim();
       if(!p) return alert('Tulis dulu usulan Anda.');
-      // push proposal as announcement to teacher logs
       const logs = load(LOG_KEY,[]);
       logs.unshift({type:'agreement-proposal',nisn:currentSession.nisn,name:currentSession.name,ts:nowStr(),text:p});
       save(LOG_KEY,logs);
@@ -102,7 +101,13 @@ function setupNotulenEditor(){
     save(NOTULEN_KEY,{text,ts:nowStr()});
     alert('Notulen tersimpan.'); renderNotulenForStudent(); renderLogs();
   });
-  if(clear) clear.addEventListener('click', ()=>{ if(confirm('Hapus notulen?')){ save(NOTULEN_KEY,{text:'Belum ada notulen.'}); alert('Notulen dihapus.'); renderNotulenForStudent(); renderLogs(); } });
+  if(clear) clear.addEventListener('click', ()=>{ 
+    if(confirm('Hapus notulen?')){
+      save(NOTULEN_KEY,{text:'Belum ada notulen.'}); 
+      alert('Notulen dihapus.'); 
+      renderNotulenForStudent(); renderLogs(); 
+    } 
+  });
 }
 
 // --- Logs ---
@@ -136,7 +141,6 @@ function startSession(nisn,name){
   const start = Date.now();
   currentSession = {nisn,name,start,ts:nowStr()};
   save(SESSION_KEY,currentSession);
-  // add log: login
   const logs = load(LOG_KEY,[]);
   logs.unshift({type:'login',ts:nowStr(),nisn,name,text:'login'});
   save(LOG_KEY,logs);
@@ -162,29 +166,37 @@ function resetInactivity(){
   if(inactivityTimer) clearTimeout(inactivityTimer);
   inactivityTimer = setTimeout(()=>{
     endSession('auto-logout (inactivity)');
-    alert('Anda otomatis logout karena tidak aktif.'); window.location.href='index.html';
+    alert('Anda otomatis logout karena tidak aktif.'); 
+    window.location.href='index.html';
   }, INACTIVITY_LIMIT);
 }
 
-// capture activity
-['click','mousemove','keydown','touchstart'].forEach(ev=>document.addEventListener(ev, ()=>{ if(load(SESSION_KEY,null)) resetInactivity(); }));
+['click','mousemove','keydown','touchstart'].forEach(ev=>
+  document.addEventListener(ev, ()=>{ if(load(SESSION_KEY,null)) resetInactivity(); })
+);
 
 // --- Page initializations ---
 document.addEventListener('DOMContentLoaded', ()=>{
-  // index page
   const loginForm = document.getElementById('loginForm');
   if(loginForm){
-    document.getElementById('demoBtn').addEventListener('click', ()=>{
-      document.getElementById('username').value = Object.keys(STUDENTS)[0];
-      document.getElementById('password').value = 'siswa';
-    });
+    // ✅ Aman: hanya aktif kalau ada tombol demo (tidak error)
+    const demoBtn = document.getElementById('demoBtn');
+    if (demoBtn) {
+      demoBtn.addEventListener('click', ()=>{
+        document.getElementById('username').value = Object.keys(STUDENTS)[0];
+        document.getElementById('password').value = 'siswa';
+      });
+    }
+
     loginForm.addEventListener('submit', (e)=>{
       e.preventDefault();
       const u = document.getElementById('username').value.trim();
       const p = document.getElementById('password').value.trim();
-      if(u.toLowerCase()==='bayu' && p==='binapustaka'){ window.location.href='guru.html'; return; }
+      if(u.toLowerCase()==='bayu' && p==='binapustaka'){ 
+        window.location.href='guru.html'; 
+        return; 
+      }
       if(STUDENTS[u] && p==='siswa'){
-        // start session and go to siswa page
         startSession(u, STUDENTS[u]);
         window.location.href = `siswa.html?nisn=${encodeURIComponent(u)}`;
         return;
@@ -200,16 +212,15 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const name = STUDENTS[nisn] || 'Siswa';
     document.getElementById('greeting').textContent = `Hai, ${name}!`;
     document.getElementById('nisnDisplay').textContent = `NISN: ${nisn||'-'}`;
-    // set curhat link
     const waText = `Halo Pak Bayu, saya ${encodeURIComponent(name)} (NISN: ${nisn}) ingin curhat tentang...`;
     document.getElementById('curhatBtn').href = `https://wa.me/${WA_NUMBER}?text=${waText}`;
-    // announce & agreement & notulen
     renderAnnouncements();
     renderAgreementForStudent();
     renderNotulenForStudent();
-    // logout button behavior
-    document.getElementById('logoutBtn').addEventListener('click', ()=>{ endSession('logout'); window.location.href='index.html'; });
-    // when student opens curhat, log event
+    document.getElementById('logoutBtn').addEventListener('click', ()=>{
+      endSession('logout'); 
+      window.location.href='index.html';
+    });
     document.getElementById('curhatBtn').addEventListener('click', ()=>{
       const logs = load(LOG_KEY,[]);
       logs.unshift({type:'curhat',ts:nowStr(),nisn, name, text:'open_whatsapp'});
@@ -220,10 +231,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
   // guru page
   if(document.getElementById('announceForm')){
-    // render students table
     const listEl = document.getElementById('studentsList');
-    listEl.innerHTML = Object.entries(STUDENTS).map(([nisn,name])=>`<div style='display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed #f0f5fb'><div>${name}</div><div class='smallmuted'>${nisn}</div></div>`).join('');
-    // announcements
+    listEl.innerHTML = Object.entries(STUDENTS).map(([nisn,name])=>
+      `<div style='display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed #f0f5fb'>
+        <div>${name}</div><div class='smallmuted'>${nisn}</div>
+      </div>`).join('');
     document.getElementById('announceForm').addEventListener('submit', (e)=>{
       e.preventDefault();
       const text = document.getElementById('announceText').value.trim();
@@ -235,16 +247,23 @@ document.addEventListener('DOMContentLoaded', ()=>{
       document.getElementById('announceText').value='';
       renderAnnouncements('announcements');
     });
-    document.getElementById('clearAnn').addEventListener('click', ()=>{ if(confirm('Hapus semua pengumuman?')){ save(ANN_KEY,[]); renderAnnouncements('announcements'); alert('Semua pengumuman dihapus.'); } });
-    // agreement editor
+    document.getElementById('clearAnn').addEventListener('click', ()=>{
+      if(confirm('Hapus semua pengumuman?')){
+        save(ANN_KEY,[]); 
+        renderAnnouncements('announcements'); 
+        alert('Semua pengumuman dihapus.');
+      }
+    });
     renderAgreementEditor();
     renderAgreementForStudent();
-    // notulen
     setupNotulenEditor();
     renderNotulenForStudent();
-    // logs
     renderLogs();
     document.getElementById('downloadLogs').addEventListener('click', downloadLogsCSV);
-    document.getElementById('clearLogs').addEventListener('click', ()=>{ if(confirm('Hapus semua log?')){ save(LOG_KEY,[]); renderLogs(); alert('Log dihapus.'); } });
+    document.getElementById('clearLogs').addEventListener('click', ()=>{
+      if(confirm('Hapus semua log?')){
+        save(LOG_KEY,[]); renderLogs(); alert('Log dihapus.');
+      }
+    });
   }
 });
