@@ -27,6 +27,7 @@
     <a href="notulen.html" class="menu-btn">📝 Notulen</a>
     <a href="pembinaan.html" class="menu-btn">🏫 Pembinaan</a>
     <a href="masalahsiswa.html" class="menu-btn">⚠️ Masalah Siswa</a>
+    <a href="datasiswa.html" class="menu-btn">📊 Data Siswa</a> <!-- ✅ menu baru -->
   </div>
 
   <!-- ====== Navbar Bawah ====== -->
@@ -53,6 +54,7 @@
     // Fungsi Logout
     function logout() {
       if (confirm("Yakin ingin keluar dari akun guru?")) {
+        localStorage.removeItem('gw_ann_session_v3');
         window.location.href = "index.html";
       }
     }
