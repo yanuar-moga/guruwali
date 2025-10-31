@@ -1,4 +1,4 @@
-/* FONT & DASAR */
+/* ======== STYLE DASAR ======== */
 body {
   font-family: "Poppins", sans-serif;
   background: linear-gradient(180deg, #E3F2FD, #BBDEFB);
@@ -10,7 +10,7 @@ body {
   min-height: 100vh;
 }
 
-/* TOPBAR APP */
+/* ======== TOPBAR ======== */
 .topbar {
   background: linear-gradient(90deg, #64b5f6, #42a5f5);
   color: white;
@@ -34,7 +34,7 @@ body {
   object-fit: cover;
 }
 
-/* LOGIN BOX */
+/* ======== LOGIN BOX ======== */
 .login-container {
   background: white;
   width: 90%;
@@ -63,7 +63,7 @@ h2 {
   margin-bottom: 20px;
 }
 
-/* INPUT FORM */
+/* ======== INPUT FORM ======== */
 input[type="text"],
 input[type="password"],
 textarea {
@@ -82,7 +82,7 @@ input:focus {
   box-shadow: 0 0 6px rgba(66,165,245,0.4);
 }
 
-/* SHOW PASSWORD */
+/* ======== SHOW PASSWORD ======== */
 .show-pass {
   display: flex;
   align-items: center;
@@ -93,7 +93,7 @@ input:focus {
   justify-content: flex-start;
 }
 
-/* BUTTON */
+/* ======== BUTTON ======== */
 button, .btn {
   background: linear-gradient(90deg, #42a5f5, #1e88e5);
   color: white;
@@ -113,7 +113,7 @@ button:hover, .btn:hover {
   transform: scale(1.03);
 }
 
-/* DASHBOARD CARD STYLE */
+/* ======== CARD (DASHBOARD) ======== */
 .main-content {
   flex: 1;
   padding: 15px;
@@ -146,7 +146,7 @@ button:hover, .btn:hover {
   font-size: 0.9rem;
 }
 
-/* MENU ICON GRID */
+/* ======== MENU GRID (TOMBOL MENU) ======== */
 .menu-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -162,11 +162,13 @@ button:hover, .btn:hover {
   font-weight: 600;
   box-shadow: 0 3px 10px rgba(0,0,0,0.05);
   transition: 0.3s;
+  border: 2px solid transparent;
 }
 
 .menu-item:hover {
   background: #e3f2fd;
   transform: scale(1.05);
+  border: 2px solid #FFCA28;
 }
 
 .menu-item img {
@@ -175,7 +177,7 @@ button:hover, .btn:hover {
   margin-bottom: 8px;
 }
 
-/* FOOTER */
+/* ======== FOOTER ======== */
 footer {
   text-align: center;
   padding: 12px 0;
@@ -185,7 +187,7 @@ footer {
   border-top: 2px solid #BBDEFB;
 }
 
-/* ANIMASI */
+/* ======== ANIMASI ======== */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -197,9 +199,10 @@ footer {
   }
 }
 
-/* RESPONSIVE */
+/* ======== RESPONSIVE ======== */
 @media (max-width: 480px) {
   h2 { font-size: 1.1rem; }
   .login-container { margin-top: 40px; }
   .menu-grid { grid-template-columns: 1fr 1fr; }
+  .menu-item { font-size: 0.9rem; }
 }
