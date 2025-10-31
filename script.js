@@ -41,31 +41,40 @@ document.addEventListener('DOMContentLoaded', ()=>{
   const loginForm = document.getElementById('loginForm');
   if(loginForm){
     const sp = document.getElementById('showPassword');
-    if(sp){ sp.addEventListener('change', ()=>{ document.getElementById('password').type = sp.checked ? 'text' : 'password'; }) }
+    if(sp){
+      sp.addEventListener('change', ()=>{
+        const passField = document.getElementById('password');
+        passField.type = sp.checked ? 'text' : 'password';
+      });
+    }
 
     loginForm.addEventListener('submit', (e)=>{
       e.preventDefault();
       const u = document.getElementById('username').value.trim();
       const p = document.getElementById('password').value.trim();
-      if(u.toLowerCase()==='bayu' && p==='binapustaka'){
+
+      if(u.toLowerCase() === 'bayu' && p === 'binapustaka'){
         localStorage.setItem(SESSION_KEY, JSON.stringify({role:'guru',user:'bayu',ts:nowStr()}));
-        window.location.href='guru.html';
+        window.location.href = 'guru.html';
         return;
       }
-      if(STUDENTS[u] && p==='siswa'){
+
+      if(STUDENTS[u] && p === 'siswa'){
         localStorage.setItem(SESSION_KEY, JSON.stringify({role:'siswa',nisn:u,name:STUDENTS[u],ts:nowStr()}));
         window.location.href = `siswa.html?nisn=${encodeURIComponent(u)}`;
         return;
       }
+
       alert('Login gagal — periksa username/NISN dan password.');
     });
   }
 
-  // student page
+  // --- Student page logic ---
   if(document.getElementById('pengumumanArea')){
     renderStudentAnnouncements();
     const sendBtn = document.getElementById('sendCurhat');
     const resetBtn = document.getElementById('resetCurhat');
+
     if(sendBtn){
       sendBtn.addEventListener('click', ()=>{
         const text = document.getElementById('curhatText').value.trim();
@@ -84,11 +93,15 @@ document.addEventListener('DOMContentLoaded', ()=>{
         document.getElementById('curhatText').value = '';
       });
     }
+
     if(resetBtn){
-      resetBtn.addEventListener('click', ()=>{ if(confirm('Bersihkan kolom curhat?')) document.getElementById('curhatText').value=''; });
+      resetBtn.addEventListener('click', ()=>{ 
+        if(confirm('Bersihkan kolom curhat?')) document.getElementById('curhatText').value = ''; 
+      });
     }
   }
 
+  // --- Guru/Admin Dashboard Logic ---
   if(document.getElementById('viewArea')){
     window.renderAdminView = function(view){
       const area = document.getElementById('viewArea');
@@ -116,33 +129,95 @@ document.addEventListener('DOMContentLoaded', ()=>{
           alert('Pengumuman tersimpan.');
         });
         document.getElementById('clearAnn').addEventListener('click', ()=>{
-          if(confirm('Hapus semua pengumuman?')){ save(ANN_KEY,[]); renderAdminAnnouncements(); alert('Semua pengumuman dihapus.'); }
+          if(confirm('Hapus semua pengumuman?')){
+            save(ANN_KEY,[]);
+            renderAdminAnnouncements();
+            alert('Semua pengumuman dihapus.');
+          }
         });
         renderAdminAnnouncements();
-      } else if(view === 'curhat'){
+      } 
+      else if(view === 'curhat'){
         area.innerHTML = `<div class="card"><h3>💬 Curhat Siswa</h3><div id="curhatList"></div></div>`;
         renderAdminCurhats();
-      } else if(view === 'notulen'){
-        area.innerHTML = `<div class="card"><h3>📝 Notulen Pembinaan</h3><textarea id="notulenText" class="input" rows="6"></textarea><div class="row" style="margin-top:8px"><button id="saveNotulen" class="btn">Simpan Notulen</button><button id="clearNotulen" class="btn ghost">Hapus</button></div><div id="notulenPreview" style="margin-top:12px"></div></div>`;
-        document.getElementById('saveNotulen').addEventListener('click', ()=>{ const text = document.getElementById('notulenText').value.trim(); save(NOTULEN_KEY,{text,ts:nowStr()}); alert('Notulen disimpan.'); renderAdminNotulen(); });
-        document.getElementById('clearNotulen').addEventListener('click', ()=>{ if(confirm('Hapus notulen?')){ save(NOTULEN_KEY,{text:'',ts:''}); renderAdminNotulen(); alert('Notulen dihapus.'); } });
+      } 
+      else if(view === 'notulen'){
+        area.innerHTML = `<div class="card"><h3>📝 Notulen Pembinaan</h3>
+          <textarea id="notulenText" class="input" rows="6"></textarea>
+          <div class="row" style="margin-top:8px">
+            <button id="saveNotulen" class="btn">Simpan Notulen</button>
+            <button id="clearNotulen" class="btn ghost">Hapus</button>
+          </div>
+          <div id="notulenPreview" style="margin-top:12px"></div></div>`;
+        document.getElementById('saveNotulen').addEventListener('click', ()=>{
+          const text = document.getElementById('notulenText').value.trim();
+          save(NOTULEN_KEY,{text,ts:nowStr()}); 
+          alert('Notulen disimpan.'); 
+          renderAdminNotulen();
+        });
+        document.getElementById('clearNotulen').addEventListener('click', ()=>{
+          if(confirm('Hapus notulen?')){
+            save(NOTULEN_KEY,{text:'',ts:''});
+            renderAdminNotulen();
+            alert('Notulen dihapus.');
+          }
+        });
         renderAdminNotulen();
-      } else if(view === 'pembinaan'){
-        area.innerHTML = `<div class="card"><h3>🏫 Pembinaan</h3><textarea id="pembText" class="input" rows="4" placeholder="Catatan pembinaan..."></textarea><div class="row" style="margin-top:8px"><button id="savePemb" class="btn">Simpan Pembinaan</button></div><div id="pembList" style="margin-top:12px"></div></div>`;
-        document.getElementById('savePemb').addEventListener('click', ()=>{ const text = document.getElementById('pembText').value.trim(); if(!text) return; const arr = load(PEMB_KEY,[]); arr.unshift({text,ts:nowStr()}); save(PEMB_KEY,arr); alert('Pembinaan tersimpan.'); renderAdminPemb(); });
+      } 
+      else if(view === 'pembinaan'){
+        area.innerHTML = `<div class="card"><h3>🏫 Pembinaan</h3>
+          <textarea id="pembText" class="input" rows="4" placeholder="Catatan pembinaan..."></textarea>
+          <div class="row" style="margin-top:8px">
+            <button id="savePemb" class="btn">Simpan Pembinaan</button>
+          </div><div id="pembList" style="margin-top:12px"></div></div>`;
+        document.getElementById('savePemb').addEventListener('click', ()=>{
+          const text = document.getElementById('pembText').value.trim();
+          if(!text) return;
+          const arr = load(PEMB_KEY,[]);
+          arr.unshift({text,ts:nowStr()});
+          save(PEMB_KEY,arr);
+          alert('Pembinaan tersimpan.');
+          renderAdminPemb();
+        });
         renderAdminPemb();
-      } else if(view === 'masalah'){
-        area.innerHTML = `<div class="card"><h3>⚠️ Masalah Siswa</h3><textarea id="masalahText" class="input" rows="4" placeholder="Catatan masalah siswa..."></textarea><div class="row" style="margin-top:8px"><button id="saveMasalah" class="btn">Simpan Masalah</button></div><div id="masalahList" style="margin-top:12px"></div></div>`;
-        document.getElementById('saveMasalah').addEventListener('click', ()=>{ const text = document.getElementById('masalahText').value.trim(); if(!text) return; const arr = load(MASALAH_KEY,[]); arr.unshift({text,ts:nowStr()}); save(MASALAH_KEY,arr); alert('Masalah siswa tersimpan.'); renderAdminMasalah(); });
+      } 
+      else if(view === 'masalah'){
+        area.innerHTML = `<div class="card"><h3>⚠️ Masalah Siswa</h3>
+          <textarea id="masalahText" class="input" rows="4" placeholder="Catatan masalah siswa..."></textarea>
+          <div class="row" style="margin-top:8px">
+            <button id="saveMasalah" class="btn">Simpan Masalah</button>
+          </div><div id="masalahList" style="margin-top:12px"></div></div>`;
+        document.getElementById('saveMasalah').addEventListener('click', ()=>{
+          const text = document.getElementById('masalahText').value.trim();
+          if(!text) return;
+          const arr = load(MASALAH_KEY,[]);
+          arr.unshift({text,ts:nowStr()});
+          save(MASALAH_KEY,arr);
+          alert('Masalah siswa tersimpan.');
+          renderAdminMasalah();
+        });
         renderAdminMasalah();
-      } else if(view === 'logs'){
-        area.innerHTML = `<div class="card"><h3>📜 Log Aktivitas</h3><div id="logList"></div><div class="row" style="margin-top:12px"><button id="downloadLogs" class="btn">Download CSV</button><button id="clearLogs" class="btn ghost">Hapus Log</button></div></div>`;
+      } 
+      else if(view === 'logs'){
+        area.innerHTML = `<div class="card"><h3>📜 Log Aktivitas</h3>
+          <div id="logList"></div>
+          <div class="row" style="margin-top:12px">
+            <button id="downloadLogs" class="btn">Download CSV</button>
+            <button id="clearLogs" class="btn ghost">Hapus Log</button>
+          </div></div>`;
         renderAdminLogs();
         document.getElementById('downloadLogs').addEventListener('click', ()=>{ downloadLogsCSV(); });
-        document.getElementById('clearLogs').addEventListener('click', ()=>{ if(confirm('Hapus semua log?')){ save(LOG_KEY,[]); renderAdminLogs(); alert('Log dihapus.'); } });
+        document.getElementById('clearLogs').addEventListener('click', ()=>{
+          if(confirm('Hapus semua log?')){
+            save(LOG_KEY,[]);
+            renderAdminLogs();
+            alert('Log dihapus.');
+          }
+        });
       }
     };
 
+    // Render default
     window.renderAdminAnnouncements = function(){
       const list = load(ANN_KEY,[]);
       const el = document.getElementById('annList');
@@ -150,7 +225,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
       if(list.length===0){ el.innerHTML = '<p class="smallmuted">Belum ada pengumuman.</p>'; return; }
       el.innerHTML = list.map(a=>`<div class="ann"><small class="smallmuted">${a.ts}</small><div>${a.text}</div></div>`).join('');
     };
-
     window.renderAdminCurhats = function(){
       const arr = load(CURHAT_KEY,[]);
       const el = document.getElementById('curhatList');
@@ -158,27 +232,23 @@ document.addEventListener('DOMContentLoaded', ()=>{
       if(arr.length===0){ el.innerHTML = '<p class="smallmuted">Belum ada pesan curhat.</p>'; return; }
       el.innerHTML = `<table class="table"><thead><tr><th>Waktu</th><th>Nama (NISN)</th><th>Pesan</th></tr></thead><tbody>`+arr.map(c=>`<tr><td class="smallmuted">${c.ts}</td><td>${c.name}<br><small class="smallmuted">${c.nisn}</small></td><td>${c.text}</td></tr>`).join('')+`</tbody></table>`;
     };
-
     window.renderAdminNotulen = function(){
       const n = load(NOTULEN_KEY,{text:'',ts:''});
       const preview = document.getElementById('notulenPreview');
       if(preview) preview.innerHTML = n.text?`<div class="card"><small class="smallmuted">Terakhir: ${n.ts}</small><div style="margin-top:8px">${n.text.replace(/\n/g,'<br>')}</div></div>`:'<p class="smallmuted">Belum ada notulen.</p>';
     };
-
     window.renderAdminPemb = function(){
       const arr = load(PEMB_KEY,[]);
       const el = document.getElementById('pembList');
       if(!el) return;
       el.innerHTML = arr.length?arr.map(p=>`<div class="ann"><small class="smallmuted">${p.ts}</small><div>${p.text}</div></div>`).join(''):'<p class="smallmuted">Belum ada catatan pembinaan.</p>';
     };
-
     window.renderAdminMasalah = function(){
       const arr = load(MASALAH_KEY,[]);
       const el = document.getElementById('masalahList');
       if(!el) return;
       el.innerHTML = arr.length?arr.map(p=>`<div class="ann"><small class="smallmuted">${p.ts}</small><div>${p.text}</div></div>`).join(''):'<p class="smallmuted">Belum ada catatan masalah siswa.</p>';
     };
-
     window.renderAdminLogs = function(){
       const arr = load(LOG_KEY,[]);
       const el = document.getElementById('logList');
