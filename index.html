@@ -1,132 +1,67 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - Guru Wali Bayu</title>
-  <link rel="stylesheet" href="style.css">
-  <style>
-    body {
-      font-family: "Poppins", sans-serif;
-      background: linear-gradient(180deg, #e6f2ff 0%, #ffffff 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-    }
-
-    .login-card {
-      background: #fff;
-      border-radius: 18px;
-      padding: 20px;
-      width: 85%;
-      max-width: 250px; /* lebih kecil dan proporsional */
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      text-align: center;
-      border-top: 4px solid #ffd84c;
-    }
-
-    .login-card img {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      margin-bottom: 10px;
-    }
-
-    .login-card h2 {
-      font-size: 1.1rem;
-      color: #003f7f;
-      margin-bottom: 18px;
-    }
-
-    input[type="text"],
-    input[type="password"] {
-      width: 100%;
-      padding: 8px 10px;
-      margin-bottom: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 13px;
-      box-sizing: border-box;
-    }
-
-    .show-pass {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 5px;
-      width: 100%;
-      margin: 6px 0 12px 0;
-      font-size: 13px;
-      color: #333;
-    }
-
-    .show-pass input[type="checkbox"] {
-      margin: 0;
-      transform: scale(1.1);
-      cursor: pointer;
-      accent-color: #4da3ff;
-    }
-
-    .show-pass label {
-      cursor: pointer;
-      flex: 1;
-      text-align: left;
-    }
-
-    button {
-      width: 100%;
-      padding: 9px;
-      background: linear-gradient(90deg, #4da3ff, #007bff);
-      border: none;
-      border-radius: 8px;
-      color: white;
-      font-weight: bold;
-      font-size: 14px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    button:hover {
-      background: linear-gradient(90deg, #007bff, #005ecb);
-      transform: scale(1.03);
-    }
-
-    .footer {
-      margin-top: 14px;
-      font-size: 11px;
-      color: #777;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - Guru Wali Bayu</title>
+<style>
+  body {
+    font-family: "Poppins", sans-serif;
+    background: linear-gradient(180deg,#e8f3ff,#ffffff);
+    height:100vh; display:flex; align-items:center; justify-content:center; margin:0;
+  }
+  .login-card {
+    background:#fff;
+    border-radius:18px;
+    padding:18px 20px;
+    width:90%; max-width:230px;            /* lebih kecil */
+    box-shadow:0 3px 8px rgba(0,0,0,.1);
+    border-top:4px solid #ffd84c;
+    text-align:center;
+  }
+  .login-card img {
+    width:55px; height:55px; border-radius:50%; margin-bottom:8px;
+  }
+  h2 {font-size:1rem;color:#003f7f;margin:10px 0 18px;}
+  input[type=text],input[type=password]{
+    width:100%;padding:7px 8px;margin-bottom:8px;
+    border:1px solid #ccc;border-radius:6px;font-size:13px;box-sizing:border-box;
+  }
+  .show-pass{
+    display:flex;align-items:center;justify-content:flex-start;
+    font-size:12.5px;color:#333;margin-bottom:10px;
+  }
+  .show-pass input[type=checkbox]{margin-right:6px;transform:scale(1.05);cursor:pointer;accent-color:#4da3ff;}
+  button{
+    width:100%;padding:8px;border:none;border-radius:6px;
+    background:linear-gradient(90deg,#4da3ff,#007bff);
+    color:#fff;font-weight:600;font-size:13.5px;cursor:pointer;transition:.25s;
+  }
+  button:hover{transform:scale(1.03);background:linear-gradient(90deg,#007bff,#005ecb);}
+  .footer{margin-top:12px;font-size:10.5px;color:#777;}
+</style>
 </head>
 <body>
   <div class="login-card">
     <img src="assets/logo.png" alt="Logo Sekolah">
     <h2>Guru Wali Bayu</h2>
-
     <form id="loginForm">
       <input type="text" id="username" placeholder="Username / NISN" required>
       <input type="password" id="password" placeholder="Password" required>
-
       <div class="show-pass">
         <input type="checkbox" id="showPassword">
         <label for="showPassword">Tampilkan Password</label>
       </div>
-
       <button type="submit">Masuk</button>
     </form>
-
     <div class="footer">© 2025 SMP Negeri 1 Moga</div>
   </div>
 
-  <script src="script.js"></script>
-  <script>
-    // Toggle tampilkan password
-    document.getElementById("showPassword").addEventListener("change", function() {
-      const pass = document.getElementById("password");
-      pass.type = this.checked ? "text" : "password";
-    });
-  </script>
+<script>
+document.getElementById("showPassword").addEventListener("change",function(){
+  const p=document.getElementById("password");
+  p.type=this.checked?"text":"password";
+});
+</script>
 </body>
 </html>
