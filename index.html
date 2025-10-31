@@ -1,39 +1,37 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Guru Wali Bayu - Login</title>
-<link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Guru Wali Bayu</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-  <div class="app">
-    <header class="header">
-      <img src="assets/logo.png" class="logo" alt="logo"/>
-      <h1>Guru Wali Bayu</h1>
-    </header>
+<body class="light">
+  <div class="login-container">
+    <img src="assets/logo.png" alt="Logo Sekolah" class="logo" />
+    <h2>Login Portal</h2>
+    <form id="loginForm">
+      <label for="username">Username / NISN</label>
+      <input type="text" id="username" placeholder="Masukkan Username atau NISN" required />
 
-    <div style="display:flex;justify-content:center;padding:40px">
-      <div style="width:360px">
-        <div class="card">
-          <h3>Masuk</h3>
-          <form id="loginForm">
-            <input id="username" class="input" placeholder="Username atau NISN" required>
-            <input id="password" type="password" class="input" placeholder="Password" required>
-            <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
-              <input type="checkbox" id="showPassword"><label for="showPassword" class="smallmuted">Tampilkan Password</label>
-            </div>
-            <button class="btn" style="width:100%;margin-top:12px">Masuk</button>
-          </form>
-        </div>
-        <div class="card smallmuted">
-          <div><b>Info:</b> Gunakan akun guru atau akun siswa.</div>
-          <div style="margin-top:6px"><b>Guru:</b> <code>bayu</code> / <code>binapustaka</code></div>
-          <div style="margin-top:6px"><b>Siswa:</b> <i>NISN</i> / <code>siswa</code></div>
-        </div>
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Masukkan Password" required />
+
+      <div class="show-pass">
+        <input type="checkbox" id="showPass" />
+        <label for="showPass">Tampilkan Password</label>
       </div>
-    </div>
+
+      <button type="submit" class="btn primary">Masuk</button>
+    </form>
   </div>
-<script src="script.js"></script>
+
+  <script src="script.js"></script>
+  <script>
+    document.getElementById('showPass').addEventListener('change', function() {
+      const pw = document.getElementById('password');
+      pw.type = this.checked ? 'text' : 'password';
+    });
+  </script>
 </body>
 </html>
