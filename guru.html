@@ -7,11 +7,20 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="light">
+
+  <!-- ====== Topbar ====== -->
   <div class="topbar">
-    <img src="assets/logo.png" class="toplogo">
-    <h1>Dashboard Guru</h1>
+    <div class="top-left">
+      <img src="assets/logo.png" class="toplogo" alt="Logo">
+      <h2>Dashboard Guru</h2>
+    </div>
+    <div class="top-right">
+      <span id="clock"></span>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
   </div>
 
+  <!-- ====== Menu Utama ====== -->
   <div class="menu-container">
     <a href="pengumuman.html" class="menu-btn">📢 Pengumuman</a>
     <a href="curhatsiswa.html" class="menu-btn">💬 Curhat</a>
@@ -20,6 +29,34 @@
     <a href="masalahsiswa.html" class="menu-btn">⚠️ Masalah Siswa</a>
   </div>
 
-  <script src="script.js"></script>
+  <!-- ====== Navbar Bawah ====== -->
+  <div class="navbar">
+    <a href="guru.html">Beranda</a>
+    <a href="pengumuman.html">Pengumuman</a>
+    <a href="curhatsiswa.html">Curhat</a>
+    <a href="pembinaan.html">Pembinaan</a>
+  </div>
+
+  <!-- ====== Script Jam & Logout ====== -->
+  <script>
+    // Jam Digital
+    function updateClock() {
+      const now = new Date();
+      const jam = String(now.getHours()).padStart(2, '0');
+      const menit = String(now.getMinutes()).padStart(2, '0');
+      const detik = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById('clock').textContent = `${jam}:${menit}:${detik}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Fungsi Logout
+    function logout() {
+      if (confirm("Yakin ingin keluar dari akun guru?")) {
+        window.location.href = "index.html";
+      }
+    }
+  </script>
+
 </body>
 </html>
