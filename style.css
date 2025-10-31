@@ -1,83 +1,123 @@
+/* ====== Tema Utama Aplikasi Guru Wali Bayu ====== */
 body.light {
   font-family: "Poppins", sans-serif;
   background-color: #f9fbff;
-  margin: 0;
   color: #333;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
+/* ====== Header / Topbar ====== */
 .topbar {
   background: linear-gradient(90deg, #b8dcff, #a4c8ff);
   border-bottom: 4px solid #ffd84c;
-  text-align: center;
   color: #002855;
-  padding: 10px;
+  text-align: center;
+  padding: 10px 0;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   gap: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .toplogo {
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
+  object-fit: cover;
 }
 
-.login-container {
-  width: 90%;
-  max-width: 360px;
-  margin: 80px auto;
-  background: white;
-  padding: 25px;
-  border-radius: 16px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  border-top: 4px solid #ffd84c;
+.topbar h2 {
+  font-size: 18px;
+  margin: 0;
+  color: #003f7f;
+  font-weight: 600;
 }
 
+/* ====== Kontainer Menu ====== */
 .menu-container {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  margin-top: 40px;
+  justify-content: start;
+  padding: 30px 10px;
   gap: 15px;
 }
 
+/* ====== Tombol Menu ====== */
 .menu-btn {
   display: block;
-  width: 80%;
+  width: 85%;
+  max-width: 320px;
   text-align: center;
   background: linear-gradient(90deg, #4da3ff, #007bff);
-  color: white;
+  color: #fff;
   padding: 12px 0;
-  border-radius: 16px;
+  border-radius: 14px;
   text-decoration: none;
-  font-size: 16px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  transition: 0.3s;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
 .menu-btn:hover {
-  transform: scale(1.03);
+  transform: translateY(-2px);
   background: linear-gradient(90deg, #007bff, #005ecb);
 }
 
-.show-pass {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 10px;
+/* ====== Kartu dan Konten ====== */
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 15px;
+  margin: 15px auto;
+  width: 90%;
+  max-width: 500px;
+  border-left: 5px solid #ffd84c;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
+.card h3 {
+  color: #003f7f;
+  margin-top: 0;
+}
+
+textarea, input, select {
+  width: 100%;
+  padding: 10px;
+  margin: 6px 0;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: 0.3s;
+}
+
+textarea:focus, input:focus {
+  border-color: #4da3ff;
+  box-shadow: 0 0 5px rgba(77, 163, 255, 0.5);
+}
+
+/* ====== Tombol Biasa ====== */
 .btn {
   display: inline-block;
   padding: 8px 12px;
   border: none;
-  border-radius: 8px;
-  text-decoration: none;
+  border-radius: 10px;
   cursor: pointer;
-  transition: 0.3s;
   font-weight: bold;
+  text-decoration: none;
+  transition: 0.3s;
 }
 
 .btn.primary {
@@ -87,4 +127,63 @@ body.light {
 
 .btn.primary:hover {
   background-color: #1c7ff0;
+}
+
+.btn.ghost {
+  background: #ffd84c;
+  color: #002855;
+}
+
+.btn.ghost:hover {
+  background: #ffc800;
+}
+
+/* ====== Tabel Data ====== */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.table th, .table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.table th {
+  background-color: #e9f3ff;
+  color: #002855;
+}
+
+.smallmuted {
+  color: #777;
+  font-size: 12px;
+}
+
+/* ====== Footer / Catatan Bawah ====== */
+footer {
+  text-align: center;
+  padding: 15px;
+  font-size: 12px;
+  color: #555;
+  background-color: #f0f7ff;
+  border-top: 2px solid #ffd84c;
+}
+
+/* ====== Responsif Mobile ====== */
+@media (max-width: 480px) {
+  .menu-btn {
+    font-size: 14px;
+    width: 90%;
+  }
+
+  .card {
+    width: 94%;
+  }
+
+  .topbar h2 {
+    font-size: 16px;
+  }
 }
