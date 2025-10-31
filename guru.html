@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard Guru Wali Bayu</title>
-  <link rel="stylesheet" href="style.css" />
   <style>
     body {
       font-family: 'Poppins', sans-serif;
@@ -28,9 +27,6 @@
     }
     main {
       padding: 20px;
-    }
-    h2 {
-      color: #1565C0;
     }
     .card {
       background: white;
@@ -77,24 +73,15 @@
         <button type="submit">Simpan & Umumkan</button>
       </form>
     </section>
-
-    <section class="card">
-      <h2>🔗 Fitur Lain</h2>
-      <ul>
-        <li><a href="https://wa.me/6285229399579" target="_blank">Konsultasi via WhatsApp</a></li>
-        <li><a href="#">Catatan Notulen Pembinaan</a></li>
-        <li><a href="#">Kesepakatan Kelas</a></li>
-      </ul>
-    </section>
   </main>
 
   <script>
     document.getElementById("announcementForm").addEventListener("submit", function(e) {
       e.preventDefault();
-      const pengumuman = document.getElementById("announcementText").value.trim();
-      if (pengumuman) {
-        localStorage.setItem("pengumuman", pengumuman);
-        alert("✅ Pengumuman berhasil disimpan dan akan muncul di dashboard siswa.");
+      const text = document.getElementById("announcementText").value.trim();
+      if (text) {
+        localStorage.setItem("pengumuman", text);
+        alert("✅ Pengumuman disimpan. Silakan buka halaman siswa untuk melihat hasilnya.");
         document.getElementById("announcementText").value = "";
       } else {
         alert("⚠️ Tuliskan isi pengumuman terlebih dahulu.");
