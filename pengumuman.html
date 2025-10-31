@@ -1,25 +1,23 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pengumuman - Guru Wali Bayu</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pengumuman - Guru Wali Bayu</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
-<header>
-  <img src="assets/logo.png" alt="logo" class="logo">
-  <h2>Pengumuman</h2>
-  <button onclick="history.back()" class="back-btn">⬅️ Kembali</button>
-</header>
-<main id="content" class="card-list"></main>
-<script>
+<body class="light">
+  <div class="topbar">
+    <img src="assets/logo.png" class="toplogo" alt="Logo Sekolah">
+    <h2>Pengumuman</h2>
+  </div>
 
-const data = JSON.parse(localStorage.getItem('announcements') || '[]');
-const container = document.getElementById('content');
-if (data.length === 0) container.innerHTML = "<p>Tidak ada pengumuman.</p>";
-else container.innerHTML = data.map(a => `<div class='card'><p>${a.text}</p><small>${a.date}</small></div>`).join('');
+  <div class="card">
+    <h3>✉️ Pengumuman Terbaru</h3>
+    <div id="pengumumanArea">Belum ada pengumuman.</div>
+  </div>
 
-</script>
+  <footer>© 2025 SMP Negeri 1 Moga — Guru Wali Bayu</footer>
+  <script src="script.js"></script>
 </body>
 </html>
