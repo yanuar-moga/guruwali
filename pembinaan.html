@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kegiatan Pembinaan - Guru Wali Bayu</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <img src="assets/logo.png" alt="logo" class="logo">
+  <h2>Kegiatan Pembinaan</h2>
+  <button onclick="history.back()" class="back-btn">⬅️ Kembali</button>
+</header>
+<main id="content" class="card-list"></main>
+<script>
+
+const pembinaan = JSON.parse(localStorage.getItem('pembinaan') || '[]');
+const container = document.getElementById('content');
+if (pembinaan.length === 0) container.innerHTML = "<p>Belum ada kegiatan pembinaan.</p>";
+else container.innerHTML = pembinaan.map(p => `<div class='card'><b>${p.tema}</b><p>${p.isi}</p><small>${p.tanggal}</small></div>`).join('');
+
+</script>
+</body>
+</html>

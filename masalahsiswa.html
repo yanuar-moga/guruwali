@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Masalah Siswa - Guru Wali Bayu</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <img src="assets/logo.png" alt="logo" class="logo">
+  <h2>Masalah Siswa</h2>
+  <button onclick="history.back()" class="back-btn">⬅️ Kembali</button>
+</header>
+<main id="content" class="card-list"></main>
+<script>
+
+const masalah = JSON.parse(localStorage.getItem('masalahsiswa') || '[]');
+const container = document.getElementById('content');
+if (masalah.length === 0) container.innerHTML = "<p>Belum ada catatan masalah siswa.</p>";
+else container.innerHTML = masalah.map(m => `<div class='card'><b>${m.nama}</b><br><small>${m.tanggal}</small><p><b>Masalah:</b> ${m.kasus}</p><p><b>Solusi:</b> ${m.solusi}</p></div>`).join('');
+
+</script>
+</body>
+</html>
