@@ -50,6 +50,23 @@ body.light {
   color: #002855;
 }
 
+/* ====== Tombol Logout ====== */
+.logout-btn {
+  background: #ffd84c;
+  color: #002855;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-left: 15px;
+}
+
+.logout-btn:hover {
+  background: #ffc800;
+}
+
 /* ====== Kontainer Menu ====== */
 .menu-container {
   flex: 1;
@@ -196,6 +213,7 @@ footer {
   align-items: center;
   padding: 8px 0;
   box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+  z-index: 999;
 }
 
 .navbar a {
@@ -203,17 +221,13 @@ footer {
   color: #003f7f;
   text-align: center;
   font-size: 13px;
+  font-weight: 600;
   transition: 0.3s;
 }
 
 .navbar a:hover {
   color: #007bff;
   transform: scale(1.05);
-}
-
-.navbar i {
-  display: block;
-  font-size: 18px;
 }
 
 /* ====== Responsif Mobile ====== */
@@ -232,6 +246,11 @@ footer {
   }
 
   #clock {
+    font-size: 12px;
+  }
+
+  .logout-btn {
+    padding: 5px 10px;
     font-size: 12px;
   }
 }
