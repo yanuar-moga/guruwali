@@ -1,36 +1,48 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login - Guru Wali Bayu</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal SPENSAMO</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body class="light">
-  <div class="login-container">
-    <img src="assets/logo.png" alt="Logo Sekolah" class="logo" />
-    <h2>Login Portal</h2>
-    <form id="loginForm">
-      <label for="username">Username / NISN</label>
-      <input type="text" id="username" placeholder="Masukkan Username atau NISN" required />
+<body>
+  <header>
+    <img src="asset/logo.png" alt="Logo SMPN 1 Moga">
+    <h1>Portal SPENSAMO</h1>
+  </header>
 
-      <label for="password">Password</label>
-      <input type="password" id="password" placeholder="Masukkan Password" required />
+  <div class="container">
+    <div class="section">
+      <h2>Login Pengguna</h2>
+      <form id="loginForm">
+        <label for="username">NISN / Nama Guru</label>
+        <input type="text" id="username" placeholder="Masukkan NISN atau nama">
 
-      <div class="show-pass">
-        <input type="checkbox" id="showPass" />
-        <label for="showPass">Tampilkan Password</label>
-      </div>
+        <label for="password">Tanggal Lahir / Sandi</label>
+        <input type="password" id="password" placeholder="Contoh: 27012010">
 
-      <button type="submit" class="btn primary">Masuk</button>
-    </form>
+        <button type="submit">Masuk</button>
+      </form>
+    </div>
   </div>
 
-  <script src="script.js"></script>
   <script>
-    document.getElementById('showPass').addEventListener('change', function() {
-      const pw = document.getElementById('password');
-      pw.type = this.checked ? 'text' : 'password';
+    document.getElementById('loginForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      const user = document.getElementById('username').value.trim();
+      const pass = document.getElementById('password').value.trim();
+
+      // Guru login
+      if(user.toLowerCase() === "guru" && pass === "teacherspensamo"){
+        window.location.href = "guru.html";
+      }
+      // Siswa login
+      else if(pass === "spensamo7h"){
+        window.location.href = "siswa.html";
+      } else {
+        alert("Login gagal! Periksa kembali NISN / sandi Anda.");
+      }
     });
   </script>
 </body>
