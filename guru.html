@@ -1,70 +1,105 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Dashboard Guru - Guru Wali Bayu</title>
-<link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Guru Wali Bayu</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(180deg, #E3F2FD 0%, #BBDEFB 100%);
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #42A5F5;
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    header img {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    main {
+      padding: 20px;
+    }
+    h2 {
+      color: #1565C0;
+    }
+    .card {
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    textarea {
+      width: 100%;
+      min-height: 100px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      font-family: 'Poppins', sans-serif;
+      resize: none;
+    }
+    button {
+      background: #42A5F5;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #2196F3;
+    }
+  </style>
 </head>
-<body class="mobile">
-<header class="appbar">
-  <img src="assets/logo.svg" class="logo" alt="logo"/>
-  <div class="title">Guru Wali Bayu — Admin</div>
-  <a href="index.html" class="iconbtn">⟲</a>
-</header>
+<body>
+  <header>
+    <img src="assets/logo.png" alt="Logo Sekolah" />
+    <h1>Guru Wali Bayu</h1>
+  </header>
 
-<main class="page">
-  <section class="card">
-    <h2>Selamat datang, Pak Bayu</h2>
-    <div class="muted">Nomor Curhat: <b>+62 852-2939-9579</b></div>
-  </section>
+  <main>
+    <section class="card">
+      <h2>✉️ Buat Pengumuman</h2>
+      <form id="announcementForm">
+        <textarea id="announcementText" placeholder="Tulis pengumuman di sini..."></textarea>
+        <button type="submit">Simpan & Umumkan</button>
+      </form>
+    </section>
 
-  <section class="card">
-    <h3>Tambah Pengumuman</h3>
-    <form id="announceForm">
-      <textarea id="announceText" rows="3" placeholder="Tulis pengumuman..." required></textarea>
-      <div class="row">
-        <button class="btn primary" type="submit">Simpan</button>
-        <button id="clearAnn" class="btn ghost" type="button">Hapus Semua</button>
-      </div>
-    </form>
-  </section>
+    <section class="card">
+      <h2>🔗 Fitur Lain</h2>
+      <ul>
+        <li><a href="https://wa.me/6285229399579" target="_blank">Konsultasi via WhatsApp</a></li>
+        <li><a href="#">Catatan Notulen Pembinaan</a></li>
+        <li><a href="#">Kesepakatan Kelas</a></li>
+      </ul>
+    </section>
+  </main>
 
-  <section class="card">
-    <h3>Kesepakatan Kelas</h3>
-    <div id="agreementEditBox"></div>
-    <div class="row" style="margin-top:8px">
-      <button id="lockAgreement" class="btn primary">Kunci</button>
-      <button id="unlockAgreement" class="btn ghost">Buka</button>
-    </div>
-  </section>
-
-  <section class="card">
-    <h3>Notulen Pembinaan</h3>
-    <textarea id="notulenText" rows="4" placeholder="Tulis notulen..."></textarea>
-    <div class="row" style="margin-top:8px">
-      <button id="saveNotulen" class="btn primary">Simpan Notulen</button>
-      <button id="clearNotulen" class="btn ghost">Hapus Notulen</button>
-    </div>
-  </section>
-
-  <section class="card">
-    <h3>Log Aktivitas Siswa</h3>
-    <div id="logs"></div>
-    <div class="row" style="margin-top:8px">
-      <button id="downloadLogs" class="btn primary">Download CSV</button>
-      <button id="clearLogs" class="btn ghost">Hapus Log</button>
-    </div>
-  </section>
-
-  <section class="card">
-    <h3>Data Siswa</h3>
-    <div id="studentsList"></div>
-  </section>
-
-</main>
-
-<footer class="foot"><small class="muted">Kelola pengumuman, notulen, dan log siswa</small></footer>
-<script src="script.js"></script>
+  <script>
+    document.getElementById("announcementForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const pengumuman = document.getElementById("announcementText").value.trim();
+      if (pengumuman) {
+        localStorage.setItem("pengumuman", pengumuman);
+        alert("✅ Pengumuman berhasil disimpan dan akan muncul di dashboard siswa.");
+        document.getElementById("announcementText").value = "";
+      } else {
+        alert("⚠️ Tuliskan isi pengumuman terlebih dahulu.");
+      }
+    });
+  </script>
 </body>
 </html>
