@@ -1,40 +1,46 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard Siswa</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Siswa - SPENSAMO</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body class="light">
-  <header class="topbar">
-    <img src="assets/logo.png" alt="Logo" class="toplogo">
-    <h1>Selamat Datang, Siswa</h1>
+<body>
+  <header>
+    <img src="asset/logo.png" alt="Logo SMPN 1 Moga">
+    <h1>Halo, Siswa SPENSAMO!</h1>
   </header>
 
-  <main class="main-content">
-    <section class="card">
-      <h2>📢 Pengumuman Terbaru</h2>
-      <div id="announcements"></div>
-    </section>
+  <div class="container">
+    <div class="dashboard">
+      <div class="card">
+        <img src="asset/icon-pengumuman.png" alt="Pengumuman">
+        <h3><a href="pengumuman.html">Pengumuman</a></h3>
+      </div>
+      <div class="card">
+        <img src="asset/icon-curhat.png" alt="Curhat">
+        <h3><a href="curhatsiswa.html">Kotak Curhat</a></h3>
+      </div>
+      <div class="card">
+        <img src="asset/icon-notulen.png" alt="Notulen">
+        <h3><a href="notulen.html">Notulen</a></h3>
+      </div>
+      <div class="card">
+        <img src="asset/icon-pembinaan.png" alt="Pembinaan">
+        <h3><a href="pembinaan.html">Pembinaan</a></h3>
+      </div>
+      <div class="card">
+        <img src="asset/icon-masalah.png" alt="Masalah">
+        <h3><a href="masalahsiswa.html">Masalah Siswa</a></h3>
+      </div>
+    </div>
+  </div>
 
-    <section class="card">
-      <h2>💬 Curhat</h2>
-      <a id="curhatBtn" class="btn secondary" href="#">Kirim Curhat via WhatsApp</a>
-    </section>
-
-    <section class="card">
-      <h2>📘 Notulen Kegiatan</h2>
-      <div id="notulenBox"></div>
-    </section>
-
-    <section class="card">
-      <h2>👨‍🏫 Pembinaan & Masalah</h2>
-      <a href="pembinaan.html" class="btn primary">Lihat Pembinaan</a>
-      <a href="masalahsiswa.html" class="btn secondary">Lihat Masalah</a>
-    </section>
-  </main>
-
-  <script src="script.js"></script>
+  <nav>
+    <a href="siswa.html" class="active"><img src="asset/home.png" alt="Beranda">Beranda</a>
+    <a href="pengumuman.html"><img src="asset/loudspeaker.png" alt="Pengumuman">Info</a>
+    <a href="curhatsiswa.html"><img src="asset/chat.png" alt="Curhat">Curhat</a>
+  </nav>
 </body>
 </html>
