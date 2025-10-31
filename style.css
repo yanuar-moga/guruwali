@@ -1,37 +1,121 @@
-
-body {
-  font-family: 'Segoe UI', sans-serif;
+body.light {
+  font-family: "Poppins", sans-serif;
   background-color: #f9fbff;
   color: #333;
   margin: 0;
   padding: 0;
 }
-header {
+
+.topbar {
+  background: linear-gradient(90deg, #dbe9ff, #a4c8ff);
+  border-bottom: 4px solid #ffd84c;
+  color: #002855;
+  text-align: center;
+  padding: 12px;
   display: flex;
+  justify-content: center;
   align-items: center;
-  justify-content: space-between;
-  background-color: #e3f2fd;
-  padding: 10px 16px;
-  border-bottom: 2px solid #90caf9;
+  gap: 10px;
 }
+
+.toplogo {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+}
+
+.login-container {
+  width: 90%;
+  max-width: 360px;
+  margin: 80px auto;
+  background: white;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  border-top: 4px solid #ffd84c;
+}
+
 .logo {
-  height: 40px;
+  display: block;
+  width: 80px;
+  margin: 0 auto 10px;
 }
-.back-btn {
-  background: #2196f3;
-  color: white;
+
+h2 {
+  text-align: center;
+  color: #003f7f;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 8px;
+  margin: 6px 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 8px 12px;
   border: none;
   border-radius: 8px;
-  padding: 6px 12px;
+  text-decoration: none;
   cursor: pointer;
+  transition: 0.3s;
+  font-weight: bold;
 }
+
+.btn.primary {
+  background-color: #4da3ff;
+  color: white;
+}
+
+.btn.primary:hover {
+  background-color: #1c7ff0;
+}
+
+.btn.secondary {
+  background-color: #ffd84c;
+  color: #002855;
+}
+
+.show-pass {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.main-content {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 10px;
+}
+
 .card {
   background: white;
-  margin: 10px 16px;
-  padding: 14px;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  border-radius: 16px;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-left: 5px solid #ffd84c;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
-.card-list {
-  margin-top: 20px;
+
+.menu-list {
+  list-style: none;
+  padding: 0;
+}
+
+.menu-list li {
+  margin: 10px 0;
+}
+
+.menu-list a {
+  text-decoration: none;
+  color: #003f7f;
+  font-weight: 500;
+}
+
+.menu-list a:hover {
+  color: #1c7ff0;
 }
