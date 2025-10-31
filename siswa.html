@@ -1,47 +1,86 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Dashboard Siswa - Guru Wali Bayu</title>
-<link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Siswa - Guru Wali Bayu</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(180deg, #BBDEFB 0%, #E3F2FD 100%);
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #2196F3;
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    header img {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    main {
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    h2 {
+      color: #1565C0;
+    }
+    .pengumuman-box {
+      background: #FFF9C4;
+      padding: 15px;
+      border-radius: 10px;
+      font-size: 1rem;
+      line-height: 1.5;
+      color: #333;
+      border: 1px solid #FDD835;
+    }
+  </style>
 </head>
-<body class="mobile">
-<header class="appbar">
-  <img src="assets/logo.svg" class="logo" alt="logo"/>
-  <div class="title">Guru Wali Bayu</div>
-  <a href="index.html" class="iconbtn">⟲</a>
-</header>
+<body>
+  <header>
+    <img src="assets/logo.png" alt="Logo Sekolah" />
+    <h1>Dashboard Siswa</h1>
+  </header>
 
-<main class="page">
-  <section class="card">
-    <div class="greeting" id="greeting">Hai, Siswa!</div>
-    <div class="muted" id="nisnDisplay"></div>
-    <div class="row" style="margin-top:12px">
-      <a id="curhatBtn" class="btn primary" target="_blank">💬 Curhat via WhatsApp</a>
-      <button id="logoutBtn" class="btn ghost">Logout</button>
-    </div>
-  </section>
+  <main>
+    <section class="card">
+      <h2>📢 Pengumuman</h2>
+      <div id="pengumumanArea" class="pengumuman-box">Memuat pengumuman...</div>
+    </section>
 
-  <section class="card">
-    <h3>Pengumuman</h3>
-    <div id="announcements"></div>
-  </section>
+    <section class="card">
+      <h2>💬 Curhat ke Wali Kelas</h2>
+      <p>Jika kamu ingin curhat atau konsultasi, klik tombol di bawah ini 👇</p>
+      <a href="https://wa.me/6285229399579" target="_blank">
+        <button>Kirim Pesan ke Pak Bayu</button>
+      </a>
+    </section>
+  </main>
 
-  <section class="card">
-    <h3>Kesepakatan Kelas</h3>
-    <div id="agreementBox"></div>
-    <div id="agreeActions" style="margin-top:8px"></div>
-  </section>
-
-  <section class="card">
-    <h3>Notulen Pembinaan</h3>
-    <div id="notulenBox"></div>
-  </section>
-
-</main>
-
-<footer class="foot"><small class="muted">Aplikasi untuk wali & siswa — Pak Bayu</small></footer>
-<script src="script.js"></script>
+  <script>
+    window.addEventListener("load", function() {
+      const pengumuman = localStorage.getItem("pengumuman");
+      const area = document.getElementById("pengumumanArea");
+      if (pengumuman) {
+        area.textContent = pengumuman;
+      } else {
+        area.textContent = "Belum ada pengumuman dari guru wali.";
+      }
+    });
+  </script>
 </body>
 </html>
