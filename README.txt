@@ -1,21 +1,14 @@
-Guru Wali Bayu — versi 2
+Guru Wali Bayu - Final (light mode)
 
-Isi paket:
-- index.html
-- siswa.html
-- guru.html
-- style.css
-- script.js
-- students.csv
-- assets/logo.svg
+Default credentials:
+- Guru: bayu / binapustaka
+- Siswa: NISN / siswa (use NISN from students.csv)
 
-Cara pakai singkat:
-1. Unzip ke folder local.
-2. Upload semua file ke repository GitHub baru.
-3. Aktifkan GitHub Pages (branch main, folder /).
-4. Pastikan assets/logo.svg diganti dengan logo sekolah jika perlu.
+How to use:
+1. Upload all files to GitHub repo root and enable GitHub Pages (branch main / folder /)
+2. Open site, login as guru or siswa.
+3. Data (announcements, curhats, notulen, pembinaan, masalah, logs) stored in browser localStorage.
 
-Catatan teknis:
-- Semua data (pengumuman, log, notulen, kesepakatan) disimpan di localStorage browser.
-- Untuk menyimpan secara bersama (sinkron), integrasikan Google Sheets / Firebase di versi selanjutnya.
-- Jangan simpan password sensitif di repo publik.
+Notes:
+- Curhat: when a student sends curhat, message is saved in app and also opens WhatsApp with prefilled text.
+- To share data across devices/users permanently, integrate Google Sheets / Firebase later.

@@ -1,85 +1,37 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard Siswa - Guru Wali Bayu</title>
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(180deg, #BBDEFB 0%, #E3F2FD 100%);
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background: #2196F3;
-      color: white;
-      display: flex;
-      align-items: center;
-      padding: 10px 20px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    header img {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      margin-right: 10px;
-    }
-    main {
-      padding: 20px;
-    }
-    .card {
-      background: white;
-      border-radius: 15px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-    }
-    h2 {
-      color: #1565C0;
-    }
-    .pengumuman-box {
-      background: #FFF9C4;
-      padding: 15px;
-      border-radius: 10px;
-      font-size: 1rem;
-      line-height: 1.5;
-      color: #333;
-      border: 1px solid #FDD835;
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Siswa - Guru Wali Bayu</title>
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <img src="assets/logo.png" alt="Logo Sekolah" />
-    <h1>Dashboard Siswa</h1>
-  </header>
+  <div class="app">
+    <header class="header">
+      <img src="assets/logo.png" class="logo" alt="logo"/>
+      <h1>Dashboard Siswa</h1>
+    </header>
 
-  <main>
-    <section class="card">
-      <h2>📢 Pengumuman</h2>
-      <div id="pengumumanArea" class="pengumuman-box">Memuat pengumuman...</div>
-    </section>
+    <div class="container" style="padding:24px;flex-direction:column">
+      <main class="main" style="width:100%">
+        <div class="card">
+          <h3>📢 Pengumuman</h3>
+          <div id="pengumumanArea" class="ann">Memuat...</div>
+        </div>
 
-    <section class="card">
-      <h2>💬 Curhat ke Wali Kelas</h2>
-      <p>Klik tombol di bawah untuk curhat lewat WhatsApp 👇</p>
-      <a href="https://wa.me/6285229399579" target="_blank">
-        <button>Kirim Pesan ke Pak Bayu</button>
-      </a>
-    </section>
-  </main>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const pengumuman = localStorage.getItem("pengumuman");
-      const area = document.getElementById("pengumumanArea");
-      if (pengumuman && pengumuman.trim() !== "") {
-        area.textContent = pengumuman;
-      } else {
-        area.textContent = "Belum ada pengumuman dari guru wali.";
-      }
-    });
-  </script>
+        <div class="card">
+          <h3>💬 Curhat ke Wali Kelas</h3>
+          <p>Tulis pesan singkat di bawah lalu tekan <b>Kirim & Buka WhatsApp</b>. Pesan akan tersimpan dan juga membuka WhatsApp Pak Bayu.</p>
+          <textarea id="curhatText" class="input" rows="4" placeholder="Tulis curhat kamu..."></textarea>
+          <div class="row" style="margin-top:8px">
+            <button id="sendCurhat" class="btn">Kirim & Buka WhatsApp</button>
+            <button id="resetCurhat" class="btn ghost">Bersihkan</button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+<script src="script.js"></script>
 </body>
 </html>

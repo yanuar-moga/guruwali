@@ -1,4 +1,4 @@
-// Guru Wali Bayu - fixed version (login + logs + whatsapp curhat)
+// Guru Wali Bayu - final app script (login, announcements, curhat, notulen, pembinaan, masalah, logs)
 const WA_NUMBER = '6285229399579';
 const STUDENTS = {
   '0122942217':'Fathan Gustomy',
@@ -23,100 +23,185 @@ const STUDENTS = {
   '3117519319':'NUR WANIFA'
 };
 
-// Storage keys
-const ANN_KEY = 'gw_ann_v2_announcements';
-const LOG_KEY = 'gw_ann_v2_logs';
-const AGREEMENT_KEY = 'gw_ann_v2_agreement';
-const NOTULEN_KEY = 'gw_ann_v2_notulen';
-const SESSION_KEY = 'gw_ann_v2_session';
+// storage keys
+const ANN_KEY = 'gw_ann_announcements_v3';
+const CURHAT_KEY = 'gw_ann_curhats_v3';
+const NOTULEN_KEY = 'gw_ann_notulen_v3';
+const PEMB_KEY = 'gw_ann_pembinaan_v3';
+const MASALAH_KEY = 'gw_ann_masalah_v3';
+const LOG_KEY = 'gw_ann_logs_v3';
+const SESSION_KEY = 'gw_ann_session_v3';
 
-// --- Utilities ---
 function nowStr(){return new Date().toLocaleString()}
 function save(key,obj){localStorage.setItem(key, JSON.stringify(obj))}
 function load(key,def){try{return JSON.parse(localStorage.getItem(key))||def}catch(e){return def}}
 
-// --- Announcements ---
-function renderAnnouncements(containerId='announcements'){
-  const container = document.getElementById(containerId);
-  const anns = load(ANN_KEY,[]);
-  if(!container) return;
-  if(anns.length===0){container.innerHTML = '<p class="muted">Belum ada pengumuman.</p>'; return;}
-  container.innerHTML = anns.map(a=>`<div class="ann"><small class="smallmuted">${a.ts}</small><div>${a.text}</div></div>`).join('');
-}
+// --- Login ---
+document.addEventListener('DOMContentLoaded', ()=>{
+  const loginForm = document.getElementById('loginForm');
+  if(loginForm){
+    const sp = document.getElementById('showPassword');
+    if(sp){ sp.addEventListener('change', ()=>{ document.getElementById('password').type = sp.checked ? 'text' : 'password'; }) }
 
-// --- Agreement ---
-function renderAgreementForStudent(){
-  const box = document.getElementById('agreementBox');
-  const ag = load(AGREEMENT_KEY,{text:'Belum ada kesepakatan kelas.',locked:false});
-  if(!box) return;
-  box.innerHTML = `<div class="agreebox"><div>${ag.text.replace(/\n/g,'<br>')}</div><div class="smallmuted" style="margin-top:6px">Status: ${ag.locked?'<b>Dikunci oleh guru</b>':'Terbuka (siswa bisa usul)'}</div></div>`;
-  const actions = document.getElementById('agreeActions');
-  if(actions){
-    actions.innerHTML = ag.locked?'<small class="muted">Kesepakatan sudah dikunci oleh guru.</small>':'<div><textarea id="agreeProposal" rows="2" placeholder="Usulkan perubahan... (akan dikirim ke guru)"></textarea><div class="row" style="margin-top:6px"><button id="sendAgree" class="btn primary">Kirim Usulan</button></div></div>';
-    const btn = document.getElementById('sendAgree');
-    if(btn) btn.addEventListener('click', ()=>{
-      const p = document.getElementById('agreeProposal').value.trim();
-      if(!p) return alert('Tulis dulu usulan Anda.');
-      const logs = load(LOG_KEY,[]);
-      logs.unshift({type:'agreement-proposal',nisn:currentSession.nisn,name:currentSession.name,ts:nowStr(),text:p});
-      save(LOG_KEY,logs);
-      alert('Usulan terkirim ke guru dalam log aktivitas.');
-      document.getElementById('agreeProposal').value='';
+    loginForm.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const u = document.getElementById('username').value.trim();
+      const p = document.getElementById('password').value.trim();
+      if(u.toLowerCase()==='bayu' && p==='binapustaka'){
+        localStorage.setItem(SESSION_KEY, JSON.stringify({role:'guru',user:'bayu',ts:nowStr()}));
+        window.location.href='guru.html';
+        return;
+      }
+      if(STUDENTS[u] && p==='siswa'){
+        localStorage.setItem(SESSION_KEY, JSON.stringify({role:'siswa',nisn:u,name:STUDENTS[u],ts:nowStr()}));
+        window.location.href = `siswa.html?nisn=${encodeURIComponent(u)}`;
+        return;
+      }
+      alert('Login gagal — periksa username/NISN dan password.');
     });
   }
-}
 
-function renderAgreementEditor(){
-  const box = document.getElementById('agreementEditBox');
-  const ag = load(AGREEMENT_KEY,{text:'Belum ada kesepakatan kelas.',locked:false});
-  if(!box) return;
-  box.innerHTML = `<textarea id="agreementText" rows="4">${ag.text}</textarea>`;
-  document.getElementById('lockAgreement').addEventListener('click', ()=>{
-    const text = document.getElementById('agreementText').value.trim();
-    save(AGREEMENT_KEY,{text,locked:true});
-    alert('Kesepakatan dikunci.');
-    renderAgreementEditor(); renderAgreementForStudent(); renderLogs();
-  });
-  document.getElementById('unlockAgreement').addEventListener('click', ()=>{
-    const text = document.getElementById('agreementText').value.trim();
-    save(AGREEMENT_KEY,{text,locked:false});
-    alert('Kesepakatan dibuka.');
-    renderAgreementEditor(); renderAgreementForStudent(); renderLogs();
-  });
-}
+  // student page
+  if(document.getElementById('pengumumanArea')){
+    renderStudentAnnouncements();
+    const sendBtn = document.getElementById('sendCurhat');
+    const resetBtn = document.getElementById('resetCurhat');
+    if(sendBtn){
+      sendBtn.addEventListener('click', ()=>{
+        const text = document.getElementById('curhatText').value.trim();
+        if(!text) return alert('Tuliskan pesan sebelum mengirim.');
+        const curhats = load(CURHAT_KEY,[]);
+        const session = load(SESSION_KEY,null);
+        const entry = {nisn: session?session.nisn:'unknown', name: session?session.name:'Tamu', text, ts: nowStr()};
+        curhats.unshift(entry);
+        save(CURHAT_KEY, curhats);
+        const logs = load(LOG_KEY,[]);
+        logs.unshift({type:'curhat_sent', ts: nowStr(), nisn: entry.nisn, name: entry.name, text: text});
+        save(LOG_KEY, logs);
+        const waText = encodeURIComponent(`Halo Pak Bayu, saya ${entry.name} (NISN: ${entry.nisn}) ingin curhat: ${text}`);
+        window.open(`https://wa.me/${WA_NUMBER}?text=${waText}`, '_blank');
+        alert('Pesan tersimpan dan membuka WhatsApp.');
+        document.getElementById('curhatText').value = '';
+      });
+    }
+    if(resetBtn){
+      resetBtn.addEventListener('click', ()=>{ if(confirm('Bersihkan kolom curhat?')) document.getElementById('curhatText').value=''; });
+    }
+  }
 
-// --- Notulen ---
-function renderNotulenForStudent(){
-  const box = document.getElementById('notulenBox');
-  const n = load(NOTULEN_KEY,{text:'Belum ada notulen.'});
-  if(!box) return;
-  box.innerHTML = `<div>${n.text.replace(/\n/g,'<br>')}</div><div class='smallmuted' style='margin-top:6px'>Terakhir diubah: ${n.ts||'-'}</div>`;
-}
+  if(document.getElementById('viewArea')){
+    window.renderAdminView = function(view){
+      const area = document.getElementById('viewArea');
+      if(view === 'pengumuman'){
+        area.innerHTML = `
+          <div class="card"><h3>✉️ Pengumuman</h3>
+            <form id="announceForm">
+              <textarea id="announceText" class="input" placeholder="Tulis pengumuman..."></textarea>
+              <div class="row"><button class="btn" type="submit">Simpan & Umumkan</button><button id="clearAnn" class="btn ghost" type="button">Hapus Semua</button></div>
+            </form>
+            <div id="annList" style="margin-top:12px"></div>
+          </div>`;
+        document.getElementById('announceForm').addEventListener('submit', (e)=>{
+          e.preventDefault();
+          const text = document.getElementById('announceText').value.trim();
+          if(!text) return alert('Tulis pengumuman dulu.');
+          const anns = load(ANN_KEY,[]);
+          anns.unshift({text, ts: nowStr()});
+          save(ANN_KEY, anns);
+          const logs = load(LOG_KEY,[]);
+          logs.unshift({type:'announce', ts: nowStr(), user:'bayu', text});
+          save(LOG_KEY, logs);
+          document.getElementById('announceText').value='';
+          renderAdminAnnouncements();
+          alert('Pengumuman tersimpan.');
+        });
+        document.getElementById('clearAnn').addEventListener('click', ()=>{
+          if(confirm('Hapus semua pengumuman?')){ save(ANN_KEY,[]); renderAdminAnnouncements(); alert('Semua pengumuman dihapus.'); }
+        });
+        renderAdminAnnouncements();
+      } else if(view === 'curhat'){
+        area.innerHTML = `<div class="card"><h3>💬 Curhat Siswa</h3><div id="curhatList"></div></div>`;
+        renderAdminCurhats();
+      } else if(view === 'notulen'){
+        area.innerHTML = `<div class="card"><h3>📝 Notulen Pembinaan</h3><textarea id="notulenText" class="input" rows="6"></textarea><div class="row" style="margin-top:8px"><button id="saveNotulen" class="btn">Simpan Notulen</button><button id="clearNotulen" class="btn ghost">Hapus</button></div><div id="notulenPreview" style="margin-top:12px"></div></div>`;
+        document.getElementById('saveNotulen').addEventListener('click', ()=>{ const text = document.getElementById('notulenText').value.trim(); save(NOTULEN_KEY,{text,ts:nowStr()}); alert('Notulen disimpan.'); renderAdminNotulen(); });
+        document.getElementById('clearNotulen').addEventListener('click', ()=>{ if(confirm('Hapus notulen?')){ save(NOTULEN_KEY,{text:'',ts:''}); renderAdminNotulen(); alert('Notulen dihapus.'); } });
+        renderAdminNotulen();
+      } else if(view === 'pembinaan'){
+        area.innerHTML = `<div class="card"><h3>🏫 Pembinaan</h3><textarea id="pembText" class="input" rows="4" placeholder="Catatan pembinaan..."></textarea><div class="row" style="margin-top:8px"><button id="savePemb" class="btn">Simpan Pembinaan</button></div><div id="pembList" style="margin-top:12px"></div></div>`;
+        document.getElementById('savePemb').addEventListener('click', ()=>{ const text = document.getElementById('pembText').value.trim(); if(!text) return; const arr = load(PEMB_KEY,[]); arr.unshift({text,ts:nowStr()}); save(PEMB_KEY,arr); alert('Pembinaan tersimpan.'); renderAdminPemb(); });
+        renderAdminPemb();
+      } else if(view === 'masalah'){
+        area.innerHTML = `<div class="card"><h3>⚠️ Masalah Siswa</h3><textarea id="masalahText" class="input" rows="4" placeholder="Catatan masalah siswa..."></textarea><div class="row" style="margin-top:8px"><button id="saveMasalah" class="btn">Simpan Masalah</button></div><div id="masalahList" style="margin-top:12px"></div></div>`;
+        document.getElementById('saveMasalah').addEventListener('click', ()=>{ const text = document.getElementById('masalahText').value.trim(); if(!text) return; const arr = load(MASALAH_KEY,[]); arr.unshift({text,ts:nowStr()}); save(MASALAH_KEY,arr); alert('Masalah siswa tersimpan.'); renderAdminMasalah(); });
+        renderAdminMasalah();
+      } else if(view === 'logs'){
+        area.innerHTML = `<div class="card"><h3>📜 Log Aktivitas</h3><div id="logList"></div><div class="row" style="margin-top:12px"><button id="downloadLogs" class="btn">Download CSV</button><button id="clearLogs" class="btn ghost">Hapus Log</button></div></div>`;
+        renderAdminLogs();
+        document.getElementById('downloadLogs').addEventListener('click', ()=>{ downloadLogsCSV(); });
+        document.getElementById('clearLogs').addEventListener('click', ()=>{ if(confirm('Hapus semua log?')){ save(LOG_KEY,[]); renderAdminLogs(); alert('Log dihapus.'); } });
+      }
+    };
 
-function setupNotulenEditor(){
-  const btn = document.getElementById('saveNotulen');
-  const clear = document.getElementById('clearNotulen');
-  if(btn) btn.addEventListener('click', ()=>{
-    const text = document.getElementById('notulenText').value.trim();
-    save(NOTULEN_KEY,{text,ts:nowStr()});
-    alert('Notulen tersimpan.'); renderNotulenForStudent(); renderLogs();
-  });
-  if(clear) clear.addEventListener('click', ()=>{ 
-    if(confirm('Hapus notulen?')){
-      save(NOTULEN_KEY,{text:'Belum ada notulen.'}); 
-      alert('Notulen dihapus.'); 
-      renderNotulenForStudent(); renderLogs(); 
-    } 
-  });
-}
+    window.renderAdminAnnouncements = function(){
+      const list = load(ANN_KEY,[]);
+      const el = document.getElementById('annList');
+      if(!el) return;
+      if(list.length===0){ el.innerHTML = '<p class="smallmuted">Belum ada pengumuman.</p>'; return; }
+      el.innerHTML = list.map(a=>`<div class="ann"><small class="smallmuted">${a.ts}</small><div>${a.text}</div></div>`).join('');
+    };
 
-// --- Logs ---
-function renderLogs(){
-  const el = document.getElementById('logs');
-  const logs = load(LOG_KEY,[]);
-  if(!el) return;
-  if(logs.length===0){ el.innerHTML = '<p class="muted">Belum ada aktivitas.</p>'; return; }
-  el.innerHTML = logs.map(l=>`<div style="margin-bottom:6px"><b>${l.type}</b> — <small class='smallmuted'>${l.ts}</small><div>${l.nisn?l.nisn+' / '+(l.name||'') : ''}</div><div style='font-size:13px'>${l.text||''}</div></div>`).join('');
+    window.renderAdminCurhats = function(){
+      const arr = load(CURHAT_KEY,[]);
+      const el = document.getElementById('curhatList');
+      if(!el) return;
+      if(arr.length===0){ el.innerHTML = '<p class="smallmuted">Belum ada pesan curhat.</p>'; return; }
+      el.innerHTML = `<table class="table"><thead><tr><th>Waktu</th><th>Nama (NISN)</th><th>Pesan</th></tr></thead><tbody>`+arr.map(c=>`<tr><td class="smallmuted">${c.ts}</td><td>${c.name}<br><small class="smallmuted">${c.nisn}</small></td><td>${c.text}</td></tr>`).join('')+`</tbody></table>`;
+    };
+
+    window.renderAdminNotulen = function(){
+      const n = load(NOTULEN_KEY,{text:'',ts:''});
+      const preview = document.getElementById('notulenPreview');
+      if(preview) preview.innerHTML = n.text?`<div class="card"><small class="smallmuted">Terakhir: ${n.ts}</small><div style="margin-top:8px">${n.text.replace(/\n/g,'<br>')}</div></div>`:'<p class="smallmuted">Belum ada notulen.</p>';
+    };
+
+    window.renderAdminPemb = function(){
+      const arr = load(PEMB_KEY,[]);
+      const el = document.getElementById('pembList');
+      if(!el) return;
+      el.innerHTML = arr.length?arr.map(p=>`<div class="ann"><small class="smallmuted">${p.ts}</small><div>${p.text}</div></div>`).join(''):'<p class="smallmuted">Belum ada catatan pembinaan.</p>';
+    };
+
+    window.renderAdminMasalah = function(){
+      const arr = load(MASALAH_KEY,[]);
+      const el = document.getElementById('masalahList');
+      if(!el) return;
+      el.innerHTML = arr.length?arr.map(p=>`<div class="ann"><small class="smallmuted">${p.ts}</small><div>${p.text}</div></div>`).join(''):'<p class="smallmuted">Belum ada catatan masalah siswa.</p>';
+    };
+
+    window.renderAdminLogs = function(){
+      const arr = load(LOG_KEY,[]);
+      const el = document.getElementById('logList');
+      if(!el) return;
+      if(arr.length===0){ el.innerHTML = '<p class="smallmuted">Belum ada log.</p>'; return; }
+      el.innerHTML = arr.map(l=>`<div style="margin-bottom:8px"><b>${l.type}</b> — <small class="smallmuted">${l.ts}</small><div>${l.nisn?l.nisn+' / '+l.name:''}</div><div>${l.text||''}</div></div>`).join('');
+    };
+
+    window.renderAdminAnnouncements();
+    window.renderAdminCurhats();
+    window.renderAdminNotulen();
+    window.renderAdminPemb();
+    window.renderAdminMasalah();
+    window.renderAdminLogs();
+  }
+});
+
+function renderStudentAnnouncements(){
+  const area = document.getElementById('pengumumanArea');
+  const anns = load(ANN_KEY,[]);
+  if(!area) return;
+  if(anns.length===0){ area.textContent = 'Belum ada pengumuman.'; return; }
+  area.innerHTML = anns.map(a=>`<div class="ann"><small class="smallmuted">${a.ts}</small><div>${a.text}</div></div>`).join('');
 }
 
 function downloadLogsCSV(){
@@ -131,139 +216,3 @@ function downloadLogsCSV(){
   a.href = url; a.download = 'logs_guru_wali_bayu.csv'; a.click();
   URL.revokeObjectURL(url);
 }
-
-// --- Session & activity tracking ---
-let currentSession = null;
-const INACTIVITY_LIMIT = 10*60*1000; // 10 minutes
-let inactivityTimer = null;
-
-function startSession(nisn,name){
-  const start = Date.now();
-  currentSession = {nisn,name,start,ts:nowStr()};
-  save(SESSION_KEY,currentSession);
-  const logs = load(LOG_KEY,[]);
-  logs.unshift({type:'login',ts:nowStr(),nisn,name,text:'login'});
-  save(LOG_KEY,logs);
-  renderLogs();
-  resetInactivity();
-}
-
-function endSession(reason='logout'){
-  if(!currentSession) return;
-  const end = Date.now();
-  const duration = Math.round((end - currentSession.start)/1000);
-  const logs = load(LOG_KEY,[]);
-  logs.unshift({type:reason,ts:nowStr(),nisn:currentSession.nisn,name:currentSession.name,text:reason,duration_seconds:duration});
-  save(LOG_KEY,logs);
-  localStorage.removeItem(SESSION_KEY);
-  currentSession = null;
-  renderLogs();
-  clearTimeout(inactivityTimer);
-  inactivityTimer = null;
-}
-
-function resetInactivity(){
-  if(inactivityTimer) clearTimeout(inactivityTimer);
-  inactivityTimer = setTimeout(()=>{
-    endSession('auto-logout (inactivity)');
-    alert('Anda otomatis logout karena tidak aktif.'); 
-    window.location.href='index.html';
-  }, INACTIVITY_LIMIT);
-}
-
-['click','mousemove','keydown','touchstart'].forEach(ev=>
-  document.addEventListener(ev, ()=>{ if(load(SESSION_KEY,null)) resetInactivity(); })
-);
-
-// --- Page initializations ---
-document.addEventListener('DOMContentLoaded', ()=>{
-  const loginForm = document.getElementById('loginForm');
-  if(loginForm){
-    // ✅ Aman: hanya aktif kalau ada tombol demo (tidak error)
-    const demoBtn = document.getElementById('demoBtn');
-    if (demoBtn) {
-      demoBtn.addEventListener('click', ()=>{
-        document.getElementById('username').value = Object.keys(STUDENTS)[0];
-        document.getElementById('password').value = 'siswa';
-      });
-    }
-
-    loginForm.addEventListener('submit', (e)=>{
-      e.preventDefault();
-      const u = document.getElementById('username').value.trim();
-      const p = document.getElementById('password').value.trim();
-      if(u.toLowerCase()==='bayu' && p==='binapustaka'){ 
-        window.location.href='guru.html'; 
-        return; 
-      }
-      if(STUDENTS[u] && p==='siswa'){
-        startSession(u, STUDENTS[u]);
-        window.location.href = `siswa.html?nisn=${encodeURIComponent(u)}`;
-        return;
-      }
-      alert('Login gagal — periksa username/NISN dan password.');
-    });
-  }
-
-  // siswa page
-  if(document.getElementById('greeting')){
-    const params = new URLSearchParams(location.search);
-    const nisn = params.get('nisn') || (load(SESSION_KEY,null)&&load(SESSION_KEY,null).nisn);
-    const name = STUDENTS[nisn] || 'Siswa';
-    document.getElementById('greeting').textContent = `Hai, ${name}!`;
-    document.getElementById('nisnDisplay').textContent = `NISN: ${nisn||'-'}`;
-    const waText = `Halo Pak Bayu, saya ${encodeURIComponent(name)} (NISN: ${nisn}) ingin curhat tentang...`;
-    document.getElementById('curhatBtn').href = `https://wa.me/${WA_NUMBER}?text=${waText}`;
-    renderAnnouncements();
-    renderAgreementForStudent();
-    renderNotulenForStudent();
-    document.getElementById('logoutBtn').addEventListener('click', ()=>{
-      endSession('logout'); 
-      window.location.href='index.html';
-    });
-    document.getElementById('curhatBtn').addEventListener('click', ()=>{
-      const logs = load(LOG_KEY,[]);
-      logs.unshift({type:'curhat',ts:nowStr(),nisn, name, text:'open_whatsapp'});
-      save(LOG_KEY,logs);
-      renderLogs();
-    });
-  }
-
-  // guru page
-  if(document.getElementById('announceForm')){
-    const listEl = document.getElementById('studentsList');
-    listEl.innerHTML = Object.entries(STUDENTS).map(([nisn,name])=>
-      `<div style='display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed #f0f5fb'>
-        <div>${name}</div><div class='smallmuted'>${nisn}</div>
-      </div>`).join('');
-    document.getElementById('announceForm').addEventListener('submit', (e)=>{
-      e.preventDefault();
-      const text = document.getElementById('announceText').value.trim();
-      if(!text) return;
-      const anns = load(ANN_KEY,[]);
-      anns.unshift({text,ts:nowStr()});
-      save(ANN_KEY,anns);
-      alert('Pengumuman tersimpan.');
-      document.getElementById('announceText').value='';
-      renderAnnouncements('announcements');
-    });
-    document.getElementById('clearAnn').addEventListener('click', ()=>{
-      if(confirm('Hapus semua pengumuman?')){
-        save(ANN_KEY,[]); 
-        renderAnnouncements('announcements'); 
-        alert('Semua pengumuman dihapus.');
-      }
-    });
-    renderAgreementEditor();
-    renderAgreementForStudent();
-    setupNotulenEditor();
-    renderNotulenForStudent();
-    renderLogs();
-    document.getElementById('downloadLogs').addEventListener('click', downloadLogsCSV);
-    document.getElementById('clearLogs').addEventListener('click', ()=>{
-      if(confirm('Hapus semua log?')){
-        save(LOG_KEY,[]); renderLogs(); alert('Log dihapus.');
-      }
-    });
-  }
-});
