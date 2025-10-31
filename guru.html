@@ -1,104 +1,38 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Guru - Guru Wali Bayu</title>
-  <link rel="stylesheet" href="style.css">
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(180deg, #E3F2FD 0%, #FFFDE7 100%);
-      margin: 0;
-      display: flex;
-      height: 100vh;
-    }
-    .sidebar {
-      width: 240px;
-      background: #5DB4F3;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      padding: 1.2rem;
-      border-top-right-radius: 20px;
-      border-bottom-right-radius: 20px;
-    }
-    .sidebar h2 {
-      text-align: center;
-      font-size: 1.2rem;
-      margin-bottom: 1.5rem;
-    }
-    .sidebar button {
-      background: white;
-      color: #333;
-      border: none;
-      padding: 0.8rem;
-      border-radius: 10px;
-      margin: 0.3rem 0;
-      cursor: pointer;
-      transition: background 0.3s;
-      font-weight: 600;
-    }
-    .sidebar button:hover {
-      background: #FFF9C4;
-    }
-    .main-content {
-      flex: 1;
-      background: white;
-      border-radius: 20px;
-      margin: 1rem;
-      padding: 1.5rem;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      overflow-y: auto;
-    }
-    h3 {
-      color: #333;
-      border-bottom: 2px solid #5DB4F3;
-      padding-bottom: 0.5rem;
-    }
-    textarea {
-      width: 100%;
-      height: 100px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      padding: 0.7rem;
-      margin-top: 0.5rem;
-      font-family: 'Poppins', sans-serif;
-      resize: none;
-    }
-    button.send {
-      background: #5DB4F3;
-      color: white;
-      border: none;
-      padding: 0.8rem 1.2rem;
-      border-radius: 10px;
-      margin-top: 0.8rem;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    button.send:hover {
-      background: #47A8F0;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Guru Wali Bayu</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-  <div class="sidebar">
-    <h2>Guru Wali Bayu</h2>
-    <button onclick="showSection('pengumuman')">📢 Pengumuman</button>
-    <button onclick="showSection('curhat')">💬 Curhat Siswa</button>
-    <button onclick="showSection('notulen')">🗒️ Notulen</button>
-    <button onclick="showSection('pembinaan')">👨‍🏫 Pembinaan</button>
-    <button onclick="showSection('masalah')">⚠️ Masalah Siswa</button>
-    <button onclick="logout()">🚪 Keluar</button>
-  </div>
+<body class="light">
+  <header class="topbar">
+    <img src="assets/logo.png" alt="Logo" class="toplogo">
+    <h1>Dashboard Guru Wali</h1>
+  </header>
 
-  <div class="main-content">
-    <section id="pengumumanSection">
-      <h3>Buat Pengumuman</h3>
-      <textarea id="announcementText" placeholder="Tulis pengumuman di sini..."></textarea>
-      <button class="send" onclick="postAnnouncement()">Kirim Pengumuman</button>
+  <main class="main-content">
+    <section class="card">
+      <h2>Pengumuman</h2>
+      <form id="announceForm">
+        <textarea id="announceText" rows="3" placeholder="Tulis pengumuman..."></textarea>
+        <button type="submit" class="btn primary">Kirim</button>
+      </form>
+      <div id="announcements"></div>
     </section>
-  </div>
+
+    <section class="card">
+      <h2>Menu Guru</h2>
+      <ul class="menu-list">
+        <li><a href="pengumuman.html">📢 Pengumuman</a></li>
+        <li><a href="curhatsiswa.html">💬 Curhat Siswa</a></li>
+        <li><a href="notulen.html">📘 Notulen</a></li>
+        <li><a href="pembinaan.html">👨‍🏫 Pembinaan</a></li>
+        <li><a href="masalahsiswa.html">⚠️ Masalah Siswa</a></li>
+      </ul>
+    </section>
+  </main>
 
   <script src="script.js"></script>
 </body>
