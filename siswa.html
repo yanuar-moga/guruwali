@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard Guru Wali Bayu</title>
+  <title>Dashboard Siswa - Guru Wali Bayu</title>
   <style>
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(180deg, #E3F2FD 0%, #BBDEFB 100%);
+      background: linear-gradient(180deg, #BBDEFB 0%, #E3F2FD 100%);
       margin: 0;
       padding: 0;
     }
     header {
-      background: #42A5F5;
+      background: #2196F3;
       color: white;
       display: flex;
       align-items: center;
@@ -35,56 +35,49 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       margin-bottom: 20px;
     }
-    textarea {
-      width: 100%;
-      min-height: 100px;
+    h2 {
+      color: #1565C0;
+    }
+    .pengumuman-box {
+      background: #FFF9C4;
+      padding: 15px;
       border-radius: 10px;
-      border: 1px solid #ccc;
-      padding: 10px;
-      font-family: 'Poppins', sans-serif;
-      resize: none;
-    }
-    button {
-      background: #42A5F5;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
       font-size: 1rem;
-      margin-top: 10px;
-    }
-    button:hover {
-      background: #2196F3;
+      line-height: 1.5;
+      color: #333;
+      border: 1px solid #FDD835;
     }
   </style>
 </head>
 <body>
   <header>
     <img src="assets/logo.png" alt="Logo Sekolah" />
-    <h1>Guru Wali Bayu</h1>
+    <h1>Dashboard Siswa</h1>
   </header>
 
   <main>
     <section class="card">
-      <h2>✉️ Buat Pengumuman</h2>
-      <form id="announcementForm">
-        <textarea id="announcementText" placeholder="Tulis pengumuman di sini..."></textarea>
-        <button type="submit">Simpan & Umumkan</button>
-      </form>
+      <h2>📢 Pengumuman</h2>
+      <div id="pengumumanArea" class="pengumuman-box">Memuat pengumuman...</div>
+    </section>
+
+    <section class="card">
+      <h2>💬 Curhat ke Wali Kelas</h2>
+      <p>Klik tombol di bawah untuk curhat lewat WhatsApp 👇</p>
+      <a href="https://wa.me/6285229399579" target="_blank">
+        <button>Kirim Pesan ke Pak Bayu</button>
+      </a>
     </section>
   </main>
 
   <script>
-    document.getElementById("announcementForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      const text = document.getElementById("announcementText").value.trim();
-      if (text) {
-        localStorage.setItem("pengumuman", text);
-        alert("✅ Pengumuman disimpan. Silakan buka halaman siswa untuk melihat hasilnya.");
-        document.getElementById("announcementText").value = "";
+    document.addEventListener("DOMContentLoaded", () => {
+      const pengumuman = localStorage.getItem("pengumuman");
+      const area = document.getElementById("pengumumanArea");
+      if (pengumuman && pengumuman.trim() !== "") {
+        area.textContent = pengumuman;
       } else {
-        alert("⚠️ Tuliskan isi pengumuman terlebih dahulu.");
+        area.textContent = "Belum ada pengumuman dari guru wali.";
       }
     });
   </script>
