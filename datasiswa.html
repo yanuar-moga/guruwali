@@ -12,7 +12,6 @@
       padding: 6px 10px; margin-right: 10px; cursor: pointer; font-weight: 600; transition: 0.3s;
     }
     .logout-btn:hover {background: #ffca2c;}
-
     body {padding-bottom: 70px;}
 
     .navbar {
@@ -95,7 +94,6 @@
             <th>Agama</th>
             <th>Alamat</th>
             <th>Transportasi</th>
-            <th>No HP</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -103,21 +101,22 @@
     </div>
   </main>
 
+  <!-- Navbar bawah menyesuaikan curhatsiswa.html -->
   <div class="navbar">
-    <a href="dashboard_guru.html"><i>🏠</i><span>Beranda</span></a>
     <a href="pengumuman.html"><i>📢</i><span>Pengumuman</span></a>
     <a href="curhatsiswa.html"><i>💬</i><span>Curhat</span></a>
     <a href="notulen.html"><i>📝</i><span>Notulen</span></a>
     <a href="pembinaan.html"><i>🏫</i><span>Pembinaan</span></a>
+    <a href="masalahsiswa.html"><i>⚠️</i><span>Masalah</span></a>
   </div>
 
   <script>
     // Jam berjalan
     function updateClock() {
       const now = new Date();
-      const jam = String(now.getHours()).padStart(2,'0');
-      const menit = String(now.getMinutes()).padStart(2,'0');
-      const detik = String(now.getSeconds()).padStart(2,'0');
+      const jam = String(now.getHours()).padStart(2, '0');
+      const menit = String(now.getMinutes()).padStart(2, '0');
+      const detik = String(now.getSeconds()).padStart(2, '0');
       document.getElementById("clock").textContent = `${jam}:${menit}:${detik}`;
     }
     setInterval(updateClock, 1000); updateClock();
@@ -149,7 +148,6 @@
             <td>${siswa.agama}</td>
             <td>${siswa.alamat}</td>
             <td>${siswa.transportasi}</td>
-            <td>${siswa.no_hp || '-'}</td>
           `;
           tbody.appendChild(tr);
         });
@@ -165,13 +163,10 @@
             r.style.display = (nama.includes(val) || nisn.includes(val)) ? '' : 'none';
           }
         });
-
       } catch (err) {
         console.error('Gagal memuat data siswa:', err);
       }
     }
 
     loadSiswa();
-  </script>
-</body>
-</html>
+  <
