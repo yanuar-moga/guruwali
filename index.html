@@ -1,49 +1,32 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portal SPENSAMO</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Guru Wali Bayu</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-  <header>
-    <img src="asset/logo.png" alt="Logo SMPN 1 Moga">
-    <h1>Portal SPENSAMO</h1>
-  </header>
-
-  <div class="container">
-    <div class="section">
-      <h2>Login Pengguna</h2>
-      <form id="loginForm">
-        <label for="username">NISN / Nama Guru</label>
-        <input type="text" id="username" placeholder="Masukkan NISN atau nama">
-
-        <label for="password">Tanggal Lahir / Sandi</label>
-        <input type="password" id="password" placeholder="Contoh: 27012010">
-
-        <button type="submit">Masuk</button>
-      </form>
-    </div>
+<body class="light">
+  <div class="topbar">
+    <img src="assets/logo.png" class="toplogo" alt="Logo">
+    <h2>Guru Wali Bayu</h2>
   </div>
 
-  <script>
-    document.getElementById('loginForm').addEventListener('submit', function(e){
-      e.preventDefault();
-      const user = document.getElementById('username').value.trim();
-      const pass = document.getElementById('password').value.trim();
+  <div class="login-container">
+    <img src="assets/logo.png" class="logo" alt="Logo Sekolah" />
+    <h2>Login Aplikasi</h2>
 
-      // Guru login
-      if(user.toLowerCase() === "guru" && pass === "teacherspensamo"){
-        window.location.href = "guru.html";
-      }
-      // Siswa login
-      else if(pass === "spensamo7h"){
-        window.location.href = "siswa.html";
-      } else {
-        alert("Login gagal! Periksa kembali NISN / sandi Anda.");
-      }
-    });
-  </script>
+    <form id="loginForm">
+      <input type="text" id="username" placeholder="NISN / Username" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <div class="show-pass">
+        <input type="checkbox" id="showPassword" />
+        <label for="showPassword">Tampilkan Password</label>
+      </div>
+      <button class="btn primary" type="submit">Masuk</button>
+    </form>
+  </div>
+
+  <script src="app.js"></script>
 </body>
 </html>
