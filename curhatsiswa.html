@@ -1,25 +1,27 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Curhat Siswa - Guru Wali Bayu</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Curhat Siswa - Guru Wali Bayu</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
-<header>
-  <img src="assets/logo.png" alt="logo" class="logo">
-  <h2>Curhat Siswa</h2>
-  <button onclick="history.back()" class="back-btn">⬅️ Kembali</button>
-</header>
-<main id="content" class="card-list"></main>
-<script>
+<body class="light">
+  <div class="topbar">
+    <img src="assets/logo.png" class="toplogo" alt="Logo Sekolah">
+    <h2>Curhat Siswa</h2>
+  </div>
 
-const curhats = JSON.parse(localStorage.getItem('curhatsiswa') || '[]');
-const container = document.getElementById('content');
-if (curhats.length === 0) container.innerHTML = "<p>Belum ada curhatan dari siswa.</p>";
-else container.innerHTML = curhats.map(c => `<div class='card'><b>${c.name}</b><br><small>${c.date}</small><p>${c.text}</p></div>`).join('');
+  <div class="card">
+    <p class="smallmuted">Kirim pesan pribadi dan aman ke wali kelasmu.</p>
+    <textarea id="curhatText" placeholder="Tulis curhatmu di sini..."></textarea>
+    <div style="display:flex;gap:10px;margin-top:10px;">
+      <button id="sendCurhat" class="btn primary">Kirim ke WhatsApp</button>
+      <button id="resetCurhat" class="btn secondary">Bersihkan</button>
+    </div>
+  </div>
 
-</script>
+  <footer>© 2025 SMP Negeri 1 Moga — Guru Wali Bayu</footer>
+  <script src="script.js"></script>
 </body>
 </html>
