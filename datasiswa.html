@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Siswa - Guru Wali Bayu</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    #clock {font-weight: bold; color: #003f7f; margin-left: auto; margin-right: 12px;}
+    .logout-btn {
+      background: #ffd84c; color: #002855; border: none; border-radius: 8px;
+      padding: 6px 10px; margin-right: 10px; cursor: pointer; font-weight: 600; transition: 0.3s;
+    }
+    .logout-btn:hover {background: #ffca2c;}
+    .navbar {
+      position: fixed; bottom: 0; left: 0; width: 100%;
+      background: linear-gradient(90deg, #b8dcff, #a4c8ff);
+      border-top: 3px solid #ffd84c;
+      display: flex; justify-content: space-around; padding: 8px 0;
+      box-shadow: 0 -2px 6px rgba(0,0,0,0.1); z-index: 999;
+    }
+    .navbar a {
+      color: #003f7f; text-decoration: none; text-align: center; font-size: 13px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .navbar i {font-size: 18px;}
+    body {padding-bottom: 70px;}
+    table {
+      width: 100%; border-collapse: collapse; background: #fff;
+      border-radius: 12px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 8px 10px; border-bottom: 1px solid #ddd; text-align: left;
+    }
+    th {
+      background: #003f7f; color: white; position: sticky; top: 0;
+    }
+    tr:hover {background: #f3f9ff;}
+    .search-box {
+      width: 95%; margin: 10px auto; display: block;
+      padding: 8px 10px; border-radius: 8px; border: 1px solid #bbb;
+    }
+  </style>
+</head>
+<body class="light">
+  <div class="topbar">
+    <img src="assets/logo.png" alt="Logo" class="toplogo">
+    <h2>Data Siswa</h2>
+    <div id="clock">00:00:00</div>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+
+  <main class="menu-container">
+    <input type="text" id="searchBox" class="search-box" placeholder="Cari nama atau NISN...">
+    <div class="card">
+      <table id="tabelSiswa">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Nama</th>
+            <th>JK</th>
+            <th>NISN</th>
+            <th>Tempat Lahir</th>
+            <th>Tgl Lahir</th>
+            <th>Agama</th>
+            <th>Alamat</th>
+            <th>Transportasi</th>
+            <th>No HP</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </main>
+
+  <div class="navbar">
+    <a href="dashboard_guru.html"><i>🏠</i><span>Beranda</span></a>
+    <a href="pengumuman.html"><i>📢</i><span>Pengumuman</span></a>
+    <a href="curhatsiswa.html"><i>💬</i><span>Curhat</span></a>
+    <a href="notulen.html"><i>📝</i><span>Notulen</span></a>
+    <a href="pembinaan.html"><i>🏫</i><span>Pembinaan</span></a>
+  </div>
+
+  <script>
+    // Jam berjalan
+    function updateClock() {
+      const now = new Date();
+      const jam = String(now.getHours()).padStart(2,'0');
+      const menit = String(now.getMinutes()).padStart(2,'0');
+      const detik = String(now.getSeconds()).padStart(2,'0');
+      document.getElementById("clock").textContent = `${jam}:${menit}:${detik}`;
+    }
+    setInterval(updateClock, 1000); updateClock();
+
+    // Logout
+    function logout() {
+      localStorage.removeItem('gw_ann_session_v3');
+      alert('Anda telah logout.');
+      window.location.href = 'index.html';
+    }
+
+    // Ambil data siswa dari JSON
+    async function loadSiswa() {
+      try {
+        const res = await fetch('data/siswa.json');
+        const data = await res.json();
+        const tbody = document.querySelector('#tabelSiswa tbody');
+        tbody.innerHTML = '';
+
+        data.forEach(siswa => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${siswa.no}</td>
+            <td>${siswa.nama}</td>
+            <td>${siswa.jk}</td>
+            <td>${siswa.nisn}</td>
+            <td>${siswa.tempat_lahir}</td>
+            <td>${siswa.tgl_lahir}</td>
+            <td>${siswa.agama}</td>
+            <td>${siswa.alamat}</td>
+            <td>${siswa.transportasi}</td>
+            <td>${siswa.no_hp || '-'}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        // Fungsi pencarian
+        const searchBox = document.getElementById('searchBox');
+        searchBox.addEventListener('input', () => {
+          const val = searchBox.value.toLowerCase();
+          const rows = tbody.getElementsByTagName('tr');
+          for (let r of rows) {
+            const nama = r.cells[1].textContent.toLowerCase();
+            const nisn = r.cells[3].textContent.toLowerCase();
+            r.style.display = (nama.includes(val) || nisn.includes(val)) ? '' : 'none';
+          }
+        });
+
+      } catch (err) {
+        console.error('Gagal memuat data siswa:', err);
+      }
+    }
+
+    loadSiswa();
+  </script>
+</body>
+</html>
