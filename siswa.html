@@ -1,37 +1,40 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Siswa - Guru Wali Bayu</title>
-<link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Siswa</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-  <div class="app">
-    <header class="header">
-      <img src="assets/logo.png" class="logo" alt="logo"/>
-      <h1>Dashboard Siswa</h1>
-    </header>
+<body class="light">
+  <header class="topbar">
+    <img src="assets/logo.png" alt="Logo" class="toplogo">
+    <h1>Selamat Datang, Siswa</h1>
+  </header>
 
-    <div class="container" style="padding:24px;flex-direction:column">
-      <main class="main" style="width:100%">
-        <div class="card">
-          <h3>📢 Pengumuman</h3>
-          <div id="pengumumanArea" class="ann">Memuat...</div>
-        </div>
+  <main class="main-content">
+    <section class="card">
+      <h2>📢 Pengumuman Terbaru</h2>
+      <div id="announcements"></div>
+    </section>
 
-        <div class="card">
-          <h3>💬 Curhat ke Wali Kelas</h3>
-          <p>Tulis pesan singkat di bawah lalu tekan <b>Kirim & Buka WhatsApp</b>. Pesan akan tersimpan dan juga membuka WhatsApp Pak Bayu.</p>
-          <textarea id="curhatText" class="input" rows="4" placeholder="Tulis curhat kamu..."></textarea>
-          <div class="row" style="margin-top:8px">
-            <button id="sendCurhat" class="btn">Kirim & Buka WhatsApp</button>
-            <button id="resetCurhat" class="btn ghost">Bersihkan</button>
-          </div>
-        </div>
-      </main>
-    </div>
-  </div>
-<script src="script.js"></script>
+    <section class="card">
+      <h2>💬 Curhat</h2>
+      <a id="curhatBtn" class="btn secondary" href="#">Kirim Curhat via WhatsApp</a>
+    </section>
+
+    <section class="card">
+      <h2>📘 Notulen Kegiatan</h2>
+      <div id="notulenBox"></div>
+    </section>
+
+    <section class="card">
+      <h2>👨‍🏫 Pembinaan & Masalah</h2>
+      <a href="pembinaan.html" class="btn primary">Lihat Pembinaan</a>
+      <a href="masalahsiswa.html" class="btn secondary">Lihat Masalah</a>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
 </body>
 </html>
