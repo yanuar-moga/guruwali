@@ -1,102 +1,145 @@
-/* ======== GLOBAL STYLE ======== */
-body {
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(180deg, #E3F2FD, #FFFFFF);
+body.light {
+  font-family: "Poppins", sans-serif;
+  background-color: #f9fbff;
   color: #333;
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
 }
 
-/* ======== CARD / DASHBOARD ======== */
-.container {
-  background: #fff;
-  border-radius: 25px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+/* TOPBAR */
+.topbar {
+  background: linear-gradient(90deg, #dbe9ff, #a4c8ff);
+  border-bottom: 4px solid #ffd84c;
+  color: #002855;
+  text-align: center;
+  padding: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.toplogo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+/* LOGIN */
+.login-container {
   width: 90%;
-  max-width: 400px;
+  max-width: 360px;
+  margin: 80px auto;
+  background: white;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  border-top: 4px solid #ffd84c;
   text-align: center;
-  padding: 30px 20px;
-  border-top: 5px solid #FFD54F;
 }
 
-/* ======== LOGO ======== */
 .logo {
-  width: 90px;
-  height: 90px;
-  object-fit: contain;
-  margin-bottom: 10px;
-  animation: floatLogo 3s ease-in-out infinite;
+  display: block;
+  width: 100px;
+  margin: 0 auto 10px;
+  border-radius: 16px;
 }
 
-@keyframes floatLogo {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+/* FORM */
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 14px;
 }
 
-/* ======== JUDUL ======== */
-h1 {
-  color: #1565C0;
-  font-size: 1.6rem;
-  margin-bottom: 20px;
+textarea {
+  resize: none;
 }
 
-/* ======== MENU TENGAH ======== */
-.menu {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 15px;
-}
-
-.menu button {
-  width: 85%;
-  background: linear-gradient(90deg, #42A5F5, #64B5F6);
-  color: white;
-  font-size: 1rem;
-  font-weight: 600;
+/* BUTTONS */
+.btn {
+  display: inline-block;
+  padding: 10px 14px;
   border: none;
-  border-radius: 15px;
-  padding: 12px 0;
-  box-shadow: 0 4px 10px rgba(33,150,243,0.2);
+  border-radius: 10px;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.3s;
+  font-weight: bold;
+  transition: 0.3s;
 }
 
-.menu button:hover {
-  transform: scale(1.03);
-  box-shadow: 0 6px 12px rgba(33,150,243,0.35);
+.btn.primary {
+  background-color: #4da3ff;
+  color: white;
 }
 
-.menu button:active {
-  transform: scale(0.97);
+.btn.primary:hover {
+  background-color: #1c7ff0;
 }
 
-/* ======== FOOTER ======== */
-footer {
-  margin-top: 25px;
-  font-size: 0.8rem;
-  color: #777;
+.btn.secondary {
+  background-color: #ffd84c;
+  color: #002855;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* DASHBOARD MENU */
+.menu-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 15px;
+  max-width: 400px;
+  margin: 20px auto;
   text-align: center;
 }
 
-/* ======== RESPONSIVE ======== */
-@media (max-width: 480px) {
-  .container {
-    width: 95%;
-    padding: 25px 10px;
-  }
+.menu-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px 0;
+  font-size: 16px;
+  color: #003f7f;
+  font-weight: 600;
+  border: 2px solid #dbe9ff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  transition: 0.3s;
+}
 
-  h1 {
-    font-size: 1.4rem;
-  }
+.menu-card:hover {
+  transform: scale(1.05);
+  background-color: #f0f8ff;
+}
 
-  .menu button {
-    font-size: 0.95rem;
-  }
+/* MAIN CARD */
+.main-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 15px;
+}
+
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-left: 5px solid #ffd84c;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+h3 {
+  color: #003f7f;
+  margin-top: 0;
+}
+
+.smallmuted {
+  color: #777;
+  font-size: 12px;
 }
