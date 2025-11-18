@@ -6,7 +6,7 @@
 <title>Biodata Siswa</title>
 
 <!-- XLSX JS -->
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <style>
 body {
@@ -38,6 +38,24 @@ p {
     margin: 4px 0;
     font-size: 15px;
 }
+.navbtn {
+    width: 48%;
+    padding: 10px;
+    margin-top: 15px;
+    font-size: 16px;
+    border: none;
+    background: #1976d2;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.navbtn:disabled {
+    background: #9e9e9e;
+}
+.btnwrap {
+    display: flex;
+    justify-content: space-between;
+}
 </style>
 </head>
 <body>
@@ -45,67 +63,81 @@ p {
 <div class="container">
     <h2 style="text-align:center; margin-top:0;">Biodata Siswa</h2>
     <div style="text-align:center;">
-        <img id="foto" class="foto" src="foto/noimage.jpg" alt="Foto Siswa">
+        <img id="foto" class="foto" src="" alt="Foto Siswa">
     </div>
-    <div id="data">Memuat data...</div>
+    <div id="data"></div>
+
+    <div class="btnwrap">
+        <button id="prevBtn" class="navbtn">⬅ Prev</button>
+        <button id="nextBtn" class="navbtn">Next ➡</button>
+    </div>
 </div>
 
-<script type="text/javascript">
-
-(async () => {
-
+<script>
 const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
 
 const params = new URLSearchParams(window.location.search);
-const nisParam = params.get("nis");
+let nisParam = params.get("nis");
 
-if (!nisParam) {
-    document.getElementById("data").innerHTML = "<p>Parameter ?nis= tidak diberikan.</p>";
-    return;
-}
+fetch(url)
+    .then(res => res.arrayBuffer())
+    .then(buffer => {
+        const workbook = XLSX.read(buffer, { type: "array" });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const json = XLSX.utils.sheet_to_json(sheet);
 
-try {
-    const resp = await fetch(url);
-    if (!resp.ok) {
-        document.getElementById("data").innerHTML = "<p>Gagal memuat file Excel.</p>";
-        return;
-    }
+        // Jika NIS tidak diberikan → tampilkan siswa pertama
+        if (!nisParam) nisParam = json[0].NIS;
 
-    const buffer = await resp.arrayBuffer();
-    const workbook = XLSX.read(buffer, { type: "array" });
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        // Cari index siswa aktif
+        let index = json.findIndex(s => String(s.NIS) === String(nisParam));
 
-    const json = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+        // Jika tidak ditemukan, tampilkan pesan
+        if (index === -1) {
+            document.getElementById("data").innerHTML = "<p>Data tidak ditemukan.</p>";
+            return;
+        }
 
-    console.log("Data Excel:", json);  // Debug
+        function tampilkanSiswa(idx) {
+            const siswa = json[idx];
 
-    // Cari siswa berdasarkan NIS
-    const siswa = json.find(s => String(s.NIS).trim() === String(nisParam).trim());
+            // Tampilkan foto
+            document.getElementById("foto").src = `foto/${siswa.NIS}.jpg`;
 
-    if (!siswa) {
-        document.getElementById("data").innerHTML =
-            `<p>Data dengan NIS <b>${nisParam}</b> tidak ditemukan.</p>`;
-        return;
-    }
+            // Tampilkan data
+            let html = "";
+            for (let k in siswa) {
+                html += `<p><span class="label">${k}: </span> ${siswa[k]}</p>`;
+            }
+            document.getElementById("data").innerHTML = html;
 
-    // Foto
-    let fotoPath = `foto/${siswa.NIS}.jpg`;
-    document.getElementById("foto").src = fotoPath;
+            // Update tombol Prev/Next
+            document.getElementById("prevBtn").disabled = idx === 0;
+            document.getElementById("nextBtn").disabled = idx === json.length - 1;
 
-    // Tampilkan data
-    let html = "";
-    for (let key in siswa) {
-        html += `<p><span class="label">${key}:</span> ${siswa[key]}</p>`;
-    }
+            // Update URL tanpa reload
+            const newUrl = window.location.pathname + "?nis=" + siswa.NIS;
+            window.history.replaceState(null, "", newUrl);
+        }
 
-    document.getElementById("data").innerHTML = html;
+        // Tampilkan pertama kali
+        tampilkanSiswa(index);
 
-} catch (err) {
-    document.getElementById("data").innerHTML = "<p>Terjadi kesalahan memuat data.</p>";
-    console.error(err);
-}
+        // Tombol navigasi
+        document.getElementById("prevBtn").onclick = () => {
+            if (index > 0) {
+                index--;
+                tampilkanSiswa(index);
+            }
+        };
 
-})();
+        document.getElementById("nextBtn").onclick = () => {
+            if (index < json.length - 1) {
+                index++;
+                tampilkanSiswa(index);
+            }
+        };
+    });
 </script>
 
 </body>
