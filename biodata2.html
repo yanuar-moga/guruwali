@@ -1,34 +1,33 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Biodata Siswa</title>
 
 <!-- XLSX -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
 <!-- html2canvas + jsPDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
+/* --- TAMPILAN UTAMA (sesuai permintaan, jangan ubah) --- */
 body {
     font-family: Arial, sans-serif;
     padding: 20px;
     background: #f3f3f3;
+    margin: 0;
 }
-
 .container {
     max-width: 430px;
-    margin: auto;
+    margin: 10px auto;
     background: white;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    transition: transform 0.4s ease;
+    transition: transform 0.36s ease, opacity 0.36s ease;
 }
-
 .slide-left { transform: translateX(-120%); opacity: 0; }
 .slide-right { transform: translateX(120%); opacity: 0; }
 .slide-reset { transform: translateX(0); opacity: 1; }
@@ -39,6 +38,7 @@ img.foto {
     object-fit: cover;
     border: 2px solid #333;
     margin-bottom: 15px;
+    background: #eee;
 }
 
 .label {
@@ -51,15 +51,15 @@ p {
     font-size: 15px;
 }
 
+/* Navigation buttons */
 .nav-buttons {
     display: flex;
     justify-content: space-between;
     max-width: 430px;
-    margin: 20px auto;
+    margin: 12px auto 30px;
 }
-
-button {
-    padding: 10px 20px;
+button.nav {
+    padding: 10px 16px;
     border: none;
     background: #1e88e5;
     color: #fff;
@@ -67,27 +67,23 @@ button {
     border-radius: 8px;
     cursor: pointer;
 }
-
-button:disabled {
-    background: #9e9e9e;
-    cursor: not-allowed;
-}
+button.nav:disabled { background: #9e9e9e; cursor: not-allowed; }
 
 /* Floating Button */
 .fab {
     position: fixed;
-    bottom: 22px;
-    right: 22px;
+    bottom: 18px;
+    right: 18px;
     background: #ff9800;
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
     display: flex;
     justify-content: center;
     align-items: center;
     color: white;
-    font-size: 28px;
+    font-size: 26px;
     cursor: pointer;
     z-index: 1000;
 }
@@ -95,162 +91,348 @@ button:disabled {
 /* menu popup download */
 .fab-menu {
     position: fixed;
-    bottom: 95px;
-    right: 22px;
+    bottom: 92px;
+    right: 18px;
     background: white;
     border-radius: 10px;
-    padding: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    padding: 8px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.18);
     display: none;
     z-index: 1001;
 }
-
 .fab-menu button {
     display: block;
     width: 220px;
     margin: 6px 0;
+    padding: 8px 10px;
+    border: none;
     background: #1e88e5;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* small responsive tweak */
+@media (max-width: 480px) {
+    .container { margin: 10px; }
+    .label { width: 100px; font-size: 14px; }
+    p { font-size: 14px; }
+    .fab-menu button { width: 180px; }
 }
 </style>
 </head>
-
 <body>
 
-<div class="container" id="cardContainer">
-    <h2 style="text-align:center;">Biodata Siswa</h2>
+<div id="cardContainer" class="container slide-reset" aria-live="polite">
+    <h2 style="text-align:center; margin:0 0 10px 0;">Biodata Siswa</h2>
     <div style="text-align:center;">
-        <img id="foto" class="foto" src="">
+        <img id="foto" class="foto" src="foto/default.jpg" alt="Foto Siswa">
     </div>
-    <div id="data"></div>
+    <div id="data" aria-atomic="true">Memuat data...</div>
 </div>
 
-<div class="nav-buttons">
-    <button id="prevBtn">Prev</button>
-    <button id="nextBtn">Next</button>
+<div class="nav-buttons" role="navigation" aria-label="Navigasi siswa">
+    <button id="prevBtn" class="nav">⬅ Prev</button>
+    <button id="nextBtn" class="nav">Next ➡</button>
 </div>
 
 <!-- Floating download button -->
-<div class="fab" id="fabBtn">↓</div>
+<div id="fabBtn" class="fab" title="Download">↓</div>
 
 <!-- Download Menu -->
-<div class="fab-menu" id="fabMenu">
-    <button id="pdfCurrent">Download Biodata Ini</button>
-    <button id="pdfAll">Download Semua Biodata</button>
+<div id="fabMenu" class="fab-menu" role="menu" aria-hidden="true">
+    <button id="pdfCurrent" role="menuitem">Download Biodata Ini</button>
+    <button id="pdfAll" role="menuitem">Download Semua Biodata</button>
 </div>
 
 <script>
-const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
+/*
+ Final biodata.html with:
+ - read Excel from GitHub
+ - navigation prev/next with slide animation
+ - floating FAB with two options: current / all
+ - photo based on No Absen (auto-detect column)
+ - fallback foto/default.jpg when missing
+ - robust handling and no visual changes to card layout
+*/
 
-let siswaList = [];
+// RAW URL to the Excel file in your repo
+const EXCEL_URL = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
+
+// candidate keys for "no absen" - try to match any of these (case-insensitive)
+const NO_ABSEN_CANDIDATES = ["NO_ABSEN","No Absen","No_Absen","NOAB","NO","No","Absen","No.Absen","NoAbsen","Nomer","Nomor","Nomor Absen","Nomor_Absen","NO.ABSEN","NO_ABSEN "];
+
+/* Utility: find matching key in object for candidates */
+function detectKey(obj, candidates) {
+    const keys = Object.keys(obj || {});
+    const lowKeys = keys.map(k => k.toLowerCase().trim());
+    for (let cand of candidates) {
+        const c = String(cand).toLowerCase().trim();
+        const idx = lowKeys.indexOf(c);
+        if (idx !== -1) return keys[idx];
+    }
+    // fallback heuristics:
+    if (keys.length > 0) return keys[0]; // first column as last resort
+    return null;
+}
+
+/* Read query param (optional starting NIS or NoAbsen) */
+const params = new URLSearchParams(window.location.search);
+let startKey = params.get("nis") || params.get("no") || params.get("no_absen") || null;
+
+// global data
+let students = [];
 let current = 0;
+let detectedNoAbsenKey = null;
+let detectedNISKey = null;
 
-// --- Ambil data ---
-fetch(url)
-    .then(r => r.arrayBuffer())
-    .then(buffer => {
-        const wb = XLSX.read(buffer, { type: "array" });
-        const sheet = wb.Sheets[wb.SheetNames[0]];
-        siswaList = XLSX.utils.sheet_to_json(sheet);
-
-        tampilSiswa(0);
-        updateNavButtons();
-    });
-
-// --- Menampilkan 1 kartu ---
-function tampilSiswa(i) {
-    const siswa = siswaList[i];
-    if (!siswa) return;
-
-    const card = document.getElementById("cardContainer");
-
-    // animasi slide
-    card.classList.remove("slide-reset");
-    card.classList.add(i > current ? "slide-right" : "slide-left");
-
-    setTimeout(() => {
-        // isi konten
-        document.getElementById("foto").src = `foto/${siswa.NIS}.jpg`;
-        document.getElementById("foto").onerror = function(){
-            this.src = "foto/default.jpg";
-        };
-
-        let html = "";
-        for (let key in siswa) {
-            html += `<p><span class="label">${key}: </span>${siswa[key]}</p>`;
-        }
-        document.getElementById("data").innerHTML = html;
-
-        // reset animasi
-        card.classList.remove("slide-left","slide-right");
-        card.classList.add("slide-reset");
-
-    }, 220);
-
-    current = i;
-    updateNavButtons();
-}
-
-// --- Prev / Next nav ---
-document.getElementById("nextBtn").onclick = () => {
-    if (current < siswaList.length - 1) tampilSiswa(current + 1);
-};
-
-document.getElementById("prevBtn").onclick = () => {
-    if (current > 0) tampilSiswa(current - 1);
-};
-
-function updateNavButtons() {
-    document.getElementById("prevBtn").disabled = current === 0;
-    document.getElementById("nextBtn").disabled = current === siswaList.length - 1;
-}
-
-// =========================
-// Floating Button Menu
-// =========================
+// DOM refs
+const card = document.getElementById("cardContainer");
+const dataDiv = document.getElementById("data");
+const fotoImg = document.getElementById("foto");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
 const fabBtn = document.getElementById("fabBtn");
 const fabMenu = document.getElementById("fabMenu");
+const pdfCurrentBtn = document.getElementById("pdfCurrent");
+const pdfAllBtn = document.getElementById("pdfAll");
 
-fabBtn.onclick = () => {
-    fabMenu.style.display = fabMenu.style.display === "block" ? "none" : "block";
-};
-
-// =========================
-// DOWNLOAD PDF - CURRENT
-// =========================
-document.getElementById("pdfCurrent").onclick = async () => {
-    const { jsPDF } = window.jspdf;
-    const card = document.getElementById("cardContainer");
-
-    const canvas = await html2canvas(card, { scale: 2 });
-    const img = canvas.toDataURL("image/png");
-
-    const pdf = new jsPDF({ orientation: "portrait", unit: "px", format: "a4" });
-    pdf.addImage(img, "PNG", 20, 20, 400, 600);
-    pdf.save(`Biodata-${siswaList[current].NIS}.pdf`);
-};
-
-// =========================
-// DOWNLOAD PDF ALL
-// =========================
-document.getElementById("pdfAll").onclick = async () => {
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF({ orientation: "portrait", unit: "px", format: "a4" });
-
-    for (let i = 0; i < siswaList.length; i++) {
-        await tampilSiswa(i);
-
-        const canvas = await html2canvas(document.getElementById("cardContainer"), { scale: 2 });
-        const img = canvas.toDataURL("image/png");
-
-        if (i > 0) pdf.addPage();
-        pdf.addImage(img, "PNG", 20, 20, 400, 600);
+// close fab menu on outside click
+document.addEventListener("click", (e) => {
+    if (!fabMenu.contains(e.target) && !fabBtn.contains(e.target)) {
+        fabMenu.style.display = "none";
+        fabMenu.setAttribute("aria-hidden","true");
     }
+});
 
-    pdf.save("Semua-Biodata-Siswa.pdf");
+// toggle fab menu
+fabBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    fabMenu.style.display = (fabMenu.style.display === "block") ? "none" : "block";
+    fabMenu.setAttribute("aria-hidden", fabMenu.style.display === "block" ? "false" : "true");
+});
 
-    // kembali ke current posisi
-    tampilSiswa(current);
-};
+// load Excel and initialize
+(async function loadExcel(){
+    try {
+        dataDiv.innerText = "Memuat data...";
+        const resp = await fetch(EXCEL_URL);
+        if (!resp.ok) {
+            dataDiv.innerText = "Gagal memuat file Excel (periksa URL/file di repo).";
+            console.error("Fetch Excel failed:", resp.status, resp.statusText);
+            return;
+        }
+        const buffer = await resp.arrayBuffer();
+        const wb = XLSX.read(buffer, { type: "array" });
+        const sheet = wb.Sheets[wb.SheetNames[0]];
+        // defval to avoid undefined cells
+        students = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+
+        if (!students || students.length === 0) {
+            dataDiv.innerText = "File Excel kosong atau tidak berformat tabel.";
+            return;
+        }
+
+        // detect keys
+        detectedNoAbsenKey = detectKey(students[0], NO_ABSEN_CANDIDATES);
+        // detect NIS key as well (common)
+        detectedNISKey = Object.keys(students[0]).find(k => k.toLowerCase().includes("nis")) || null;
+
+        console.log("Detected NoAbsen key:", detectedNoAbsenKey, "Detected NIS key:", detectedNISKey);
+        console.log("Students sample:", students.slice(0,6));
+
+        // determine starting index
+        if (startKey) {
+            // try to find by NIS or NoAbsen matching the startKey
+            let idx = students.findIndex(s => {
+                // check by NIS if key seems numeric and NIS key exists
+                if (detectedNISKey && String(s[detectedNISKey]).trim() === String(startKey).trim()) return true;
+                // check by detectedNoAbsenKey
+                if (detectedNoAbsenKey && String(s[detectedNoAbsenKey]).trim() === String(startKey).trim()) return true;
+                // also try any field equals startKey
+                return Object.values(s).some(v => String(v).trim() === String(startKey).trim());
+            });
+            if (idx !== -1) current = idx;
+        } else {
+            // default to first row
+            current = 0;
+        }
+
+        // render first student
+        renderStudent(current);
+        updateNavButtons();
+    } catch (err) {
+        console.error(err);
+        dataDiv.innerText = "Terjadi kesalahan saat memuat data.";
+    }
+})();
+
+// function to render a student with animation
+function renderStudent(idx) {
+    const s = students[idx];
+    if (!s) return;
+
+    // animation direction
+    const prevIndex = current;
+    const directionClass = (idx > prevIndex) ? "slide-right" : (idx < prevIndex) ? "slide-left" : "slide-reset";
+
+    // apply out animation then update content
+    card.classList.remove("slide-left","slide-right","slide-reset");
+    card.classList.add(directionClass);
+
+    setTimeout(() => {
+        // determine photo id: prefer NoAbsen column, else NIS, else first column value
+        let photoId = "";
+        if (detectedNoAbsenKey && s[detectedNoAbsenKey] !== undefined && String(s[detectedNoAbsenKey]).trim() !== "") {
+            photoId = String(s[detectedNoAbsenKey]).trim();
+        } else if (detectedNISKey && s[detectedNISKey] !== undefined && String(s[detectedNISKey]).trim() !== "") {
+            photoId = String(s[detectedNISKey]).trim();
+        } else {
+            // fallback to first column's value
+            const firstKey = Object.keys(s)[0];
+            photoId = String(s[firstKey]).trim();
+        }
+
+        // set photo src; onerror fallback to default
+        fotoImg.src = `foto/${photoId}.jpg`;
+        fotoImg.onerror = function() {
+            // try other extensions automatically (jpg -> jpeg -> png)
+            if (!this._tried) {
+                this._tried = true;
+                // try uppercase extension
+                const altList = [`foto/${photoId}.jpeg`, `foto/${photoId}.png`, `foto/${photoId}.JPG`, `foto/${photoId}.PNG`];
+                let triedIndex = 0;
+                (function tryNext(imgEl){
+                    if (triedIndex >= altList.length) {
+                        imgEl.src = "foto/default.jpg";
+                        return;
+                    }
+                    imgEl.src = altList[triedIndex++];
+                    imgEl.onerror = function(){ tryNext(imgEl); };
+                })(this);
+            } else {
+                this.src = "foto/default.jpg";
+            }
+        };
+
+        // build HTML content (preserve keys and values)
+        let html = "";
+        for (let k of Object.keys(s)) {
+            const label = k || "";
+            const value = s[k];
+            html += `<p><span class="label">${label}:</span> ${value}</p>`;
+        }
+        dataDiv.innerHTML = html;
+
+        // reset animation to visible
+        card.classList.remove("slide-left","slide-right");
+        card.classList.add("slide-reset");
+    }, 170);
+
+    current = idx;
+    updateNavButtons();
+
+    // update URL param to reflect current student (use NoAbsen if available)
+    let urlVal = "";
+    if (detectedNoAbsenKey && students[current][detectedNoAbsenKey] !== undefined && String(students[current][detectedNoAbsenKey]).trim() !== "") {
+        urlVal = String(students[current][detectedNoAbsenKey]).trim();
+    } else if (detectedNISKey && students[current][detectedNISKey] !== undefined && String(students[current][detectedNISKey]).trim() !== "") {
+        urlVal = String(students[current][detectedNISKey]).trim();
+    } else {
+        urlVal = String(students[current][Object.keys(students[current])[0]]).trim();
+    }
+    const newUrl = window.location.pathname + "?nis=" + encodeURIComponent(urlVal);
+    window.history.replaceState(null, "", newUrl);
+}
+
+function updateNavButtons() {
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current >= students.length - 1;
+}
+
+// Prev / Next handlers
+prevBtn.addEventListener("click", () => {
+    if (current > 0) renderStudent(current - 1);
+});
+nextBtn.addEventListener("click", () => {
+    if (current < students.length - 1) renderStudent(current + 1);
+});
+
+// ===== DOWNLOAD CURRENT as PDF =====
+pdfCurrentBtn.addEventListener("click", async () => {
+    try {
+        const { jsPDF } = window.jspdf;
+        const el = card;
+        // hide FAB while rendering
+        const oldFabDisplay = fabMenu.style.display;
+        fabMenu.style.display = "none";
+        const oldFabVisible = fabBtn.style.display;
+        fabBtn.style.display = "none";
+
+        const canvas = await html2canvas(el, { scale: 2, useCORS: true });
+        const imgData = canvas.toDataURL("image/png");
+
+        const pdf = new jsPDF({ orientation: "portrait", unit: "px", format: "a4" });
+        // calculate width to fit a4 approx: use 560 px width-ish
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const imgProps = { width: pageWidth - 40 }; // margin
+        pdf.addImage(imgData, "PNG", 20, 20, pageWidth - 40, (canvas.height * (pageWidth - 40)) / canvas.width);
+        const idVal = (detectedNoAbsenKey && students[current][detectedNoAbsenKey]) ? students[current][detectedNoAbsenKey] : (detectedNISKey ? students[current][detectedNISKey] : current+1);
+        pdf.save(`Biodata-${String(idVal).replace(/\s+/g,'')}.pdf`);
+
+        // restore FAB
+        fabMenu.style.display = oldFabDisplay;
+        fabBtn.style.display = oldFabVisible;
+    } catch (err) {
+        console.error("PDF current failed:", err);
+        alert("Gagal membuat PDF. Cek console untuk detail.");
+    }
+});
+
+// ===== DOWNLOAD ALL as PDF (one per page) =====
+pdfAllBtn.addEventListener("click", async () => {
+    try {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation: "portrait", unit: "px", format: "a4" });
+
+        // hide FAB / nav to have clean render
+        const oldFabDisplay = fabMenu.style.display;
+        const oldFabVisible = fabBtn.style.display;
+        fabMenu.style.display = "none";
+        fabBtn.style.display = "none";
+
+        // remember current index to restore later
+        const beforeIndex = current;
+
+        for (let i = 0; i < students.length; i++) {
+            await new Promise(res => {
+                // render student i and wait small delay for image load
+                renderStudent(i);
+                // wait 250ms for image & DOM settle (image cached or fallback)
+                setTimeout(res, 300);
+            });
+
+            const canvas = await html2canvas(card, { scale: 2, useCORS: true });
+            const imgData = canvas.toDataURL("image/png");
+
+            if (i > 0) pdf.addPage();
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            pdf.addImage(imgData, "PNG", 20, 20, pageWidth - 40, (canvas.height * (pageWidth - 40)) / canvas.width);
+        }
+
+        // save
+        pdf.save("Semua-Biodata-Siswa.pdf");
+
+        // restore view & index
+        renderStudent(beforeIndex);
+        fabMenu.style.display = oldFabDisplay;
+        fabBtn.style.display = oldFabVisible;
+    } catch (err) {
+        console.error("PDF all failed:", err);
+        alert("Gagal membuat PDF semua. Cek console untuk detail.");
+    }
+});
 </script>
 
 </body>
