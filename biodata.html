@@ -1,125 +1,81 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Aplikasi Biodata Siswa - Online GitHub</title>
-
-<!-- XLSX reader -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-        background: #f4f4f4;
-    }
-    h2 {
-        text-align: center;
-        margin-bottom: 20px;
-        font-size: 26px;
-    }
-    #search {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 15px;
-        border-radius: 6px;
-        border: 1px solid #999;
-        font-size: 16px;
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        background: white;
-    }
-    th, td {
-        border: 1px solid #ccc;
-        padding: 8px;
-        text-align: left;
-        font-size: 14px;
-    }
-    th {
-        background: #eee;
-    }
-    img {
-        width: 70px;
-        border-radius: 6px;
-    }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biodata Siswa</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    #search { width: 100%; padding: 10px; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #eee; }
+    img { width: 70px; border-radius: 6px; }
+  </style>
 </head>
-
 <body>
-<h2>Biodata Siswa - Data Online</h2>
-
-<input type="text" id="search" placeholder="Cari nama / NIS / kelas ...">
-
-<table id="table">
+  <h2>Biodata Siswa</h2>
+  <input type="text" id="search" placeholder="Cari…">
+  <table id="table">
     <thead id="thead"></thead>
     <tbody id="tbody"></tbody>
-</table>
+  </table>
 
-<script>
-async function loadExcel() {
-    // ================================
-    // GANTI BAGIAN INI !!!
-    // ================================
-    const url = "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/assets/data.xlsx";
-    // ================================
+  <script>
+    async function loadExcel() {
+      // Ganti URL ini sesuai repositori dan struktur folder
+      const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
 
-    const response = await fetch(url);
-    const buffer = await response.arrayBuffer();
-    const workbook = XLSX.read(buffer, { type: "array" });
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const data = XLSX.utils.sheet_to_json(sheet);
+      const response = await fetch(url);
+      if (!response.ok) {
+        console.error("Gagal fetch file Excel:", response.status, response.statusText);
+        return;
+      }
+      const arrayBuffer = await response.arrayBuffer();
+      const workbook = XLSX.read(arrayBuffer, { type: "array" });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const data = XLSX.utils.sheet_to_json(sheet);
 
-    renderTable(data);
-}
+      renderTable(data);
+    }
 
-function renderTable(data) {
-    const thead = document.getElementById("thead");
-    const tbody = document.getElementById("tbody");
+    function renderTable(data) {
+      const thead = document.getElementById("thead");
+      const tbody = document.getElementById("tbody");
 
-    // Generate header otomatis
-    const headers = Object.keys(data[0]);
+      const headers = Object.keys(data[0] || {});
 
-    let headerHTML = "<tr>";
-    headerHTML += "<th>Foto</th>";
-    headers.forEach(h => {
-        headerHTML += `<th>${h}</th>`;
-    });
-    headerHTML += "</tr>";
+      // Header tabel
+      let headerHTML = "<tr><th>Foto</th>";
+      headers.forEach(h => headerHTML += `<th>${h}</th>`);
+      headerHTML += "</tr>";
+      thead.innerHTML = headerHTML;
 
-    thead.innerHTML = headerHTML;
-
-    // Isi data
-    let rows = "";
-    data.forEach(row => {
-        // Nama kolom foto → gunakan kolom "NIS" atau "ID" sebagai nama file
-        const fotoName = row.NIS || row.ID || row.No || row.nomor || ""; 
-
+      // Baris data
+      let rows = "";
+      data.forEach(row => {
+        // Asumsi kolom untuk nama file foto: "NIS"
+        const fotoName = row.NIS;
         rows += "<tr>";
         rows += `<td><img src="foto/${fotoName}.jpg" onerror="this.src='foto/default.jpg'"></td>`;
-
         headers.forEach(h => {
-            rows += `<td>${row[h] ?? ""}</td>`;
+          rows += `<td>${row[h] ?? ""}</td>`;
         });
-
         rows += "</tr>";
-    });
+      });
+      tbody.innerHTML = rows;
 
-    tbody.innerHTML = rows;
-
-    // Fitur Pencarian
-    document.getElementById("search").addEventListener("keyup", function () {
+      // Fitur pencarian
+      document.getElementById("search").addEventListener("keyup", function () {
         const q = this.value.toLowerCase();
-
-        [...tbody.rows].forEach(row => {
-            row.style.display = row.innerText.toLowerCase().includes(q) ? "" : "none";
+        [...tbody.rows].forEach(r => {
+          r.style.display = r.innerText.toLowerCase().includes(q) ? "" : "none";
         });
-    });
-}
+      });
+    }
 
-loadExcel();
-</script>
+    loadExcel();
+  </script>
 </body>
 </html>
