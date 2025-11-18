@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biodata Siswa</title>
+
+<!-- XLSX -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<!-- html2canvas + jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background: #f3f3f3;
+}
+
+.container {
+    max-width: 430px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    transition: transform 0.4s ease;
+}
+
+.slide-left { transform: translateX(-120%); opacity: 0; }
+.slide-right { transform: translateX(120%); opacity: 0; }
+.slide-reset { transform: translateX(0); opacity: 1; }
+
+img.foto {
+    width: 120px;
+    height: 160px;
+    object-fit: cover;
+    border: 2px solid #333;
+    margin-bottom: 15px;
+}
+
+.label {
+    display: inline-block;
+    width: 120px;
+    font-weight: bold;
+}
+p {
+    margin: 4px 0;
+    font-size: 15px;
+}
+
+.nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    max-width: 430px;
+    margin: 20px auto;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    background: #1e88e5;
+    color: #fff;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+button:disabled {
+    background: #9e9e9e;
+    cursor: not-allowed;
+}
+
+/* Floating Button */
+.fab {
+    position: fixed;
+    bottom: 22px;
+    right: 22px;
+    background: #ff9800;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+/* menu popup download */
+.fab-menu {
+    position: fixed;
+    bottom: 95px;
+    right: 22px;
+    background: white;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    display: none;
+    z-index: 1001;
+}
+
+.fab-menu button {
+    display: block;
+    width: 220px;
+    margin: 6px 0;
+    background: #1e88e5;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="cardContainer">
+    <h2 style="text-align:center;">Biodata Siswa</h2>
+    <div style="text-align:center;">
+        <img id="foto" class="foto" src="">
+    </div>
+    <div id="data"></div>
+</div>
+
+<div class="nav-buttons">
+    <button id="prevBtn">Prev</button>
+    <button id="nextBtn">Next</button>
+</div>
+
+<!-- Floating download button -->
+<div class="fab" id="fabBtn">↓</div>
+
+<!-- Download Menu -->
+<div class="fab-menu" id="fabMenu">
+    <button id="pdfCurrent">Download Biodata Ini</button>
+    <button id="pdfAll">Download Semua Biodata</button>
+</div>
+
+<script>
+const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
+
+let siswaList = [];
+let current = 0;
+
+// --- Ambil data ---
+fetch(url)
+    .then(r => r.arrayBuffer())
+    .then(buffer => {
+        const wb = XLSX.read(buffer, { type: "array" });
+        const sheet = wb.Sheets[wb.SheetNames[0]];
+        siswaList = XLSX.utils.sheet_to_json(sheet);
+
+        tampilSiswa(0);
+        updateNavButtons();
+    });
+
+// --- Menampilkan 1 kartu ---
+function tampilSiswa(i) {
+    const siswa = siswaList[i];
+    if (!siswa) return;
+
+    const card = document.getElementById("cardContainer");
+
+    // animasi slide
+    card.classList.remove("slide-reset");
+    card.classList.add(i > current ? "slide-right" : "slide-left");
+
+    setTimeout(() => {
+        // isi konten
+        document.getElementById("foto").src = `foto/${siswa.NIS}.jpg`;
+        document.getElementById("foto").onerror = function(){
+            this.src = "foto/default.jpg";
+        };
+
+        let html = "";
+        for (let key in siswa) {
+            html += `<p><span class="label">${key}: </span>${siswa[key]}</p>`;
+        }
+        document.getElementById("data").innerHTML = html;
+
+        // reset animasi
+        card.classList.remove("slide-left","slide-right");
+        card.classList.add("slide-reset");
+
+    }, 220);
+
+    current = i;
+    updateNavButtons();
+}
+
+// --- Prev / Next nav ---
+document.getElementById("nextBtn").onclick = () => {
+    if (current < siswaList.length - 1) tampilSiswa(current + 1);
+};
+
+document.getElementById("prevBtn").onclick = () => {
+    if (current > 0) tampilSiswa(current - 1);
+};
+
+function updateNavButtons() {
+    document.getElementById("prevBtn").disabled = current === 0;
+    document.getElementById("nextBtn").disabled = current === siswaList.length - 1;
+}
+
+// =========================
+// Floating Button Menu
+// =========================
+const fabBtn = document.getElementById("fabBtn");
+const fabMenu = document.getElementById("fabMenu");
+
+fabBtn.onclick = () => {
+    fabMenu.style.display = fabMenu.style.display === "block" ? "none" : "block";
+};
+
+// =========================
+// DOWNLOAD PDF - CURRENT
+// =========================
+document.getElementById("pdfCurrent").onclick = async () => {
+    const { jsPDF } = window.jspdf;
+    const card = document.getElementById("cardContainer");
+
+    const canvas = await html2canvas(card, { scale: 2 });
+    const img = canvas.toDataURL("image/png");
+
+    const pdf = new jsPDF({ orientation: "portrait", unit: "px", format: "a4" });
+    pdf.addImage(img, "PNG", 20, 20, 400, 600);
+    pdf.save(`Biodata-${siswaList[current].NIS}.pdf`);
+};
+
+// =========================
+// DOWNLOAD PDF ALL
+// =========================
+document.getElementById("pdfAll").onclick = async () => {
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation: "portrait", unit: "px", format: "a4" });
+
+    for (let i = 0; i < siswaList.length; i++) {
+        await tampilSiswa(i);
+
+        const canvas = await html2canvas(document.getElementById("cardContainer"), { scale: 2 });
+        const img = canvas.toDataURL("image/png");
+
+        if (i > 0) pdf.addPage();
+        pdf.addImage(img, "PNG", 20, 20, 400, 600);
+    }
+
+    pdf.save("Semua-Biodata-Siswa.pdf");
+
+    // kembali ke current posisi
+    tampilSiswa(current);
+};
+</script>
+
+</body>
+</html>
