@@ -1,226 +1,125 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Kartu Biodata Siswa 7H</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biodata Siswa</title>
 
+<!-- XLSX JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<!-- HTML2PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <style>
-/* --- ORIGINAL CSS (tidak diubah) --- */
-body{
-    font-family:Segoe UI,Arial;
-    background:#eef3ff;
-    padding:20px;
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background: #f3f3f3;
 }
-h2{
-    text-align:center;
-    color:#1f3a93;
-    font-size:28px;
-    margin-bottom:20px;
+.container {
+    max-width: 430px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
-#downloadAll, #downloadSingle{
-    margin:0 auto 25px;
-    padding:12px;
-    background:#1f3a93;
-    color:#fff;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-    font-weight:bold;
-    width:250px;
-    display:block;
+img.foto {
+    width: 120px;
+    height: 160px;
+    object-fit: cover;
+    border: 2px solid #333;
+    margin-bottom: 15px;
 }
-#downloadAll{ background:#b8860b; }
-#output{
-    display: grid;
-    grid-template-columns: 375px 375px; 
-    justify-content: center;
-    gap: 20px 76px; 
+.label {
+    display: inline-block;
+    width: 120px;
+    font-weight: bold;
 }
-.card{
-    width:375px; 
-    height:200px; 
-    background: linear-gradient(135deg, #d9ecff, #ffffff);
-    border-radius:14px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.18);
-    font-size:11px;
-    display:flex; 
-    flex-direction:row;
-    gap:10px; 
-    position:relative;
-    padding: 15px 10px 10px 15px; 
+p {
+    margin: 4px 0;
+    font-size: 15px;
 }
-.photo-box{
-    width:110px; 
-    text-align:center;
-    display:flex;
-    justify-content:center;
-    align-items: flex-start; 
-    height: 100%;
+
+/* Floating Button */
+#downloadBtn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #007bff;
+    color: white;
+    padding: 14px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: 0.2s;
+    z-index: 99;
 }
-.photo{
-    width:100px; 
-    height:130px; 
-    object-fit:cover;
-    border-radius:8px;
-    border:2px solid #1f3a93;
-    box-shadow:0 2px 6px rgba(0,0,0,0.25);
+#downloadBtn:hover {
+    background: #0056b3;
 }
-.data-box{
-    flex:1; 
-    display:flex;
-    flex-direction:column;
-}
-.row{
-    display:flex;
-    margin-bottom:0px;
-    font-size:10px;
-    line-height:1.15;
-}
-.label{
-    width:80px;
-    color:#1f3a93;
-    font-weight:bold;
-    position:relative;
-}
-.label::after{
-    content:": ";
-    position:absolute;
-    right:0;
-}
-.name-value{ font-weight:bold; }
 </style>
 </head>
-
 <body>
 
-<h2>Kartu Biodata Siswa Kelas 7H</h2>
-<button id="downloadAll">Download PDF (10 Kartu per Halaman)</button>
-<button id="downloadSingle">Download PDF Per Kartu</button>
-<div id="output"></div>
+<!-- Floating Download Button -->
+<div id="downloadBtn">📄 Download PDF</div>
+
+<div id="biodataArea" class="container">
+    <h2 style="text-align:center; margin-top:0;">Biodata Siswa</h2>
+    <div style="text-align:center;">
+        <img id="foto" class="foto" src="" alt="Foto Siswa">
+    </div>
+    <div id="data"></div>
+</div>
 
 <script>
-/* ======================================================
-   Kolom mapping sesuai script ASLI (tidak diubah!)
-====================================================== */
-let kolomMap = {
-    NO_ABSEN: "A",
-    Nama: "B",
-    NIS: "L",
-    NISN: "M",
-    JK: "D",
-    TglLahir: "F",
-    Alamat: "G",
-    WA_Siswa: "H",
-    Hobi: "J",
-    Cita_cita: "K",
-    Mapel_Suka: "N",
-    Motivasi: "Q",
-    Harapan_Ortu: "Z"
-};
+// URL RAW EXCEL dari GitHub kamu
+const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
 
-function formatTanggal(x){
-    if(!x) return "";
-    const bulan = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+// Ambil parameter NIS dari URL
+const params = new URLSearchParams(window.location.search);
+const nisParam = params.get("nis");
 
-    if(typeof x === "number"){
-        let d = XLSX.SSF.parse_date_code(x);
-        return `${d.d} ${bulan[d.m-1]} ${d.y}`;
-    }
-    return x;
-}
+fetch(url)
+    .then(response => response.arrayBuffer())
+    .then(data => {
+        const workbook = XLSX.read(data, { type: "array" });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const json = XLSX.utils.sheet_to_json(sheet);
 
-/* ======================================================
-   FETCH FILE EXCEL DARI GITHUB OTOMATIS
-====================================================== */
+        const siswa = json.find(s => String(s.NIS) === String(nisParam));
 
-async function loadExcelOnline(){
+        if (!siswa) {
+            document.getElementById("data").innerHTML = "<p>Data tidak ditemukan.</p>";
+            return;
+        }
 
-    const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
+        // Tampilkan foto
+        document.getElementById("foto").src = `foto/${siswa.NIS}.jpg`;
 
-    const resp = await fetch(url);
-    const buffer = await resp.arrayBuffer();
-
-    const workbook = XLSX.read(buffer, {type: "array"});
-
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const excelData = XLSX.utils.sheet_to_json(sheet, {header:1});
-
-    tampilkan(excelData);
-}
-
-/* ======================================================
-   RENDER KARTU (ASLI, TIDAK DIUBAH)
-====================================================== */
-
-function tampilkan(excelData){
-    let output = document.getElementById("output");
-    output.innerHTML = "";
-
-    let rows = excelData.slice(1); // tanpa header
-
-    rows.forEach((row)=>{
-        let card = document.createElement("div");
-        card.className = "card";
-
-        let noAbsen = row[0];  
-        let fotoPath = `foto/${noAbsen}.jpg`;
-
-        let html = `
-            <div class="photo-box">
-                <img class="photo" src="${fotoPath}" onerror="this.src='foto/noimage.jpg'">
-            </div>
-            <div class="data-box">
-        `;
-
-        Object.keys(kolomMap).forEach(label=>{
-            let index = XLSX.utils.decode_col(kolomMap[label]);
-            let value = row[index] || "";
-
-            if(label === "TglLahir") value = formatTanggal(value);
-
-            let isName = (label === "Nama") ? ' class="name-value"' : '';
-
-            html += `
-                <div class="row">
-                    <span class="label">${label.replace(/_/g," ")}</span>
-                    <span${isName}>${value}</span>
-                </div>
-            `;
-        });
-
-        html += `</div>`;
-
-        card.innerHTML = html;
-        output.appendChild(card);
+        // Tampilkan data biodata
+        let html = "";
+        for (let key in siswa) {
+            html += `<p><span class="label">${key}: </span>${siswa[key]}</p>`;
+        }
+        document.getElementById("data").innerHTML = html;
     });
-}
 
-/* ======================================================
-   DOWNLOAD PDF PER KARTU (ASLI)
-====================================================== */
-document.getElementById("downloadSingle").addEventListener("click", async function(){
-    const jsPDF = window.jspdf.jsPDF;
-    const cards = document.querySelectorAll(".card");
-
-    for(let i=0;i<cards.length;i++){
-        let canvas = await html2canvas(cards[i], {scale:2});
-        let img = canvas.toDataURL("image/png");
-
-        let pdf = new jsPDF({orientation:"landscape",unit:"px",format:[400,230]});
-        pdf.addImage(img, "PNG", 10, 10, 380, 210);
-        pdf.save(`Kartu-${i+1}.pdf`);
-    }
+// DOWNLOAD PDF
+document.getElementById("downloadBtn").addEventListener("click", function () {
+    const area = document.getElementById("biodataArea");
+    const opt = {
+        margin: 10,
+        filename: "biodata_siswa.pdf",
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
+    };
+    html2pdf().from(area).set(opt).save();
 });
-
-/* ======================================================
-   AUTO LOAD DATA SAAT PAGE DIBUKA
-====================================================== */
-loadExcelOnline();
 </script>
 
 </body>
