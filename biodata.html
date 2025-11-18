@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Biodata Siswa</title>
 
-<!-- XLSX JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <style>
@@ -76,6 +75,9 @@ p {
 <script>
 const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
 
+// URL dasar untuk foto siswa (Mengganti path relatif menjadi URL absolut)
+const baseUrlFoto = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/foto/"; 
+
 const params = new URLSearchParams(window.location.search);
 let nisParam = params.get("nis");
 
@@ -101,8 +103,8 @@ fetch(url)
         function tampilkanSiswa(idx) {
             const siswa = json[idx];
 
-            // Tampilkan foto
-            document.getElementById("foto").src = `foto/${siswa.NIS}.jpg`;
+            // Tampilkan foto (Perbaikan: Menggunakan baseUrlFoto)
+            document.getElementById("foto").src = `${baseUrlFoto}${siswa.NIS}.jpg`;
 
             // Tampilkan data
             let html = "";
