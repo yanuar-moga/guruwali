@@ -1,51 +1,112 @@
-<script>
-// URL RAW EXCEL dari GitHub kamu
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biodata Siswa</title>
+
+<!-- XLSX JS -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background: #f3f3f3;
+}
+.container {
+    max-width: 430px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+img.foto {
+    width: 120px;
+    height: 160px;
+    object-fit: cover;
+    border: 2px solid #333;
+    margin-bottom: 15px;
+}
+.label {
+    display: inline-block;
+    width: 120px;
+    font-weight: bold;
+}
+p {
+    margin: 4px 0;
+    font-size: 15px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2 style="text-align:center; margin-top:0;">Biodata Siswa</h2>
+    <div style="text-align:center;">
+        <img id="foto" class="foto" src="foto/noimage.jpg" alt="Foto Siswa">
+    </div>
+    <div id="data">Memuat data...</div>
+</div>
+
+<script type="text/javascript">
+
+(async () => {
+
 const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
 
-// Ambil parameter NIS dari URL
 const params = new URLSearchParams(window.location.search);
 const nisParam = params.get("nis");
 
-// Jika tidak ada parameter NIS
 if (!nisParam) {
     document.getElementById("data").innerHTML = "<p>Parameter ?nis= tidak diberikan.</p>";
+    return;
 }
 
-// Load Excel
-fetch(url)
-    .then(response => response.arrayBuffer())
-    .then(buffer => {
-        const workbook = XLSX.read(buffer, { type: "array" });
-        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+try {
+    const resp = await fetch(url);
+    if (!resp.ok) {
+        document.getElementById("data").innerHTML = "<p>Gagal memuat file Excel.</p>";
+        return;
+    }
 
-        // Pakai defval agar kolom kosong tetap muncul
-        const json = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+    const buffer = await resp.arrayBuffer();
+    const workbook = XLSX.read(buffer, { type: "array" });
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
 
-        console.log("Data Excel:", json); // DEBUG — cek nama kolom di console
+    const json = XLSX.utils.sheet_to_json(sheet, { defval: "" });
 
-        // Cari data siswa berdasarkan NIS
-        const siswa = json.find(s => String(s.NIS).trim() === String(nisParam).trim());
+    console.log("Data Excel:", json);  // Debug
 
-        if (!siswa) {
-            document.getElementById("data").innerHTML =
-                `<p>Data dengan NIS <b>${nisParam}</b> tidak ditemukan di Excel.</p>`;
-            return;
-        }
+    // Cari siswa berdasarkan NIS
+    const siswa = json.find(s => String(s.NIS).trim() === String(nisParam).trim());
 
-        // Tampilkan foto
-        document.getElementById("foto").src = `foto/${siswa.NIS}.jpg`;
+    if (!siswa) {
+        document.getElementById("data").innerHTML =
+            `<p>Data dengan NIS <b>${nisParam}</b> tidak ditemukan.</p>`;
+        return;
+    }
 
-        // Tampilkan data
-        let html = "";
-        for (let key in siswa) {
-            html += `
-            <p><span class="label">${key}: </span>${siswa[key]}</p>
-            `;
-        }
-        document.getElementById("data").innerHTML = html;
-    })
-    .catch(err => {
-        document.getElementById("data").innerHTML = "<p>Gagal memuat data Excel.</p>";
-        console.error(err);
-    });
+    // Foto
+    let fotoPath = `foto/${siswa.NIS}.jpg`;
+    document.getElementById("foto").src = fotoPath;
+
+    // Tampilkan data
+    let html = "";
+    for (let key in siswa) {
+        html += `<p><span class="label">${key}:</span> ${siswa[key]}</p>`;
+    }
+
+    document.getElementById("data").innerHTML = html;
+
+} catch (err) {
+    document.getElementById("data").innerHTML = "<p>Terjadi kesalahan memuat data.</p>";
+    console.error(err);
+}
+
+})();
 </script>
+
+</body>
+</html>
