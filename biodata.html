@@ -1,80 +1,3 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Biodata Siswa</title>
-
-<!-- XLSX JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
-<!-- HTML2PDF -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-<style>
-body {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    background: #f3f3f3;
-}
-.container {
-    max-width: 430px;
-    margin: auto;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-img.foto {
-    width: 120px;
-    height: 160px;
-    object-fit: cover;
-    border: 2px solid #333;
-    margin-bottom: 15px;
-}
-.label {
-    display: inline-block;
-    width: 120px;
-    font-weight: bold;
-}
-p {
-    margin: 4px 0;
-    font-size: 15px;
-}
-
-/* Floating Button */
-#downloadBtn {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: #007bff;
-    color: white;
-    padding: 14px 20px;
-    border-radius: 50px;
-    cursor: pointer;
-    font-weight: bold;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    transition: 0.2s;
-    z-index: 99;
-}
-#downloadBtn:hover {
-    background: #0056b3;
-}
-</style>
-</head>
-<body>
-
-<!-- Floating Download Button -->
-<div id="downloadBtn">📄 Download PDF</div>
-
-<div id="biodataArea" class="container">
-    <h2 style="text-align:center; margin-top:0;">Biodata Siswa</h2>
-    <div style="text-align:center;">
-        <img id="foto" class="foto" src="" alt="Foto Siswa">
-    </div>
-    <div id="data"></div>
-</div>
-
 <script>
 // URL RAW EXCEL dari GitHub kamu
 const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
@@ -83,44 +6,46 @@ const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/
 const params = new URLSearchParams(window.location.search);
 const nisParam = params.get("nis");
 
+// Jika tidak ada parameter NIS
+if (!nisParam) {
+    document.getElementById("data").innerHTML = "<p>Parameter ?nis= tidak diberikan.</p>";
+}
+
+// Load Excel
 fetch(url)
     .then(response => response.arrayBuffer())
-    .then(data => {
-        const workbook = XLSX.read(data, { type: "array" });
+    .then(buffer => {
+        const workbook = XLSX.read(buffer, { type: "array" });
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        const json = XLSX.utils.sheet_to_json(sheet);
 
-        const siswa = json.find(s => String(s.NIS) === String(nisParam));
+        // Pakai defval agar kolom kosong tetap muncul
+        const json = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+
+        console.log("Data Excel:", json); // DEBUG — cek nama kolom di console
+
+        // Cari data siswa berdasarkan NIS
+        const siswa = json.find(s => String(s.NIS).trim() === String(nisParam).trim());
 
         if (!siswa) {
-            document.getElementById("data").innerHTML = "<p>Data tidak ditemukan.</p>";
+            document.getElementById("data").innerHTML =
+                `<p>Data dengan NIS <b>${nisParam}</b> tidak ditemukan di Excel.</p>`;
             return;
         }
 
         // Tampilkan foto
         document.getElementById("foto").src = `foto/${siswa.NIS}.jpg`;
 
-        // Tampilkan data biodata
+        // Tampilkan data
         let html = "";
         for (let key in siswa) {
-            html += `<p><span class="label">${key}: </span>${siswa[key]}</p>`;
+            html += `
+            <p><span class="label">${key}: </span>${siswa[key]}</p>
+            `;
         }
         document.getElementById("data").innerHTML = html;
+    })
+    .catch(err => {
+        document.getElementById("data").innerHTML = "<p>Gagal memuat data Excel.</p>";
+        console.error(err);
     });
-
-// DOWNLOAD PDF
-document.getElementById("downloadBtn").addEventListener("click", function () {
-    const area = document.getElementById("biodataArea");
-    const opt = {
-        margin: 10,
-        filename: "biodata_siswa.pdf",
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
-    };
-    html2pdf().from(area).set(opt).save();
-});
 </script>
-
-</body>
-</html>
