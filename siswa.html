@@ -198,5 +198,33 @@ function logout() {
 loadExcel();
 </script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+async function loadBiodata() {
+    const s = load(SESSION_KEY);
+    if (!s || s.role !== 'siswa') {
+        window.location.href = 'index.html';
+        return;
+    }
+    const nisnLogin = s.nisn;
+    const file = await fetch('data.xlsx');
+    const arrayBuffer = await file.arrayBuffer();
+    const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const json = XLSX.utils.sheet_to_json(sheet);
+    const row = json.find(r => String(r.NISN).trim() === String(nisnLogin));
+    if (!row) { alert('Data siswa tidak ditemukan'); return; }
+    document.getElementById('bio-nama').textContent = row.Nama || '-';
+    document.getElementById('bio-nisn').textContent = row.NISN || '-';
+    document.getElementById('bio-nis').textContent = row.NIS || '-';
+    document.getElementById('bio-kelas').textContent = row.Kelas || '-';
+    document.getElementById('bio-tmplahir').textContent = row['Tempat Lahir'] || '-';
+    document.getElementById('bio-tgllahir').textContent = row['Tanggal Lahir'] || '-';
+    document.getElementById('bio-alamat').textContent = row.Alamat || '-';
+    document.getElementById('bio-ayah').textContent = row['Nama Ayah'] || '-';
+    document.getElementById('bio-ibu').textContent = row['Nama Ibu'] || '-';
+}
+loadBiodata();
+</script>
 </body>
 </html>
