@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Siswa - Guru Wali Bayu</title>
+
+  <!-- XLSX untuk membaca file Excel -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <style>
+    body { padding-bottom: 70px; font-family: Arial, sans-serif; }
+
+    #clock { font-weight: bold; color: #003f7f; }
+
+    .logout-btn {
+      background: #ffd84c; color: #002855; border: none;
+      border-radius: 8px; padding: 6px 10px; cursor: pointer;
+      font-weight: 600; transition: 0.3s;
+    }
+    .logout-btn:hover { background: #ffca2c; }
+
+    .topbar {
+      width: 100%; padding: 10px;
+      background: #003f7f; color: white;
+      display: flex; justify-content: space-between;
+      align-items: center;
+    }
+
+    .top-left { display: flex; align-items: center; gap: 10px; }
+
+    .toplogo { height: 40px; }
+
+    .search-box {
+      width: 90%; max-width: 500px; margin: 15px auto;
+      display: block; padding: 8px 10px;
+      border-radius: 8px; border: 1px solid #bbb;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .card {
+      width: 95%;
+      max-width: 1400px;
+      margin: 0 auto 80px auto;
+      background: white;
+      border-radius: 14px;
+      padding: 15px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+      font-size: 13px;
+      vertical-align: top;
+    }
+
+    th {
+      background: #003f7f; color: white; white-space: nowrap;
+      position: sticky; top: 0; z-index: 2;
+    }
+
+    tr:hover { background: #f3f9ff; }
+
+    /* Navbar bawah */
+    .navbar {
+      position: fixed; bottom: 0; left: 0; width: 100%;
+      background: #003f7f; padding: 10px 0;
+      display: flex; justify-content: space-around;
+    }
+    .navbar a {
+      color: white; text-decoration: none; font-size: 14px;
+      padding: 6px 10px;
+    }
+  </style>
+
+</head>
+<body class="light">
+
+  <!-- ====== Topbar ====== -->
+  <div class="topbar">
+    <div class="top-left">
+      <img src="assets/logo.png" alt="Logo" class="toplogo">
+      <h2>Data Siswa</h2>
+    </div>
+
+    <div class="top-right" style="display:flex;align-items:center;gap:10px;">
+      <span id="clock">00:00:00</span>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <!-- ====== Konten Utama ====== -->
+  <main class="menu-container">
+    <input type="text" id="searchBox" class="search-box" placeholder="Cari nama atau NISN...">
+
+    <div class="card">
+      <table id="tabelSiswa">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Nama Lengkap</th>
+            <th>Nama Panggil</th>
+            <th>JK</th>
+            <th>Tempat Lahir</th>
+            <th>Tgl Lahir</th>
+            <th>Alamat</th>
+            <th>No WA Siswa</th>
+            <th>Hobi</th>
+            <th>Cita-cita</th>
+            <th>NIS</th>
+            <th>NISN</th>
+            <th>Pelajaran Disukai</th>
+            <th>Pelajaran Tidak Disukai</th>
+            <th>Ekskul</th>
+            <th>Motivasi</th>
+            <th>Cara Belajar</th>
+            <th>Harapan Orang Tua</th>
+            <th>Penerima KIP</th>
+            <th>Ada KIP</th>
+            <th>Yatim/Piatu</th>
+            <th>Mondok</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <!-- ====== Navbar bawah ====== -->
+  <div class="navbar">
+    <a href="guru.html">Beranda</a>
+    <a href="pengumuman.html">Pengumuman</a>
+    <a href="curhatsiswa.html">Curhat</a>
+    <a href="pembinaan.html">Pembinaan</a>
+    <a href="masalahsiswa.html">Masalah</a>
+  </div>
+
+  <!-- ========== SCRIPT ========== -->
+  <script>
+
+    // Jam digital real-time
+    function updateClock() {
+      const now = new Date();
+      document.getElementById("clock").textContent =
+        now.toLocaleTimeString("id-ID", { hour12: false });
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Logout
+    function logout() {
+      if (confirm("Yakin ingin logout?")) {
+        localStorage.removeItem('gw_ann_session_v3');
+        window.location.href = 'index.html';
+      }
+    }
+
+    // Membaca Excel
+    async function loadExcel() {
+      const response = await fetch("assets/data.xlsx");
+      const arrayBuffer = await response.arrayBuffer();
+      const workbook = XLSX.read(arrayBuffer, { type: "array" });
+
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const data = XLSX.utils.sheet_to_json(sheet);
+
+      const tbody = document.querySelector("#tabelSiswa tbody");
+      tbody.innerHTML = "";
+
+      data.forEach(row => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${row.NO || ""}</td>
+          <td>${row["NAMA LENGKAP"] || ""}</td>
+          <td>${row["NAMA PANGGIL"] || ""}</td>
+          <td>${row["JENIS KELAMIN"] || ""}</td>
+          <td>${row["Tempat Lahir"] || ""}</td>
+          <td>${row["Tgl Lahir"] || ""}</td>
+          <td>${row["Alamat"] || ""}</td>
+          <td>${row["No WA Siswa"] || ""}</td>
+          <td>${row["Hobi"] || ""}</td>
+          <td>${row["Cita-cita"] || ""}</td>
+          <td>${row["NIS"] || ""}</td>
+          <td>${row["NISN"] || ""}</td>
+          <td>${row["Pelajaran yg disukai"] || ""}</td>
+          <td>${row["Pelajaran tdk disukai"] || ""}</td>
+          <td>${row["Ekskul"] || ""}</td>
+          <td>${row["Kegiatan yg memotivasi di sekolah"] || ""}</td>
+          <td>${row["Cara Belajar"] || ""}</td>
+          <td>${row["Harapan Orang Tua"] || ""}</td>
+          <td>${row["Penerima KIP"] || ""}</td>
+          <td>${row["ADA KARTU KIP"] || ""}</td>
+          <td>${row["YATIM/PIATU"] || ""}</td>
+          <td>${row["MONDOK"] || ""}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Kolom pencarian
+      const searchBox = document.getElementById("searchBox");
+      searchBox.addEventListener("input", () => {
+        const val = searchBox.value.toLowerCase();
+        const rows = tbody.getElementsByTagName("tr");
+
+        for (let r of rows) {
+          const name = r.cells[1].textContent.toLowerCase();
+          const nisn = r.cells[11].textContent.toLowerCase();
+          r.style.display = (name.includes(val) || nisn.includes(val)) ? "" : "none";
+        }
+      });
+    }
+
+    loadExcel();
+
+  </script>
+
+</body>
+</html>
