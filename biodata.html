@@ -13,51 +13,18 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
-body {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    background: #f3f3f3;
-}
-.container {
-    max-width: 430px;
-    margin: auto;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-img.foto {
-    width: 120px;
-    height: 160px;
-    object-fit: cover;
-    border: 2px solid #333;
-    margin-bottom: 15px;
-}
-.label {
-    display: inline-block;
-    width: 130px;
-    font-weight: bold;
-}
-p {
-    margin: 4px 0;
-    font-size: 15px;
-}
-.nav-buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
-}
-.nav-buttons button {
-    padding: 8px 15px;
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-}
-.nav-buttons button:hover {
-    background: #005fcc;
-}
+body { font-family: Arial, sans-serif; padding: 20px; background: #f3f3f3; }
+.container { max-width: 430px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+img.foto { width: 120px; height: 160px; object-fit: cover; border: 2px solid #333; margin-bottom: 15px; }
+.label { display: inline-block; width: 130px; font-weight: bold; }
+p { margin: 4px 0; font-size: 15px; }
+
+/* tombol next prev */
+.nav-buttons { display: flex; justify-content: space-between; margin-top: 15px; }
+.nav-buttons button { padding: 8px 15px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; }
+.nav-buttons button:hover { background: #005fcc; }
+
+/* floating download button */
 #downloadMenuBtn {
     position: fixed;
     right: 20px;
@@ -71,6 +38,8 @@ p {
     border: none;
     box-shadow: 0 4px 8px rgba(0,0,0,0.25);
 }
+
+/* menu dropdown */
 #menuPanel {
     position: fixed;
     right: 20px;
@@ -90,20 +59,17 @@ p {
 #menuPanel div:hover {
     background: #f0f0f0;
 }
-#menuPanel div:last-child {
-    border-bottom: none;
-}
+#menuPanel div:last-child { border-bottom: none; }
 </style>
 </head>
+
 <body>
 
 <div class="container" id="card">
     <h2 style="text-align:center;margin-top:0;">Biodata Siswa</h2>
-
     <div style="text-align:center;">
         <img id="foto" class="foto" src="" alt="Foto siswa">
     </div>
-
     <div id="data"></div>
 
     <div class="nav-buttons">
@@ -112,8 +78,10 @@ p {
     </div>
 </div>
 
+<!-- tombol floating -->
 <button id="downloadMenuBtn" onclick="toggleMenu()">Download</button>
 
+<!-- menu dropdown -->
 <div id="menuPanel">
     <div onclick="downloadImage()">📷 Download Gambar</div>
     <div onclick="downloadPDFsingle()">📄 Download PDF Kartu Ini</div>
@@ -121,6 +89,8 @@ p {
 </div>
 
 <script>
+
+// EXCEL GitHub
 const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
 
 let siswaData = [];
@@ -139,7 +109,6 @@ function excelDateToText(value) {
     return value;
 }
 
-// Label mapping
 const LABEL_MAP = {
     "NAMA": "Nama",
     "NISN": "NISN",
@@ -151,58 +120,53 @@ const LABEL_MAP = {
     "ABSEN": "Absen"
 };
 
-// Load Excel
+// Load excel
 fetch(url)
-    .then(r => r.arrayBuffer())
-    .then(buf => {
-        const wb = XLSX.read(buf, { type: "array" });
-        const sheet = wb.Sheets[wb.SheetNames[0]];
-        siswaData = XLSX.utils.sheet_to_json(sheet);
-        showCard(0);
-    });
+.then(r => r.arrayBuffer())
+.then(buf => {
+    const wb = XLSX.read(buf, { type: "array" });
+    const sheet = wb.Sheets[wb.SheetNames[0]];
+    siswaData = XLSX.utils.sheet_to_json(sheet);
+    showCard(0);
+});
 
-// Tampilkan kartu
+// tampilkan kartu
 function showCard(i) {
     index = i;
     const s = siswaData[i];
     if (!s) return;
 
-    // FOTO
-    const foto = document.getElementById("foto");
-    const base = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/foto/";
+    // TAMPILKAN FOTO
+    document.getElementById("foto").src =
+        `https://raw.githubusercontent.com/yanuar-moga/guruwali/main/foto/${s.ABSEN}.jpg`;
 
-    foto.onerror = null;
-    foto.src = `${base}${s.ABSEN}.jpg`;
-
-    foto.onerror = () => {
-        foto.onerror = null;
-        foto.src = `${base}${s.ABSEN}.JPG`;
-    };
-
-    // DATA
+    // TAMPILKAN DATA
     let html = "";
     for (let key in s) {
         if (!LABEL_MAP[key]) continue;
+        let label = LABEL_MAP[key];
+        let value = excelDateToText(s[key]);
+
         html += `
-            <p><span class="label">${LABEL_MAP[key]}</span>: ${excelDateToText(s[key])}</p>
+            <p>
+                <span class="label">${label}</span>: ${value}
+            </p>
         `;
     }
+
     document.getElementById("data").innerHTML = html;
 }
 
-function nextCard() {
-    if (index < siswaData.length - 1) showCard(index + 1);
-}
-function prevCard() {
-    if (index > 0) showCard(index - 1);
-}
+function nextCard() { if (index < siswaData.length - 1) showCard(index + 1); }
+function prevCard() { if (index > 0) showCard(index - 1); }
 
-// Menu
+/* MENU DOWNLOAD */
 function toggleMenu() {
     const menu = document.getElementById("menuPanel");
     menu.style.display = menu.style.display === "block" ? "none" : "block";
 }
 
+/* Download Gambar */
 function downloadImage() {
     html2canvas(document.getElementById("card")).then(canvas => {
         const link = document.createElement("a");
@@ -212,6 +176,7 @@ function downloadImage() {
     });
 }
 
+/* PDF satu kartu */
 function downloadPDFsingle() {
     html2canvas(document.getElementById("card")).then(canvas => {
         const imgData = canvas.toDataURL("image/png");
@@ -221,8 +186,10 @@ function downloadPDFsingle() {
     });
 }
 
+/* PDF semua kartu */
 async function downloadPDFall() {
     const pdf = new jspdf.jsPDF();
+
     for (let i = 0; i < siswaData.length; i++) {
         showCard(i);
         await html2canvas(document.getElementById("card")).then(canvas => {
@@ -231,6 +198,7 @@ async function downloadPDFall() {
             pdf.addImage(img, "PNG", 10, 10, 190, 0);
         });
     }
+
     pdf.save("semua_kartu.pdf");
 }
 
