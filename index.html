@@ -6,14 +6,18 @@
 <title>Login - Aplikasi Guru Wali</title>
 <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
 
 <main class="page-center">
+
   <div class="login-card">
+
     <img src="assets/logo.png" alt="Logo Sekolah" class="logo" />
     <h1 class="title">Aplikasi Guru Wali</h1>
 
     <form id="loginForm" class="form">
+
       <label class="field">
         <span class="label-text">User</span>
         <input id="username" type="text" placeholder="Masukkan User" required />
@@ -30,22 +34,23 @@
       </div>
 
       <button type="submit" class="btn-primary">Masuk</button>
+
     </form>
 
+    <div class="footer">© 2025 MB All Rights Reserved</div>
 
-    </div>
-
-    <div class="footer">© 2025 SMPN 1 Moga</div>
   </div>
+
 </main>
 
 <script src="script.js"></script>
 <script>
-  // toggle tampilkan password
-  document.getElementById('showPassword').addEventListener('change', function(){
+  // Tampilkan / sembunyikan password
+  document.getElementById('showPassword').addEventListener('change', function () {
     const p = document.getElementById('password');
     p.type = this.checked ? 'text' : 'password';
   });
 </script>
+
 </body>
 </html>
