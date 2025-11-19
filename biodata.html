@@ -16,34 +16,38 @@
 body {
     font-family: Arial, sans-serif;
     background: #e6eef7;
-    padding: 25px;
+    padding: 20px 0 100px 0; /* ruang bawah untuk floating */
+    margin: 0;
 }
 
+/* --- CARD (rasio 9:16) --- */
 .card {
     width: 360px;
+    height: 640px;   /* rasio portrait 9:16 */
     background: white;
     border-radius: 16px;
     padding: 18px;
     margin: auto;
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     border-top: 8px solid #0d47a1;
+    overflow: hidden; /* biar tidak scroll */
 }
 
+/* --- HEADER --- */
 .header {
     text-align: center;
     margin-bottom: 10px;
 }
-
 .header img {
     width: 70px;
 }
-
 .header h2 {
-    font-size: 20px;
+    font-size: 18px;
     margin: 5px 0 0 0;
     color: #0d47a1;
 }
 
+/* --- FOTO --- */
 .photo {
     width: 110px;
     height: 140px;
@@ -54,32 +58,57 @@ body {
     border: 2px solid #0d47a1;
 }
 
+/* --- ROW DATA --- */
 .row {
     display: flex;
     padding: 5px 8px;
 }
-
 .row:nth-child(odd) {
     background: #f5f8ff;
 }
 
-.label { width: 140px; font-weight: bold; font-size: 13px; }
+.label { width: 140px; font-weight: bold; font-size: 12px; }
 .colon { width: 10px; }
-.value { flex: 1; font-size: 13px; }
+.value { flex: 1; font-size: 12px; }
 
-.btn {
-    padding: 10px 18px;
-    background: #0d47a1;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    margin: 5px;
+/* ---- FLOATING BOTTOM MENU ---- */
+#floatingMenu {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    box-shadow: 0 -3px 12px rgba(0,0,0,0.2);
+    padding: 10px;
+    display: flex;
+    justify-content: space-around;
+    z-index: 999;
 }
 
+.btn {
+    background: #0d47a1;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: none;
+    font-size: 14px;
+}
+
+/* --- dropdown download --- */
+#downloadMenu {
+    position: fixed;
+    bottom: 60px;
+    right: 10px;
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+    display: none;
+    z-index: 1000;
+}
 #downloadMenu button {
-    width: 220px;
-    margin-bottom: 6px;
+    width: 200px;
+    margin: 5px 0;
 }
 </style>
 </head>
@@ -87,7 +116,6 @@ body {
 <body>
 
 <div id="card" class="card">
-
     <div class="header">
         <img src="https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/logo.png">
         <h2>Biodata Siswa Kelas 7H</h2>
@@ -98,14 +126,15 @@ body {
     <div id="data"></div>
 </div>
 
-<div style="text-align:center; margin-top:15px;">
-    <button class="btn" onclick="prev()">◀ Prev</button>
-    <button class="btn" onclick="next()">Next ▶</button>
+<!-- FLOATING BOTTOM MENU -->
+<div id="floatingMenu">
+    <button class="btn" onclick="prev()">◀</button>
+    <button class="btn" onclick="next()">▶</button>
     <button class="btn" onclick="toggleMenu()">Download ▼</button>
 </div>
 
-<!-- MENU DOWNLOAD -->
-<div id="downloadMenu" style="display:none; text-align:center; margin-top:10px;">
+<!-- POPUP DOWNLOAD -->
+<div id="downloadMenu">
     <button class="btn" onclick="downloadJPG()">📷 Download JPG</button>
     <button class="btn" onclick="downloadPDFsingle()">📄 PDF Kartu Ini</button>
     <button class="btn" onclick="downloadPDFall()">📚 PDF Semua Kartu</button>
@@ -115,7 +144,7 @@ body {
 let siswa = [];
 let index = 0;
 
-// Ambil Excel
+/* LOAD EXCEL */
 async function loadExcel() {
     const file = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
     const res = await fetch(file);
@@ -123,11 +152,10 @@ async function loadExcel() {
     const wb = XLSX.read(buf, { type: "array" });
     const sheet = wb.Sheets[wb.SheetNames[0]];
     siswa = XLSX.utils.sheet_to_json(sheet);
-
     showData();
 }
 
-// Tampilkan biodata per siswa
+/* TAMPILKAN DATA */
 function showData() {
     const s = siswa[index];
     let nomorFoto = index + 1;
@@ -148,22 +176,23 @@ function showData() {
     document.getElementById("data").innerHTML = html;
 }
 
+/* NAVIGASI */
 function next() {
     if (index < siswa.length - 1) index++;
     showData();
 }
-
 function prev() {
     if (index > 0) index--;
     showData();
 }
 
+/* DOWNLOAD MENU */
 function toggleMenu() {
     const m = document.getElementById("downloadMenu");
     m.style.display = (m.style.display === "none") ? "block" : "none";
 }
 
-/* 1. DOWNLOAD JPG */
+/* DOWNLOAD JPG */
 function downloadJPG() {
     html2canvas(document.getElementById("card"), { scale: 3 }).then(canvas => {
         const a = document.createElement("a");
@@ -173,21 +202,21 @@ function downloadJPG() {
     });
 }
 
-/* 2. DOWNLOAD PDF KARTU TAMPIL */
+/* PDF SATU */
 function downloadPDFsingle() {
     const { jsPDF } = window.jspdf;
 
     html2canvas(document.getElementById("card"), { scale: 3 }).then(canvas => {
-        const pdf = new jsPDF("p", "px", [400, 600]);
-        pdf.addImage(canvas.toDataURL("image/jpeg"), "JPEG", 10, 10, 380, 580);
+        const pdf = new jsPDF("p", "px", [400, 640]);
+        pdf.addImage(canvas.toDataURL("image/jpeg"), "JPEG", 10, 10, 380, 620);
         pdf.save(`Kartu-${index + 1}.pdf`);
     });
 }
 
-/* 3. DOWNLOAD PDF SEMUA KARTU */
+/* PDF SEMUA */
 async function downloadPDFall() {
     const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF("p", "px", [400, 600]);
+    const pdf = new jsPDF("p", "px", [400, 640]);
 
     for (let i = 0; i < siswa.length; i++) {
         index = i;
@@ -196,11 +225,11 @@ async function downloadPDFall() {
         await html2canvas(document.getElementById("card"), { scale: 3 })
         .then(canvas => {
             if (i > 0) pdf.addPage();
-            pdf.addImage(canvas.toDataURL("image/jpeg"), "JPEG", 10, 10, 380, 580);
+            pdf.addImage(canvas.toDataURL("image/jpeg"), "JPEG", 10, 10, 380, 620);
         });
     }
 
-    pdf.save("Semua-Kartu-Pelajar.pdf");
+    pdf.save("Semua-Kartu.pdf");
 }
 
 loadExcel();
