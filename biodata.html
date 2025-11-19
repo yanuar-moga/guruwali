@@ -9,137 +9,146 @@
 
 <style>
 body {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    background: #f3f3f3;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background: #f3f3f3;
 }
 .container {
-    max-width: 430px;
-    margin: auto;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    max-width: 430px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 img.foto {
-    width: 120px;
-    height: 160px;
-    object-fit: cover;
-    border: 2px solid #333;
-    margin-bottom: 15px;
+    width: 120px;
+    height: 160px;
+    object-fit: cover;
+    border: 2px solid #333;
+    margin-bottom: 15px;
 }
 .label {
-    display: inline-block;
-    width: 120px;
-    font-weight: bold;
+    display: inline-block;
+    width: 120px;
+    font-weight: bold;
 }
 p {
-    margin: 4px 0;
-    font-size: 15px;
+    margin: 4px 0;
+    font-size: 15px;
 }
 .navbtn {
-    width: 48%;
-    padding: 10px;
-    margin-top: 15px;
-    font-size: 16px;
-    border: none;
-    background: #1976d2;
-    color: white;
-    border-radius: 6px;
-    cursor: pointer;
+    width: 48%;
+    padding: 10px;
+    margin-top: 15px;
+    font-size: 16px;
+    border: none;
+    background: #1976d2;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
 }
 .navbtn:disabled {
-    background: #9e9e9e;
+    background: #9e9e9e;
 }
 .btnwrap {
-    display: flex;
-    justify-content: space-between;
+    display: flex;
+    justify-content: space-between;
 }
 </style>
 </head>
 <body>
 
 <div class="container">
-    <h2 style="text-align:center; margin-top:0;">Biodata Siswa</h2>
-    <div style="text-align:center;">
-        <img id="foto" class="foto" src="" alt="Foto Siswa">
-    </div>
-    <div id="data"></div>
+    <h2 style="text-align:center; margin-top:0;">Biodata Siswa</h2>
+    <div style="text-align:center;">
+        <img id="foto" class="foto" src="" alt="Foto Siswa">
+    </div>
+    <div id="data"></div>
 
-    <div class="btnwrap">
-        <button id="prevBtn" class="navbtn">⬅ Prev</button>
-        <button id="nextBtn" class="navbtn">Next ➡</button>
-    </div>
+    <div class="btnwrap">
+        <button id="prevBtn" class="navbtn">⬅ Prev</button>
+        <button id="nextBtn" class="navbtn">Next ➡</button>
+    </div>
 </div>
 
 <script>
 const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
 
-// URL dasar untuk foto siswa (Mengganti path relatif menjadi URL absolut)
-const baseUrlFoto = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/foto/"; 
+// URL dasar untuk foto siswa - Pastikan ini *tepat* menunjuk ke folder tempat foto berada
+const baseUrlFoto = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/foto/"; 
 
 const params = new URLSearchParams(window.location.search);
 let nisParam = params.get("nis");
 
 fetch(url)
-    .then(res => res.arrayBuffer())
-    .then(buffer => {
-        const workbook = XLSX.read(buffer, { type: "array" });
-        const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        const json = XLSX.utils.sheet_to_json(sheet);
+    .then(res => res.arrayBuffer())
+    .then(buffer => {
+        const workbook = XLSX.read(buffer, { type: "array" });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const json = XLSX.utils.sheet_to_json(sheet);
 
-        // Jika NIS tidak diberikan → tampilkan siswa pertama
-        if (!nisParam) nisParam = json[0].NIS;
+        // Jika NIS tidak diberikan → tampilkan siswa pertama
+        if (!nisParam) nisParam = json[0].NIS;
 
-        // Cari index siswa aktif
-        let index = json.findIndex(s => String(s.NIS) === String(nisParam));
+        // Cari index siswa aktif
+        let index = json.findIndex(s => String(s.NIS) === String(nisParam));
 
-        // Jika tidak ditemukan, tampilkan pesan
-        if (index === -1) {
-            document.getElementById("data").innerHTML = "<p>Data tidak ditemukan.</p>";
-            return;
-        }
+        // Jika tidak ditemukan, tampilkan pesan
+        if (index === -1) {
+            document.getElementById("data").innerHTML = "<p>Data tidak ditemukan.</p>";
+            return;
+        }
 
-        function tampilkanSiswa(idx) {
-            const siswa = json[idx];
+        function tampilkanSiswa(idx) {
+            const siswa = json[idx];
 
-            // Tampilkan foto (Perbaikan: Menggunakan baseUrlFoto)
-            document.getElementById("foto").src = `${baseUrlFoto}${siswa.NIS}.jpg`;
-
-            // Tampilkan data
-            let html = "";
-            for (let k in siswa) {
-                html += `<p><span class="label">${k}: </span> ${siswa[k]}</p>`;
+            // PERBAIKAN FOTO DI SINI:
+            // Menggabungkan baseUrlFoto, NIS, dan ekstensi '.jpg'
+            document.getElementById("foto").src = `${baseUrlFoto}${siswa.NIS}.jpg`; 
+            document.getElementById("foto").alt = `Foto Siswa ${siswa.NIS}`;
+            // Untuk mengatasi potensi error jika foto tidak ada:
+            document.getElementById("foto").onerror = function() {
+                this.onerror=null; 
+                this.src=''; // Ganti dengan path foto default jika ada
+                this.alt='Foto tidak ditemukan';
             }
-            document.getElementById("data").innerHTML = html;
 
-            // Update tombol Prev/Next
-            document.getElementById("prevBtn").disabled = idx === 0;
-            document.getElementById("nextBtn").disabled = idx === json.length - 1;
 
-            // Update URL tanpa reload
-            const newUrl = window.location.pathname + "?nis=" + siswa.NIS;
-            window.history.replaceState(null, "", newUrl);
-        }
+            // Tampilkan data
+            let html = "";
+            for (let k in siswa) {
+                html += `<p><span class="label">${k}: </span> ${siswa[k]}</p>`;
+            }
+            document.getElementById("data").innerHTML = html;
 
-        // Tampilkan pertama kali
-        tampilkanSiswa(index);
+            // Update tombol Prev/Next
+            document.getElementById("prevBtn").disabled = idx === 0;
+            document.getElementById("nextBtn").disabled = idx === json.length - 1;
 
-        // Tombol navigasi
-        document.getElementById("prevBtn").onclick = () => {
-            if (index > 0) {
-                index--;
-                tampilkanSiswa(index);
-            }
-        };
+            // Update URL tanpa reload
+            const newUrl = window.location.pathname + "?nis=" + siswa.NIS;
+            window.history.replaceState(null, "", newUrl);
+        }
 
-        document.getElementById("nextBtn").onclick = () => {
-            if (index < json.length - 1) {
-                index++;
-                tampilkanSiswa(index);
-            }
-        };
-    });
+        // Tampilkan pertama kali
+        tampilkanSiswa(index);
+
+        // Tombol navigasi
+        document.getElementById("prevBtn").onclick = () => {
+            if (index > 0) {
+                index--;
+                tampilkanSiswa(index);
+            }
+        };
+
+        document.getElementById("nextBtn").onclick = () => {
+            if (index < json.length - 1) {
+                index++;
+                tampilkanSiswa(index);
+            }
+        };
+    });
 </script>
 
 </body>
