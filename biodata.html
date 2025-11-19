@@ -1,96 +1,5 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Biodata Siswa</title>
-
-<!-- XLSX -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
-<!-- html2canvas + jsPDF -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-<style>
-body { font-family: Arial, sans-serif; padding: 20px; background: #f3f3f3; }
-.container { max-width: 430px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-img.foto { width: 120px; height: 160px; object-fit: cover; border: 2px solid #333; margin-bottom: 15px; }
-.label { display: inline-block; width: 130px; font-weight: bold; }
-p { margin: 4px 0; font-size: 15px; }
-
-/* tombol next prev */
-.nav-buttons { display: flex; justify-content: space-between; margin-top: 15px; }
-.nav-buttons button { padding: 8px 15px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; }
-.nav-buttons button:hover { background: #005fcc; }
-
-/* floating download button */
-#downloadMenuBtn {
-    position: fixed;
-    right: 20px;
-    bottom: 20px;
-    background: #007bff;
-    color: white;
-    padding: 14px 20px;
-    border-radius: 30px;
-    font-size: 17px;
-    cursor: pointer;
-    border: none;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.25);
-}
-
-/* menu dropdown */
-#menuPanel {
-    position: fixed;
-    right: 20px;
-    bottom: 80px;
-    background: white;
-    border-radius: 10px;
-    padding: 10px;
-    width: 200px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-    display: none;
-}
-#menuPanel div {
-    padding: 10px;
-    cursor: pointer;
-    border-bottom: 1px solid #ddd;
-}
-#menuPanel div:hover {
-    background: #f0f0f0;
-}
-#menuPanel div:last-child { border-bottom: none; }
-</style>
-</head>
-
-<body>
-
-<div class="container" id="card">
-    <h2 style="text-align:center;margin-top:0;">Biodata Siswa</h2>
-    <div style="text-align:center;">
-        <img id="foto" class="foto" src="" alt="Foto siswa">
-    </div>
-    <div id="data"></div>
-
-    <div class="nav-buttons">
-        <button onclick="prevCard()">Prev</button>
-        <button onclick="nextCard()">Next</button>
-    </div>
-</div>
-
-<!-- tombol floating -->
-<button id="downloadMenuBtn" onclick="toggleMenu()">Download</button>
-
-<!-- menu dropdown -->
-<div id="menuPanel">
-    <div onclick="downloadImage()">📷 Download Gambar</div>
-    <div onclick="downloadPDFsingle()">📄 Download PDF Kartu Ini</div>
-    <div onclick="downloadPDFall()">📚 Download Semua PDF</div>
-</div>
-
 <script>
-
-// EXCEL GitHub
+// URL Excel
 const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
 
 let siswaData = [];
@@ -109,6 +18,7 @@ function excelDateToText(value) {
     return value;
 }
 
+// Label rapi
 const LABEL_MAP = {
     "NAMA": "Nama",
     "NISN": "NISN",
@@ -120,27 +30,28 @@ const LABEL_MAP = {
     "ABSEN": "Absen"
 };
 
-// Load excel
+// Load Excel
 fetch(url)
-.then(r => r.arrayBuffer())
-.then(buf => {
-    const wb = XLSX.read(buf, { type: "array" });
-    const sheet = wb.Sheets[wb.SheetNames[0]];
-    siswaData = XLSX.utils.sheet_to_json(sheet);
-    showCard(0);
-});
+    .then(r => r.arrayBuffer())
+    .then(buf => {
+        const wb = XLSX.read(buf, { type: "array" });
+        const sheet = wb.Sheets[wb.SheetNames[0]];
+        siswaData = XLSX.utils.sheet_to_json(sheet);
+        showCard(0);
+    });
 
-// tampilkan kartu
+// Tampilkan 1 kartu
 function showCard(i) {
     index = i;
     const s = siswaData[i];
     if (!s) return;
 
-    // TAMPILKAN FOTO
+    // FOTO BERDASARKAN URUTAN BARIS (1, 2, 3, dst)
+    const fotoNomor = i + 1;
     document.getElementById("foto").src =
-        `https://raw.githubusercontent.com/yanuar-moga/guruwali/main/foto/${s.ABSEN}.jpg`;
+        `https://raw.githubusercontent.com/yanuar-moga/guruwali/main/foto/${fotoNomor}.jpg`;
 
-    // TAMPILKAN DATA
+    // DATA RAPI
     let html = "";
     for (let key in s) {
         if (!LABEL_MAP[key]) continue;
@@ -157,16 +68,21 @@ function showCard(i) {
     document.getElementById("data").innerHTML = html;
 }
 
-function nextCard() { if (index < siswaData.length - 1) showCard(index + 1); }
-function prevCard() { if (index > 0) showCard(index - 1); }
+function nextCard() {
+    if (index < siswaData.length - 1) showCard(index + 1);
+}
 
-/* MENU DOWNLOAD */
+function prevCard() {
+    if (index > 0) showCard(index - 1);
+}
+
+/* Download menu */
 function toggleMenu() {
     const menu = document.getElementById("menuPanel");
     menu.style.display = menu.style.display === "block" ? "none" : "block";
 }
 
-/* Download Gambar */
+/* Download gambar */
 function downloadImage() {
     html2canvas(document.getElementById("card")).then(canvas => {
         const link = document.createElement("a");
@@ -176,17 +92,17 @@ function downloadImage() {
     });
 }
 
-/* PDF satu kartu */
+/* Download PDF single */
 function downloadPDFsingle() {
     html2canvas(document.getElementById("card")).then(canvas => {
-        const imgData = canvas.toDataURL("image/png");
+        const img = canvas.toDataURL("image/png");
         const pdf = new jspdf.jsPDF();
-        pdf.addImage(imgData, "PNG", 10, 10, 190, 0);
+        pdf.addImage(img, "PNG", 10, 10, 190, 0);
         pdf.save("kartu.pdf");
     });
 }
 
-/* PDF semua kartu */
+/* Download semua PDF */
 async function downloadPDFall() {
     const pdf = new jspdf.jsPDF();
 
@@ -201,8 +117,4 @@ async function downloadPDFall() {
 
     pdf.save("semua_kartu.pdf");
 }
-
 </script>
-
-</body>
-</html>
