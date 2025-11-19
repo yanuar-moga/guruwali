@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login - Aplikasi Guru Wali</title>
+<link rel="stylesheet" href="style.css">
+
 <style>
   body {
     font-family: "Poppins", sans-serif;
@@ -57,22 +59,11 @@
     font-size:13px;
     color:#333;
     margin-bottom:12px;
-    width:100%;
   }
-
-  .show-pass input[type=checkbox] {
-    margin-left:0;
+  .show-pass input {
     margin-right:6px;
     transform:scale(1.05);
-    cursor:pointer;
     accent-color:#4da3ff;
-  }
-
-  .show-pass label {
-    cursor:pointer;
-    flex:1;
-    text-align:left;
-    margin-left:0;
   }
 
   button {
@@ -87,25 +78,18 @@
     cursor:pointer;
     transition:.25s;
   }
-
   button:hover {
     transform:scale(1.03);
-    background:linear-gradient(90deg,#007bff,#005ecb);
   }
 
   .footer {
-    margin-top:12px;
     font-size:10.5px;
     color:#777;
-  }
-
-  .error {
-    margin-top:10px;
-    color:red;
-    font-size:12px;
+    margin-top:12px;
   }
 </style>
 </head>
+
 <body>
   <div class="login-card">
     <img src="assets/logo.png" alt="Logo Sekolah">
@@ -123,56 +107,17 @@
       <button type="submit">Masuk</button>
     </form>
 
-    <div id="errorMsg" class="error"></div>
-
     <div class="footer">© 2025 MB All rights reserved</div>
   </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="script.js"></script>
 
-<script>
-document.getElementById("showPassword").addEventListener("change", function() {
-  const pass = document.getElementById("password");
-  pass.type = this.checked ? "text" : "password";
-});
-
-// 🔗 URL RAW GitHub kamu (ganti sesuai punyamu)
-const DATA_URL = "https://raw.githubusercontent.com/USERNAME/REPO/main/data.xlsx";
-
-document.getElementById("loginForm").addEventListener("submit", function(e) {
-  e.preventDefault();
-
-  const nisnInput = document.getElementById("username").value.trim();
-  const passwordInput = document.getElementById("password").value.trim();
-  const errorMsg = document.getElementById("errorMsg");
-
-  if (passwordInput !== "siswa") {
-    errorMsg.textContent = "Login gagal — periksa username/NISN dan password.";
-    return;
-  }
-
-  fetch(DATA_URL)
-    .then(res => res.arrayBuffer())
-    .then(buffer => {
-      const workbook = XLSX.read(buffer, { type: "array" });
-      const sheet = workbook.Sheets["DATA"];
-      const rows = XLSX.utils.sheet_to_json(sheet);
-
-      const siswa = rows.find(r => String(r.NISN) === nisnInput);
-
-      if (!siswa) {
-        errorMsg.textContent = "Login gagal — periksa username/NISN dan password.";
-        return;
-      }
-
-      localStorage.setItem("siswaLogin", JSON.stringify(siswa));
-      window.location.href = "siswa.html";
-    })
-    .catch(() => {
-      errorMsg.textContent = "Gagal mengambil data. Periksa koneksi.";
-    });
-});
-</script>
-
+  <script>
+    document.getElementById("showPassword").onclick = () => {
+      const p = document.getElementById("password");
+      p.type = p.type === "password" ? "text" : "password";
+    };
+  </script>
 </body>
 </html>
