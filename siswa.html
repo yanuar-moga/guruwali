@@ -5,6 +5,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard Siswa</title>
   <link rel="stylesheet" href="style.css">
+
+  <style>
+    .bio-card {
+      width: 92%;
+      max-width: 500px;
+      margin: 15px auto;
+      background: white;
+      border-radius: 14px;
+      padding: 15px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+      text-align: center;
+    }
+    .bio-photo {
+      width: 120px;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid #ddd;
+    }
+    .bio-title {
+      font-weight: bold;
+      margin-top: 8px;
+      font-size: 18px;
+      color: #003f7f;
+    }
+    .bio-table {
+      width: 100%;
+      margin-top: 12px;
+      font-size: 14px;
+      border-collapse: collapse;
+    }
+    .bio-table td {
+      padding: 6px 5px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+    }
+    .label {
+      width: 35%;
+      font-weight: bold;
+      color: #003f7f;
+    }
+  </style>
 </head>
 <body class="light">
 
@@ -18,6 +60,11 @@
       <span id="clock"></span>
       <button class="logout-btn" onclick="logout()">Logout</button>
     </div>
+  </div>
+
+  <!-- ====== BIODATA SISWA ====== -->
+  <div id="bioContainer" class="bio-card">
+    <p>Sedang memuat data siswa...</p>
   </div>
 
   <!-- ====== Menu Utama ====== -->
@@ -37,26 +84,79 @@
     <a href="pembinaan.html">Pembinaan</a>
   </div>
 
-  <!-- ====== Script Jam & Logout ====== -->
-  <script>
-    // Jam Digital
-    function updateClock() {
-      const now = new Date();
-      const jam = String(now.getHours()).padStart(2, '0');
-      const menit = String(now.getMinutes()).padStart(2, '0');
-      const detik = String(now.getSeconds()).padStart(2, '0');
-      document.getElementById('clock').textContent = `${jam}:${menit}:${detik}`;
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
+<script>
+/* ======================
+      JAM DIGITAL
+====================== */
+function updateClock() {
+  const now = new Date();
+  document.getElementById("clock").textContent =
+    now.toLocaleTimeString("id-ID");
+}
+setInterval(updateClock, 1000);
+updateClock();
 
-    // Fungsi Logout
-    function logout() {
-      if (confirm("Yakin ingin keluar dari akun siswa?")) {
-        window.location.href = "index.html";
-      }
-    }
-  </script>
+/* ======================
+      LOGOUT
+====================== */
+function logout() {
+  if (confirm("Yakin ingin keluar dari akun siswa?")) {
+    window.location.href = "index.html";
+  }
+}
+
+/* =====================================================
+      LOAD DATA SISWA BERDASARKAN PARAMETER NISN
+===================================================== */
+async function loadSiswaDashboard() {
+  const params = new URLSearchParams(window.location.search);
+  const nisn = params.get("nisn");
+
+  if (!nisn) {
+    document.getElementById("bioContainer").innerHTML =
+      "<p style='color:red;'>NISN tidak ditemukan!</p>";
+    return;
+  }
+
+  // 🔥 Ambil data siswa
+  const res = await fetch("data/siswa.json");
+  const siswaList = await res.json();
+
+  const siswa = siswaList.find(s => s.nisn == nisn);
+
+  if (!siswa) {
+    document.getElementById("bioContainer").innerHTML =
+      "<p style='color:red;'>Data siswa tidak ditemukan!</p>";
+    return;
+  }
+
+  // Foto berdasarkan nomor urut
+  const fotoUrl = `foto/${siswa.no}.jpg`;
+
+  // Render biodata
+  document.getElementById("bioContainer").innerHTML = `
+    <img src="${fotoUrl}" class="bio-photo" alt="Foto Siswa"
+         onerror="this.src='assets/nofoto.png'">
+
+    <div class="bio-title">${siswa.nama}</div>
+
+    <table class="bio-table">
+      <tr><td class="label">NISN</td><td>${siswa.nisn}</td></tr>
+      <tr><td class="label">Nama Panggil</td><td>${siswa.panggil}</td></tr>
+      <tr><td class="label">Jenis Kelamin</td><td>${siswa.jk}</td></tr>
+      <tr><td class="label">Tempat Lahir</td><td>${siswa.tempat_lahir}</td></tr>
+      <tr><td class="label">Tanggal Lahir</td><td>${siswa.tgl_lahir}</td></tr>
+      <tr><td class="label">Alamat</td><td>${siswa.alamat}</td></tr>
+      <tr><td class="label">No. WA</td><td>${siswa.no_wa}</td></tr>
+      <tr><td class="label">Hobi</td><td>${siswa.hobi}</td></tr>
+      <tr><td class="label">Cita-cita</td><td>${siswa.cita}</td></tr>
+      <tr><td class="label">Ekskul</td><td>${siswa.ekskul}</td></tr>
+    </table>
+  `;
+}
+
+loadSiswaDashboard();
+</script>
 
 </body>
 </html>
