@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Kartu Pelajar SMPN 1 Moga</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biodata Siswa SMPN 1 Moga</title>
 
+<!-- XLSX -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<!-- html2canvas + jsPDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -17,7 +20,7 @@ body {
 }
 
 .card {
-    width: 350px;
+    width: 360px;
     background: white;
     border-radius: 16px;
     padding: 18px;
@@ -26,58 +29,44 @@ body {
     border-top: 8px solid #0d47a1;
 }
 
-/* HEADER */
 .header {
     text-align: center;
     margin-bottom: 10px;
 }
+
 .header img {
     width: 70px;
-    margin-bottom: 5px;
-}
-.header h2 {
-    margin: 0;
-    color: #0d47a1;
-}
-.header small {
-    font-size: 12px;
 }
 
-/* FOTO */
+.header h2 {
+    font-size: 20px;
+    margin: 5px 0 0 0;
+    color: #0d47a1;
+}
+
 .photo {
     width: 110px;
     height: 140px;
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: 10px;
     margin: 10px auto;
     display: block;
     border: 2px solid #0d47a1;
 }
 
-/* BIODATA ROW */
 .row {
     display: flex;
-    padding: 5px 6px;
-    font-size: 13px;
-}
-.row:nth-child(odd) {
-    background: #f2f6fc;
-}
-.row:nth-child(even) {
-    background: #e7edf7;
-}
-.label {
-    width: 120px;
-    font-weight: bold;
-}
-.colon {
-    width: 10px;
-}
-.value {
-    flex: 1;
+    padding: 5px 8px;
 }
 
-/* BUTTON */
+.row:nth-child(odd) {
+    background: #f5f8ff;
+}
+
+.label { width: 140px; font-weight: bold; font-size: 13px; }
+.colon { width: 10px; }
+.value { flex: 1; font-size: 13px; }
+
 .btn {
     padding: 10px 18px;
     background: #0d47a1;
@@ -87,18 +76,21 @@ body {
     cursor: pointer;
     margin: 5px;
 }
+
+#downloadMenu button {
+    width: 220px;
+    margin-bottom: 6px;
+}
 </style>
 </head>
 
 <body>
 
-<h2 style="text-align:center; color:#0d47a1;">Kartu Pelajar Digital</h2>
-
 <div id="card" class="card">
+
     <div class="header">
-        <img src="https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/logo.png" alt="Logo">
-        <h2>SMP Negeri 1 Moga</h2>
-        <small>Kartu Identitas Peserta Didik</small>
+        <img src="https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/logo.png">
+        <h2>Biodata Siswa Kelas 7H</h2>
     </div>
 
     <img id="foto" class="photo" src="" alt="Foto Siswa">
@@ -109,19 +101,25 @@ body {
 <div style="text-align:center; margin-top:15px;">
     <button class="btn" onclick="prev()">◀ Prev</button>
     <button class="btn" onclick="next()">Next ▶</button>
-    <button class="btn" onclick="downloadPDF()">Download PDF</button>
+    <button class="btn" onclick="toggleMenu()">Download ▼</button>
+</div>
+
+<!-- MENU DOWNLOAD -->
+<div id="downloadMenu" style="display:none; text-align:center; margin-top:10px;">
+    <button class="btn" onclick="downloadJPG()">📷 Download JPG</button>
+    <button class="btn" onclick="downloadPDFsingle()">📄 PDF Kartu Ini</button>
+    <button class="btn" onclick="downloadPDFall()">📚 PDF Semua Kartu</button>
 </div>
 
 <script>
 let siswa = [];
 let index = 0;
 
-/* LOAD EXCEL */
+// Ambil Excel
 async function loadExcel() {
-    const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
-    const res = await fetch(url);
+    const file = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
+    const res = await fetch(file);
     const buf = await res.arrayBuffer();
-
     const wb = XLSX.read(buf, { type: "array" });
     const sheet = wb.Sheets[wb.SheetNames[0]];
     siswa = XLSX.utils.sheet_to_json(sheet);
@@ -129,7 +127,7 @@ async function loadExcel() {
     showData();
 }
 
-/* TAMPILKAN DATA */
+// Tampilkan biodata per siswa
 function showData() {
     const s = siswa[index];
     let nomorFoto = index + 1;
@@ -144,8 +142,7 @@ function showData() {
             <div class="label">${k}</div>
             <div class="colon">:</div>
             <div class="value">${s[k]}</div>
-        </div>
-        `;
+        </div>`;
     });
 
     document.getElementById("data").innerHTML = html;
@@ -161,22 +158,49 @@ function prev() {
     showData();
 }
 
-/* DOWNLOAD PDF */
-async function downloadPDF() {
-    const { jsPDF } = window.jspdf;
-    const card = document.getElementById("card");
+function toggleMenu() {
+    const m = document.getElementById("downloadMenu");
+    m.style.display = (m.style.display === "none") ? "block" : "none";
+}
 
-    const canvas = await html2canvas(card, { scale: 3 });
-    const imgData = canvas.toDataURL("image/jpeg", 1.0);
-
-    const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "px",
-        format: [400, 600]
+/* 1. DOWNLOAD JPG */
+function downloadJPG() {
+    html2canvas(document.getElementById("card"), { scale: 3 }).then(canvas => {
+        const a = document.createElement("a");
+        a.href = canvas.toDataURL("image/jpeg");
+        a.download = `Kartu-${index + 1}.jpg`;
+        a.click();
     });
+}
 
-    pdf.addImage(imgData, "JPEG", 10, 10, 380, 580);
-    pdf.save(`Kartu-Pelajar-${index + 1}.pdf`);
+/* 2. DOWNLOAD PDF KARTU TAMPIL */
+function downloadPDFsingle() {
+    const { jsPDF } = window.jspdf;
+
+    html2canvas(document.getElementById("card"), { scale: 3 }).then(canvas => {
+        const pdf = new jsPDF("p", "px", [400, 600]);
+        pdf.addImage(canvas.toDataURL("image/jpeg"), "JPEG", 10, 10, 380, 580);
+        pdf.save(`Kartu-${index + 1}.pdf`);
+    });
+}
+
+/* 3. DOWNLOAD PDF SEMUA KARTU */
+async function downloadPDFall() {
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF("p", "px", [400, 600]);
+
+    for (let i = 0; i < siswa.length; i++) {
+        index = i;
+        showData();
+
+        await html2canvas(document.getElementById("card"), { scale: 3 })
+        .then(canvas => {
+            if (i > 0) pdf.addPage();
+            pdf.addImage(canvas.toDataURL("image/jpeg"), "JPEG", 10, 10, 380, 580);
+        });
+    }
+
+    pdf.save("Semua-Kartu-Pelajar.pdf");
 }
 
 loadExcel();
