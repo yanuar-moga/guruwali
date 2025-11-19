@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Beranda Siswa</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; }
+        .container { max-width: 900px; margin: 20px auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h2 { margin-top: 0; }
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-top: 20px; }
+        .card { background: #007bff; color: white; padding: 20px; border-radius: 10px; text-align: center; font-size: 16px; cursor: pointer; transition: 0.2s; }
+        .card:hover { background: #0056b3; }
+        /* biodata */
+        .biodata-box { margin-top:20px; padding:20px; background:#fafafa; border-radius:10px; border:1px solid #ddd; }
+        .bio-row { display:flex; margin-bottom:10px; }
+        .bio-label { width:150px; font-weight:bold; }
+        .bio-value { flex:1; }
+        #foto { width:120px; height:150px; object-fit:cover; border-radius:8px; border:1px solid #999; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Selamat Datang, <span id="nama">Siswa</span></h2>
+        <p>Silakan pilih menu di bawah ini:</p>
+
+        <div class="menu-grid">
+            <div class="card" onclick="scrollToBiodata()">Biodata</div>
+            <div class="card" onclick="alert('Menu Latihan belum diaktifkan')">Latihan Soal</div>
+            <div class="card" onclick="alert('Menu Tugas belum diaktifkan')">Tugas</div>
+            <div class="card" onclick="alert('Menu Nilai belum diaktifkan')">Nilai</div>
+            <div class="card" onclick="alert('Menu Pengumuman belum diaktifkan')">Pengumuman</div>
+        </div>
+
+        <div id="biodataContainer" class="biodata-box">
+            <h3>Biodata Siswa</h3>
+            <div style="display:flex; gap:20px; align-items:flex-start;">
+                <img id="foto" src="" alt="Foto Siswa" />
+
+                <div style="flex:1;">
+                    <div class="bio-row"><div class="bio-label">Nama</div><div id="nama" class="bio-value"></div></div>
+                    <div class="bio-row"><div class="bio-label">NISN</div><div id="nisn" class="bio-value"></div></div>
+                    <div class="bio-row"><div class="bio-label">Kelas</div><div id="kelas" class="bio-value"></div></div>
+                    <div class="bio-row"><div class="bio-label">Tempat Lahir</div><div id="tempat_lahir" class="bio-value"></div></div>
+                    <div class="bio-row"><div class="bio-label">Tanggal Lahir</div><div id="tgl_lahir" class="bio-value"></div></div>
+                    <div class="bio-row"><div class="bio-label">Alamat</div><div id="alamat" class="bio-value"></div></div>
+                    <div class="bio-row"><div class="bio-label">Nama Ayah</div><div id="ayah" class="bio-value"></div></div>
+                    <div class="bio-row"><div class="bio-label">Nama Ibu</div><div id="ibu" class="bio-value"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- XLSX Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <script>
+    function scrollToBiodata(){
+        document.getElementById('biodataContainer').scrollIntoView({behavior:'smooth'});
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const nisnLogin = urlParams.get("nisn");
+        if (!nisnLogin) { alert("NISN tidak ditemukan di URL"); return; }
+
+        const excelURL = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
+
+        fetch(excelURL)
+            .then(response => response.arrayBuffer())
+            .then(data => {
+                const wb = XLSX.read(data, { type: "array" });
+                const sheet = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+
+                const siswa = sheet.find(r => String(r.nisn).trim() === String(nisnLogin).trim());
+
+                if (!siswa) { alert("Data siswa tidak ditemukan!"); return; }
+
+                Object.keys(siswa).forEach(k => {
+                    const el = document.getElementById(k);
+                    if (el) el.textContent = siswa[k];
+                });
+
+                if (siswa.foto && document.getElementById("foto")) {
+                    document.getElementById("foto").src = siswa.foto;
+                }
+            })
+            .catch(err => console.error(err));
+    });
+    </script>
+</body>
+</html>
