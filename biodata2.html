@@ -1,185 +1,44 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Biodata Siswa</title>
-
-<!-- XLSX -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
-<!-- html2canvas + jsPDF -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-<style>
-body {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    background: #f3f3f3;
-}
-.container {
-    max-width: 430px;
-    margin: auto;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-img.foto {
-    width: 120px;
-    height: 160px;
-    object-fit: cover;
-    border: 2px solid #333;
-    margin-bottom: 15px;
-}
-.label {
-    display: inline-block;
-    width: 130px;
-    font-weight: bold;
-}
-p {
-    margin: 4px 0;
-    font-size: 15px;
-}
-
-/* tombol next prev */
-.nav-buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
-}
-.nav-buttons button {
-    padding: 8px 15px;
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-}
-.nav-buttons button:hover {
-    background: #005fcc;
-}
-
-/* floating download button */
-#downloadMenuBtn {
-    position: fixed;
-    right: 20px;
-    bottom: 20px;
-    background: #007bff;
-    color: white;
-    padding: 14px 20px;
-    border-radius: 30px;
-    font-size: 17px;
-    cursor: pointer;
-    border: none;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.25);
-}
-
-/* menu dropdown */
-#menuPanel {
-    position: fixed;
-    right: 20px;
-    bottom: 80px;
-    background: white;
-    border-radius: 10px;
-    padding: 10px;
-    width: 200px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-    display: none;
-}
-#menuPanel div {
-    padding: 10px;
-    cursor: pointer;
-    border-bottom: 1px solid #ddd;
-}
-#menuPanel div:hover {
-    background: #f0f0f0;
-}
-#menuPanel div:last-child {
-    border-bottom: none;
-}
-</style>
-</head>
-<body>
-
-<div class="container" id="card">
-    <h2 style="text-align:center;margin-top:0;">Biodata Siswa</h2>
-    <div style="text-align:center;">
-        <img id="foto" class="foto" src="" alt="Foto siswa">
-    </div>
-
-    <div id="data"></div>
-
-    <div class="nav-buttons">
-        <button onclick="prevCard()">Prev</button>
-        <button onclick="nextCard()">Next</button>
-    </div>
-</div>
-
-<!-- tombol floating -->
-<button id="downloadMenuBtn" onclick="toggleMenu()">Download</button>
-
-<!-- menu dropdown -->
-<div id="menuPanel">
-    <div onclick="downloadImage()">📷 Download Gambar</div>
-    <div onclick="downloadPDFsingle()">📄 Download PDF Kartu Ini</div>
-    <div onclick="downloadPDFall()">📚 Download Semua PDF</div>
-</div>
-
-<script>
-// EXCEL GitHub
-const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
-
-let siswaData = [];
-let index = 0;
-
-// Konversi tanggal Excel
-function excelDateToText(value) {
-    if (typeof value === "number") {
-        const date = new Date((value - 25569) * 86400 * 1000);
-        return date.toLocaleDateString("id-ID", {
-            day: "numeric",
-            month: "long",
-            year: "numeric"
-        });
-    }
-    return value;
-}
-
-// Mapping label rapi
-const LABEL_MAP = {
-    "NAMA": "Nama",
-    "NISN": "NISN",
-    "NIS": "NIS",
-    "KELAS": "Kelas",
-    "TEMPAT_LAHIR": "Tempat Lahir",
-    "TANGGAL_LAHIR": "Tanggal Lahir",
-    "ALAMAT": "Alamat",
-    "ABSEN": "Absen"
-};
-
-// load excel
-fetch(url)
-    .then(r => r.arrayBuffer())
-    .then(buf => {
-        const wb = XLSX.read(buf, { type: "array" });
-        const sheet = wb.Sheets[wb.SheetNames[0]];
-        siswaData = XLSX.utils.sheet_to_json(sheet);
-        showCard(0);
-    });
-
 // tampilkan 1 kartu
 function showCard(i) {
     index = i;
     const s = siswaData[i];
     if (!s) return;
 
-    // FOTO TAMPIL DARI NOMOR ABSEN
-    document.getElementById("foto").src =
-        `https://raw.githubusercontent.com/yanuar-moga/guruwali/main/foto/${s.ABSEN}.jpg`;
+    const fotoEl = document.getElementById("foto");
 
-    // DATA RAPI
+    // ---- NORMALISASI ABSEN ----
+    let absen = String(s.ABSEN).trim();
+    absen = parseInt(absen); // jadikan angka murni
+
+    if (isNaN(absen)) {
+        fotoEl.src = "https://via.placeholder.com/120x160?text=No+Foto";
+    } else {
+
+        const base = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/foto/";
+
+        // coba beberapa kemungkinan ekstensi
+        const kemungkinan = [
+            `${base}${absen}.jpg`,
+            `${base}${absen}.JPG`,
+            `${base}${absen}.jpeg`,
+            `${base}${absen}.png`
+        ];
+
+        function cobaLoad(idx = 0) {
+            if (idx >= kemungkinan.length) {
+                fotoEl.src = "https://via.placeholder.com/120x160?text=No+Foto";
+                return;
+            }
+            const img = new Image();
+            img.onload = () => (fotoEl.src = kemungkinan[idx]);
+            img.onerror = () => cobaLoad(idx + 1);
+            img.src = kemungkinan[idx];
+        }
+
+        cobaLoad();
+    }
+
+    // --------- TAMPILKAN DATA ---------
     let html = "";
     for (let key in s) {
         if (!LABEL_MAP[key]) continue;
@@ -197,55 +56,3 @@ function showCard(i) {
 
     document.getElementById("data").innerHTML = html;
 }
-
-function nextCard() {
-    if (index < siswaData.length - 1) showCard(index + 1);
-}
-
-function prevCard() {
-    if (index > 0) showCard(index - 1);
-}
-
-/* ========== MENU DOWNLOAD ========== */
-function toggleMenu() {
-    const menu = document.getElementById("menuPanel");
-    menu.style.display = menu.style.display === "block" ? "none" : "block";
-}
-
-/* Download Gambar */
-function downloadImage() {
-    html2canvas(document.getElementById("card")).then(canvas => {
-        const link = document.createElement("a");
-        link.download = "kartu.png";
-        link.href = canvas.toDataURL();
-        link.click();
-    });
-}
-
-/* Download PDF kartu tampil */
-function downloadPDFsingle() {
-    html2canvas(document.getElementById("card")).then(canvas => {
-        const imgData = canvas.toDataURL("image/png");
-        const pdf = new jspdf.jsPDF();
-        pdf.addImage(imgData, "PNG", 10, 10, 190, 0);
-        pdf.save("kartu.pdf");
-    });
-}
-
-/* Download semua PDF */
-async function downloadPDFall() {
-    const pdf = new jspdf.jsPDF();
-    for (let i = 0; i < siswaData.length; i++) {
-        showCard(i);
-        await html2canvas(document.getElementById("card")).then(canvas => {
-            const img = canvas.toDataURL("image/png");
-            if (i !== 0) pdf.addPage();
-            pdf.addImage(img, "PNG", 10, 10, 190, 0);
-        });
-    }
-    pdf.save("semua_kartu.pdf");
-}
-</script>
-
-</body>
-</html>
