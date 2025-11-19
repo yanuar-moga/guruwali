@@ -2,137 +2,209 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Biodata Siswa Kelas 7H</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biodata Siswa SMPN 1 Moga</title>
+
+<!-- XLSX -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<!-- html2canvas + jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
-    body {
-        margin: 0;
-        padding: 0;
-        background: #eaeaea;
-        height: 100vh;
-        overflow: hidden; /* Kunci agar tidak bisa scroll */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-family: Arial, sans-serif;
-    }
+body {
+    font-family: Arial, sans-serif;
+    background: #e6eef7;
+    padding: 25px;
+}
 
-    /* Wrapper berskala otomatis */
-    .scale-wrapper {
-        transform-origin: top left;
-    }
+.card {
+    width: 360px;
+    background: white;
+    border-radius: 16px;
+    padding: 18px;
+    margin: auto;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    border-top: 8px solid #0d47a1;
+}
 
-    /* Lebar kartu fix agar mudah di-scale */
-    .card {
-        width: 360px;
-        height: 640px; /* aspect ratio kartu HP */
-        background: white;
-        border-radius: 12px;
-        padding: 10px 15px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.25);
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-    }
+.header {
+    text-align: center;
+    margin-bottom: 10px;
+}
 
-    .header {
-        text-align: center;
-        margin-bottom: 5px;
-    }
+.header img {
+    width: 70px;
+}
 
-    .header img {
-        height: 55px;
-        margin-bottom: -10px;
-    }
+.header h2 {
+    font-size: 20px;
+    margin: 5px 0 0 0;
+    color: #0d47a1;
+}
 
-    .header h2 {
-        margin: 0;
-        font-size: 18px;
-        font-weight: bold;
-    }
+.photo {
+    width: 110px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin: 10px auto;
+    display: block;
+    border: 2px solid #0d47a1;
+}
 
-    .header h3 {
-        margin: 0;
-        font-size: 14px;
-    }
+.row {
+    display: flex;
+    padding: 5px 8px;
+}
 
-    .photo {
-        text-align: center;
-        margin-bottom: 6px;
-    }
+.row:nth-child(odd) {
+    background: #f5f8ff;
+}
 
-    .photo img {
-        width: 120px;
-        height: 150px;
-        object-fit: cover;
-        border-radius: 6px;
-        border: 2px solid #333;
-    }
+.label { width: 140px; font-weight: bold; font-size: 13px; }
+.colon { width: 10px; }
+.value { flex: 1; font-size: 13px; }
 
-    .row {
-        display: grid;
-        grid-template-columns: 130px 10px auto;
-        font-size: 12px;
-        padding: 3px 0;
-        border-bottom: 1px solid #efefef;
-    }
+.btn {
+    padding: 10px 18px;
+    background: #0d47a1;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 5px;
+}
 
-    .label {
-        font-weight: bold;
-    }
-
-    @media (max-width: 480px) {
-        .card { font-size: 11px; }
-    }
+#downloadMenu button {
+    width: 220px;
+    margin-bottom: 6px;
+}
 </style>
-
-<script>
-    // AUTO SCALE agar seluruh kartu muat 1 layar HP
-    function autoScale() {
-        const wrapper = document.querySelector('.scale-wrapper');
-        const card = document.querySelector('.card');
-
-        let scaleX = window.innerWidth / card.offsetWidth;
-        let scaleY = window.innerHeight / card.offsetHeight;
-
-        let scale = Math.min(scaleX, scaleY);
-
-        wrapper.style.transform = `scale(${scale})`;
-    }
-
-    window.onload = autoScale;
-    window.onresize = autoScale;
-</script>
 </head>
 
 <body>
 
-<div class="scale-wrapper">
-    <div class="card">
+<div id="card" class="card">
 
-        <div class="header">
-            <img src="assets/logo.png">
-            <h2>SMP NEGERI 1 MOGA</h2>
-            <h3>Biodata Siswa Kelas 7H</h3>
-        </div>
-
-        <div class="photo">
-            <img id="foto" src="https://raw.githubusercontent.com/yanuar-moga/guruwali/main/foto/1.jpg">
-        </div>
-
-        <div id="data-biodata">
-            <div class="row"><div class="label">Nama Lengkap</div><div>:</div><div id="nama">Ahmad Budi</div></div>
-            <div class="row"><div class="label">Jenis Kelamin</div><div>:</div><div id="jk">Laki-laki</div></div>
-            <div class="row"><div class="label">Tempat Lahir</div><div>:</div><div id="tmpLahir">Pemalang</div></div>
-            <div class="row"><div class="label">Tgl Lahir</div><div>:</div><div id="tgl">12 Juli 2012</div></div>
-            <div class="row"><div class="label">Alamat</div><div>:</div><div id="alamat">Jl. Mawar No 3</div></div>
-            <div class="row"><div class="label">Hobi</div><div>:</div><div id="hobi">Membaca</div></div>
-            <div class="row"><div class="label">Cita-cita</div><div>:</div><div id="cita">Dokter</div></div>
-        </div>
-
+    <div class="header">
+        <img src="https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/logo.png">
+        <h2>Biodata Siswa Kelas 7H</h2>
     </div>
+
+    <img id="foto" class="photo" src="" alt="Foto Siswa">
+
+    <div id="data"></div>
 </div>
+
+<div style="text-align:center; margin-top:15px;">
+    <button class="btn" onclick="prev()">◀ Prev</button>
+    <button class="btn" onclick="next()">Next ▶</button>
+    <button class="btn" onclick="toggleMenu()">Download ▼</button>
+</div>
+
+<!-- MENU DOWNLOAD -->
+<div id="downloadMenu" style="display:none; text-align:center; margin-top:10px;">
+    <button class="btn" onclick="downloadJPG()">📷 Download JPG</button>
+    <button class="btn" onclick="downloadPDFsingle()">📄 PDF Kartu Ini</button>
+    <button class="btn" onclick="downloadPDFall()">📚 PDF Semua Kartu</button>
+</div>
+
+<script>
+let siswa = [];
+let index = 0;
+
+// Ambil Excel
+async function loadExcel() {
+    const file = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
+    const res = await fetch(file);
+    const buf = await res.arrayBuffer();
+    const wb = XLSX.read(buf, { type: "array" });
+    const sheet = wb.Sheets[wb.SheetNames[0]];
+    siswa = XLSX.utils.sheet_to_json(sheet);
+
+    showData();
+}
+
+// Tampilkan biodata per siswa
+function showData() {
+    const s = siswa[index];
+    let nomorFoto = index + 1;
+
+    document.getElementById("foto").src =
+        `https://raw.githubusercontent.com/yanuar-moga/guruwali/main/foto/${nomorFoto}.jpg`;
+
+    let html = "";
+    Object.keys(s).forEach(k => {
+        html += `
+        <div class="row">
+            <div class="label">${k}</div>
+            <div class="colon">:</div>
+            <div class="value">${s[k]}</div>
+        </div>`;
+    });
+
+    document.getElementById("data").innerHTML = html;
+}
+
+function next() {
+    if (index < siswa.length - 1) index++;
+    showData();
+}
+
+function prev() {
+    if (index > 0) index--;
+    showData();
+}
+
+function toggleMenu() {
+    const m = document.getElementById("downloadMenu");
+    m.style.display = (m.style.display === "none") ? "block" : "none";
+}
+
+/* 1. DOWNLOAD JPG */
+function downloadJPG() {
+    html2canvas(document.getElementById("card"), { scale: 3 }).then(canvas => {
+        const a = document.createElement("a");
+        a.href = canvas.toDataURL("image/jpeg");
+        a.download = `Kartu-${index + 1}.jpg`;
+        a.click();
+    });
+}
+
+/* 2. DOWNLOAD PDF KARTU TAMPIL */
+function downloadPDFsingle() {
+    const { jsPDF } = window.jspdf;
+
+    html2canvas(document.getElementById("card"), { scale: 3 }).then(canvas => {
+        const pdf = new jsPDF("p", "px", [400, 600]);
+        pdf.addImage(canvas.toDataURL("image/jpeg"), "JPEG", 10, 10, 380, 580);
+        pdf.save(`Kartu-${index + 1}.pdf`);
+    });
+}
+
+/* 3. DOWNLOAD PDF SEMUA KARTU */
+async function downloadPDFall() {
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF("p", "px", [400, 600]);
+
+    for (let i = 0; i < siswa.length; i++) {
+        index = i;
+        showData();
+
+        await html2canvas(document.getElementById("card"), { scale: 3 })
+        .then(canvas => {
+            if (i > 0) pdf.addPage();
+            pdf.addImage(canvas.toDataURL("image/jpeg"), "JPEG", 10, 10, 380, 580);
+        });
+    }
+
+    pdf.save("Semua-Kartu-Pelajar.pdf");
+}
+
+loadExcel();
+</script>
 
 </body>
 </html>
