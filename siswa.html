@@ -1,230 +1,580 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Beranda Siswa - Responsive Biodata</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Dashboard Siswa - SMPN 1 Moga</title>
 
-<!-- XLSX -->
+<!-- Icons (lucide) -->
+<script src="https://unpkg.com/lucide/dist/lucide.min.js"></script>
+
+<!-- SheetJS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #eef3f9;
-    display: flex;
-}
+  :root{
+    --bg:#eef3f9;
+    --card:#ffffff;
+    --accent:#0d47a1;
+    --muted:#666;
+  }
+  [data-theme="dark"]{
+    --bg:#0b1220;
+    --card:#071023;
+    --accent:#3ea0ff;
+    --muted:#9aa8bf;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:Inter, "Segoe UI", Roboto, Arial, sans-serif;
+    background:var(--bg);
+    color: #073147;
+    min-height:100vh;
+    display:flex;
+    gap:0;
+  }
 
-/* SIDEBAR */
-.sidebar {
-    width: 240px;
-    background: #0d47a1;
-    color: white;
-    height: 100vh;
-    padding: 20px;
-    box-sizing: border-box;
-}
-.sidebar h2 {
-    text-align: center;
-    font-size: 20px;
-}
-.menu a {
-    display: block;
-    padding: 12px;
-    margin: 6px 0;
-    background: rgba(255,255,255,0.1);
-    color: white;
-    text-decoration: none;
-    border-radius: 8px;
-}
-.menu a:hover { background: rgba(255,255,255,0.25); }
+  /* SIDEBAR */
+  .sidebar{
+    width:240px;
+    background:var(--accent);
+    color:#fff;
+    padding:18px 12px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    flex-shrink:0;
+  }
+  .brand{font-weight:700; text-align:center; margin-bottom:6px}
+  .sidebar .menu a{
+    display:flex; gap:10px; align-items:center;
+    padding:10px 12px; color:#fff; text-decoration:none;
+    border-radius:8px; font-weight:600; font-size:14px;
+  }
+  .sidebar .menu a:hover{ background: rgba(255,255,255,0.08) }
 
-/* MAIN */
-.main {
-    flex: 1;
-    padding: 20px;
-}
+  .theme-toggle{ margin-top:auto; display:flex; gap:8px; align-items:center; justify-content:center; }
 
-/* CARD BIODATA RESPONSIVE */
-.biodata-wrapper {
-    max-width: 900px;
-    margin: auto;
-    background: white;
-    padding: 20px;
-    border-radius: 16px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-}
+  /* MAIN */
+  .main{flex:1; padding:18px; overflow:auto; position:relative}
+  .topbar{display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px}
+  .topbar .session{font-weight:700; color:var(--accent)}
+  .topbar .controls{display:flex; gap:8px; align-items:center}
 
-.biodata-header {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
+  /* CARD BIODATA (responsive layout, not forced portrait) */
+  .card{
+    background:var(--card);
+    border-radius:12px;
+    padding:16px;
+    box-shadow:0 6px 20px rgba(3,12,34,0.08);
+    max-width:1200px;
+    margin:0 auto 18px;
+  }
 
-.biodata-header img.logo {
-    width: 60px;
-}
+  .bio-grid{
+    display:grid;
+    grid-template-columns: 180px 1fr;
+    gap:16px;
+    align-items:start;
+  }
+  .bio-photo{ width:160px; height:200px; border-radius:10px; object-fit:cover; border:3px solid var(--accent); }
+  .bio-info{ display:flex; flex-direction:column; gap:6px }
 
-.photo-box img {
-    width: 160px;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 12px;
-    border: 2px solid #0d47a1;
-}
+  .data-grid{
+    margin-top:12px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(240px,1fr));
+    gap:10px;
+  }
+  .data-item{
+    background:rgba(13,71,161,0.04);
+    padding:10px; border-radius:8px;
+  }
+  .data-item .k{ font-weight:700; color:var(--accent); font-size:13px }
+  .data-item .v{ margin-top:6px; color:var(--muted); font-size:14px; white-space:pre-wrap }
 
-/* GRID DATA */
-.data-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 12px;
-    margin-top: 20px;
-}
+  /* content area for pages (curhat, pengumuman, ... ) */
+  .page{
+    display:none;
+    margin:18px auto;
+    max-width:1200px;
+  }
+  .page.active{ display:block }
+  .form-row{ margin-bottom:10px; display:flex; flex-direction:column; gap:6px; }
+  textarea, input, select { padding:8px; border-radius:6px; border:1px solid #ddd; font-size:14px; width:100% }
+  button.primary { background:var(--accent); color:white; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; font-weight:700 }
+  .muted{ color:var(--muted); font-size:13px }
 
-.data-item {
-    background: #f5f8ff;
-    padding: 10px;
-    border-radius: 8px;
-}
+  /* floating bottom actions (download etc) */
+  .floating {
+    position:fixed; right:18px; bottom:18px; display:flex; gap:10px; z-index:40;
+  }
+  .chip{ background:var(--card); padding:8px 12px; border-radius:999px; box-shadow:0 6px 20px rgba(3,12,34,0.06) }
 
-.data-item .label {
-    font-weight: bold;
-    font-size: 13px;
-    color: #0d47a1;
-}
-
-.data-item .value {
-    font-size: 14px;
-}
-
+  /* responsive */
+  @media (max-width:920px){
+    .bio-grid{ grid-template-columns:1fr; }
+    .sidebar{ width:100%; height:auto; position:sticky; top:0; z-index:40; display:flex; flex-direction:row; overflow:auto; padding:8px }
+    body{ flex-direction:column }
+    .main{ padding:12px }
+  }
 </style>
 </head>
 <body>
 
-<div class="sidebar">
-    <h2>Menu Siswa</h2>
-    <div class="menu">
-        <a href="#">Curhat Siswa</a>
-        <a href="#">Masalah Siswa</a>
-        <a href="#">Notulen</a>
-        <a href="#">Pembinaan</a>
-        <a href="#">Pengumuman</a>
-        <a href="#" onclick="logout()">Logout</a>
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">SMPN 1 Moga</div>
+
+    <nav class="menu" id="menu">
+      <a href="#" data-page="biodata"><span data-lucide="user"></span> Biodata</a>
+      <a href="#" data-page="curhat"><span data-lucide="message-square"></span> Curhat</a>
+      <a href="#" data-page="pengumuman"><span data-lucide="megaphone"></span> Pengumuman</a>
+      <a href="#" data-page="jadwal"><span data-lucide="calendar"></span> Jadwal</a>
+      <a href="#" data-page="notulen"><span data-lucide="file-text"></span> Notulen</a>
+      <a href="#" data-page="about"><span data-lucide="info"></span> About</a>
+      <a href="#" id="logoutLink"><span data-lucide="log-out"></span> Logout</a>
+    </nav>
+
+    <div class="theme-toggle" style="padding:12px">
+      <button id="themeBtn" class="chip">Toggle Theme</button>
     </div>
-</div>
+  </aside>
 
-<div class="main">
-    <h2>Biodata Siswa</h2>
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <div class="muted">Dashboard Siswa</div>
+        <div class="session muted" id="sessionName">Memuat...</div>
+      </div>
+      <div class="controls">
+        <div class="muted" id="statusMsg"></div>
+      </div>
+    </div>
 
-    <div class="biodata-wrapper">
+    <!-- BIODATA PAGE -->
+    <section id="biodata" class="card page active">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h3 style="margin:0">Biodata Siswa</h3>
+        <div class="muted">SMPN 1 Moga</div>
+      </div>
 
-        <div class="biodata-header">
-            <img src="assets/logo.png" class="logo">
+      <div class="bio-grid">
+        <div>
+          <img id="foto" class="bio-photo" src="" alt="Foto"/>
+        </div>
+
+        <div class="bio-info">
+          <div style="display:flex;justify-content:space-between;align-items:center">
             <div>
-                <h2 id="namaSiswa"></h2>
-                <div id="nisnText" style="opacity:0.6"></div>
+              <div id="namaBig" style="font-size:20px;font-weight:800"></div>
+              <div id="nisnSmall" class="muted"></div>
             </div>
+            <div style="text-align:right">
+              <div class="chip muted">Kelas: <span id="kelasSmall">-</span></div>
+            </div>
+          </div>
+
+          <div class="data-grid" id="bioGrid">
+            <!-- items injected here -->
+          </div>
         </div>
+      </div>
+    </section>
 
-        <div class="photo-box" style="margin-top:20px; text-align:center;">
-            <img id="foto" src="" alt="Foto Siswa">
-        </div>
+    <!-- CURHAT PAGE -->
+    <section id="curhat" class="card page">
+      <h3>Curhat Siswa</h3>
+      <p class="muted">Tuliskan curhat/keluh-kesanmu. Data akan tersimpan di perangkat dan (opsional) dikirim ke Google Sheet jika dikonfigurasi.</p>
 
-        <div id="dataGrid" class="data-grid"></div>
+      <div class="form-row">
+        <input id="curhatJudul" placeholder="Judul (opsional)"/>
+      </div>
+      <div class="form-row">
+        <textarea id="curhatIsi" rows="6" placeholder="Tulis curhat..."></textarea>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="primary" id="btnKirimCurhat">Kirim Curhat</button>
+        <div class="muted">Status: <span id="curhatStatus">belum terkirim</span></div>
+      </div>
 
+      <hr/>
+      <h4>Riwayat Curhat</h4>
+      <div id="curhatList"></div>
+    </section>
+
+    <!-- PENGUMUMAN PAGE -->
+    <section id="pengumuman" class="card page">
+      <h3>Pengumuman</h3>
+      <div id="annList">Memuat...</div>
+    </section>
+
+    <!-- JADWAL PAGE -->
+    <section id="jadwal" class="card page">
+      <h3>Jadwal Pelajaran</h3>
+      <div id="jadwalList">Memuat jadwal...</div>
+    </section>
+
+    <!-- NOTULEN PAGE -->
+    <section id="notulen" class="card page">
+      <h3>Notulen</h3>
+      <p class="muted">Catatan kegiatan/pembinaan (disimpan lokal).</p>
+      <div class="form-row">
+        <input id="notuJudul" placeholder="Judul notulen"/>
+      </div>
+      <div class="form-row">
+        <textarea id="notuIsi" rows="5" placeholder="Isi notulen..."></textarea>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="primary" id="btnSaveNotu">Simpan Notulen</button>
+      </div>
+      <hr/>
+      <div id="notuList"></div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="card page">
+      <h3>Tentang Aplikasi</h3>
+      <p class="muted">Aplikasi sederhana untuk siswa SMPN 1 Moga. Dibangun untuk menampilkan biodata, curhat, pengumuman, jadwal, dan notulen. Data biodata diambil dari <code>data.xlsx</code> pada repo GitHub.</p>
+      <p class="muted">Versi lokal — data sensitif disimpan di browser kecuali Anda menghubungkannya ke server.</p>
+    </section>
+
+    <!-- floating actions -->
+    <div class="floating">
+      <div class="chip" id="xlsStatus">Excel: memuat...</div>
+      <div class="chip" id="localStatus">Local OK</div>
     </div>
-</div>
+  </main>
 
-<script src="script.js"></script>
 <script>
-const ss = load(SESSION_KEY);
-if (!ss || ss.role !== 'siswa') window.location.href = 'index.html';
+/* =======================
+   CONFIG
+   ======================= */
+// RAW Excel URL (raw.githubusercontent)
+const EXCEL_URL = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
 
-const NISN_LOGIN = ss.nisn;
-let siswa = [];
+// Optional: Google Apps Script endpoint to collect curhat (POST JSON)
+// If you want curhat to be sent to Google Sheets, replace with your Web App URL.
+// Leave empty ("") to disable remote sending.
+const GAS_ENDPOINT = ""; // e.g. "https://script.google.com/macros/s/XXXX/exec"
 
-async function loadExcel() {
-    const file = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
-    const res = await fetch(file);
-    const buf = await res.arrayBuffer();
-    const wb = XLSX.read(buf, { type:'array' });
-    const sheet = wb.Sheets[wb.SheetNames[0]];
-    siswa = XLSX.utils.sheet_to_json(sheet);
+/* =======================
+   HELPERS
+   ======================= */
+function q(selector, ctx=document){ return ctx.querySelector(selector); }
+function id(i){ return document.getElementById(i); }
+function saveStudentKey(nisn, key, val){
+  const all = JSON.parse(localStorage.getItem('gw_data_'+nisn) || "{}");
+  all[key] = val;
+  localStorage.setItem('gw_data_'+nisn, JSON.stringify(all));
+}
+function loadStudentKey(nisn, key){
+  const all = JSON.parse(localStorage.getItem('gw_data_'+nisn) || "{}");
+  return all[key];
+}
+function loadAllStudent(nisn){
+  return JSON.parse(localStorage.getItem('gw_data_'+nisn) || "{}");
+}
+function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, m=> ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
-    const data = siswa.find(x => String(x["NISN"]).trim() === NISN_LOGIN);
+/* =======================
+   THEME
+   ======================= */
+const themeBtn = id('themeBtn');
+function applyTheme(t){
+  if(t==='dark') document.documentElement.setAttribute('data-theme','dark');
+  else document.documentElement.removeAttribute('data-theme');
+  localStorage.setItem('gw_theme', t);
+}
+themeBtn.addEventListener('click', ()=>{
+  const cur = localStorage.getItem('gw_theme') === 'dark' ? 'light' : 'dark';
+  applyTheme(cur);
+});
+const savedTheme = localStorage.getItem('gw_theme') || 'light';
+applyTheme(savedTheme);
 
-    if (!data) {
-        document.getElementById("dataGrid").innerHTML = "<p style='color:red;'>Data siswa tidak ditemukan.</p>";
-        return;
-    }
-
-    tampilkan(data);
+/* =======================
+   PARSE NISN FROM URL
+   ======================= */
+const params = new URLSearchParams(window.location.search);
+const NISN = (params.get('nisn')||'').trim();
+if(!NISN){
+  alert('NISN tidak ditemukan di URL. Silakan login melalui halaman index.');
+  window.location.href = 'index.html';
 }
 
-function tampilkan(s) {
-    document.getElementById("namaSiswa").textContent = s["NAMA LENGKAP"];
-    document.getElementById("nisnText").textContent = "NISN: " + s["NISN"];
+/* =======================
+   STATE
+   ======================= */
+let EXCEL_JSON = null;
 
-    const idx = siswa.indexOf(s) + 1;
-    document.getElementById("foto").src = `https://raw.githubusercontent.com/yanuar-moga/guruwali/main/foto/${idx}.jpg`;
+/* =======================
+   LOAD EXCEL & RENDER BIODATA + JADWAL
+   ======================= */
+async function loadExcelAndInit(){
+  id('xlsStatus').textContent = 'Excel: memuat...';
+  try{
+    const res = await fetch(EXCEL_URL);
+    if(!res.ok) throw new Error('Fetch gagal: ' + res.status);
+    const ab = await res.arrayBuffer();
+    const wb = XLSX.read(ab, { type:'array' });
 
-    const fields = [
-        "NAMA PANGGIL", "JENIS KELAMIN", "Tempat Lahir", "Tgl Lahir",
-        "Alamat", "No WA Siswa", "Hobi", "Cita-cita",
-        "NIS", "NISN", "Pelajaran yg disukai", "Pelajaran tdk disukai",
-        "Ekskul", "Cara Belajar", "Harapan Orang Tua",
-        "Penerima KIP", "YATIM/PIATU", "MONDOK"
-    ];
+    // prefer sheet named 'Sheet1' or first sheet
+    const sheetNames = wb.SheetNames;
+    const firstSheet = sheetNames[0];
+    const wsObj = wb.Sheets[firstSheet];
+    const data = XLSX.utils.sheet_to_json(wsObj, { defval: "" });
+    EXCEL_JSON = data;
 
-    let html = "";
-    fields.forEach(f => {
-        html += `
-            <div class='data-item'>
-                <div class='label'>${f}</div>
-                <div class='value'>${s[f] || '-'}</div>
-            </div>
-        `;
+    id('xlsStatus').textContent = 'Excel: OK';
+
+    renderBiodataFromExcel(data, NISN);
+    renderJadwalFromWorkbook(wb);
+
+    loadLocalData();
+    loadAnnouncements();
+  }catch(err){
+    console.error(err);
+    id('xlsStatus').textContent = 'Excel: gagal';
+    q('#bioGrid').innerHTML = '<div class="muted">Gagal memuat file data.xlsx. Cek koneksi.</div>';
+  }
+}
+
+/* find row by NISN (case-insensitive, trim) */
+function findRowByNisn(data, nisn){
+  const nisnStr = String(nisn).trim();
+  return data.find(r=>{
+    // try common column names
+    for(const key of Object.keys(r)){
+      if(String(key||'').toLowerCase().replace(/[^a-z0-9]/g,'') === 'nisn' &&
+         String(r[key]).trim() === nisnStr) return r;
+    }
+    // fallback: direct property 'NISN' or 'nisn'
+    if(String(r.NISN||r.nisn||'').trim() === nisnStr) return r;
+    return false;
+  });
+}
+
+function colValue(obj, canonicalName){
+  // canonicalName e.g. "nama lengkap" => tries to find key ignoring case and non-alnum
+  const norm = canonicalName.toLowerCase().replace(/[^a-z0-9]/g,'');
+  const k = Object.keys(obj).find(x => String(x).toLowerCase().replace(/[^a-z0-9]/g,'') === norm);
+  return k ? obj[k] : '';
+}
+
+function renderBiodataFromExcel(data, nisn){
+  const row = findRowByNisn(data, nisn);
+  if(!row){
+    q('#bioGrid').innerHTML = '<div class="muted">Data NISN tidak ditemukan di data.xlsx</div>';
+    id('sessionName').textContent = 'NISN: ' + nisn + ' (tidak ditemukan)';
+    id('namaBig').textContent = '—';
+    id('nisnSmall').textContent = nisn;
+    return;
+  }
+
+  // map common fields (try robust matching)
+  const nama = colValue(row, 'nama lengkap') || colValue(row, 'nama') || colValue(row,'NAMA LENGKAP') || '';
+  const nisnVal = colValue(row, 'nisn') || colValue(row,'NISN') || '';
+  const nis = colValue(row,'nis') || '';
+  const kelas = colValue(row,'kelas') || '';
+  const tmpl = colValue(row,'tempat lahir') || colValue(row,'tempat_lahir') || '';
+  const tgl = colValue(row,'tgl lahir') || colValue(row,'tanggal lahir') || '';
+  const alamat = colValue(row,'alamat') || '';
+  const ayah = colValue(row,'nama ayah') || colValue(row,'nama_ayah') || '';
+  const ibu = colValue(row,'nama ibu') || colValue(row,'nama_ibu') || '';
+  const pelFav = colValue(row,'pelajaran yg disukai') || colValue(row,'pelajaran') || '';
+
+  id('sessionName').textContent = nama + ' (' + nisnVal + ')';
+  id('namaBig').textContent = nama || '-';
+  id('nisnSmall').textContent = nisnVal || nisn;
+
+  id('kelasSmall').textContent = kelas || '-';
+
+  // photo: attempt to use photo column; if absent use index-based file in repo
+  let photoUrl = colValue(row,'foto') || colValue(row,'photo') || '';
+  if(!photoUrl){
+    const idx = data.indexOf(row) + 1;
+    photoUrl = `https://raw.githubusercontent.com/yanuar-moga/guruwali/main/foto/${idx}.jpg`;
+  }
+  id('foto').src = photoUrl;
+
+  // build grid items (key, value)
+  const items = [
+    {k:'NIS', v: nis || '-'},
+    {k:'NISN', v: nisnVal || '-'},
+    {k:'Tempat Lahir', v: tmpl || '-'},
+    {k:'Tanggal Lahir', v: (isNaN(tgl) ? tgl : formatExcelDate(tgl)) || '-'},
+    {k:'Alamat', v: alamat || '-'},
+    {k:'Nama Ayah', v: ayah || '-'},
+    {k:'Nama Ibu', v: ibu || '-'},
+    {k:'Pelajaran Favorit', v: pelFav || '-'}
+  ];
+  const grid = items.map(it => `<div class="data-item"><div class="k">${escapeHtml(it.k)}</div><div class="v">${escapeHtml(it.v)}</div></div>`).join('');
+  q('#bioGrid').innerHTML = grid;
+}
+
+/* try to render jadwal if there's a sheet named Jadwal or columns that look like schedule */
+function renderJadwalFromWorkbook(wb){
+  const sheetNames = wb.SheetNames.map(s=>s.toLowerCase());
+  let jadwalHTML = '';
+  // try find sheet name includes 'jadwal' or 'schedule'
+  let idx = sheetNames.findIndex(s => s.includes('jadwal') || s.includes('schedule'));
+  if(idx >=0){
+    const ws = wb.Sheets[wb.SheetNames[idx]];
+    const data = XLSX.utils.sheet_to_json(ws, { defval:'' });
+    if(data.length===0) {
+      id('jadwalList').innerHTML = '<div class="muted">Sheet Jadwal kosong.</div>';
+      return;
+    }
+    // display simple table
+    jadwalHTML = '<table style="width:100%;border-collapse:collapse"><thead><tr style="text-align:left"><th style="padding:6px">Hari</th><th style="padding:6px">Jam</th><th style="padding:6px">Pelajaran</th><th style="padding:6px">Kelas</th></tr></thead><tbody>';
+    data.forEach(r=>{
+      const hari = colValue(r,'hari') || colValue(r,'day') || '';
+      const jam = colValue(r,'jam') || colValue(r,'time') || '';
+      const pel = colValue(r,'pelajaran') || colValue(r,'subject') || '';
+      const kls = colValue(r,'kelas') || '';
+      jadwalHTML += `<tr><td style="padding:6px;border-top:1px solid #eee">${escapeHtml(hari)}</td><td style="padding:6px;border-top:1px solid #eee">${escapeHtml(jam)}</td><td style="padding:6px;border-top:1px solid #eee">${escapeHtml(pel)}</td><td style="padding:6px;border-top:1px solid #eee">${escapeHtml(kls)}</td></tr>`;
     });
+    jadwalHTML += '</tbody></table>';
+    id('jadwalList').innerHTML = jadwalHTML;
+    return;
+  }
 
-    document.getElementById("dataGrid").innerHTML = html;
-}
-
-function logout() {
-    localStorage.removeItem(SESSION_KEY);
-    window.location.href = 'index.html';
-}
-
-loadExcel();
-</script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script>
-async function loadBiodata() {
-    const s = load(SESSION_KEY);
-    if (!s || s.role !== 'siswa') {
-        window.location.href = 'index.html';
-        return;
+  // fallback: check if the main sheet has columns like Hari, Jam, Pelajaran and aggregate rows for this student's class
+  try{
+    const mainSheet = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval:'' });
+    const hasJ = Object.keys(mainSheet[0]||{}).some(k=>String(k).toLowerCase().includes('hari') || String(k).toLowerCase().includes('jam'));
+    if(!hasJ){
+      id('jadwalList').innerHTML = '<div class="muted">Jadwal tidak tersedia di file.</div>';
+      return;
     }
-    const nisnLogin = s.nisn;
-    const file = await fetch('data.xlsx');
-    const arrayBuffer = await file.arrayBuffer();
-    const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const json = XLSX.utils.sheet_to_json(sheet);
-    const row = json.find(r => String(r.NISN).trim() === String(nisnLogin));
-    if (!row) { alert('Data siswa tidak ditemukan'); return; }
-    document.getElementById('bio-nama').textContent = row.Nama || '-';
-    document.getElementById('bio-nisn').textContent = row.NISN || '-';
-    document.getElementById('bio-nis').textContent = row.NIS || '-';
-    document.getElementById('bio-kelas').textContent = row.Kelas || '-';
-    document.getElementById('bio-tmplahir').textContent = row['Tempat Lahir'] || '-';
-    document.getElementById('bio-tgllahir').textContent = row['Tanggal Lahir'] || '-';
-    document.getElementById('bio-alamat').textContent = row.Alamat || '-';
-    document.getElementById('bio-ayah').textContent = row['Nama Ayah'] || '-';
-    document.getElementById('bio-ibu').textContent = row['Nama Ibu'] || '-';
+  }catch(e){
+    id('jadwalList').innerHTML = '<div class="muted">Jadwal tidak ditemukan.</div>';
+  }
 }
-loadBiodata();
+
+/* util: format excel serial date */
+function formatExcelDate(v){
+  if(v === '' || v === null || v === undefined) return '-';
+  if(!isNaN(v)){
+    const d = new Date((v - 25569) * 86400 * 1000);
+    return d.toLocaleDateString('id-ID', { day:'2-digit', month:'long', year:'numeric' });
+  }
+  return v;
+}
+
+/* =======================
+   LOCAL DATA (Curhat, Notulen, Announcements)
+   ======================= */
+function getStudentStorageKey(nisn){ return 'gw_data_' + String(nisn).trim(); }
+function loadStudentData(nisn){ try{ return JSON.parse(localStorage.getItem(getStudentStorageKey(nisn))||'{}'); }catch(e){return {};} }
+function saveStudentData(nisn, obj){ localStorage.setItem(getStudentStorageKey(nisn), JSON.stringify(obj)); }
+
+/* CURHAT: save locally + optionally POST to GAS endpoint */
+id('btnKirimCurhat').addEventListener('click', async ()=> {
+  const judul = id('curhatJudul').value.trim();
+  const isi = id('curhatIsi').value.trim();
+  if(!isi) return alert('Isi curhat kosong.');
+  const rec = { id: Date.now(), judul, isi, ts: new Date().toLocaleString() };
+  const d = loadStudentData(NISN);
+  d.curhat = d.curhat || [];
+  d.curhat.push(rec);
+  saveStudentData(NISN, d);
+  renderCurhatList();
+  id('curhatStatus').textContent = 'tersimpan lokal';
+  // optionally send to GAS
+  if(GAS_ENDPOINT){
+    try{
+      id('curhatStatus').textContent = 'mengirim...';
+      const payload = { nisn: NISN, nama: id('namaBig').textContent, curhat: rec };
+      const r = await fetch(GAS_ENDPOINT, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+      if(r.ok) id('curhatStatus').textContent = 'terkirim ke server';
+      else { id('curhatStatus').textContent = 'gagal kirim server'; console.warn('GAS response', r.status); }
+    }catch(e){
+      id('curhatStatus').textContent = 'gagal kirim server';
+      console.error(e);
+    }
+  }
+});
+
+/* render curhat */
+function renderCurhatList(){
+  const d = loadStudentData(NISN);
+  const arr = d.curhat || [];
+  if(arr.length===0){ id('curhatList').innerHTML = '<div class="muted">Belum ada curhat.</div>'; return; }
+  id('curhatList').innerHTML = arr.slice().reverse().map(c=>{
+    return `<div style="padding:10px;border-radius:8px;border:1px solid #eee;margin-bottom:8px">
+      <div style="font-weight:700">${escapeHtml(c.judul||'(Tanpa Judul)')}</div>
+      <div class="muted" style="font-size:12px">${escapeHtml(c.ts)}</div>
+      <div style="margin-top:8px;white-space:pre-wrap">${escapeHtml(c.isi)}</div>
+    </div>`;
+  }).join('');
+}
+
+/* NOTULEN */
+id('btnSaveNotu').addEventListener('click', ()=>{
+  const judul = id('notuJudul').value.trim();
+  const isi = id('notuIsi').value.trim();
+  if(!isi) return alert('Isi notulen kosong.');
+  const rec = { id: Date.now(), judul, isi, ts: new Date().toLocaleString() };
+  const d = loadStudentData(NISN);
+  d.notulen = d.notulen || [];
+  d.notulen.push(rec);
+  saveStudentData(NISN, d);
+  renderNotuList();
+});
+function renderNotuList(){
+  const d = loadStudentData(NISN); const arr = d.notulen || [];
+  if(arr.length===0){ id('notuList').innerHTML = '<div class="muted">Belum ada notulen.</div>'; return; }
+  id('notuList').innerHTML = arr.slice().reverse().map(n=>`<div style="padding:10px;border-radius:8px;border:1px solid #eee;margin-bottom:8px">
+    <div style="font-weight:700">${escapeHtml(n.judul||'(Tanpa Judul)')}</div>
+    <div class="muted" style="font-size:12px">${escapeHtml(n.ts)}</div>
+    <div style="margin-top:8px;white-space:pre-wrap">${escapeHtml(n.isi)}</div>
+  </div>`).join('');
+}
+
+/* ANNOUNCEMENTS (global) */
+function loadAnnouncements(){
+  try{
+    const arr = JSON.parse(localStorage.getItem('gw_ann_announcements')||'[]');
+    if(!arr || arr.length===0){ id('annList').innerHTML = '<div class="muted">Belum ada pengumuman.</div>'; return; }
+    id('annList').innerHTML = arr.slice().reverse().map(a=>`<div style="padding:10px;border-radius:8px;border:1px solid #eee;margin-bottom:8px">
+      <div style="font-weight:700">${escapeHtml(a.title)}</div>
+      <div class="muted" style="font-size:12px">${escapeHtml(a.ts||'')}</div>
+      <div style="margin-top:8px">${escapeHtml(a.text)}</div>
+    </div>`).join('');
+  }catch(e){
+    id('annList').innerHTML = '<div class="muted">Gagal memuat pengumuman.</div>';
+  }
+}
+
+/* load local student data to UI */
+function loadLocalData(){
+  renderCurhatList();
+  renderNotuList();
+  // show saved announcements count
+  const anns = JSON.parse(localStorage.getItem('gw_ann_announcements')||'[]');
+  id('localStatus').textContent = 'Pengumuman: ' + (anns.length||0);
+}
+
+/* PAGE NAV */
+q('#menu').addEventListener('click', e=>{
+  const a = e.target.closest('a');
+  if(!a) return;
+  const page = a.dataset.page;
+  if(page){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    const el = id(page);
+    if(el) el.classList.add('active');
+  }else if(a.id==='logoutLink'){ localStorage.removeItem('gw_ann_session_v3'); window.location.href='index.html'; }
+});
+
+/* init */
+loadExcelAndInit();
+
+/* lucide icons init */
+document.addEventListener('DOMContentLoaded', ()=>{ if(window.lucide) lucide.createIcons(); });
 </script>
+
 </body>
 </html>
