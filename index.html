@@ -1,132 +1,53 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Login - Aplikasi Guru Wali</title>
-<style>
-  body {
-    font-family: "Poppins", sans-serif;
-    background: linear-gradient(180deg,#e8f3ff,#ffffff);
-    height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    margin:0;
-  }
-
-  .login-card {
-    background:#fff;
-    border-radius:18px;
-    padding:18px 20px;
-    width:90%;
-    max-width:240px; /* proporsional di layar HP */
-    box-shadow:0 3px 8px rgba(0,0,0,.1);
-    border-top:4px solid #ffd84c;
-    text-align:center;
-  }
-
-  .login-card img {
-    width:55px;
-    height:55px;
-    border-radius:50%;
-    margin-bottom:8px;
-  }
-
-  h2 {
-    font-size:1rem;
-    color:#003f7f;
-    margin:10px 0 18px;
-  }
-
-  input[type=text],
-  input[type=password] {
-    width:100%;
-    padding:7px 8px;
-    margin-bottom:10px;
-    border:1px solid #ccc;
-    border-radius:6px;
-    font-size:13px;
-    box-sizing:border-box;
-  }
-
-  .show-pass {
-    display:flex;
-    align-items:center;
-    justify-content:flex-start;
-    font-size:13px;
-    color:#333;
-    margin-bottom:12px;
-    width:100%;
-  }
-
-  .show-pass input[type=checkbox] {
-    margin-left:0;
-    margin-right:6px;  /* jarak kecil dari teks */
-    transform:scale(1.05);
-    cursor:pointer;
-    accent-color:#4da3ff;
-  }
-
-  .show-pass label {
-    cursor:pointer;
-    flex:1;
-    text-align:left;
-    margin-left:0;
-  }
-
-  button {
-    width:100%;
-    padding:8px;
-    border:none;
-    border-radius:6px;
-    background:linear-gradient(90deg,#4da3ff,#007bff);
-    color:#fff;
-    font-weight:600;
-    font-size:13.5px;
-    cursor:pointer;
-    transition:.25s;
-  }
-
-  button:hover {
-    transform:scale(1.03);
-    background:linear-gradient(90deg,#007bff,#005ecb);
-  }
-
-  .footer {
-    margin-top:12px;
-    font-size:10.5px;
-    color:#777;
-  }
-</style>
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="login-card">
-    <img src="assets/logo.png" alt="Logo Sekolah">
-    <h2>Aplikasi Guru Wali</h2>
 
-    <form id="loginForm">
-      <input type="text" id="username" placeholder="Username" required>
-      <input type="password" id="password" placeholder="Password" required>
+<main class="page-center">
+  <div class="login-card">
+    <img src="assets/logo.png" alt="Logo Sekolah" class="logo" />
+    <h1 class="title">Aplikasi Guru Wali</h1>
+
+    <form id="loginForm" class="form">
+      <label class="field">
+        <span class="label-text">NISN</span>
+        <input id="username" type="text" placeholder="Masukkan NISN" required />
+      </label>
+
+      <label class="field">
+        <span class="label-text">Password</span>
+        <input id="password" type="password" placeholder="Masukkan password" required />
+      </label>
 
       <div class="show-pass">
-        <input type="checkbox" id="showPassword">
+        <input type="checkbox" id="showPassword" />
         <label for="showPassword">Tampilkan Password</label>
       </div>
 
-      <button type="submit">Masuk</button>
+      <button type="submit" class="btn-primary">Masuk</button>
     </form>
 
-    <div class="footer">© 2025 MB All rights reserved</div>
-  </div>
+    <div class="login-note">
+      <small>Login siswa: <b>NISN</b> / password: <b>siswa</b> &nbsp; • &nbsp;
+             Login guru: <b>bayu</b> / password: <b>binapustaka</b></small>
+    </div>
 
-  <script src="script.js"></script>
-  <script>
-    // Tampilkan password
-    document.getElementById("showPassword").addEventListener("change", function() {
-      const pass = document.getElementById("password");
-      pass.type = this.checked ? "text" : "password";
-    });
-  </script>
+    <div class="footer">© 2025 SMPN 1 Moga</div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+<script>
+  // toggle tampilkan password
+  document.getElementById('showPassword').addEventListener('change', function(){
+    const p = document.getElementById('password');
+    p.type = this.checked ? 'text' : 'password';
+  });
+</script>
 </body>
 </html>
