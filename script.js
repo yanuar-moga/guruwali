@@ -1,123 +1,79 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login - Aplikasi Guru Wali</title>
-<link rel="stylesheet" href="style.css">
+// ===============================
+//  Aplikasi Guru Wali - SCRIPT JS
+// ===============================
 
-<style>
-  body {
-    font-family: "Poppins", sans-serif;
-    background: linear-gradient(180deg,#e8f3ff,#ffffff);
-    height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    margin:0;
-  }
+// --- Konfigurasi WhatsApp ---
+const WA_NUMBER = '6285229399579';
 
-  .login-card {
-    background:#fff;
-    border-radius:18px;
-    padding:18px 20px;
-    width:90%;
-    max-width:240px;
-    box-shadow:0 3px 8px rgba(0,0,0,.1);
-    border-top:4px solid #ffd84c;
-    text-align:center;
-  }
+// --- Data Siswa (NISN : Nama) ---
+const STUDENTS = {
+  '0122942217':'Fathan Gustomy',
+  '0133910125':'Ibtisam Arifa',
+  '0138379546':'Inayati Aena',
+  '0116285864':'IQBAL WICAKSONO',
+  '0122823698':'IRMA NOVIANA',
+  '3137605563':'MELIYA EKA NUR AFRIANI',
+  '3138786854':'MUHAMAD AFKARUL ISLAM',
+  '0128406125':'Muhamad Faiq Imammillah',
+  '0112958192':'MUHAMAD HABIBI',
+  '0135310769':'MUHAMAD REHAN FARDAN',
+  '0135704989':'Muhamad Syauqi Asyrofal Khabibi',
+  '0111797577':'MUHAMAD ZULMI FAKHRI',
+  '0139036863':"MUHAMMAD 'IZZA KURNIAWAN",
+  '3127598392':'Muhammad Ziyya Ahlunnaza',
+  '3133623151':'MUKHAMAD BAYU MAULID',
+  '3130206215':'MUTIARA SILMI',
+  '0136942798':'NAFISA IKLIMA AZZAHRA',
+  '3138872764':"NASY'ATUL MAHYA",
+  '0133675007':'NAUFAL HISAM PRATAMA',
+  '3117519319':'NUR WANIFA'
+};
 
-  .login-card img {
-    width:55px;
-    height:55px;
-    border-radius:50%;
-    margin-bottom:8px;
-  }
+// --- LocalStorage Keys ---
+const ANN_KEY = 'gw_ann_announcements_v3';
+const CURHAT_KEY = 'gw_ann_curhats_v3';
+const NOTULEN_KEY = 'gw_ann_notulen_v3';
+const PEMB_KEY = 'gw_ann_pembinaan_v3';
+const MASALAH_KEY = 'gw_ann_masalah_v3';
+const LOG_KEY = 'gw_ann_logs_v3';
+const SESSION_KEY = 'gw_ann_session_v3';
 
-  h2 {
-    font-size:1rem;
-    color:#003f7f;
-    margin:10px 0 18px;
-  }
+// --- Helper Functions ---
+function nowStr(){ return new Date().toLocaleString(); }
+function save(key,obj){ localStorage.setItem(key, JSON.stringify(obj)); }
+function load(key,def){ try{return JSON.parse(localStorage.getItem(key))||def}catch(e){return def;} }
 
-  input[type=text],
-  input[type=password] {
-    width:100%;
-    padding:7px 8px;
-    margin-bottom:10px;
-    border:1px solid #ccc;
-    border-radius:6px;
-    font-size:13px;
-    box-sizing:border-box;
-  }
+// ===============================
+//  LOGIN SYSTEM
+// ===============================
+document.addEventListener('DOMContentLoaded', ()=>{
 
-  .show-pass {
-    display:flex;
-    align-items:center;
-    justify-content:flex-start;
-    font-size:13px;
-    color:#333;
-    margin-bottom:12px;
-  }
-  .show-pass input {
-    margin-right:6px;
-    transform:scale(1.05);
-    accent-color:#4da3ff;
-  }
+  const loginForm = document.getElementById('loginForm');
 
-  button {
-    width:100%;
-    padding:8px;
-    border:none;
-    border-radius:6px;
-    background:linear-gradient(90deg,#4da3ff,#007bff);
-    color:#fff;
-    font-weight:600;
-    font-size:13.5px;
-    cursor:pointer;
-    transition:.25s;
-  }
-  button:hover {
-    transform:scale(1.03);
-  }
+  if(loginForm){
+    // tombol show password
+    const sp = document.getElementById('showPassword');
+    if(sp){
+      sp.addEventListener('change', ()=>{
+        const passField = document.getElementById('password');
+        passField.type = sp.checked ? 'text' : 'password';
+      });
+    }
 
-  .footer {
-    font-size:10.5px;
-    color:#777;
-    margin-top:12px;
-  }
-</style>
-</head>
+    // PROSES LOGIN
+    loginForm.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const u = document.getElementById('username').value.trim();
+      const p = document.getElementById('password').value.trim();
 
-<body>
-  <div class="login-card">
-    <img src="assets/logo.png" alt="Logo Sekolah">
-    <h2>Aplikasi Guru Wali</h2>
+      // --- Login Guru / Admin ---
+      if(u.toLowerCase()==='bayu' && p==='binapustaka'){
+        save(SESSION_KEY,{role:'guru',user:'bayu',ts:nowStr()});
+        window.location.href='guru.html';
+        return;
+      }
 
-    <form id="loginForm">
-      <input type="text" id="username" placeholder="NISN" required>
-      <input type="password" id="password" placeholder="Password" required>
-
-      <div class="show-pass">
-        <input type="checkbox" id="showPassword">
-        <label for="showPassword">Tampilkan Password</label>
-      </div>
-
-      <button type="submit">Masuk</button>
-    </form>
-
-    <div class="footer">© 2025 MB All rights reserved</div>
-  </div>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <script src="script.js"></script>
-
-  <script>
-    document.getElementById("showPassword").onclick = () => {
-      const p = document.getElementById("password");
-      p.type = p.type === "password" ? "text" : "password";
-    };
-  </script>
-</body>
-</html>
+      // --- Login Siswa ---
+      if(STUDENTS[u] && p === 'siswa'){
+        save(SESSION_KEY,{
+          role:'siswa',
