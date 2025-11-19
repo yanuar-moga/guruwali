@@ -1,156 +1,381 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Biodata Siswa</title>
-<link rel="stylesheet" href="style.css" />
+
+<!-- XLSX -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<!-- html2canvas + jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <style>
-  /* specific kartu style for siswa (kejar 9:16 look) */
-  .topbar {
-    background: #0A4FA3; color: #fff; padding:12px; display:flex; justify-content:space-between; align-items:center;
-  }
-  .top-left { display:flex; align-items:center; gap:10px; }
-  .toplogo { width:40px; height:40px; object-fit:contain; }
-  .kartu { width:360px; height:640px; margin:18px auto; background:#fff; border-radius:12px; padding:14px; box-shadow:0 6px 20px rgba(10,79,163,0.12); display:flex; flex-direction:column; }
-  .foto-box{ text-align:center; }
-  .foto-siswa{ width:130px; height:170px; object-fit:cover; border-radius:10px; border:3px solid #0A4FA3; }
-  .data-scroll{ flex:1; margin-top:12px; overflow-y:auto; padding-right:6px; }
-  table{ width:100%; border-collapse:collapse; font-size:15px;}
-  td{ padding:7px 6px; vertical-align:top; }
-  tr:nth-child(even){ background:#f0f4ff; }
-  .label{ width:40%; font-weight:700; }
-  .logout-btn{ background:#ff5d5d; color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; }
+
+/* ============================ */
+/*  GLOBAL LAYOUT               */
+/* ============================ */
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #eef3f9;
+}
+
+.layout {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* ============================ */
+/* SIDEBAR                      */
+/* ============================ */
+
+.sidebar {
+    width: 210px;
+    background: #0d47a1;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding-top: 15px;
+}
+
+.sidebar h2 {
+    text-align: center;
+    margin: 0 0 15px 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.menu a {
+    display: block;
+    padding: 12px 18px;
+    color: white;
+    text-decoration: none;
+    font-size: 15px;
+}
+
+.menu a:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+/* ============================ */
+/* MAIN AREA                    */
+/* ============================ */
+
+.main {
+    flex: 1;
+    overflow-y: auto;
+    position: relative;
+}
+
+/* HEADER TOP RIGHT */
+.header-bar {
+    position: sticky;
+    top: 0;
+    background: #ffffff;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: flex-end;
+    border-bottom: 1px solid #ddd;
+}
+
+.header-bar span {
+    margin-right: 15px;
+    font-weight: bold;
+    color: #0d47a1;
+}
+
+.header-bar button {
+    background: #d32f2f;
+    border: none;
+    padding: 7px 12px;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+}
+
+/* ============================ */
+/* KARTU 9:16                   */
+/* ============================ */
+
+.card {
+    width: 360px;
+    height: 640px;
+    background: white;
+    border-radius: 16px;
+    padding: 18px;
+    margin: 20px auto;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    border-top: 8px solid #0d47a1;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    text-align: center;
+}
+
+.header img {
+    width: 70px;
+}
+
+.header h2 {
+    font-size: 20px;
+    margin: 5px 0;
+    color: #0d47a1;
+}
+
+.photo {
+    width: 120px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin: 10px auto;
+    border: 2px solid #0d47a1;
+}
+
+.data-box {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.row {
+    display: flex;
+    padding: 6px 8px;
+}
+.row:nth-child(odd) { background: #f5f8ff; }
+
+.label { width: 150px; font-size: 13px; font-weight: bold; }
+.colon { width: 10px; }
+.value { flex: 1; font-size: 13px; }
+
+/* FLOATING MENU */
+.floating-menu {
+    position: fixed;
+    bottom: 0;
+    left: 210px;
+    width: calc(100% - 210px);
+    background: #0d47a1;
+    text-align: center;
+    padding: 10px 0;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+}
+
+.floating-menu button {
+    padding: 10px 15px;
+    margin: 4px;
+    background: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    color: #0d47a1;
+    cursor: pointer;
+}
+
+#downloadMenu {
+    display: none;
+    margin-top: 8px;
+}
+
+#downloadMenu button {
+    width: 260px;
+    background: #0d47a1;
+    color: white;
+}
 </style>
 </head>
+
 <body>
 
-<div class="topbar">
-  <div class="top-left">
-    <img src="assets/logo.png" class="toplogo" alt="logo">
-    <strong>Dashboard Siswa</strong>
-  </div>
-  <div>
-    <span id="clock"></span>
-    <button class="logout-btn" onclick="logout()">Logout</button>
-  </div>
+<div class="layout">
+
+    <!-- ======================= -->
+    <!-- SIDEBAR                 -->
+    <!-- ======================= -->
+    <div class="sidebar">
+        <h2>MENU</h2>
+        <div class="menu">
+            <a href="#">🏠 Beranda</a>
+            <a href="#">📢 Pengumuman</a>
+            <a href="#">💬 Curhat Siswa</a>
+            <a href="#">⚠ Masalah Siswa</a>
+            <a href="#">📝 Notulen</a>
+            <a href="#">👥 Pembinaan</a>
+            <a href="#">🤝 Sosial</a>
+            <a href="#">ℹ About</a>
+        </div>
+    </div>
+
+    <!-- ======================= -->
+    <!-- MAIN                    -->
+    <!-- ======================= -->
+    <div class="main">
+
+        <!-- HEADER KANAN ATAS -->
+        <div class="header-bar">
+            <span id="sessionName"></span>
+            <button onclick="logout()">Logout</button>
+        </div>
+
+        <!-- KARTU SISWA -->
+        <div id="card" class="card">
+            <div class="header">
+                <img src="assets/logo.png">
+                <h2>Biodata Siswa</h2>
+            </div>
+
+            <img id="foto" class="photo" src="" alt="Foto Siswa">
+            <div id="data" class="data-box"></div>
+        </div>
+
+    </div>
 </div>
 
-<div id="konten"></div>
+<!-- FLOATING MENU -->
+<div class="floating-menu">
+    <button onclick="prev()">◀ Prev</button>
+    <button onclick="next()">Next ▶</button>
+    <button onclick="toggleMenu()">Download ▼</button>
 
-<!-- SheetJS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script>
-const SESSION_KEY = 'gw_ann_session_v3';
-function updateClock(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('id-ID'); }
-setInterval(updateClock,1000); updateClock();
-
-function logout(){
-  localStorage.removeItem(SESSION_KEY);
-  window.location.href = 'index.html';
-}
-
-// read session
-const sess = (function(){ try{ return JSON.parse(localStorage.getItem(SESSION_KEY)); }catch(e){return null;} })();
-if(!sess || sess.role !== 'siswa'){
-  // not logged in as siswa -> redirect to login
-  window.location.href = 'index.html';
-}
-
-// Try to load Excel (preferred) then fallback to minimal data
-const RAW_XLSX = 'https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx';
-
-// helper: convert excel serial to date string
-function excelDateToText(v){
-  if(typeof v === 'number'){
-    const d = new Date((v - 25569) * 24 * 3600 * 1000);
-    return d.toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' });
-  }
-  return v || '';
-}
-
-async function loadAndRender(){
-  try{
-    const res = await fetch(RAW_XLSX);
-    if(!res.ok) throw new Error('file xlsx tidak bisa diambil');
-    const buf = await res.arrayBuffer();
-    const wb = XLSX.read(buf, { type:'array' });
-    const sheet = wb.Sheets['DATA'] || wb.Sheets[wb.SheetNames[0]];
-    const rows = XLSX.utils.sheet_to_json(sheet, { header:1, defval: '' });
-
-    // find row where col M (index 12) matches nisn
-    let found = null;
-    for(let r=1; r<rows.length; r++){
-      const nisn = String(rows[r][12] || '').trim();
-      if(nisn === sess.nisn){
-        found = rows[r];
-        break;
-      }
-    }
-
-    if(found){
-      const noAbsen = found[0] || '';
-      const nama = found[1] || '';
-      const jk = (found[3] === 'L') ? 'Laki-laki' : 'Perempuan';
-      const tempat = found[4] || '';
-      const tglRaw = found[5];
-      const tgl = excelDateToText(tglRaw);
-      const alamat = found[6] || '';
-      const hobi = found[9] || '';
-      const cita = found[10] || '';
-
-      renderCard({ noAbsen, nama, nisn: sess.nisn, jk, tempat, tgl, alamat, hobi, cita });
-      return;
-    }
-
-    // fallback: if not found in excel, use session minimal info
-    renderCard({
-      noAbsen: '', nama: sess.name || '', nisn: sess.nisn || '',
-      jk:'', tempat:'', tgl:'', alamat:'', hobi:'', cita:''
-    });
-
-  }catch(err){
-    // on error fallback
-    renderCard({
-      noAbsen:'', nama: sess.name || '', nisn: sess.nisn || '', jk:'', tempat:'', tgl:'', alamat:'', hobi:'', cita:''
-    });
-  }
-}
-
-function renderCard(data){
-  const konten = document.getElementById('konten');
-  const photoPath = data.noAbsen ? `assets/foto/${data.noAbsen}.jpg` : 'assets/foto/1.jpg';
-  konten.innerHTML = `
-    <div class="kartu">
-      <div class="foto-box">
-        <img src="${photoPath}" class="foto-siswa" alt="foto siswa" onerror="this.src='assets/foto/1.jpg'">
-      </div>
-      <div class="data-scroll">
-        <table>
-          <tr><td class="label">Nama</td><td>: ${escapeHtml(data.nama)}</td></tr>
-          <tr><td class="label">NISN</td><td>: ${escapeHtml(data.nisn)}</td></tr>
-          <tr><td class="label">Jenis Kelamin</td><td>: ${escapeHtml(data.jk)}</td></tr>
-          <tr><td class="label">Tempat, Tgl Lahir</td><td>: ${escapeHtml(data.tempat)}${data.tgl? ', ' + escapeHtml(data.tgl): ''}</td></tr>
-          <tr><td class="label">Alamat</td><td>: ${escapeHtml(data.alamat)}</td></tr>
-          <tr><td class="label">Hobi</td><td>: ${escapeHtml(data.hobi)}</td></tr>
-          <tr><td class="label">Cita-cita</td><td>: ${escapeHtml(data.cita)}</td></tr>
-        </table>
-      </div>
+    <div id="downloadMenu">
+        <button onclick="downloadJPG()">📷 Download JPG</button>
+        <button onclick="downloadPDFsingle()">📄 PDF Kartu Ini</button>
+        <button onclick="downloadPDFall()">📚 PDF Semua Kartu</button>
     </div>
-  `;
+</div>
+
+<script>
+// =========================
+// SESSION LOGIN
+// =========================
+const SESSION_KEY = "gw_ann_session_v4";
+let SESSION = JSON.parse(localStorage.getItem(SESSION_KEY));
+
+if (!SESSION || SESSION.role !== "siswa") {
+    window.location.href = "index.html";
+}
+document.getElementById("sessionName").textContent =
+    SESSION.name + " (" + SESSION.nisn + ")";
+
+// =========================
+// BIODATA SISWA EXCEL
+// =========================
+let siswa = [];
+let index = 0;
+
+function formatTanggal(excelDate) {
+    if (!excelDate) return "-";
+    if (isNaN(excelDate)) return excelDate;
+    const date = new Date((excelDate - 25569) * 86400 * 1000);
+    return date.toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" });
 }
 
-function escapeHtml(s){
-  if(!s && s !== 0) return '';
-  return String(s)
-    .replaceAll('&','&amp;')
-    .replaceAll('<','&lt;')
-    .replaceAll('>','&gt;')
-    .replaceAll('"','&quot;')
-    .replaceAll("'", '&#39;');
+async function loadExcel() {
+    const file = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
+    const res = await fetch(file);
+    const buf = await res.arrayBuffer();
+    const wb = XLSX.read(buf, { type: "array" });
+    siswa = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+
+    // Cari index berdasarkan NISN login
+    index = siswa.findIndex(s => String(s["NISN"]) === SESSION.nisn);
+    if (index < 0) index = 0;
+
+    showData();
 }
 
-loadAndRender();
+function showData() {
+    const s = siswa[index];
+    let noFoto = index + 1;
+
+    document.getElementById("foto").src =
+        `https://raw.githubusercontent.com/yanuar-moga/guruwali/main/foto/${noFoto}.jpg`;
+
+    const fields = [
+        "NO","NAMA LENGKAP","NAMA PANGGIL","JENIS KELAMIN","Tempat Lahir",
+        "Tgl Lahir","Alamat","No WA Siswa","Hobi","Cita-cita",
+        "NIS","NISN","Pelajaran yg disukai","Pelajaran tdk disukai",
+        "Ekskul","Kegiatan yg memotivasi di sekolah","Cara Belajar",
+        "Harapan Orang Tua","Penerima KIP","ADA KARTU KIP",
+        "YATIM/PIATU","MONDOK"
+    ];
+
+    let html = "";
+    fields.forEach(k=>{
+        let val = s[k] || "-";
+        if (k === "Tgl Lahir") val = formatTanggal(val);
+
+        html += `
+        <div class="row">
+            <div class="label">${k}</div>
+            <div class="colon">:</div>
+            <div class="value">${val}</div>
+        </div>`;
+    });
+
+    document.getElementById("data").innerHTML = html;
+}
+
+function next(){ if(index < siswa.length-1) index++; showData(); }
+function prev(){ if(index > 0) index--; showData(); }
+
+function toggleMenu(){
+    const m = document.getElementById("downloadMenu");
+    m.style.display = m.style.display === "none" ? "block" : "none";
+}
+
+// =========================
+// DOWNLOAD
+// =========================
+function downloadJPG(){
+    html2canvas(document.getElementById("card"), {scale:3}).then(canvas=>{
+        let a = document.createElement("a");
+        a.href = canvas.toDataURL("image/jpeg");
+        a.download = `Kartu-${index+1}.jpg`;
+        a.click();
+    });
+}
+
+function downloadPDFsingle(){
+    const { jsPDF } = window.jspdf;
+    html2canvas(document.getElementById("card"), {scale:3}).then(canvas=>{
+        const pdf = new jsPDF("p","px",[400,640]);
+        pdf.addImage(canvas.toDataURL("image/jpeg"),"JPEG",10,10,380,620);
+        pdf.save(`Kartu-${index+1}.pdf`);
+    });
+}
+
+async function downloadPDFall(){
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF("p","px",[400,640]);
+
+    for(let i=0;i<siswa.length;i++){
+        index=i;
+        showData();
+        await html2canvas(document.getElementById("card"),{scale:3})
+        .then(canvas=>{
+            if(i>0) pdf.addPage();
+            pdf.addImage(canvas.toDataURL("image/jpeg"),"JPEG",10,10,380,620);
+        });
+    }
+    pdf.save("Semua-Kartu-Siswa.pdf");
+}
+
+// =========================
+// LOGOUT
+// =========================
+function logout(){
+    localStorage.removeItem(SESSION_KEY);
+    window.location.href = "index.html";
+}
+
+loadExcel();
 </script>
+
 </body>
 </html>
