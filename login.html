@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login - Aplikasi Guru Wali</title>
-<link rel="stylesheet" href="style.css">
 
 <style>
   body {
@@ -52,18 +51,24 @@
     box-sizing:border-box;
   }
 
+  /* === PERBAIKAN AREA CEKLIST === */
   .show-pass {
-    display:flex;
-    align-items:center;
-    justify-content:flex-start;
-    font-size:13px;
-    color:#333;
-    margin-bottom:12px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    margin: 5px 0 12px 0;
+    font-size: 13px;
+    color: #333;
+    text-align: left;
   }
-  .show-pass input {
-    margin-right:6px;
-    transform:scale(1.05);
-    accent-color:#4da3ff;
+
+  .show-pass input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #4da3ff;
+    margin: 0;
+    cursor: pointer;
   }
 
   button {
@@ -99,6 +104,7 @@
       <input type="text" id="username" placeholder="NISN" required>
       <input type="password" id="password" placeholder="Password" required>
 
+      <!-- AREA CEKLIST DIPERBAIKI -->
       <div class="show-pass">
         <input type="checkbox" id="showPassword">
         <label for="showPassword">Tampilkan Password</label>
@@ -110,6 +116,7 @@
     <div class="footer">© 2025 MB All rights reserved</div>
   </div>
 
+  <!-- XLSX -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="script.js"></script>
 
@@ -119,5 +126,6 @@
       p.type = p.type === "password" ? "text" : "password";
     };
   </script>
+
 </body>
 </html>
