@@ -1,120 +1,102 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Aplikasi Biodata Siswa Offline</title>
+
+<!-- XLSX -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<style>
+    body { font-family: Arial; padding: 20px; }
+    #preview { border:1px solid #ccc; padding:15px; width:280px; }
+    img { width: 100%; border-radius:8px; }
+</style>
+</head>
+<body>
+
+<h2>Aplikasi Biodata Siswa</h2>
+
+<input type="file" id="uploadExcel" accept=".xlsx,.xls" />
+
+<hr>
+
+<select id="selectSiswa"></select>
+
+<div id="preview">
+    <img id="fotoSiswa" src="" alt="Foto siswa" />
+    <p><b>Nama:</b> <span id="nama"></span></p>
+    <p><b>NISN:</b> <span id="nisn"></span></p>
+    <p><b>Kelas:</b> <span id="kelas"></span></p>
+</div>
+
 <script>
-// URL Excel
-const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
+let dataSiswa = [];
 
-let siswaData = [];
-let index = 0;
+// =========== BACA EXCEL ===========
+document.getElementById("uploadExcel").addEventListener("change", function(e){
+    const reader = new FileReader();
+    reader.onload = function(e){
+        const workbook = XLSX.read(e.target.result, { type: 'binary' });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const json = XLSX.utils.sheet_to_json(sheet);
 
-// Konversi tanggal Excel
-function excelDateToText(value) {
-    if (typeof value === "number") {
-        const date = new Date((value - 25569) * 86400 * 1000);
-        return date.toLocaleDateString("id-ID", {
-            day: "numeric",
-            month: "long",
-            year: "numeric"
-        });
-    }
-    return value;
-}
+        dataSiswa = json;
+        isiDropdown();
+    };
+    reader.readAsBinaryString(e.target.files[0]);
+});
 
-// Label rapi
-const LABEL_MAP = {
-    "NAMA": "Nama",
-    "NISN": "NISN",
-    "NIS": "NIS",
-    "KELAS": "Kelas",
-    "TEMPAT_LAHIR": "Tempat Lahir",
-    "TANGGAL_LAHIR": "Tanggal Lahir",
-    "ALAMAT": "Alamat",
-    "ABSEN": "Absen"
-};
+// =========== ISI DROPDOWN ===========
+function isiDropdown(){
+    const sel = document.getElementById("selectSiswa");
+    sel.innerHTML = "";
 
-// Load Excel
-fetch(url)
-    .then(r => r.arrayBuffer())
-    .then(buf => {
-        const wb = XLSX.read(buf, { type: "array" });
-        const sheet = wb.Sheets[wb.SheetNames[0]];
-        siswaData = XLSX.utils.sheet_to_json(sheet);
-        showCard(0);
+    dataSiswa.forEach((s, i) => {
+        const opt = document.createElement("option");
+        opt.value = i;           // PENTING: index = nomor urut foto
+        opt.textContent = s.Nama || `Siswa ${i+1}`;
+        sel.appendChild(opt);
     });
 
-// Tampilkan 1 kartu
-function showCard(i) {
-    index = i;
-    const s = siswaData[i];
-    if (!s) return;
-
-    // FOTO BERDASARKAN URUTAN BARIS (1, 2, 3, dst)
-    const fotoNomor = i + 1;
-    document.getElementById("foto").src =
-        `https://raw.githubusercontent.com/yanuar-moga/guruwali/main/foto/${fotoNomor}.jpg`;
-
-    // DATA RAPI
-    let html = "";
-    for (let key in s) {
-        if (!LABEL_MAP[key]) continue;
-        let label = LABEL_MAP[key];
-        let value = excelDateToText(s[key]);
-
-        html += `
-            <p>
-                <span class="label">${label}</span>: ${value}
-            </p>
-        `;
-    }
-
-    document.getElementById("data").innerHTML = html;
+    tampilkanData(0);
 }
 
-function nextCard() {
-    if (index < siswaData.length - 1) showCard(index + 1);
-}
+// =========== TAMPILKAN DATA =========== 
+document.getElementById("selectSiswa").addEventListener("change", function(){
+    tampilkanData(this.value);
+});
 
-function prevCard() {
-    if (index > 0) showCard(index - 1);
-}
+function tampilkanData(index){
+    index = parseInt(index);
 
-/* Download menu */
-function toggleMenu() {
-    const menu = document.getElementById("menuPanel");
-    menu.style.display = menu.style.display === "block" ? "none" : "block";
-}
+    const siswa = dataSiswa[index];
+    if(!siswa) return;
 
-/* Download gambar */
-function downloadImage() {
-    html2canvas(document.getElementById("card")).then(canvas => {
-        const link = document.createElement("a");
-        link.download = "kartu.png";
-        link.href = canvas.toDataURL();
-        link.click();
+    // --------------------------
+    // Ganti sesuai nama kolom Excel-mu
+    // --------------------------
+    document.getElementById("nama").textContent  = siswa.Nama || "";
+    document.getElementById("nisn").textContent  = siswa.NISN || "";
+    document.getElementById("kelas").textContent = siswa.Kelas || "";
+
+    // FOTO BERDASARKAN INDEX + 1
+    const fotoURL = `https://raw.githubusercontent.com/yanuar-moga/guruwali/main/foto/${index+1}.jpg`;
+
+    // cek apakah foto ada
+    fetch(fotoURL).then(res => {
+        if(res.ok){
+            document.getElementById("fotoSiswa").src = fotoURL;
+        } else {
+            document.getElementById("fotoSiswa").src = "https://via.placeholder.com/300x400?text=No+Photo";
+        }
+    }).catch(err => {
+        document.getElementById("fotoSiswa").src = "https://via.placeholder.com/300x400?text=No+Photo";
     });
-}
 
-/* Download PDF single */
-function downloadPDFsingle() {
-    html2canvas(document.getElementById("card")).then(canvas => {
-        const img = canvas.toDataURL("image/png");
-        const pdf = new jspdf.jsPDF();
-        pdf.addImage(img, "PNG", 10, 10, 190, 0);
-        pdf.save("kartu.pdf");
-    });
-}
-
-/* Download semua PDF */
-async function downloadPDFall() {
-    const pdf = new jspdf.jsPDF();
-
-    for (let i = 0; i < siswaData.length; i++) {
-        showCard(i);
-        await html2canvas(document.getElementById("card")).then(canvas => {
-            const img = canvas.toDataURL("image/png");
-            if (i !== 0) pdf.addPage();
-            pdf.addImage(img, "PNG", 10, 10, 190, 0);
-        });
-    }
-
-    pdf.save("semua_kartu.pdf");
 }
 </script>
+
+</body>
+</html>
