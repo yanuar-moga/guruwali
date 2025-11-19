@@ -1,11 +1,8 @@
-// ===============================
-//  Aplikasi Guru Wali - SCRIPT JS
-// ===============================
+// =========================
+// script.js - Guru Wali
+// =========================
 
-// --- Konfigurasi WhatsApp ---
-const WA_NUMBER = '6285229399579';
-
-// --- Data Siswa (NISN : Nama) ---
+// STUDENTS: NISN -> NAMA (internal)
 const STUDENTS = {
   '0122942217':'Fathan Gustomy',
   '0133910125':'Ibtisam Arifa',
@@ -19,61 +16,49 @@ const STUDENTS = {
   '0135310769':'MUHAMAD REHAN FARDAN',
   '0135704989':'Muhamad Syauqi Asyrofal Khabibi',
   '0111797577':'MUHAMAD ZULMI FAKHRI',
-  '0139036863':"MUHAMMAD 'IZZA KURNIAWAN",
+  '0139036863':'MUHAMMAD IZZA KURNIAWAN',
   '3127598392':'Muhammad Ziyya Ahlunnaza',
   '3133623151':'MUKHAMAD BAYU MAULID',
   '3130206215':'MUTIARA SILMI',
   '0136942798':'NAFISA IKLIMA AZZAHRA',
-  '3138872764':"NASY'ATUL MAHYA",
+  '3138872764':'NASYATUL MAHYA',
   '0133675007':'NAUFAL HISAM PRATAMA',
   '3117519319':'NUR WANIFA'
 };
 
-// --- LocalStorage Keys ---
-const ANN_KEY = 'gw_ann_announcements_v3';
-const CURHAT_KEY = 'gw_ann_curhats_v3';
-const NOTULEN_KEY = 'gw_ann_notulen_v3';
-const PEMB_KEY = 'gw_ann_pembinaan_v3';
-const MASALAH_KEY = 'gw_ann_masalah_v3';
-const LOG_KEY = 'gw_ann_logs_v3';
+// Storage key for session
 const SESSION_KEY = 'gw_ann_session_v3';
 
-// --- Helper Functions ---
+// helper
 function nowStr(){ return new Date().toLocaleString(); }
-function save(key,obj){ localStorage.setItem(key, JSON.stringify(obj)); }
-function load(key,def){ try{return JSON.parse(localStorage.getItem(key))||def}catch(e){return def;} }
+function save(key, obj){ localStorage.setItem(key, JSON.stringify(obj)); }
+function load(key){ try{return JSON.parse(localStorage.getItem(key));}catch(e){return null;} }
 
-// ===============================
-//  LOGIN SYSTEM
-// ===============================
-document.addEventListener('DOMContentLoaded', ()=>{
-
+// login form handling (on index.html)
+document.addEventListener('DOMContentLoaded', ()=> {
   const loginForm = document.getElementById('loginForm');
+  if(!loginForm) return;
 
-  if(loginForm){
-    // tombol show password
-    const sp = document.getElementById('showPassword');
-    if(sp){
-      sp.addEventListener('change', ()=>{
-        const passField = document.getElementById('password');
-        passField.type = sp.checked ? 'text' : 'password';
-      });
+  loginForm.addEventListener('submit', (ev)=>{
+    ev.preventDefault();
+    const u = document.getElementById('username').value.trim();
+    const p = document.getElementById('password').value.trim();
+
+    // guru
+    if(u.toLowerCase() === 'bayu' && p === 'binapustaka'){
+      save(SESSION_KEY, { role:'guru', user:'bayu', ts: nowStr() });
+      window.location.href = 'guru.html';
+      return;
     }
 
-    // PROSES LOGIN
-    loginForm.addEventListener('submit', (e)=>{
-      e.preventDefault();
-      const u = document.getElementById('username').value.trim();
-      const p = document.getElementById('password').value.trim();
+    // siswa (internal list)
+    if(STUDENTS[u] && p === 'siswa'){
+      save(SESSION_KEY, { role:'siswa', nisn: u, name: STUDENTS[u], ts: nowStr() });
+      // redirect to siswa page (we will use session to load detailed data)
+      window.location.href = `siswa.html`;
+      return;
+    }
 
-      // --- Login Guru / Admin ---
-      if(u.toLowerCase()==='bayu' && p==='binapustaka'){
-        save(SESSION_KEY,{role:'guru',user:'bayu',ts:nowStr()});
-        window.location.href='guru.html';
-        return;
-      }
-
-      // --- Login Siswa ---
-      if(STUDENTS[u] && p === 'siswa'){
-        save(SESSION_KEY,{
-          role:'siswa',
+    alert('Login gagal — periksa username/NISN dan password.');
+  });
+});
