@@ -8,121 +8,142 @@
   <style>
     body {
       font-family: Arial, sans-serif;
+      background: #f4f4f4;
       margin: 0;
-      background: #f5f5f5;
+      padding: 0;
     }
 
+    /* Topbar */
     .topbar {
-      background: #0A4FA3;
+      background: #004aad;
       color: white;
-      padding: 10px;
+      padding: 10px 15px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-
     .top-left {
       display: flex;
       align-items: center;
       gap: 10px;
     }
-
     .toplogo {
       width: 40px;
       height: 40px;
     }
+    .logout-btn {
+      background: #d9534f;
+      border: none;
+      padding: 7px 12px;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
 
+    /* Menu Utama */
     .menu-container {
-      display: flex;
-      justify-content: space-around;
-      padding: 10px;
-      background: #ffffff;
-      flex-wrap: wrap;
+      padding: 15px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
     }
-
     .menu-btn {
-      background: #0A4FA3;
-      color: white;
-      padding: 10px 15px;
-      border-radius: 8px;
-      text-decoration: none;
-      margin: 5px;
-    }
-
-    .navbar {
-      background: #0A4FA3;
-      color: white;
-      padding: 10px;
-      display: flex;
-      justify-content: space-around;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-    }
-
-    .navbar a {
-      color: white;
-      text-decoration: none;
-    }
-
-    /* BIODATA CARD */
-    .card {
-      width: 90%;
-      margin: 20px auto;
+      display: block;
       background: white;
       padding: 15px;
       border-radius: 10px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.2);
-    }
-
-    .foto-box {
       text-align: center;
-      margin-bottom: 15px;
+      text-decoration: none;
+      color: #222;
+      font-weight: bold;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
     }
 
-    .foto-siswa {
-      width: 120px;
-      height: 160px;
-      object-fit: cover;
-      border-radius: 8px;
-      border: 2px solid #0A4FA3;
+    /* Navbar bawah */
+    .navbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0;
+      border-top: 1px solid #ccc;
+    }
+    .navbar a {
+      text-decoration: none;
+      color: #004aad;
+      font-weight: bold;
     }
 
+    /* Kartu Biodata */
+    .biodata-box {
+      margin: 15px;
+      background: white;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 0 7px rgba(0,0,0,0.15);
+    }
+    .title {
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
+      color: #004aad;
+      margin-bottom: 10px;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
       font-size: 15px;
     }
-
     td {
-      padding: 6px;
+      padding: 5px 3px;
       vertical-align: top;
+      border-bottom: 1px solid #eee;
     }
-
-    tr:nth-child(even) {
-      background: #f0f4ff;
-    }
-
-    .label {
-      width: 40%;
+    td.label {
+      width: 35%;
       font-weight: bold;
     }
-
+    td.colon {
+      width: 5%;
+    }
   </style>
 </head>
-<body>
 
-  <!-- ====== Topbar ====== -->
+<body class="light">
+
+  <!-- ========== TOPBAR ========== -->
   <div class="topbar">
     <div class="top-left">
-      <img src="assets/logo.png" class="toplogo" alt="Logo">
+      <img src="assets/logo.png" class="toplogo" alt="Logo Sekolah">
       <h2>Dashboard Siswa</h2>
     </div>
-    <span id="clock"></span>
+
+    <div class="top-right">
+      <span id="clock"></span>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
   </div>
 
-  <!-- ====== Menu Utama ====== -->
+  <!-- ========== BIODATA ========== -->
+  <div class="biodata-box">
+    <div class="title">Biodata Siswa</div>
+
+    <table>
+      <tr><td class="label">Nama</td><td class="colon">:</td><td id="namaSiswa"></td></tr>
+      <tr><td class="label">NISN</td><td class="colon">:</td><td id="nisnSiswa"></td></tr>
+      <tr><td class="label">Jenis Kelamin</td><td class="colon">:</td><td id="jkSiswa"></td></tr>
+      <tr><td class="label">Tempat, Tgl Lahir</td><td class="colon">:</td><td id="lahirSiswa"></td></tr>
+      <tr><td class="label">Alamat</td><td class="colon">:</td><td id="alamatSiswa"></td></tr>
+      <tr><td class="label">Dusun</td><td class="colon">:</td><td id="dusunSiswa"></td></tr>
+      <tr><td class="label">Kecamatan</td><td class="colon">:</td><td id="kecamatanSiswa"></td></tr>
+      <tr><td class="label">Transportasi</td><td class="colon">:</td><td id="transportasiSiswa"></td></tr>
+    </table>
+  </div>
+
+  <!-- ========== MENU UTAMA ========== -->
   <div class="menu-container">
     <a href="pengumuman.html" class="menu-btn">📢 Pengumuman</a>
     <a href="curhatsiswa.html" class="menu-btn">💬 Curhat</a>
@@ -131,10 +152,7 @@
     <a href="masalahsiswa.html" class="menu-btn">⚠️ Masalah</a>
   </div>
 
-  <!-- ====== BIODATA SISWA ====== -->
-  <div id="biodata"></div>
-
-  <!-- ====== Navbar Bawah ====== -->
+  <!-- ========== NAVBAR BAWAH ========== -->
   <div class="navbar">
     <a href="siswa.html">Beranda</a>
     <a href="pengumuman.html">Pengumuman</a>
@@ -142,58 +160,62 @@
     <a href="pembinaan.html">Pembinaan</a>
   </div>
 
-<script>
-/* ==== Jam Digital ==== */
-function updateClock() {
-  const now = new Date();
-  document.getElementById("clock").textContent =
-    now.toLocaleTimeString("id-ID");
-}
-setInterval(updateClock, 1000);
+  <!-- ========== SCRIPT ========== -->
+  <script>
+    // Clock
+    function updateClock() {
+      const now = new Date();
+      document.getElementById("clock").textContent =
+        now.toLocaleTimeString("id-ID", { hour12: false });
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
 
-/* ==== Ambil Parameter NISN ==== */
-const urlParams = new URLSearchParams(window.location.search);
-const nisnParam = urlParams.get("nisn");
-
-/* ==== Load Data JSON ==== */
-fetch("assets/data/siswa.json")
-  .then(res => res.json())
-  .then(data => {
-    const siswa = data.find(s => s.nisn === nisnParam);
-
-    const biodataDiv = document.getElementById("biodata");
-
-    if (!siswa) {
-      biodataDiv.innerHTML = `
-        <div class="card">
-          <h3>Data tidak ditemukan!</h3>
-          <p>NISN: ${nisnParam}</p>
-        </div>`;
-      return;
+    // Logout
+    function logout() {
+      if (confirm("Yakin ingin keluar?")) {
+        window.location.href = "index.html";
+      }
     }
 
-    biodataDiv.innerHTML = `
-      <div class="card">
-        <div class="foto-box">
-          <img src="assets/foto/${siswa.no}.jpg" class="foto-siswa" alt="Foto">
-        </div>
+    // READ PARAMETER ?no=1
+    function getQuery(param) {
+      const url = new URL(window.location.href);
+      return url.searchParams.get(param);
+    }
 
-        <table>
-          <tr><td class="label">Nama Lengkap</td><td>: ${siswa.nama}</td></tr>
-          <tr><td class="label">Jenis Kelamin</td><td>: ${siswa.jk === 'L' ? 'Laki-laki' : 'Perempuan'}</td></tr>
-          <tr><td class="label">Tempat Lahir</td><td>: ${siswa.tempat_lahir}</td></tr>
-          <tr><td class="label">Tanggal Lahir</td><td>: ${siswa.tgl_lahir}</td></tr>
-          <tr><td class="label">Alamat</td><td>: ${siswa.alamat}</td></tr>
-          <tr><td class="label">RT/RW</td><td>: ${siswa.rt} / ${siswa.rw}</td></tr>
-          <tr><td class="label">Dukuh</td><td>: ${siswa.dukuh}</td></tr>
-          <tr><td class="label">Dusun</td><td>: ${siswa.dusun}</td></tr>
-          <tr><td class="label">Kecamatan</td><td>: ${siswa.kecamatan}</td></tr>
-          <tr><td class="label">Transportasi</td><td>: ${siswa.transportasi}</td></tr>
-        </table>
-      </div>
-    `;
-  });
-</script>
+    const noParam = getQuery("no");
+
+    if (!noParam) {
+      alert("Parameter ?no= tidak ditemukan!");
+    } else {
+      loadSiswa(noParam);
+    }
+
+    // LOAD DATA SISWA
+    function loadSiswa(no) {
+      fetch("siswa.json")
+        .then(res => res.json())
+        .then(data => {
+          const siswa = data.find(s => s.no == no);
+
+          if (!siswa) {
+            alert("Data siswa tidak ditemukan!");
+            return;
+          }
+
+          // Isi data ke halaman
+          document.getElementById("namaSiswa").textContent = siswa.nama;
+          document.getElementById("nisnSiswa").textContent = siswa.nisn;
+          document.getElementById("jkSiswa").textContent = siswa.jk;
+          document.getElementById("lahirSiswa").textContent = siswa.tempat_lahir + ", " + siswa.tgl_lahir;
+          document.getElementById("alamatSiswa").textContent = siswa.alamat;
+          document.getElementById("dusunSiswa").textContent = siswa.dusun;
+          document.getElementById("kecamatanSiswa").textContent = siswa.kecamatan;
+          document.getElementById("transportasiSiswa").textContent = siswa.transportasi;
+        });
+    }
+  </script>
 
 </body>
 </html>
