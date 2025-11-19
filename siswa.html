@@ -5,9 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Biodata Siswa</title>
 
-<!-- SheetJS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
 <style>
   body {
     margin: 0;
@@ -82,8 +79,19 @@
     font-weight: bold;
   }
 
+  /* Tombol logout */
+  .logout-btn {
+    background: #ff5d5d;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+  }
 </style>
 </head>
+
 <body>
 
 <!-- ====== TOPBAR ====== -->
@@ -92,7 +100,10 @@
     <img src="assets/logo.png" class="toplogo">
     <h3>Dashboard Siswa</h3>
   </div>
-  <span id="clock"></span>
+  <div style="display:flex; gap:10px; align-items:center;">
+    <span id="clock"></span>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
 </div>
 
 <!-- ====== TEMPAT BIODATA ====== -->
@@ -106,74 +117,53 @@ function updateClock() {
 }
 setInterval(updateClock, 1000);
 
-/* === Ambil NISN dari URL === */
-const urlParams = new URLSearchParams(window.location.search);
-const nisnParam = urlParams.get("nisn");
 
-/* === Load Excel === */
-async function loadExcel() {
-  const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
-  const response = await fetch(url);
-  const arrayBuffer = await response.arrayBuffer();
-  const workbook = XLSX.read(arrayBuffer, { type: "array" });
+/* === Ambil data siswa dari localStorage === */
+const siswa = JSON.parse(localStorage.getItem("siswa"));
 
-  const sheet = workbook.Sheets["DATA"];
-  return XLSX.utils.sheet_to_json(sheet, { header: 1 });
+// Jika belum login → kembali ke login.html
+if (!siswa) {
+  window.location.href = "login.html";
 }
 
-/* === Tampilkan Biodata === */
-loadExcel().then(rows => {
-  let data = null;
+/* === Logout === */
+function logout(){
+  localStorage.removeItem("siswa");
+  window.location.href = "login.html";
+}
 
-  for (let i = 1; i < rows.length; i++) {
-    if (String(rows[i][12]).trim() === nisnParam) {
-      data = rows[i];
-      break;
-    }
-  }
+/* === Tampilkan biodata === */
+const noAbsen = siswa["No"] || siswa["NO"] || siswa["No Absen"] || siswa["NO ABSEN"] || siswa[0];
+const nama = siswa["Nama"];
+const nisn = siswa["NISN"];
+const jk = siswa["Jenis Kelamin"] === "L" ? "Laki-laki" : "Perempuan";
+const tempat = siswa["Tempat Lahir"];
+const tgl = siswa["Tgl Lahir"];
+const alamat = siswa["Alamat"];
+const hobi = siswa["Hobi"];
+const cita = siswa["Cita-cita"];
 
-  const box = document.getElementById("konten");
+document.getElementById("konten").innerHTML = `
+  <div class="kartu">
 
-  if (!data) {
-    box.innerHTML = `
-      <div class="kartu">
-        <h3>Data tidak ditemukan</h3>
-        <p>NISN: ${nisnParam}</p>
-      </div>`;
-    return;
-  }
-
-  const noAbsen = data[0];
-  const nama = data[1];
-  const jk = data[3] === "L" ? "Laki-laki" : "Perempuan";
-  const tempat = data[4];
-  const tgl = data[5];
-  const alamat = data[6];
-  const hobi = data[9];
-  const cita = data[10];
-
-  box.innerHTML = `
-    <div class="kartu">
-
-      <div class="foto-box">
-        <img src="assets/foto/${noAbsen}.jpg" class="foto-siswa" alt="Foto">
-      </div>
-
-      <div class="data-scroll">
-        <table>
-          <tr><td class="label">Nama</td><td>: ${nama}</td></tr>
-          <tr><td class="label">NISN</td><td>: ${nisnParam}</td></tr>
-          <tr><td class="label">Jenis Kelamin</td><td>: ${jk}</td></tr>
-          <tr><td class="label">Tempat, Tgl Lahir</td><td>: ${tempat}, ${tgl}</td></tr>
-          <tr><td class="label">Alamat</td><td>: ${alamat}</td></tr>
-          <tr><td class="label">Hobi</td><td>: ${hobi}</td></tr>
-          <tr><td class="label">Cita-cita</td><td>: ${cita}</td></tr>
-        </table>
-      </div>
-
+    <div class="foto-box">
+      <img src="assets/foto/${noAbsen}.jpg" class="foto-siswa" alt="Foto">
     </div>
-  `;
-});
+
+    <div class="data-scroll">
+      <table>
+        <tr><td class="label">Nama</td><td>: ${nama}</td></tr>
+        <tr><td class="label">NISN</td><td>: ${nisn}</td></tr>
+        <tr><td class="label">Jenis Kelamin</td><td>: ${jk}</td></tr>
+        <tr><td class="label">Tempat, Tgl Lahir</td><td>: ${tempat}, ${tgl}</td></tr>
+        <tr><td class="label">Alamat</td><td>: ${alamat}</td></tr>
+        <tr><td class="label">Hobi</td><td>: ${hobi}</td></tr>
+        <tr><td class="label">Cita-cita</td><td>: ${cita}</td></tr>
+      </table>
+    </div>
+
+  </div>
+`;
 </script>
 
 </body>
