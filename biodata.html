@@ -1,246 +1,255 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Biodata Siswa</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Aplikasi Biodata Siswa Offline</title>
 
 <!-- XLSX -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-<!-- html2canvas + jsPDF -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- HTML2PDF -->
+<script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
 
 <style>
 body {
     font-family: Arial, sans-serif;
+    background: #f2f2f2;
     padding: 20px;
-    background: #f3f3f3;
+    text-align: center;
 }
+
 .container {
     max-width: 430px;
     margin: auto;
     background: white;
-    padding: 20px;
+    padding: 15px;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    box-shadow: 0 0 10px #aaa;
 }
-img.foto {
-    width: 120px;
-    height: 160px;
-    object-fit: cover;
+
+.card {
     border: 2px solid #333;
-    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 10px;
 }
-.label {
-    display: inline-block;
+
+img {
     width: 130px;
+    height: 170px;
+    object-fit: cover;
+    border: 2px solid #444;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+label {
     font-weight: bold;
 }
-p {
-    margin: 4px 0;
-    font-size: 15px;
+
+.data-row {
+    text-align: left;
+    margin: 5px 0;
 }
-.nav-buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
-}
-.nav-buttons button {
+
+.btn {
     padding: 8px 15px;
+    margin: 3px;
+    border: none;
     background: #007bff;
     color: white;
-    border: none;
-    border-radius: 6px;
+    border-radius: 5px;
     cursor: pointer;
 }
-.nav-buttons button:hover {
-    background: #005fcc;
-}
-#downloadMenuBtn {
-    position: fixed;
-    right: 20px;
-    bottom: 20px;
-    background: #007bff;
-    color: white;
-    padding: 14px 20px;
-    border-radius: 30px;
-    font-size: 17px;
-    cursor: pointer;
-    border: none;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.25);
-}
-#menuPanel {
-    position: fixed;
-    right: 20px;
-    bottom: 80px;
-    background: white;
-    border-radius: 10px;
-    padding: 10px;
-    width: 200px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+
+.btn:hover { background: #0056b3; }
+
+#menuDownload {
     display: none;
-}
-#menuPanel div {
+    background: white;
+    border: 1px solid #aaa;
     padding: 10px;
+    border-radius: 10px;
+    position: absolute;
+    right: 20px;
+    top: 60px;
+    width: 170px;
+    text-align: left;
+}
+
+.menu-item {
+    padding: 5px;
     cursor: pointer;
-    border-bottom: 1px solid #ddd;
 }
-#menuPanel div:hover {
-    background: #f0f0f0;
+.menu-item:hover { background: #eee; }
+
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: 5px;
 }
-#menuPanel div:last-child {
-    border-bottom: none;
+.icon-btn img {
+    width: 35px;
+    height: 35px;
 }
 </style>
 </head>
+
 <body>
 
-<div class="container" id="card">
-    <h2 style="text-align:center;margin-top:0;">Biodata Siswa</h2>
-    <div style="text-align:center;">
-        <img id="foto" class="foto" src="" alt="Foto siswa">
-    </div>
+<h2>Aplikasi Biodata Siswa Offline</h2>
 
-    <div id="data"></div>
+<input type="file" id="fileInput" accept=".xlsx" class="btn"><br><br>
 
-    <div class="nav-buttons">
-        <button onclick="prevCard()">Prev</button>
-        <button onclick="nextCard()">Next</button>
+<select id="filterKelas" class="btn">
+    <option value="">Pilih Kelas</option>
+</select>
+
+<input type="text" id="searchInput" placeholder="Cari nama..." class="btn"><br><br>
+
+<div class="container">
+    <div id="card" class="card">
+
+        <img id="foto" src="">
+
+        <div class="data-row"><label>Nama:</label> <span id="nama"></span></div>
+        <div class="data-row"><label>Kelas:</label> <span id="kelas"></span></div>
+        <div class="data-row"><label>No Absen:</label> <span id="absen"></span></div>
+        <div class="data-row"><label>TTL:</label> <span id="ttl"></span></div>
+        <div class="data-row"><label>Alamat:</label> <span id="alamat"></span></div>
+
     </div>
 </div>
 
-<button id="downloadMenuBtn" onclick="toggleMenu()">Download</button>
+<br>
 
-<div id="menuPanel">
-    <div onclick="downloadImage()">📷 Download Gambar</div>
-    <div onclick="downloadPDFsingle()">📄 Download PDF Kartu Ini</div>
-    <div onclick="downloadPDFall()">📚 Download Semua PDF</div>
+<button class="btn" onclick="prevCard()">◀ Prev</button>
+<button class="btn" onclick="nextCard()">Next ▶</button>
+
+<button class="icon-btn" onclick="toggleMenu()">
+    <img src="https://i.ibb.co/kyV2BWd/download-icon.png">
+</button>
+
+<div id="menuDownload">
+    <div class="menu-item" onclick="downloadImage()">📷 Download Gambar</div>
+    <div class="menu-item" onclick="downloadPDF()">📄 Download PDF Kartu Ini</div>
+    <div class="menu-item" onclick="downloadAllPDF()">📚 Download Semua PDF</div>
 </div>
 
 <script>
-// EXCEL GitHub
-const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/master/assets/data.xlsx";
+let data = [];
+let filteredData = [];
+let currentIndex = 0;
 
-let siswaData = [];
-let index = 0;
+document.getElementById("fileInput").addEventListener("change", function (e) {
+    let file = e.target.files[0];
+    let reader = new FileReader();
+    reader.onload = function (event) {
+        let workbook = XLSX.read(event.target.result, { type: "binary" });
+        let sheet = workbook.Sheets[workbook.SheetNames[0]];
+        data = XLSX.utils.sheet_to_json(sheet);
 
-// Konversi tanggal Excel
-function excelDateToText(value) {
-    if (typeof value === "number") {
-        const date = new Date((value - 25569) * 86400 * 1000);
-        return date.toLocaleDateString("id-ID", {
-            day: "numeric",
-            month: "long",
-            year: "numeric"
+        let kelasList = [...new Set(data.map(s => s.KELAS))];
+        let sel = document.getElementById("filterKelas");
+
+        sel.innerHTML = "<option value=''>Pilih Kelas</option>";
+        kelasList.forEach(k => {
+            sel.innerHTML += `<option value="${k}">${k}</option>`;
         });
-    }
-    return value;
-}
 
-const LABEL_MAP = {
-    "NAMA": "Nama",
-    "NISN": "NISN",
-    "NIS": "NIS",
-    "KELAS": "Kelas",
-    "TEMPAT_LAHIR": "Tempat Lahir",
-    "TANGGAL_LAHIR": "Tanggal Lahir",
-    "ALAMAT": "Alamat",
-    "ABSEN": "Absen"
-};
+        filteredData = data;
+        showCard();
+    };
+    reader.readAsBinaryString(file);
+});
 
-// Load Excel
-fetch(url)
-    .then(r => r.arrayBuffer())
-    .then(buf => {
-        const wb = XLSX.read(buf, { type: "array" });
-        const sheet = wb.Sheets[wb.SheetNames[0]];
-        siswaData = XLSX.utils.sheet_to_json(sheet);
-        showCard(0);
-    });
+document.getElementById("filterKelas").addEventListener("change", () => {
+    let k = document.getElementById("filterKelas").value;
+    filteredData = k ? data.filter(s => s.KELAS == k) : data;
+    currentIndex = 0;
+    showCard();
+});
 
-// Tampilkan kartu
-function showCard(i) {
-    index = i;
-    const s = siswaData[i];
-    if (!s) return;
+document.getElementById("searchInput").addEventListener("input", () => {
+    let q = document.getElementById("searchInput").value.toLowerCase();
+    filteredData = data.filter(s => s.NAMA.toLowerCase().includes(q));
+    currentIndex = 0;
+    showCard();
+});
+
+function showCard() {
+    if (!filteredData.length) return;
+
+    const s = filteredData[currentIndex];
+
+    document.getElementById("nama").textContent = s.NAMA;
+    document.getElementById("kelas").textContent = s.KELAS;
+    document.getElementById("absen").textContent = s.ABSEN;
+    document.getElementById("ttl").textContent = s.TTL;
+    document.getElementById("alamat").textContent = s.ALAMAT;
 
     const foto = document.getElementById("foto");
-    const base = "https://raw.githubusercontent.com/yanuar-moga/guruwali/master/foto/";
+    const base = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/foto/";
 
-    foto.onerror = () => {
-        foto.src = `${base}${s.ABSEN}.JPG`; // fallback ke uppercase
-    };
-
+    foto.onerror = null;
     foto.src = `${base}${s.ABSEN}.jpg`;
 
-    // Tampilkan data
-    let html = "";
-    for (let key in s) {
-        if (!LABEL_MAP[key]) continue;
-
-        let label = LABEL_MAP[key];
-        let value = excelDateToText(s[key]);
-
-        html += `
-            <p>
-                <span class="label">${label}</span>:
-                ${value}
-            </p>
-        `;
-    }
-
-    document.getElementById("data").innerHTML = html;
+    foto.onerror = () => {
+        foto.onerror = null;
+        foto.src = `${base}${s.ABSEN}.JPG`;
+    };
 }
 
 function nextCard() {
-    if (index < siswaData.length - 1) showCard(index + 1);
+    if (currentIndex < filteredData.length - 1) currentIndex++;
+    showCard();
 }
-
 function prevCard() {
-    if (index > 0) showCard(index - 1);
+    if (currentIndex > 0) currentIndex--;
+    showCard();
 }
 
-// MENU
 function toggleMenu() {
-    const menu = document.getElementById("menuPanel");
-    menu.style.display = menu.style.display === "block" ? "none" : "block";
+    let m = document.getElementById("menuDownload");
+    m.style.display = (m.style.display === "block") ? "none" : "block";
 }
 
-// Download Gambar
 function downloadImage() {
-    html2canvas(document.getElementById("card")).then(canvas => {
-        const link = document.createElement("a");
+    let card = document.getElementById("card");
+    html2canvas(card).then(canvas => {
+        let link = document.createElement("a");
         link.download = "kartu.png";
         link.href = canvas.toDataURL();
         link.click();
     });
 }
 
-// Download PDF kartu tampil
-function downloadPDFsingle() {
-    html2canvas(document.getElementById("card")).then(canvas => {
-        const imgData = canvas.toDataURL("image/png");
-        const pdf = new jspdf.jsPDF();
-        pdf.addImage(imgData, "PNG", 10, 10, 190, 0);
-        pdf.save("kartu.pdf");
-    });
+function downloadPDF() {
+    let card = document.getElementById("card");
+    html2pdf().set({ margin: 10, filename: "kartu.pdf" }).from(card).save();
 }
 
-// Download Semua
-async function downloadPDFall() {
-    const pdf = new jspdf.jsPDF();
-    for (let i = 0; i < siswaData.length; i++) {
-        showCard(i);
-        await html2canvas(document.getElementById("card")).then(canvas => {
-            const img = canvas.toDataURL("image/png");
-            if (i !== 0) pdf.addPage();
-            pdf.addImage(img, "PNG", 10, 10, 190, 0);
-        });
-    }
-    pdf.save("semua_kartu.pdf");
+function downloadAllPDF() {
+    let container = document.createElement("div");
+
+    filteredData.forEach(s => {
+        let div = document.createElement("div");
+        div.innerHTML = `
+            <h3>${s.NAMA}</h3>
+            <img src="https://raw.githubusercontent.com/yanuar-moga/guruwali/main/foto/${s.ABSEN}.jpg" style="width:120px;height:160px">
+            <p>Kelas: ${s.KELAS}</p>
+            <p>Absen: ${s.ABSEN}</p>
+            <p>TTL: ${s.TTL}</p>
+            <p>Alamat: ${s.ALAMAT}</p>
+            <hr>
+        `;
+        container.appendChild(div);
+    });
+
+    html2pdf().set({ margin: 10, filename: "semua_kartu.pdf" }).from(container).save();
 }
+
 </script>
 
 </body>
