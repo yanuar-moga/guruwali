@@ -1,230 +1,217 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Data Siswa - Guru Wali Bayu</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beranda Siswa</title>
 
-  <!-- XLSX untuk membaca file Excel -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- XLSX -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-  <style>
-    body { padding-bottom: 70px; font-family: Arial, sans-serif; }
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #eef3f9;
+    display: flex;
+}
 
-    #clock { font-weight: bold; color: #003f7f; }
+/* =========================
+   SIDEBAR MENU
+========================= */
+.sidebar {
+    width: 240px;
+    background: #0d47a1;
+    color: white;
+    height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+}
 
-    .logout-btn {
-      background: #ffd84c; color: #002855; border: none;
-      border-radius: 8px; padding: 6px 10px; cursor: pointer;
-      font-weight: 600; transition: 0.3s;
-    }
-    .logout-btn:hover { background: #ffca2c; }
+.sidebar h2 {
+    margin-top: 0;
+    font-size: 20px;
+    text-align: center;
+}
 
-    .topbar {
-      width: 100%; padding: 10px;
-      background: #003f7f; color: white;
-      display: flex; justify-content: space-between;
-      align-items: center;
-    }
+.menu a {
+    display: block;
+    padding: 12px;
+    margin: 6px 0;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+}
 
-    .top-left { display: flex; align-items: center; gap: 10px; }
+.menu a:hover {
+    background: rgba(255,255,255,0.25);
+}
 
-    .toplogo { height: 40px; }
+/* =========================
+   MAIN CONTENT (BIODATA)
+========================= */
+.main {
+    flex: 1;
+    padding: 20px;
+}
 
-    .search-box {
-      width: 90%; max-width: 500px; margin: 15px auto;
-      display: block; padding: 8px 10px;
-      border-radius: 8px; border: 1px solid #bbb;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
+.card {
+    width: 360px;
+    background: white;
+    border-radius: 16px;
+    padding: 18px;
+    margin: auto;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    border-top: 8px solid #0d47a1;
+}
 
-    .card {
-      width: 95%;
-      max-width: 1400px;
-      margin: 0 auto 80px auto;
-      background: white;
-      border-radius: 14px;
-      padding: 15px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-      overflow-x: auto;
-    }
+.header {
+    text-align: center;
+}
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #fff;
-      border-radius: 10px;
-      overflow: hidden;
-    }
+.photo {
+    width: 120px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin: 10px auto;
+    display: block;
+    border: 2px solid #0d47a1;
+}
 
-    th, td {
-      padding: 8px 10px;
-      border-bottom: 1px solid #ddd;
-      text-align: left;
-      font-size: 13px;
-      vertical-align: top;
-    }
+.row {
+    display: flex;
+    padding: 6px 8px;
+}
 
-    th {
-      background: #003f7f; color: white; white-space: nowrap;
-      position: sticky; top: 0; z-index: 2;
-    }
+.row:nth-child(odd) {
+    background: #f5f8ff;
+}
 
-    tr:hover { background: #f3f9ff; }
+.label { width: 130px; font-weight: bold; font-size: 13px; }
+.colon { width: 10px; }
+.value { flex: 1; font-size: 13px; }
 
-    /* Navbar bawah */
-    .navbar {
-      position: fixed; bottom: 0; left: 0; width: 100%;
-      background: #003f7f; padding: 10px 0;
-      display: flex; justify-content: space-around;
-    }
-    .navbar a {
-      color: white; text-decoration: none; font-size: 14px;
-      padding: 6px 10px;
-    }
-  </style>
-
+</style>
 </head>
-<body class="light">
 
-  <!-- ====== Topbar ====== -->
-  <div class="topbar">
-    <div class="top-left">
-      <img src="assets/logo.png" alt="Logo" class="toplogo">
-      <h2>Data Siswa</h2>
+<body>
+
+<!-- ============= SIDEBAR ============= -->
+<div class="sidebar">
+    <h2>Menu Siswa</h2>
+    <div class="menu">
+        <a href="#">Curhat Siswa</a>
+        <a href="#">Masalah Siswa</a>
+        <a href="#">Notulen</a>
+        <a href="#">Pembinaan</a>
+        <a href="#">Pengumuman</a>
+        <a href="#" onclick="logout()">Logout</a>
     </div>
+</div>
 
-    <div class="top-right" style="display:flex;align-items:center;gap:10px;">
-      <span id="clock">00:00:00</span>
-      <button class="logout-btn" onclick="logout()">Logout</button>
+<!-- ============= MAIN CONTENT ============= -->
+<div class="main">
+    <h2 id="judul">Biodata Siswa</h2>
+
+    <div id="card" class="card">
+
+        <div class="header">
+            <img src="assets/logo.png" width="70">
+            <h2 id="namaSiswa"></h2>
+        </div>
+
+        <img id="foto" class="photo" src="" alt="Foto Siswa">
+
+        <div id="data"></div>
     </div>
-  </div>
+</div>
 
-  <!-- ====== Konten Utama ====== -->
-  <main class="menu-container">
-    <input type="text" id="searchBox" class="search-box" placeholder="Cari nama atau NISN...">
+<script src="script.js"></script>
 
-    <div class="card">
-      <table id="tabelSiswa">
-        <thead>
-          <tr>
-            <th>No</th>
-            <th>Nama Lengkap</th>
-            <th>Nama Panggil</th>
-            <th>JK</th>
-            <th>Tempat Lahir</th>
-            <th>Tgl Lahir</th>
-            <th>Alamat</th>
-            <th>No WA Siswa</th>
-            <th>Hobi</th>
-            <th>Cita-cita</th>
-            <th>NIS</th>
-            <th>NISN</th>
-            <th>Pelajaran Disukai</th>
-            <th>Pelajaran Tidak Disukai</th>
-            <th>Ekskul</th>
-            <th>Motivasi</th>
-            <th>Cara Belajar</th>
-            <th>Harapan Orang Tua</th>
-            <th>Penerima KIP</th>
-            <th>Ada KIP</th>
-            <th>Yatim/Piatu</th>
-            <th>Mondok</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
+<script>
+// =======================
+// CEK SESSION LOGIN
+// =======================
+const ss = load(SESSION_KEY);
 
-  </main>
+if (!ss || ss.role !== 'siswa') {
+    window.location.href = "index.html";
+}
 
-  <!-- ====== Navbar bawah ====== -->
-  <div class="navbar">
-    <a href="guru.html">Beranda</a>
-    <a href="pengumuman.html">Pengumuman</a>
-    <a href="curhatsiswa.html">Curhat</a>
-    <a href="pembinaan.html">Pembinaan</a>
-    <a href="masalahsiswa.html">Masalah</a>
-  </div>
+// Ambil NISN dari session
+const NISN_LOGIN = ss.nisn;
 
-  <!-- ========== SCRIPT ========== -->
-  <script>
+// =======================
+// LOAD DATA EXCEL & FILTER
+// =======================
+let siswa = [];
 
-    // Jam digital real-time
-    function updateClock() {
-      const now = new Date();
-      document.getElementById("clock").textContent =
-        now.toLocaleTimeString("id-ID", { hour12: false });
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
+async function loadExcel() {
+    const file = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
+    const res = await fetch(file);
+    const buf = await res.arrayBuffer();
+    const wb = XLSX.read(buf, { type: "array" });
+    const sheet = wb.Sheets[wb.SheetNames[0]];
+    siswa = XLSX.utils.sheet_to_json(sheet);
 
-    // Logout
-    function logout() {
-      if (confirm("Yakin ingin logout?")) {
-        localStorage.removeItem('gw_ann_session_v3');
-        window.location.href = 'index.html';
-      }
+    // cari siswa berdasarkan NISN
+    const dataSiswa = siswa.find(s => String(s["NISN"]).trim() === NISN_LOGIN);
+
+    if (!dataSiswa) {
+        document.getElementById("data").innerHTML = "<p style='color:red;'>Data siswa tidak ditemukan!</p>";
+        return;
     }
 
-    // Membaca Excel
-    async function loadExcel() {
-      const response = await fetch("assets/data.xlsx");
-      const arrayBuffer = await response.arrayBuffer();
-      const workbook = XLSX.read(arrayBuffer, { type: "array" });
+    tampilkanBiodata(dataSiswa);
+}
 
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const data = XLSX.utils.sheet_to_json(sheet);
+// =======================
+// TAMPILKAN BIODATA
+// =======================
+function tampilkanBiodata(s) {
 
-      const tbody = document.querySelector("#tabelSiswa tbody");
-      tbody.innerHTML = "";
+    document.getElementById("namaSiswa").textContent = s["NAMA LENGKAP"];
 
-      data.forEach(row => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${row.NO || ""}</td>
-          <td>${row["NAMA LENGKAP"] || ""}</td>
-          <td>${row["NAMA PANGGIL"] || ""}</td>
-          <td>${row["JENIS KELAMIN"] || ""}</td>
-          <td>${row["Tempat Lahir"] || ""}</td>
-          <td>${row["Tgl Lahir"] || ""}</td>
-          <td>${row["Alamat"] || ""}</td>
-          <td>${row["No WA Siswa"] || ""}</td>
-          <td>${row["Hobi"] || ""}</td>
-          <td>${row["Cita-cita"] || ""}</td>
-          <td>${row["NIS"] || ""}</td>
-          <td>${row["NISN"] || ""}</td>
-          <td>${row["Pelajaran yg disukai"] || ""}</td>
-          <td>${row["Pelajaran tdk disukai"] || ""}</td>
-          <td>${row["Ekskul"] || ""}</td>
-          <td>${row["Kegiatan yg memotivasi di sekolah"] || ""}</td>
-          <td>${row["Cara Belajar"] || ""}</td>
-          <td>${row["Harapan Orang Tua"] || ""}</td>
-          <td>${row["Penerima KIP"] || ""}</td>
-          <td>${row["ADA KARTU KIP"] || ""}</td>
-          <td>${row["YATIM/PIATU"] || ""}</td>
-          <td>${row["MONDOK"] || ""}</td>
-        `;
-        tbody.appendChild(tr);
-      });
+    // foto berdasarkan index baris
+    const idx = siswa.indexOf(s) + 1;
+    document.getElementById("foto").src =
+        `https://raw.githubusercontent.com/yanuar-moga/guruwali/main/foto/${idx}.jpg`;
 
-      // Kolom pencarian
-      const searchBox = document.getElementById("searchBox");
-      searchBox.addEventListener("input", () => {
-        const val = searchBox.value.toLowerCase();
-        const rows = tbody.getElementsByTagName("tr");
+    const fields = [
+        "NO", "NAMA LENGKAP", "NAMA PANGGIL", "JENIS KELAMIN", "Tempat Lahir",
+        "Tgl Lahir", "Alamat", "No WA Siswa", "Hobi", "Cita-cita",
+        "NIS", "NISN", "Pelajaran yg disukai", "Pelajaran tdk disukai",
+        "Ekskul", "Kegiatan yg memotivasi di sekolah", "Cara Belajar",
+        "Harapan Orang Tua", "Penerima KIP", "ADA KARTU KIP",
+        "YATIM/PIATU", "MONDOK"
+    ];
 
-        for (let r of rows) {
-          const name = r.cells[1].textContent.toLowerCase();
-          const nisn = r.cells[11].textContent.toLowerCase();
-          r.style.display = (name.includes(val) || nisn.includes(val)) ? "" : "none";
-        }
-      });
-    }
+    let html = "";
+    fields.forEach(k => {
+        let v = s[k] || "-";
+        html += `
+        <div class="row">
+            <div class="label">${k}</div>
+            <div class="colon">:</div>
+            <div class="value">${v}</div>
+        </div>`;
+    });
 
-    loadExcel();
+    document.getElementById("data").innerHTML = html;
+}
 
-  </script>
+// =======================
+// LOGOUT
+// =======================
+function logout() {
+    localStorage.removeItem(SESSION_KEY);
+    window.location.href = "index.html";
+}
+
+loadExcel();
+</script>
 
 </body>
 </html>
