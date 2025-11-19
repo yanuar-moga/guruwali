@@ -1,72 +1,436 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Beranda Siswa</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #f4f4f4;
-        }
-        .container {
-            max-width: 900px;
-            margin: 20px auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        h2 {
-            margin-top: 0;
-        }
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-        .card {
-            background: #007bff;
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .card:hover {
-            background: #0056b3;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Siswa - Biodata</title>
+
+<!-- XLSX -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<!-- html2canvas + jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+/* ============ layout ============ */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #eef3f9;
+}
+
+/* two-column layout */
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* sidebar (left) */
+.sidebar {
+    width: 220px;
+    background: #0d47a1;
+    color: white;
+    padding: 18px 12px;
+    box-sizing: border-box;
+}
+.sidebar h3 {
+    margin: 6px 0 18px 8px;
+    font-size: 16px;
+    text-align: left;
+}
+.sidebar .menu a {
+    display: block;
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 12px;
+    margin: 6px 0;
+    border-radius: 6px;
+    font-size: 14px;
+}
+.sidebar .menu a:hover { background: rgba(255,255,255,0.08); }
+
+/* main content */
+.main {
+    flex: 1;
+    padding: 18px;
+    box-sizing: border-box;
+    position: relative;
+}
+
+/* show current user on top-right of main */
+.topbar {
+    display:flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+.topbar .sessionName {
+    color: #0d47a1;
+    font-weight: bold;
+}
+.topbar button.logoutBtn {
+    background: #d32f2f;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* --- KARTU 9:16 --- (keep your original styles) */
+.card {
+    width: 360px;
+    height: 640px; /* FIX 9:16 */
+    background: white;
+    border-radius: 16px;
+    padding: 18px;
+    margin: 6px auto 20px auto;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    border-top: 8px solid #0d47a1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.header {
+    text-align: center;
+}
+
+.header img {
+    width: 70px;
+}
+
+.header h2 {
+    font-size: 20px;
+    margin: 5px 0 0 0;
+    color: #0d47a1;
+}
+
+.photo {
+    width: 120px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin: 10px auto;
+    display: block;
+    border: 2px solid #0d47a1;
+}
+
+/* --- DATA BOX SCROLL --- */
+.data-box {
+    flex: 1;
+    overflow-y: auto;
+    margin-top: 10px;
+    padding-right: 5px;
+}
+
+.row {
+    display: flex;
+    padding: 6px 8px;
+}
+
+.row:nth-child(odd) {
+    background: #f5f8ff;
+}
+
+.label { width: 150px; font-weight: bold; font-size: 13px; }
+.colon { width: 10px; }
+.value { flex: 1; font-size: 13px; }
+
+/* FLOATING MENU (bottom) */
+.floating-menu {
+    position: fixed;
+    bottom: 0;
+    left: 220px; /* leave space for sidebar */
+    width: calc(100% - 220px);
+    background: #0d47a1;
+    padding: 10px 0;
+    text-align: center;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
+}
+
+.floating-menu button {
+    padding: 10px 16px;
+    background: white;
+    color: #0d47a1;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 5px;
+    font-weight: bold;
+}
+
+#downloadMenu {
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    margin-top: 5px;
+    display: none;
+}
+
+#downloadMenu button {
+    width: 230px;
+    background: #0d47a1;
+    color: white;
+    margin-bottom: 6px;
+}
+
+/* small screens: make sidebar collapsible-ish */
+@media (max-width: 860px) {
+    .layout { flex-direction: column; }
+    .sidebar { width: 100%; display:flex; gap:12px; overflow:auto; }
+    .floating-menu { left: 0; width: 100%; }
+    .card { margin-top: 10px; }
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <h2>Selamat Datang, Siswa</h2>
-        <p>Silakan pilih menu di bawah ini:</p>
 
-        <div class="menu-grid">
-            <div class="card" onclick="location.href='profil.html'">Profil</div>
-            <div class="card" onclick="location.href='latihan.html'">Latihan Soal</div>
-            <div class="card" onclick="location.href='tugas.html'">Tugas</div>
-            <div class="card" onclick="location.href='nilai.html'">Nilai</div>
-            <div class="card" onclick="location.href='pengumuman.html'">Pengumuman</div>
-            <div class="card" onclick="location.href='logout.php'">Logout</div>
-        </div>
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <h3>MENU</h3>
+    <div class="menu">
+      <a href="#" id="menu-curhat">💬 Curhat Siswa</a>
+      <a href="#" id="menu-masalah">⚠ Masalah Siswa</a>
+      <a href="#" id="menu-notulen">📝 Notulen</a>
+      <a href="#" id="menu-pembinaan">👥 Pembinaan</a>
+      <a href="#" id="menu-pengumuman">📢 Pengumuman</a>
+      <hr style="border-color: rgba(255,255,255,0.08); margin:12px 0;">
+      <a href="#" id="menu-logout" style="background: rgba(255,255,255,0.06);">🔓 Logout</a>
     </div>
-    <script src="script.js"></script>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <div class="sessionName" id="sessionName">Loading...</div>
+      <button class="logoutBtn" id="logoutTop">Logout</button>
+    </div>
+
+    <!-- BIODATA CARD (paling atas) -->
+    <div id="card" class="card">
+        <div class="header">
+            <img src="https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/logo.png" alt="logo">
+            <h2 id="judulCard">Biodata Siswa</h2>
+        </div>
+
+        <img id="foto" class="photo" src="" alt="Foto Siswa">
+
+        <div id="data" class="data-box"></div>
+    </div>
+
+    <!-- below card we can show simple content area (keperluan menu) -->
+    <div id="contentArea" style="max-width:900px;margin:12px auto;padding:12px;">
+        <!-- Default content is biodata; menu clicks can replace this innerHTML -->
+    </div>
+
+  </main>
+</div>
+
+<!-- FLOATING MENU -->
+<div class="floating-menu" aria-hidden="false">
+    <button onclick="prev()">◀ Prev</button>
+    <button onclick="next()">Next ▶</button>
+    <button onclick="toggleMenu()">Download ▼</button>
+
+    <div id="downloadMenu">
+        <button onclick="downloadJPG()">📷 Download JPG</button>
+        <button onclick="downloadPDFsingle()">📄 PDF Kartu Ini</button>
+        <button onclick="downloadPDFall()">📚 PDF Semua Kartu</button>
+    </div>
+</div>
+
 <script>
-  const s = load(SESSION_KEY);
+/* =========================
+   Session & constants
+   ========================= */
+const SESSION_KEY = 'gw_ann_session_v3'; // gunakan key dari script.js Anda
+const SESSION = (function(){
+  try { return JSON.parse(localStorage.getItem(SESSION_KEY)); } catch(e){ return null; }
+})();
 
-  if (!s || s.role !== 'siswa') {
+if (!SESSION || SESSION.role !== 'siswa') {
+  // jika tidak login sebagai siswa, kembali ke login
+  window.location.href = 'index.html';
+}
+
+// tampilkan nama session
+document.getElementById('sessionName').textContent = SESSION.name + ' (' + SESSION.nisn + ')';
+
+/* =========================
+   Biodata via Excel (data.xlsx di GitHub)
+   ========================= */
+let siswa = [];      // seluruh data dari excel
+let index = 0;       // index baris siswa saat ini (untuk prev/next)
+
+function formatTanggal(excelDate) {
+    if (!excelDate) return "-";
+    if (isNaN(excelDate)) return excelDate;
+    const date = new Date((excelDate - 25569) * 86400 * 1000);
+    return date.toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" });
+}
+
+async function loadExcelAndFind() {
+    const file = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
+    try {
+        const res = await fetch(file);
+        const buf = await res.arrayBuffer();
+        const wb = XLSX.read(buf, { type: "array" });
+        const sheet = wb.Sheets[wb.SheetNames[0]];
+        siswa = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+
+        // cari baris sesuai NISN session
+        const nisnStr = String(SESSION.nisn).trim();
+        index = siswa.findIndex(s => String(s["NISN"]).trim() === nisnStr);
+
+        if (index < 0) {
+            // jika tidak ditemukan, fallback ke baris pertama
+            index = 0;
+            console.warn('NISN tidak ditemukan di Excel:', nisnStr);
+            // tetap tampil tapi beri peringatan di contentArea
+            document.getElementById('contentArea').innerHTML = '<div style="background:#fff4e5;padding:10px;border-radius:8px;border:1px solid #ffd8a8;color:#8a5a00">Peringatan: data NISN Anda tidak ditemukan di file Excel. Menampilkan data pertama.</div>';
+        }
+
+        showData();
+    } catch (err) {
+        console.error('Gagal load Excel:', err);
+        document.getElementById('contentArea').innerHTML = '<div style="color:red">Gagal memuat data Excel. Cek koneksi atau file data.xlsx.</div>';
+    }
+}
+
+function showData() {
+    if (!siswa || siswa.length === 0) return;
+
+    const s = siswa[index] || {};
+    const noFoto = index + 1;
+
+    // set foto (sesuaikan path foto Anda)
+    document.getElementById('foto').src =
+        `https://raw.githubusercontent.com/yanuar-moga/guruwali/main/foto/${noFoto}.jpg`;
+
+    // fields yang ingin ditampilkan (sama seperti kode Anda)
+    const fields = [
+        "NO", "NAMA LENGKAP", "NAMA PANGGIL", "JENIS KELAMIN", "Tempat Lahir",
+        "Tgl Lahir", "Alamat", "No WA Siswa", "Hobi", "Cita-cita",
+        "NIS", "NISN", "Pelajaran yg disukai", "Pelajaran tdk disukai",
+        "Ekskul", "Kegiatan yg memotivasi di sekolah", "Cara Belajar",
+        "Harapan Orang Tua", "Penerima KIP", "ADA KARTU KIP",
+        "YATIM/PIATU", "MONDOK"
+    ];
+
+    let html = "";
+    fields.forEach(k => {
+        let val = s[k] || "-";
+        if (k === "Tgl Lahir") val = formatTanggal(val);
+        html += `
+        <div class="row">
+            <div class="label">${k}</div>
+            <div class="colon">:</div>
+            <div class="value">${val}</div>
+        </div>`;
+    });
+
+    document.getElementById('data').innerHTML = html;
+
+    // juga update judul card jadi nama
+    document.getElementById('judulCard').textContent = 'Biodata - ' + (s['NAMA LENGKAP'] || SESSION.name || '-');
+}
+
+/* navigation */
+function next() {
+    if (!siswa || index >= siswa.length - 1) return;
+    index++;
+    showData();
+}
+function prev() {
+    if (!siswa || index <= 0) return;
+    index--;
+    showData();
+}
+
+function toggleMenu() {
+    const m = document.getElementById('downloadMenu');
+    m.style.display = (m.style.display === 'none' || m.style.display === '') ? 'block' : 'none';
+}
+
+/* DOWNLOAD JPG */
+function downloadJPG() {
+    html2canvas(document.getElementById("card"), { scale: 3 }).then(canvas => {
+        const a = document.createElement("a");
+        a.href = canvas.toDataURL("image/jpeg");
+        a.download = `Kartu-${index + 1}.jpg`;
+        a.click();
+    });
+}
+
+/* DOWNLOAD PDF single */
+function downloadPDFsingle() {
+    const { jsPDF } = window.jspdf;
+    html2canvas(document.getElementById("card"), { scale: 3 }).then(canvas => {
+        const pdf = new jsPDF("p", "px", [400, 640]);
+        pdf.addImage(canvas.toDataURL("image/jpeg"), "JPEG", 10, 10, 380, 620);
+        pdf.save(`Kartu-${index + 1}.pdf`);
+    });
+}
+
+/* DOWNLOAD ALL */
+async function downloadPDFall() {
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF("p", "px", [400, 640]);
+    for (let i = 0; i < siswa.length; i++) {
+        index = i;
+        showData();
+        // ensure UI updated
+        // wait a tick to allow image to load if remote
+        await new Promise(r => setTimeout(r, 120));
+        await html2canvas(document.getElementById("card"), { scale: 3 })
+        .then(canvas => {
+            if (i > 0) pdf.addPage();
+            pdf.addImage(canvas.toDataURL("image/jpeg"), "JPEG", 10, 10, 380, 620);
+        });
+    }
+    pdf.save("Semua-Kartu-Siswa.pdf");
+}
+
+/* logout */
+function logoutNow() {
+    localStorage.removeItem(SESSION_KEY);
     window.location.href = 'index.html';
-  }
+}
 
-  // tampilkan nama siswa
-  document.getElementById('studentName').textContent = s.name;
+/* 메뉴 클릭 - simple placeholders */
+document.getElementById('menu-curhat').addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('contentArea').innerHTML = '<h3>Curhat Siswa</h3><p>Form curhat akan ditampilkan di sini (placeholder).</p>';
+});
+document.getElementById('menu-masalah').addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('contentArea').innerHTML = '<h3>Masalah Siswa</h3><p>Daftar masalah siswa (placeholder).</p>';
+});
+document.getElementById('menu-notulen').addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('contentArea').innerHTML = '<h3>Notulen</h3><p>Notulen rapat/pembinaan (placeholder).</p>';
+});
+document.getElementById('menu-pembinaan').addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('contentArea').innerHTML = '<h3>Pembinaan</h3><p>Informasi pembinaan (placeholder).</p>';
+});
+document.getElementById('menu-pengumuman').addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('contentArea').innerHTML = '<h3>Pengumuman</h3><p>Pengumuman sekolah (placeholder).</p>';
+});
+document.getElementById('menu-logout').addEventListener('click', (e) => {
+    e.preventDefault();
+    logoutNow();
+});
+document.getElementById('logoutTop').addEventListener('click', logoutNow);
+
+/* load data on start */
+loadExcelAndFind();
 </script>
 
 </body>
