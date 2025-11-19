@@ -1,114 +1,177 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login Siswa</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - Aplikasi Guru Wali</title>
+<style>
+  body {
+    font-family: "Poppins", sans-serif;
+    background: linear-gradient(180deg,#e8f3ff,#ffffff);
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:0;
+  }
 
-  <!-- SheetJS untuk membaca Excel -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  .login-card {
+    background:#fff;
+    border-radius:18px;
+    padding:18px 20px;
+    width:90%;
+    max-width:240px;
+    box-shadow:0 3px 8px rgba(0,0,0,.1);
+    border-top:4px solid #ffd84c;
+    text-align:center;
+  }
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #e9f1ff;
-      margin: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .login-box {
-      width: 90%;
-      max-width: 380px;
-      background: white;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    }
-    h2 {
-      text-align: center;
-      color: #0A4FA3;
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      font-size: 16px;
-      border: 1px solid #aaa;
-      border-radius: 8px;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 15px;
-      background: #0A4FA3;
-      color: white;
-      font-size: 16px;
-      border: none;
-      border-radius: 8px;
-    }
-    .error {
-      margin-top: 10px;
-      color: red;
-      text-align: center;
-      font-weight: bold;
-      display: none;
-    }
-  </style>
+  .login-card img {
+    width:55px;
+    height:55px;
+    border-radius:50%;
+    margin-bottom:8px;
+  }
+
+  h2 {
+    font-size:1rem;
+    color:#003f7f;
+    margin:10px 0 18px;
+  }
+
+  input[type=text],
+  input[type=password] {
+    width:100%;
+    padding:7px 8px;
+    margin-bottom:10px;
+    border:1px solid #ccc;
+    border-radius:6px;
+    font-size:13px;
+    box-sizing:border-box;
+  }
+
+  .show-pass {
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+    font-size:13px;
+    color:#333;
+    margin-bottom:12px;
+    width:100%;
+  }
+
+  .show-pass input[type=checkbox] {
+    margin-left:0;
+    margin-right:6px;
+    transform:scale(1.05);
+    cursor:pointer;
+    accent-color:#4da3ff;
+  }
+
+  .show-pass label {
+    cursor:pointer;
+    flex:1;
+    text-align:left;
+    margin-left:0;
+  }
+
+  button {
+    width:100%;
+    padding:8px;
+    border:none;
+    border-radius:6px;
+    background:linear-gradient(90deg,#4da3ff,#007bff);
+    color:#fff;
+    font-weight:600;
+    font-size:13.5px;
+    cursor:pointer;
+    transition:.25s;
+  }
+
+  button:hover {
+    transform:scale(1.03);
+    background:linear-gradient(90deg,#007bff,#005ecb);
+  }
+
+  .footer {
+    margin-top:12px;
+    font-size:10.5px;
+    color:#777;
+  }
+
+  .error {
+    margin-top:10px;
+    color:red;
+    font-size:12px;
+  }
+</style>
 </head>
 <body>
+  <div class="login-card">
+    <img src="assets/logo.png" alt="Logo Sekolah">
+    <h2>Aplikasi Guru Wali</h2>
 
-<div class="login-box">
-  <h2>Login Siswa</h2>
+    <form id="loginForm">
+      <input type="text" id="username" placeholder="NISN" required>
+      <input type="password" id="password" placeholder="Password" required>
 
-  <input type="text" id="username" placeholder="Masukkan NISN">
-  <input type="password" id="password" placeholder="Password = siswa">
+      <div class="show-pass">
+        <input type="checkbox" id="showPassword">
+        <label for="showPassword">Tampilkan Password</label>
+      </div>
 
-  <button onclick="login()">Login</button>
+      <button type="submit">Masuk</button>
+    </form>
 
-  <div class="error" id="errorBox">Login gagal — periksa NISN dan password.</div>
-</div>
+    <div id="errorMsg" class="error"></div>
+
+    <div class="footer">© 2025 MB All rights reserved</div>
+  </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <script>
-  async function loadExcel() {
-    const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
-    const response = await fetch(url);
-    const arrayBuffer = await response.arrayBuffer();
-    const workbook = XLSX.read(arrayBuffer, { type: "array" });
-    const sheet = workbook.Sheets["DATA"];
-    return XLSX.utils.sheet_to_json(sheet, { header: 1 });
+document.getElementById("showPassword").addEventListener("change", function() {
+  const pass = document.getElementById("password");
+  pass.type = this.checked ? "text" : "password";
+});
+
+// 🔗 URL RAW GitHub kamu (ganti sesuai punyamu)
+const DATA_URL = "https://raw.githubusercontent.com/USERNAME/REPO/main/data.xlsx";
+
+document.getElementById("loginForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const nisnInput = document.getElementById("username").value.trim();
+  const passwordInput = document.getElementById("password").value.trim();
+  const errorMsg = document.getElementById("errorMsg");
+
+  if (passwordInput !== "siswa") {
+    errorMsg.textContent = "Login gagal — periksa username/NISN dan password.";
+    return;
   }
 
-  function login() {
-    const user = document.getElementById("username").value.trim();
-    const pass = document.getElementById("password").value.trim();
-    const errorBox = document.getElementById("errorBox");
+  fetch(DATA_URL)
+    .then(res => res.arrayBuffer())
+    .then(buffer => {
+      const workbook = XLSX.read(buffer, { type: "array" });
+      const sheet = workbook.Sheets["DATA"];
+      const rows = XLSX.utils.sheet_to_json(sheet);
 
-    if (pass !== "siswa") {
-      errorBox.style.display = "block";
-      return;
-    }
+      const siswa = rows.find(r => String(r.NISN) === nisnInput);
 
-    loadExcel().then(rows => {
-      // Cari NISN di kolom M (index 12)
-      let found = false;
-
-      for (let i = 1; i < rows.length; i++) {
-        const nisn = String(rows[i][12] || "").trim();
-
-        if (nisn === user) {
-          found = true;
-          window.location.href = "siswa.html?nisn=" + nisn;
-          break;
-        }
+      if (!siswa) {
+        errorMsg.textContent = "Login gagal — periksa username/NISN dan password.";
+        return;
       }
 
-      if (!found) {
-        errorBox.style.display = "block";
-      }
+      localStorage.setItem("siswaLogin", JSON.stringify(siswa));
+      window.location.href = "siswa.html";
+    })
+    .catch(() => {
+      errorMsg.textContent = "Gagal mengambil data. Periksa koneksi.";
     });
-  }
+});
 </script>
 
 </body>
