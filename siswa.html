@@ -4,67 +4,122 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard Siswa</title>
-  <link rel="stylesheet" href="style.css">
 
   <style>
-    .bio-card {
-      width: 92%;
-      max-width: 500px;
-      margin: 15px auto;
-      background: white;
-      border-radius: 14px;
-      padding: 15px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-      text-align: center;
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f5f5f5;
     }
-    .bio-photo {
+
+    .topbar {
+      background: #0A4FA3;
+      color: white;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .top-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .toplogo {
+      width: 40px;
+      height: 40px;
+    }
+
+    .menu-container {
+      display: flex;
+      justify-content: space-around;
+      padding: 10px;
+      background: #ffffff;
+      flex-wrap: wrap;
+    }
+
+    .menu-btn {
+      background: #0A4FA3;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+      text-decoration: none;
+      margin: 5px;
+    }
+
+    .navbar {
+      background: #0A4FA3;
+      color: white;
+      padding: 10px;
+      display: flex;
+      justify-content: space-around;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+
+    .navbar a {
+      color: white;
+      text-decoration: none;
+    }
+
+    /* BIODATA CARD */
+    .card {
+      width: 90%;
+      margin: 20px auto;
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+    }
+
+    .foto-box {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    .foto-siswa {
       width: 120px;
       height: 160px;
       object-fit: cover;
       border-radius: 8px;
-      border: 2px solid #ddd;
+      border: 2px solid #0A4FA3;
     }
-    .bio-title {
-      font-weight: bold;
-      margin-top: 8px;
-      font-size: 18px;
-      color: #003f7f;
-    }
-    .bio-table {
+
+    table {
       width: 100%;
-      margin-top: 12px;
-      font-size: 14px;
       border-collapse: collapse;
+      font-size: 15px;
     }
-    .bio-table td {
-      padding: 6px 5px;
-      border-bottom: 1px solid #eee;
-      text-align: left;
+
+    td {
+      padding: 6px;
+      vertical-align: top;
     }
+
+    tr:nth-child(even) {
+      background: #f0f4ff;
+    }
+
     .label {
-      width: 35%;
+      width: 40%;
       font-weight: bold;
-      color: #003f7f;
     }
+
   </style>
 </head>
-<body class="light">
+<body>
 
   <!-- ====== Topbar ====== -->
   <div class="topbar">
     <div class="top-left">
-      <img src="assets/logo.png" class="toplogo" alt="Logo Sekolah">
+      <img src="assets/logo.png" class="toplogo" alt="Logo">
       <h2>Dashboard Siswa</h2>
     </div>
-    <div class="top-right">
-      <span id="clock"></span>
-      <button class="logout-btn" onclick="logout()">Logout</button>
-    </div>
-  </div>
-
-  <!-- ====== BIODATA SISWA ====== -->
-  <div id="bioContainer" class="bio-card">
-    <p>Sedang memuat data siswa...</p>
+    <span id="clock"></span>
   </div>
 
   <!-- ====== Menu Utama ====== -->
@@ -76,6 +131,9 @@
     <a href="masalahsiswa.html" class="menu-btn">⚠️ Masalah</a>
   </div>
 
+  <!-- ====== BIODATA SISWA ====== -->
+  <div id="biodata"></div>
+
   <!-- ====== Navbar Bawah ====== -->
   <div class="navbar">
     <a href="siswa.html">Beranda</a>
@@ -85,77 +143,56 @@
   </div>
 
 <script>
-/* ======================
-      JAM DIGITAL
-====================== */
+/* ==== Jam Digital ==== */
 function updateClock() {
   const now = new Date();
   document.getElementById("clock").textContent =
     now.toLocaleTimeString("id-ID");
 }
 setInterval(updateClock, 1000);
-updateClock();
 
-/* ======================
-      LOGOUT
-====================== */
-function logout() {
-  if (confirm("Yakin ingin keluar dari akun siswa?")) {
-    window.location.href = "index.html";
-  }
-}
+/* ==== Ambil Parameter NISN ==== */
+const urlParams = new URLSearchParams(window.location.search);
+const nisnParam = urlParams.get("nisn");
 
-/* =====================================================
-      LOAD DATA SISWA BERDASARKAN PARAMETER NISN
-===================================================== */
-async function loadSiswaDashboard() {
-  const params = new URLSearchParams(window.location.search);
-  const nisn = params.get("nisn");
+/* ==== Load Data JSON ==== */
+fetch("assets/data/siswa.json")
+  .then(res => res.json())
+  .then(data => {
+    const siswa = data.find(s => s.nisn === nisnParam);
 
-  if (!nisn) {
-    document.getElementById("bioContainer").innerHTML =
-      "<p style='color:red;'>NISN tidak ditemukan!</p>";
-    return;
-  }
+    const biodataDiv = document.getElementById("biodata");
 
-  // 🔥 Ambil data siswa
-  const res = await fetch("data/siswa.json");
-  const siswaList = await res.json();
+    if (!siswa) {
+      biodataDiv.innerHTML = `
+        <div class="card">
+          <h3>Data tidak ditemukan!</h3>
+          <p>NISN: ${nisnParam}</p>
+        </div>`;
+      return;
+    }
 
-  const siswa = siswaList.find(s => s.nisn == nisn);
+    biodataDiv.innerHTML = `
+      <div class="card">
+        <div class="foto-box">
+          <img src="assets/foto/${siswa.no}.jpg" class="foto-siswa" alt="Foto">
+        </div>
 
-  if (!siswa) {
-    document.getElementById("bioContainer").innerHTML =
-      "<p style='color:red;'>Data siswa tidak ditemukan!</p>";
-    return;
-  }
-
-  // Foto berdasarkan nomor urut
-  const fotoUrl = `foto/${siswa.no}.jpg`;
-
-  // Render biodata
-  document.getElementById("bioContainer").innerHTML = `
-    <img src="${fotoUrl}" class="bio-photo" alt="Foto Siswa"
-         onerror="this.src='assets/nofoto.png'">
-
-    <div class="bio-title">${siswa.nama}</div>
-
-    <table class="bio-table">
-      <tr><td class="label">NISN</td><td>${siswa.nisn}</td></tr>
-      <tr><td class="label">Nama Panggil</td><td>${siswa.panggil}</td></tr>
-      <tr><td class="label">Jenis Kelamin</td><td>${siswa.jk}</td></tr>
-      <tr><td class="label">Tempat Lahir</td><td>${siswa.tempat_lahir}</td></tr>
-      <tr><td class="label">Tanggal Lahir</td><td>${siswa.tgl_lahir}</td></tr>
-      <tr><td class="label">Alamat</td><td>${siswa.alamat}</td></tr>
-      <tr><td class="label">No. WA</td><td>${siswa.no_wa}</td></tr>
-      <tr><td class="label">Hobi</td><td>${siswa.hobi}</td></tr>
-      <tr><td class="label">Cita-cita</td><td>${siswa.cita}</td></tr>
-      <tr><td class="label">Ekskul</td><td>${siswa.ekskul}</td></tr>
-    </table>
-  `;
-}
-
-loadSiswaDashboard();
+        <table>
+          <tr><td class="label">Nama Lengkap</td><td>: ${siswa.nama}</td></tr>
+          <tr><td class="label">Jenis Kelamin</td><td>: ${siswa.jk === 'L' ? 'Laki-laki' : 'Perempuan'}</td></tr>
+          <tr><td class="label">Tempat Lahir</td><td>: ${siswa.tempat_lahir}</td></tr>
+          <tr><td class="label">Tanggal Lahir</td><td>: ${siswa.tgl_lahir}</td></tr>
+          <tr><td class="label">Alamat</td><td>: ${siswa.alamat}</td></tr>
+          <tr><td class="label">RT/RW</td><td>: ${siswa.rt} / ${siswa.rw}</td></tr>
+          <tr><td class="label">Dukuh</td><td>: ${siswa.dukuh}</td></tr>
+          <tr><td class="label">Dusun</td><td>: ${siswa.dusun}</td></tr>
+          <tr><td class="label">Kecamatan</td><td>: ${siswa.kecamatan}</td></tr>
+          <tr><td class="label">Transportasi</td><td>: ${siswa.transportasi}</td></tr>
+        </table>
+      </div>
+    `;
+  });
 </script>
 
 </body>
