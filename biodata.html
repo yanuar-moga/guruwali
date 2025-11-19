@@ -3,54 +3,91 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Biodata Siswa</title>
+<title>Kartu Pelajar SMPN 1 Moga</title>
 
-<!-- XLSX untuk membaca Excel -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
-body { font-family: Arial, sans-serif; background:#f5f5f5; padding:20px; }
-.card {
-    width: 360px;
-    margin: auto;
-    background: white;
-    padding: 20px;
-    border-radius: 16px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+body {
+    font-family: Arial, sans-serif;
+    background: #e6eef7;
+    padding: 25px;
 }
-.card img {
-    width: 120px;
-    height: 160px;
+
+.card {
+    width: 350px;
+    height: auto;
+    background: white;
+    border-radius: 16px;
+    padding: 18px;
+    margin: auto;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    border-top: 8px solid #0d47a1;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 10px;
+}
+.header h2 {
+    margin: 0;
+    color: #0d47a1;
+}
+.header small {
+    font-size: 12px;
+}
+
+.photo {
+    width: 110px;
+    height: 140px;
     object-fit: cover;
     border-radius: 8px;
-    margin-bottom: 12px;
+    margin: 10px auto;
+    display: block;
+    border: 2px solid #0d47a1;
 }
-.label { font-weight: bold; margin-top: 6px; }
-.value { margin-bottom: 6px; }
-.navbtn {
-    padding: 10px 20px;
-    background: #1976d2;
-    color:white;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
+
+.row {
+    display: flex;
+    margin-bottom: 4px;
+}
+.label { width: 120px; font-weight: bold; font-size: 13px; }
+.colon { width: 10px; }
+.value { flex: 1; font-size: 13px; }
+
+.btn {
+    padding: 10px 18px;
+    background: #0d47a1;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
     margin: 5px;
 }
 </style>
 </head>
+
 <body>
 
-<h2 style="text-align:center;">Biodata Siswa</h2>
+<h2 style="text-align:center; color:#0d47a1;">Kartu Pelajar Digital</h2>
 
-<div class="card">
-    <img id="foto" src="" alt="Foto Siswa">
+<div id="card" class="card">
+    <div class="header">
+        <h2>SMP Negeri 1 Moga</h2>
+        <small>Kartu Identitas Peserta Didik</small>
+    </div>
+
+    <img id="foto" class="photo" src="" alt="Foto Siswa">
 
     <div id="data"></div>
+</div>
 
-    <div style="text-align:center; margin-top:15px;">
-        <button class="navbtn" onclick="prev()">◀ Prev</button>
-        <button class="navbtn" onclick="next()">Next ▶</button>
-    </div>
+<div style="text-align:center; margin-top:15px;">
+    <button class="btn" onclick="prev()">◀ Prev</button>
+    <button class="btn" onclick="next()">Next ▶</button>
+    <button class="btn" onclick="downloadPDF()">Download PDF</button>
 </div>
 
 <script>
@@ -59,7 +96,6 @@ let index = 0;
 
 async function loadExcel() {
     const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
-
     const response = await fetch(url);
     const arrayBuffer = await response.arrayBuffer();
     const workbook = XLSX.read(arrayBuffer, { type: "array" });
@@ -70,8 +106,6 @@ async function loadExcel() {
 }
 
 function showData() {
-    if (siswa.length === 0) return;
-
     const s = siswa[index];
     let nomorFoto = index + 1;
 
@@ -80,7 +114,12 @@ function showData() {
 
     let html = "";
     Object.keys(s).forEach(k => {
-        html += `<div class='label'>${k}</div><div class='value'>${s[k]}</div>`;
+        html += `
+        <div class="row">
+            <div class="label">${k}</div>
+            <div class="colon">:</div>
+            <div class="value">${s[k]}</div>
+        </div>`;
     });
 
     document.getElementById("data").innerHTML = html;
@@ -94,6 +133,23 @@ function next() {
 function prev() {
     if (index > 0) index--;
     showData();
+}
+
+async function downloadPDF() {
+    const { jsPDF } = window.jspdf;
+    const card = document.getElementById("card");
+
+    const canvas = await html2canvas(card, { scale: 3 });
+    const imgData = canvas.toDataURL("image/jpeg", 1.0);
+
+    const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "px",
+        format: [400, 600]
+    });
+
+    pdf.addImage(imgData, "JPEG", 10, 10, 380, 580);
+    pdf.save(`Kartu-Pelajar-${index + 1}.pdf`);
 }
 
 loadExcel();
