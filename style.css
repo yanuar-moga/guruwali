@@ -1,256 +1,94 @@
-/* ====== Tema Utama Aplikasi Guru Wali Bayu ====== */
-body.light {
-  font-family: "Poppins", sans-serif;
-  background-color: #f9fbff;
-  color: #333;
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+:root{
+  --blue-700:#0A4FA3;
+  --blue-500:#1976d2;
+  --muted:#6c7a89;
+  --card-bg:#ffffff;
 }
 
-/* ====== Header / Topbar ====== */
-.topbar {
-  background: linear-gradient(90deg, #b8dcff, #a4c8ff);
-  border-bottom: 4px solid #ffd84c;
-  color: #002855;
-  padding: 8px 15px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family: Inter, "Poppins", Arial, sans-serif;
+  background: linear-gradient(180deg,#e8f3ff,#ffffff);
+  color:#12202b;
+  -webkit-font-smoothing:antialiased;
 }
 
-.top-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.page-center{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
 }
 
-.toplogo {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  object-fit: cover;
+.login-card{
+  width:100%;
+  max-width:360px;
+  background:var(--card-bg);
+  border-radius:14px;
+  padding:22px;
+  box-shadow:0 8px 30px rgba(10,79,163,0.12);
+  text-align:center;
+  border-top:6px solid var(--blue-700);
 }
 
-.topbar h2 {
-  font-size: 17px;
-  margin: 0;
-  color: #003f7f;
-  font-weight: 600;
+.logo{
+  width:72px;
+  height:72px;
+  object-fit:contain;
+  margin-bottom:10px;
 }
 
-#clock {
-  font-size: 14px;
-  font-weight: bold;
-  color: #002855;
+.title{
+  margin:0;
+  color:var(--blue-700);
+  font-size:20px;
+  font-weight:700;
 }
 
-/* ====== Tombol Logout ====== */
-.logout-btn {
-  background: #ffd84c;
-  color: #002855;
-  border: none;
-  border-radius: 8px;
-  padding: 6px 12px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s;
-  margin-left: 15px;
+.form{ margin-top:14px; text-align:left; }
+
+.field{ display:block; margin-bottom:12px; }
+.label-text{
+  display:block;
+  font-size:13px;
+  color:var(--muted);
+  margin-bottom:6px;
+}
+input[type="text"], input[type="password"]{
+  width:100%;
+  padding:10px 12px;
+  border-radius:8px;
+  border:1px solid #d9e6fb;
+  background:#fbfeff;
+  font-size:14px;
+  outline:none;
+}
+input:focus{ box-shadow:0 2px 8px rgba(25,118,210,0.12); border-color:var(--blue-500); }
+
+.show-pass{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin:6px 0 14px 0;
+  color:var(--muted);
+  font-size:13px;
 }
 
-.logout-btn:hover {
-  background: #ffc800;
+.btn-primary{
+  width:100%;
+  padding:10px 12px;
+  border-radius:8px;
+  border:none;
+  color:white;
+  background:linear-gradient(90deg,var(--blue-500),var(--blue-700));
+  font-weight:700;
+  cursor:pointer;
+  box-shadow:0 6px 18px rgba(10,79,163,0.12);
 }
+.btn-primary:hover{ transform:translateY(-1px); }
 
-/* ====== Kontainer Menu ====== */
-.menu-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: start;
-  padding: 30px 10px;
-  gap: 15px;
-}
+.login-note{ margin-top:12px; color:var(--muted); font-size:13px; text-align:center; }
 
-/* ====== Tombol Menu ====== */
-.menu-btn {
-  display: block;
-  width: 85%;
-  max-width: 320px;
-  text-align: center;
-  background: linear-gradient(90deg, #4da3ff, #007bff);
-  color: #fff;
-  padding: 12px 0;
-  border-radius: 14px;
-  text-decoration: none;
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-.menu-btn:hover {
-  transform: translateY(-2px);
-  background: linear-gradient(90deg, #007bff, #005ecb);
-}
-
-/* ====== Kartu dan Konten ====== */
-.card {
-  background: white;
-  border-radius: 16px;
-  padding: 15px;
-  margin: 15px auto;
-  width: 90%;
-  max-width: 500px;
-  border-left: 5px solid #ffd84c;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-}
-
-.card h3 {
-  color: #003f7f;
-  margin-top: 0;
-}
-
-textarea, input, select {
-  width: 100%;
-  padding: 10px;
-  margin: 6px 0;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  outline: none;
-  transition: 0.3s;
-}
-
-textarea:focus, input:focus {
-  border-color: #4da3ff;
-  box-shadow: 0 0 5px rgba(77, 163, 255, 0.5);
-}
-
-/* ====== Tombol Biasa ====== */
-.btn {
-  display: inline-block;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: bold;
-  text-decoration: none;
-  transition: 0.3s;
-}
-
-.btn.primary {
-  background-color: #4da3ff;
-  color: white;
-}
-
-.btn.primary:hover {
-  background-color: #1c7ff0;
-}
-
-.btn.ghost {
-  background: #ffd84c;
-  color: #002855;
-}
-
-.btn.ghost:hover {
-  background: #ffc800;
-}
-
-/* ====== Tabel Data ====== */
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-  font-size: 14px;
-}
-
-.table th, .table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-.table th {
-  background-color: #e9f3ff;
-  color: #002855;
-}
-
-.smallmuted {
-  color: #777;
-  font-size: 12px;
-}
-
-/* ====== Footer ====== */
-footer {
-  text-align: center;
-  padding: 15px;
-  font-size: 12px;
-  color: #555;
-  background-color: #f0f7ff;
-  border-top: 2px solid #ffd84c;
-  margin-top: auto;
-}
-
-/* ====== Navbar Bawah (Mobile Style) ====== */
-.navbar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: white;
-  border-top: 2px solid #ffd84c;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding: 8px 0;
-  box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
-  z-index: 999;
-}
-
-.navbar a {
-  text-decoration: none;
-  color: #003f7f;
-  text-align: center;
-  font-size: 13px;
-  font-weight: 600;
-  transition: 0.3s;
-}
-
-.navbar a:hover {
-  color: #007bff;
-  transform: scale(1.05);
-}
-
-/* ====== Responsif Mobile ====== */
-@media (max-width: 480px) {
-  .menu-btn {
-    font-size: 14px;
-    width: 90%;
-  }
-
-  .card {
-    width: 94%;
-  }
-
-  .topbar h2 {
-    font-size: 15px;
-  }
-
-  #clock {
-    font-size: 12px;
-  }
-
-  .logout-btn {
-    padding: 5px 10px;
-    font-size: 12px;
-  }
-}
+.footer{ margin-top:12px; color:#9aa6b7; font-size:12px; }
