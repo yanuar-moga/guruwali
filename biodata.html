@@ -1,40 +1,55 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Biodata Siswa</title>
 
+<!-- XLSX untuk membaca Excel -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
-body { font-family: Arial; background:#f2f2f2; padding:20px; }
-.container {
-    width:420px;background:#fff;padding:20px;margin:auto;border-radius:10px;
-    box-shadow:0 0 10px rgba(0,0,0,.1);
+body { font-family: Arial, sans-serif; background:#f5f5f5; padding:20px; }
+.card {
+    width: 360px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
-.foto { width:120px;height:160px;object-fit:cover;border:2px solid #333;margin-bottom:10px; }
-.label { font-weight:bold; display:inline-block; width:160px; }
-.p-val { display:inline-block; max-width:220px; }
-.nav-btn { margin-top:15px; display:flex; justify-content:space-between; }
-button { padding:8px 15px; background:#007bff; color:#fff; border:none; border-radius:6px; cursor:pointer; }
+.card img {
+    width: 120px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+.label { font-weight: bold; margin-top: 6px; }
+.value { margin-bottom: 6px; }
+.navbtn {
+    padding: 10px 20px;
+    background: #1976d2;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    margin: 5px;
+}
 </style>
 </head>
 <body>
 
-<input type="file" id="fileInput" accept=".xlsx,.xls"><br><br>
-<div id="countInfo">Data: 0</div>
+<h2 style="text-align:center;">Biodata Siswa</h2>
 
-<div class="container" id="card">
-    <h2 style="text-align:center">Biodata Siswa</h2>
-    <center><img id="foto" class="foto" src=""></center>
+<div class="card">
+    <img id="foto" src="" alt="Foto Siswa">
+
     <div id="data"></div>
 
-    <div class="nav-btn">
-        <button onclick="prevCard()">Prev</button>
-        <button onclick="nextCard()">Next</button>
+    <div style="text-align:center; margin-top:15px;">
+        <button class="navbtn" onclick="prev()">◀ Prev</button>
+        <button class="navbtn" onclick="next()">Next ▶</button>
     </div>
 </div>
 
@@ -42,61 +57,46 @@ button { padding:8px 15px; background:#007bff; color:#fff; border:none; border-r
 let siswa = [];
 let index = 0;
 
-// Load Excel
-document.getElementById("fileInput").addEventListener("change", e => {
-    let file = e.target.files[0];
-    if (!file) return;
+async function loadExcel() {
+    const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
 
-    let reader = new FileReader();
-    reader.onload = evt => {
-        const wb = XLSX.read(evt.target.result, { type: "binary" });
-        const sheet = wb.Sheets[wb.SheetNames[0]];
+    const response = await fetch(url);
+    const arrayBuffer = await response.arrayBuffer();
+    const workbook = XLSX.read(arrayBuffer, { type: "array" });
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    siswa = XLSX.utils.sheet_to_json(sheet);
 
-        siswa = XLSX.utils.sheet_to_json(sheet, { defval: "" });
-        document.getElementById("countInfo").textContent = "Data: " + siswa.length;
+    showData();
+}
 
-        if (siswa.length > 0) showCard(0);
-    };
-    reader.readAsBinaryString(file);
-});
+function showData() {
+    if (siswa.length === 0) return;
 
-// Tampilkan per kartu
-function showCard(i) {
-    index = i;
-    const s = siswa[i];
+    const s = siswa[index];
+    let nomorFoto = index + 1;
 
-    // === LOAD FOTO BERDASARKAN INDEX BARIS ===
-    const fotoFile = (i + 1) + ".jpg";
-    const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/foto/" + fotoFile;
+    document.getElementById("foto").src =
+        `https://raw.githubusercontent.com/yanuar-moga/guruwali/main/foto/${nomorFoto}.jpg`;
 
-    const img = document.getElementById("foto");
-    img.src = url;
-    img.onerror = ()=> img.src = "https://via.placeholder.com/120x160?text=No+Photo";
-
-    // === TAMPILKAN SEMUA KOLOM EXCEL APA ADANYA ===
     let html = "";
-    Object.keys(s).forEach(key => {
-        html += `<p><span class="label">${key}</span>: <span class="p-val">${formatValue(s[key])}</span></p>`;
+    Object.keys(s).forEach(k => {
+        html += `<div class='label'>${k}</div><div class='value'>${s[k]}</div>`;
     });
 
     document.getElementById("data").innerHTML = html;
 }
 
-// Format tanggal otomatis
-function formatValue(val){
-    if (typeof val === "number") {
-        const date = new Date((val - 25569) * 86400 * 1000);
-        return date.toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"});
-    }
-    return val;
+function next() {
+    if (index < siswa.length - 1) index++;
+    showData();
 }
 
-function nextCard() {
-    if (index < siswa.length - 1) showCard(index + 1);
+function prev() {
+    if (index > 0) index--;
+    showData();
 }
-function prevCard() {
-    if (index > 0) showCard(index - 1);
-}
+
+loadExcel();
 </script>
 
 </body>
