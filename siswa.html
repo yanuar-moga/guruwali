@@ -1,170 +1,156 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Biodata Siswa</title>
-
+<link rel="stylesheet" href="style.css" />
 <style>
-  body {
-    margin: 0;
-    background: #e7f0ff;
-    font-family: Arial, sans-serif;
-  }
-
-  /* ====== TOPBAR ====== */
+  /* specific kartu style for siswa (kejar 9:16 look) */
   .topbar {
-    background: #0A4FA3;
-    color: white;
-    padding: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    background: #0A4FA3; color: #fff; padding:12px; display:flex; justify-content:space-between; align-items:center;
   }
-  .top-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .toplogo {
-    width: 40px;
-    height: 40px;
-  }
-
-  /* ====== KARTU 9:16 ====== */
-  .kartu {
-    width: 360px;
-    height: 640px;
-    background: white;
-    border-radius: 14px;
-    margin: 20px auto;
-    padding: 15px;
-    box-shadow: 0 0 8px rgba(0,0,0,0.25);
-    display: flex;
-    flex-direction: column;
-  }
-  .foto-box {
-    text-align: center;
-  }
-  .foto-siswa {
-    width: 130px;
-    height: 170px;
-    border-radius: 10px;
-    border: 3px solid #0A4FA3;
-    object-fit: cover;
-  }
-
-  /* AREA SCROLL DATA */
-  .data-scroll {
-    flex: 1;
-    margin-top: 12px;
-    overflow-y: auto;
-    padding-right: 6px;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 15px;
-  }
-  td {
-    padding: 7px 5px;
-    vertical-align: top;
-  }
-  tr:nth-child(even) {
-    background: #f0f4ff;
-  }
-  .label {
-    width: 38%;
-    font-weight: bold;
-  }
-
-  /* Tombol logout */
-  .logout-btn {
-    background: #ff5d5d;
-    color: white;
-    padding: 6px 12px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-  }
+  .top-left { display:flex; align-items:center; gap:10px; }
+  .toplogo { width:40px; height:40px; object-fit:contain; }
+  .kartu { width:360px; height:640px; margin:18px auto; background:#fff; border-radius:12px; padding:14px; box-shadow:0 6px 20px rgba(10,79,163,0.12); display:flex; flex-direction:column; }
+  .foto-box{ text-align:center; }
+  .foto-siswa{ width:130px; height:170px; object-fit:cover; border-radius:10px; border:3px solid #0A4FA3; }
+  .data-scroll{ flex:1; margin-top:12px; overflow-y:auto; padding-right:6px; }
+  table{ width:100%; border-collapse:collapse; font-size:15px;}
+  td{ padding:7px 6px; vertical-align:top; }
+  tr:nth-child(even){ background:#f0f4ff; }
+  .label{ width:40%; font-weight:700; }
+  .logout-btn{ background:#ff5d5d; color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; }
 </style>
 </head>
-
 <body>
 
-<!-- ====== TOPBAR ====== -->
 <div class="topbar">
   <div class="top-left">
-    <img src="assets/logo.png" class="toplogo">
-    <h3>Dashboard Siswa</h3>
+    <img src="assets/logo.png" class="toplogo" alt="logo">
+    <strong>Dashboard Siswa</strong>
   </div>
-  <div style="display:flex; gap:10px; align-items:center;">
+  <div>
     <span id="clock"></span>
     <button class="logout-btn" onclick="logout()">Logout</button>
   </div>
 </div>
 
-<!-- ====== TEMPAT BIODATA ====== -->
 <div id="konten"></div>
 
+<!-- SheetJS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
-/* === JAM DIGITAL === */
-function updateClock() {
-  const now = new Date();
-  document.getElementById("clock").textContent = now.toLocaleTimeString("id-ID");
-}
-setInterval(updateClock, 1000);
+const SESSION_KEY = 'gw_ann_session_v3';
+function updateClock(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('id-ID'); }
+setInterval(updateClock,1000); updateClock();
 
-
-/* === Ambil data siswa dari localStorage === */
-const siswa = JSON.parse(localStorage.getItem("siswa"));
-
-// Jika belum login → kembali ke login.html
-if (!siswa) {
-  window.location.href = "login.html";
-}
-
-/* === Logout === */
 function logout(){
-  localStorage.removeItem("siswa");
-  window.location.href = "login.html";
+  localStorage.removeItem(SESSION_KEY);
+  window.location.href = 'index.html';
 }
 
-/* === Tampilkan biodata === */
-const noAbsen = siswa["No"] || siswa["NO"] || siswa["No Absen"] || siswa["NO ABSEN"] || siswa[0];
-const nama = siswa["Nama"];
-const nisn = siswa["NISN"];
-const jk = siswa["Jenis Kelamin"] === "L" ? "Laki-laki" : "Perempuan";
-const tempat = siswa["Tempat Lahir"];
-const tgl = siswa["Tgl Lahir"];
-const alamat = siswa["Alamat"];
-const hobi = siswa["Hobi"];
-const cita = siswa["Cita-cita"];
+// read session
+const sess = (function(){ try{ return JSON.parse(localStorage.getItem(SESSION_KEY)); }catch(e){return null;} })();
+if(!sess || sess.role !== 'siswa'){
+  // not logged in as siswa -> redirect to login
+  window.location.href = 'index.html';
+}
 
-document.getElementById("konten").innerHTML = `
-  <div class="kartu">
+// Try to load Excel (preferred) then fallback to minimal data
+const RAW_XLSX = 'https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx';
 
-    <div class="foto-box">
-      <img src="assets/foto/${noAbsen}.jpg" class="foto-siswa" alt="Foto">
+// helper: convert excel serial to date string
+function excelDateToText(v){
+  if(typeof v === 'number'){
+    const d = new Date((v - 25569) * 24 * 3600 * 1000);
+    return d.toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' });
+  }
+  return v || '';
+}
+
+async function loadAndRender(){
+  try{
+    const res = await fetch(RAW_XLSX);
+    if(!res.ok) throw new Error('file xlsx tidak bisa diambil');
+    const buf = await res.arrayBuffer();
+    const wb = XLSX.read(buf, { type:'array' });
+    const sheet = wb.Sheets['DATA'] || wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(sheet, { header:1, defval: '' });
+
+    // find row where col M (index 12) matches nisn
+    let found = null;
+    for(let r=1; r<rows.length; r++){
+      const nisn = String(rows[r][12] || '').trim();
+      if(nisn === sess.nisn){
+        found = rows[r];
+        break;
+      }
+    }
+
+    if(found){
+      const noAbsen = found[0] || '';
+      const nama = found[1] || '';
+      const jk = (found[3] === 'L') ? 'Laki-laki' : 'Perempuan';
+      const tempat = found[4] || '';
+      const tglRaw = found[5];
+      const tgl = excelDateToText(tglRaw);
+      const alamat = found[6] || '';
+      const hobi = found[9] || '';
+      const cita = found[10] || '';
+
+      renderCard({ noAbsen, nama, nisn: sess.nisn, jk, tempat, tgl, alamat, hobi, cita });
+      return;
+    }
+
+    // fallback: if not found in excel, use session minimal info
+    renderCard({
+      noAbsen: '', nama: sess.name || '', nisn: sess.nisn || '',
+      jk:'', tempat:'', tgl:'', alamat:'', hobi:'', cita:''
+    });
+
+  }catch(err){
+    // on error fallback
+    renderCard({
+      noAbsen:'', nama: sess.name || '', nisn: sess.nisn || '', jk:'', tempat:'', tgl:'', alamat:'', hobi:'', cita:''
+    });
+  }
+}
+
+function renderCard(data){
+  const konten = document.getElementById('konten');
+  const photoPath = data.noAbsen ? `assets/foto/${data.noAbsen}.jpg` : 'assets/foto/1.jpg';
+  konten.innerHTML = `
+    <div class="kartu">
+      <div class="foto-box">
+        <img src="${photoPath}" class="foto-siswa" alt="foto siswa" onerror="this.src='assets/foto/1.jpg'">
+      </div>
+      <div class="data-scroll">
+        <table>
+          <tr><td class="label">Nama</td><td>: ${escapeHtml(data.nama)}</td></tr>
+          <tr><td class="label">NISN</td><td>: ${escapeHtml(data.nisn)}</td></tr>
+          <tr><td class="label">Jenis Kelamin</td><td>: ${escapeHtml(data.jk)}</td></tr>
+          <tr><td class="label">Tempat, Tgl Lahir</td><td>: ${escapeHtml(data.tempat)}${data.tgl? ', ' + escapeHtml(data.tgl): ''}</td></tr>
+          <tr><td class="label">Alamat</td><td>: ${escapeHtml(data.alamat)}</td></tr>
+          <tr><td class="label">Hobi</td><td>: ${escapeHtml(data.hobi)}</td></tr>
+          <tr><td class="label">Cita-cita</td><td>: ${escapeHtml(data.cita)}</td></tr>
+        </table>
+      </div>
     </div>
+  `;
+}
 
-    <div class="data-scroll">
-      <table>
-        <tr><td class="label">Nama</td><td>: ${nama}</td></tr>
-        <tr><td class="label">NISN</td><td>: ${nisn}</td></tr>
-        <tr><td class="label">Jenis Kelamin</td><td>: ${jk}</td></tr>
-        <tr><td class="label">Tempat, Tgl Lahir</td><td>: ${tempat}, ${tgl}</td></tr>
-        <tr><td class="label">Alamat</td><td>: ${alamat}</td></tr>
-        <tr><td class="label">Hobi</td><td>: ${hobi}</td></tr>
-        <tr><td class="label">Cita-cita</td><td>: ${cita}</td></tr>
-      </table>
-    </div>
+function escapeHtml(s){
+  if(!s && s !== 0) return '';
+  return String(s)
+    .replaceAll('&','&amp;')
+    .replaceAll('<','&lt;')
+    .replaceAll('>','&gt;')
+    .replaceAll('"','&quot;')
+    .replaceAll("'", '&#39;');
+}
 
-  </div>
-`;
+loadAndRender();
 </script>
-
 </body>
 </html>
