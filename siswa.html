@@ -57,5 +57,17 @@
             <div class="card" onclick="location.href='logout.php'">Logout</div>
         </div>
     </div>
+    <script src="script.js"></script>
+<script>
+  const s = load(SESSION_KEY);
+
+  if (!s || s.role !== 'siswa') {
+    window.location.href = 'index.html';
+  }
+
+  // tampilkan nama siswa
+  document.getElementById('studentName').textContent = s.name;
+</script>
+
 </body>
 </html>
