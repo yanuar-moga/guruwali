@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Siswa</title>
+
+  <!-- SheetJS untuk membaca Excel -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #e9f1ff;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .login-box {
+      width: 90%;
+      max-width: 380px;
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    h2 {
+      text-align: center;
+      color: #0A4FA3;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+      border: 1px solid #aaa;
+      border-radius: 8px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
+      background: #0A4FA3;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+    }
+    .error {
+      margin-top: 10px;
+      color: red;
+      text-align: center;
+      font-weight: bold;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-box">
+  <h2>Login Siswa</h2>
+
+  <input type="text" id="username" placeholder="Masukkan NISN">
+  <input type="password" id="password" placeholder="Password = siswa">
+
+  <button onclick="login()">Login</button>
+
+  <div class="error" id="errorBox">Login gagal — periksa NISN dan password.</div>
+</div>
+
+<script>
+  async function loadExcel() {
+    const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
+    const response = await fetch(url);
+    const arrayBuffer = await response.arrayBuffer();
+    const workbook = XLSX.read(arrayBuffer, { type: "array" });
+    const sheet = workbook.Sheets["DATA"];
+    return XLSX.utils.sheet_to_json(sheet, { header: 1 });
+  }
+
+  function login() {
+    const user = document.getElementById("username").value.trim();
+    const pass = document.getElementById("password").value.trim();
+    const errorBox = document.getElementById("errorBox");
+
+    if (pass !== "siswa") {
+      errorBox.style.display = "block";
+      return;
+    }
+
+    loadExcel().then(rows => {
+      // Cari NISN di kolom M (index 12)
+      let found = false;
+
+      for (let i = 1; i < rows.length; i++) {
+        const nisn = String(rows[i][12] || "").trim();
+
+        if (nisn === user) {
+          found = true;
+          window.location.href = "siswa.html?nisn=" + nisn;
+          break;
+        }
+      }
+
+      if (!found) {
+        errorBox.style.display = "block";
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
