@@ -23,11 +23,8 @@
     margin:0;
     background:var(--bg);
     font-family: Arial, sans-serif;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
   }
 
-  /* center and auto-scale wrapper so card always fits 1 screen (no vertical scroll) */
   .viewport{
     height:100vh;
     width:100vw;
@@ -40,7 +37,6 @@
     transform-origin: top left;
   }
 
-  /* card */
   .card{
     width:var(--card-w);
     height:var(--card-h);
@@ -54,7 +50,6 @@
     flex-direction:column;
   }
 
-  /* header */
   .header{
     display:flex;
     align-items:center;
@@ -67,11 +62,9 @@
   .school-title{ color:var(--accent); font-weight:700; font-size:18px; margin:0; }
   .subtitle{ font-size:12px; margin:0; color:#333; }
 
-  /* photo */
   .photo-wrap{ display:flex; justify-content:center; margin:10px 0 6px 0; }
   .photo{ width:110px; height:140px; object-fit:cover; border-radius:6px; border:2px solid var(--accent); }
 
-  /* data area (scroll hidden, content fits) */
   .data-area{
     flex:1;
     overflow:hidden;
@@ -97,7 +90,6 @@
   .colon{ width:10px; text-align:center; color:#111; }
   .value{ flex:1; font-size:12px; color:#222; word-break:break-word; }
 
-  /* controls */
   .controls{ display:flex; gap:8px; justify-content:center; margin-top:8px; }
   .btn{
     background:var(--accent);
@@ -118,9 +110,7 @@
   }
   .download-menu .btn{ width:240px; padding:10px; }
 
-  /* small screen tweaks */
   @media (max-width:420px){
-    .card{ border-radius:10px; }
     .label{ width:120px; font-size:11px; }
     .value{ font-size:11px; }
     .school-title{ font-size:16px; }
@@ -163,12 +153,8 @@
   </div>
 
 <script>
-/* ===========================
-   Config & Globals
-   =========================== */
+/* Config */
 const EXCEL_RAW_URL = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
-
-/* possible raw bases for fotos: tries these in order */
 const FOTO_BASES = [
   "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/foto/",
   "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/FOTO/",
@@ -177,21 +163,24 @@ const FOTO_BASES = [
 ];
 const FOTO_EXTS = [".jpg", ".JPG", ".jpeg", ".png"];
 
+/* Fields to show (in this exact order) */
+const SHOW_FIELDS = [
+  "NO","NAMA LENGKAP","NAMA PANGGIL","JENIS KELAMIN","Tempat Lahir","Tgl Lahir","Alamat","No WA Siswa",
+  "Hobi","Cita-cita","NIS","NISN","Pelajaran yg disukai","Pelajaran tdk disukai","Ekskul","Kegiatan yg memotivasi di sekolah","Cara Belajar",
+  "Harapan Orang Tua","Penerima KIP","ADA KARTU KIP","YATIM/PIATU","MONDOK"
+];
+
 let siswa = [];
 let idx = 0;
 
-/* ===========================
-   Utilities
-   =========================== */
+/* Utilities */
 function formatTanggalExcel(val){
   if (typeof val !== "number") return val;
-  // Excel serial -> JS date
   const jsDate = new Date((val - 25569) * 86400 * 1000);
   const bulan = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
   return `${jsDate.getDate()} ${bulan[jsDate.getMonth()]} ${jsDate.getFullYear()}`;
 }
 
-/* auto-scale so the card fits the viewport (both width and height) */
 function autoScale(){
   const wrapper = document.querySelector('.scale-wrapper');
   const card = document.querySelector('.card');
@@ -203,56 +192,40 @@ function autoScale(){
   wrapper.style.transform = `scale(${scale})`;
 }
 
-/* try load foto by number with fallback bases/exts, sets img.src when found */
 function setFotoByNo(no, imgEl){
-  // prefer numeric (remove spaces)
   const num = (no === undefined || no === null || no === "") ? null : String(no).trim();
-  const nomor = num && !isNaN(Number(num)) ? num : null;
-  const finalNoFallback = (nomor === null) ? null : nomor;
-
-  // helper recursive attempts
+  const finalNo = (num && !isNaN(Number(num))) ? num : null;
   let baseIdx = 0, extIdx = 0;
 
   function tryNext(){
     if (baseIdx >= FOTO_BASES.length){
-      // not found: placeholder
       imgEl.src = "https://via.placeholder.com/110x140?text=No+Photo";
       return;
     }
     const base = FOTO_BASES[baseIdx];
     const ext = FOTO_EXTS[extIdx];
-    const fileName = (finalNoFallback !== null) ? `${finalNoFallback}${ext}` : `${(idx+1)}${ext}`;
-    const url = base + fileName;
+    const file = (finalNo !== null) ? `${finalNo}${ext}` : `${(idx+1)}${ext}`;
+    const url = base + file;
 
     const tester = new Image();
-    tester.onload = function(){
-      imgEl.src = url;
-    };
-    tester.onerror = function(){
-      extIdx++;
-      if (extIdx >= FOTO_EXTS.length){ baseIdx++; extIdx = 0; }
-      tryNext();
-    };
+    tester.onload = function(){ imgEl.src = url; };
+    tester.onerror = function(){ extIdx++; if (extIdx >= FOTO_EXTS.length){ baseIdx++; extIdx = 0; } tryNext(); };
     tester.src = url;
   }
-
   tryNext();
 }
 
-/* safe text for value display */
-function safeText(v){
-  if (v === null || v === undefined) return "";
-  if (typeof v === "number"){
-    // might be date serial — but we'll handle by key checking in render
-    return v;
-  }
-  return String(v);
+function escapeHtml(str){
+  if (str === null || str === undefined) return "";
+  return String(str)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
 }
 
-/* ===========================
-   Data loading & render
-   =========================== */
-
+/* Load Excel */
 async function loadExcel(){
   try{
     const res = await fetch(EXCEL_RAW_URL);
@@ -266,10 +239,11 @@ async function loadExcel(){
     render();
   }catch(err){
     console.error(err);
-    alert("Gagal memuat data Excel. Cek koneksi atau URL.");
+    alert("Gagal memuat data Excel. Periksa koneksi atau URL.");
   }
 }
 
+/* Render only SHOW_FIELDS in order */
 function render(){
   autoScale();
   if (!siswa.length){
@@ -279,103 +253,71 @@ function render(){
   }
   const s = siswa[idx];
 
-  // set foto by NO column if exists, otherwise fallback to idx+1
-  const possibleNo = s.NO ?? s["NO"] ?? s["No"] ?? s["no"] ?? null;
+  // determine photo number from NO column, or fallback to idx+1
+  const possibleNo = s.NO ?? s["NO"] ?? s["No"] ?? s["no"] ?? s["No."] ?? null;
   setFotoByNo(possibleNo, document.getElementById('foto'));
 
-  // generate rows: show every key in student object (in the order returned by sheet_to_json)
   const rowsContainer = document.getElementById('rows');
   rowsContainer.innerHTML = "";
 
-  // We'll iterate keys preserving their order
-  Object.keys(s).forEach((k, i) => {
-    let rawVal = s[k];
+  // iterate through SHOW_FIELDS, fetch value from student object case-insensitively
+  SHOW_FIELDS.forEach((fieldKey) => {
+    // find actual key in s that matches ignoring case & trimming spaces
+    const foundKey = Object.keys(s).find(k => k.trim().toLowerCase() === fieldKey.trim().toLowerCase());
+    let rawVal = foundKey ? s[foundKey] : "";
     let val = rawVal;
 
-    // if key contains 'tgl' or 'lahir' -> format date if numeric
-    const kl = k.toLowerCase();
-    if ((kl.includes("tgl") || kl.includes("tanggal") || kl.includes("lahir")) && typeof rawVal === "number"){
+    const lowerKey = fieldKey.toLowerCase();
+    if ((lowerKey.includes("tgl") || lowerKey.includes("tanggal") || lowerKey.includes("lahir")) && typeof rawVal === "number"){
       val = formatTanggalExcel(rawVal);
     } else {
-      // keep as-is, but convert serial-like numbers that are obviously dates? skip to avoid wrong conversion
-      val = safeText(rawVal);
+      val = (rawVal === null || rawVal === undefined) ? "" : rawVal;
     }
 
     const rowEl = document.createElement('div');
     rowEl.className = 'row';
-    rowEl.innerHTML = `<div class="label">${escapeHtml(k)}</div><div class="colon">:</div><div class="value">${escapeHtml(val)}</div>`;
+    rowEl.innerHTML = `<div class="label">${escapeHtml(fieldKey)}</div><div class="colon">:</div><div class="value">${escapeHtml(val)}</div>`;
     rowsContainer.appendChild(rowEl);
   });
 }
 
-/* simple HTML escape */
-function escapeHtml(str){
-  if (str === null || str === undefined) return "";
-  return String(str)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
+/* Navigation */
+function next(){ if (idx < siswa.length - 1) idx++; render(); }
+function prev(){ if (idx > 0) idx--; render(); }
 
-/* ===========================
-   Navigation
-   =========================== */
-function next(){
-  if (idx < siswa.length - 1) idx++;
-  render();
-}
-function prev(){
-  if (idx > 0) idx--;
-  render();
-}
+/* Downloads */
+function toggleMenu(){ const m = document.getElementById('downloadMenu'); m.style.display = (m.style.display === 'none' || m.style.display==='') ? 'flex' : 'none'; }
 
-/* ===========================
-   Download functions
-   =========================== */
-function toggleMenu(){
-  const m = document.getElementById('downloadMenu');
-  m.style.display = (m.style.display === 'none' || m.style.display === '') ? 'flex' : 'none';
-}
-
-/* Download current card as JPG */
 function downloadJPG(){
   const card = document.getElementById('card');
   html2canvas(card, { scale: 3, useCORS: true }).then(canvas => {
     const a = document.createElement('a');
-    a.href = canvas.toDataURL('image/jpeg', 1.0);
     const no = siswa[idx]?.NO ?? (idx+1);
+    a.href = canvas.toDataURL('image/jpeg', 1.0);
     a.download = `Kartu-${no}.jpg`;
     a.click();
   });
 }
 
-/* Download current card as PDF */
 function downloadPDFsingle(){
   const { jsPDF } = window.jspdf;
   const card = document.getElementById('card');
   html2canvas(card, { scale: 3, useCORS: true }).then(canvas => {
     const img = canvas.toDataURL('image/jpeg', 1.0);
     const pdf = new jsPDF('p','px',[400,600]);
-    pdf.addImage(img, 'JPEG', 10, 10, 380, 580);
     const no = siswa[idx]?.NO ?? (idx+1);
+    pdf.addImage(img, 'JPEG', 10, 10, 380, 580);
     pdf.save(`Kartu-${no}.pdf`);
   });
 }
 
-/* Download ALL cards as single PDF (multi-page) */
 async function downloadPDFall(){
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF('p','px',[400,600]);
-
   for (let i=0; i<siswa.length; i++){
     idx = i;
     render();
-    // small pause to ensure render & image loaded
     await new Promise(r => setTimeout(r, 250));
-    // capture
-    // eslint-disable-next-line no-await-in-loop
     const canvas = await html2canvas(document.getElementById('card'), { scale: 3, useCORS: true });
     const img = canvas.toDataURL('image/jpeg',1.0);
     if (i>0) pdf.addPage();
@@ -384,9 +326,7 @@ async function downloadPDFall(){
   pdf.save('Semua-Kartu-Siswa.pdf');
 }
 
-/* ===========================
-   Init
-   =========================== */
+/* Init */
 window.addEventListener('load', () => {
   loadExcel();
   autoScale();
