@@ -67,7 +67,12 @@
     <a href="#">Laporan Perkembangan</a>
 
     <h3 style="margin-top:28px;">Menu Guru Wali</h3>
-    <a href="#">Profil Siswa</a>
+    <!-- di bagian sidebar menu -->
+<a href="#" id="menuProfil">Profil Siswa</a>
+
+<!-- di bagian content (misalnya di tempat utama) -->
+<div id="profilContainer"></div>
+<a href="#">Profil Siswa</a>
     <a href="#">Rekap Nilai</a>
     <a href="#">Pelanggaran / Poin</a>
     <a href="#">Jadwal Konsultasi</a>
@@ -219,6 +224,46 @@ function renderCharts(jkCount, hobiCount, citaCount) {
 }
 
 loadExcel();
+</script>
+<script>
+// Logout (jika sudah ada)
+function logout(){
+  localStorage.removeItem('gw_ann_session_v3');
+  window.location.href = 'index.html';
+}
+
+// Fungsi untuk load HTML eksternal ke dalam container
+async function loadProfilSiswa() {
+  const url = "https://yanuar-moga.github.io/guruwali/biodata.html";  
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error("Gagal fetch biodata: " + response.status);
+    }
+    const html = await response.text();
+
+    // Buat elemen sementara untuk parsing
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+
+    // Ambil elemen body atau bagian spesifik dari biodata.html
+    const content = doc.querySelector("body"); // bisa diganti selector spesifik
+    const container = document.getElementById("profilContainer");
+    container.innerHTML = content.innerHTML;
+
+    // Setelah dimasukkan, bisa jalankan JS di dalam biodata (opsional)
+    // Misal: kamu ingin script di dalam biodata juga dieksekusi
+
+  } catch (err) {
+    console.error("Error load profil siswa:", err);
+  }
+}
+
+// Pasang event click pada menu “Profil Siswa”
+document.getElementById("menuProfil").addEventListener("click", (e) => {
+  e.preventDefault();
+  loadProfilSiswa();
+});
 </script>
 
 </body>
