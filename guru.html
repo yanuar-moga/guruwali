@@ -1,118 +1,238 @@
-<!-- =======================
-     DASHBOARD GURU – FINAL
-     Dengan Sidebar + Grafik
-========================== -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Dashboard Guru</title>
+<link rel="stylesheet" href="style.css" />
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+  }
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    min-height: 100vh;
+  }
+  .sidebar {
+    background: #0A4FA3;
+    color: #fff;
+    padding: 20px;
+  }
+  .sidebar h3 {
+    margin-top: 0;
+  }
+  .sidebar a {
+    color: #fff;
+    text-decoration: none;
+    display: block;
+    padding: 8px 0;
+  }
+  .content {
+    padding: 22px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 6px 18px rgba(10,79,163,0.06);
+    margin-bottom: 20px;
+  }
+  #chartJK, #chartHobi, #chartCita {
+    width: 100%;
+    height: 350px;
+  }
+</style>
+</head>
 
-<div style="display:flex; gap:20px; margin-top:20px;">
+<body>
+<div class="layout">
 
-  <!-- ====================== -->
-  <!--        SIDEBAR         -->
-  <!-- ====================== -->
-  <aside style="
-      width:230px;
-      background:#ffffff;
-      border-radius:12px;
-      padding:18px;
-      box-shadow:0 6px 18px rgba(10,79,163,0.08);
-      height:max-content;
-  ">
-    <h3 style="margin-top:0; color:#0A4FA3;">Menu Wali Kelas</h3>
-    <ul style="list-style:none; padding-left:0; line-height:1.8;">
-      <li><a href="pengumuman.html">Pengumuman</a></li>
-      <li><a href="curhatsiswa.html">Curhat Siswa</a></li>
-      <li><a href="notulen.html">Notulen</a></li>
-      <li><a href="rekap.html">Rekap Kehadiran</a></li>
-      <li><a href="rapor.html">Rekap Nilai / Rapor</a></li>
-      <li><a href="biodata.html">Data Biodata Siswa</a></li>
-    </ul>
+  <!-- SIDEBAR MENU -->
+  <div class="sidebar">
+    <h3>Menu Wali Kelas</h3>
+    <a href="pengumuman.html">Pengumuman</a>
+    <a href="curhatsiswa.html">Curhat Siswa</a>
+    <a href="notulen.html">Notulen</a>
+    <a href="#">Data Absensi</a>
+    <a href="#">Laporan Perkembangan</a>
 
-    <h3 style="margin-top:22px; color:#0A4FA3;">Menu Guru Wali</h3>
-    <ul style="list-style:none; padding-left:0; line-height:1.8;">
-      <li><a href="#">Monitoring Belajar</a></li>
-      <li><a href="#">Monitoring Akhlak</a></li>
-      <li><a href="#">Catatan Khusus</a></li>
-      <li><a href="#">Laporan Bulanan</a></li>
-    </ul>
-  </aside>
+    <h3 style="margin-top:28px;">Menu Guru Wali</h3>
+    <a href="#">Profil Siswa</a>
+    <a href="#">Rekap Nilai</a>
+    <a href="#">Pelanggaran / Poin</a>
+    <a href="#">Jadwal Konsultasi</a>
 
-  <!-- ====================== -->
-  <!--      KONTEN UTAMA      -->
-  <!-- ====================== -->
-  <main style="flex:1;">
-    
+    <button onclick="logout()" style="margin-top:30px;background:#ff5d5d;color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer;width:100%;">Logout</button>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="content">
+
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
+      <img src="assets/logo.png" style="width:48px;height:48px;object-fit:contain;" />
+      <div>
+        <h2 style="margin:0;color:#0A4FA3">Dashboard Guru</h2>
+        <div style="color:#6c7a89;">Selamat datang, Bayu</div>
+      </div>
+    </div>
+
     <!-- Grafik Jenis Kelamin -->
-    <div style="background:#fff; border-radius:12px; padding:16px; 
-                box-shadow:0 6px 18px rgba(10,79,163,0.06); margin-bottom:20px;">
-      <h3 style="margin-top:0;">Grafik Jumlah Siswa Berdasarkan Jenis Kelamin</h3>
-      <canvas id="chartJK" height="120"></canvas>
+    <div class="card">
+      <h3>Grafik Jumlah Siswa Berdasarkan Jenis Kelamin</h3>
+      <canvas id="chartJK"></canvas>
     </div>
 
     <!-- Grafik Hobi -->
-    <div style="background:#fff; border-radius:12px; padding:16px; 
-                box-shadow:0 6px 18px rgba(10,79,163,0.06); margin-bottom:20px;">
-      <h3 style="margin-top:0;">Grafik 10 Hobi Terbanyak</h3>
-      <canvas id="chartHobi" height="120"></canvas>
+    <div class="card">
+      <h3>Grafik 10 Hobi Terbanyak</h3>
+      <canvas id="chartHobi"></canvas>
     </div>
 
     <!-- Grafik Cita-cita -->
-    <div style="background:#fff; border-radius:12px; padding:16px; 
-                box-shadow:0 6px 18px rgba(10,79,163,0.06);">
-      <h3 style="margin-top:0;">Grafik 10 Cita-cita Terbanyak</h3>
-      <canvas id="chartCita" height="120"></canvas>
+    <div class="card">
+      <h3>Grafik 10 Cita-cita Terbanyak</h3>
+      <canvas id="chartCita"></canvas>
     </div>
 
-  </main>
+  </div>
 </div>
 
-<!-- ===================== -->
-<!--       Chart.js        -->
-<!-- ===================== -->
+<!-- JS LIB -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-// ====== Dummy Data (nanti otomatis saya buatkan JSON-nya) ======
-// Kamu nanti bisa ganti dengan fetch('assets/data.json')
-const jkData = { laki: 0, perempuan: 0 };
-const hobiData = {};
-const citaData = {};
+function logout(){
+  localStorage.removeItem('gw_ann_session_v3');
+  window.location.href='index.html';
+}
 
-// ==== PopulateData dari Excel (via Python sudah dihitung) ====
-jkData.laki =  {{gender_counts["Laki-laki"] if "Laki-laki" in gender_counts else 0}};
-jkData.perempuan = {{gender_counts["Perempuan"] if "Perempuan" in gender_counts else 0}};
+// ============================================
+//  LOAD DATA EXCEL dari GitHub
+// ============================================
+async function loadExcel() {
+    const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
 
-const hobi = {{hobi_counts.to_dict()}};
-const cita = {{citacita_counts.to_dict()}};
+    const resp = await fetch(url);
+    const arrayBuf = await resp.arrayBuffer();
 
-// ========== CHART: Jenis Kelamin ==========
-new Chart(document.getElementById("chartJK"), {
-  type: "bar",
-  data: {
-    labels: ["Laki-laki", "Perempuan"],
-    datasets: [{
-      data: [jkData.laki, jkData.perempuan]
-    }]
-  }
-});
+    const wb = XLSX.read(arrayBuf, { type: "array" });
 
-// ========== CHART: Hobi ==========
-new Chart(document.getElementById("chartHobi"), {
-  type: "bar",
-  data: {
-    labels: Object.keys(hobi),
-    datasets: [{
-      data: Object.values(hobi)
-    }]
-  }
-});
+    // sheet = DATA (sesuai permintaan)
+    const sheet = wb.Sheets["DATA"];
+    const rows = XLSX.utils.sheet_to_json(sheet);
 
-// ========== CHART: Cita-cita ==========
-new Chart(document.getElementById("chartCita"), {
-  type: "bar",
-  data: {
-    labels: Object.keys(cita),
-    datasets: [{
-      data: Object.values(cita)
-    }]
-  }
-});
+    return rows;
+}
+
+// ============================================
+//  UTILITY SPLIT (koma / strip / slash)
+// ============================================
+function splitMulti(str) {
+    if (!str) return [];
+    return String(str)
+      .split(/[,/|-]+/g)
+      .map(s => s.trim())
+      .filter(s => s.length > 0);
+}
+
+// ============================================
+//  HITUNG DATA
+// ============================================
+function processData(rows) {
+    const gender = { "Laki-laki": 0, "Perempuan": 0 };
+    const hobi = {};
+    const cita = {};
+
+    rows.forEach(r => {
+        // Jenis kelamin
+        const jk = (r.JK || "").toString().toLowerCase();
+        if (jk.includes("l")) gender["Laki-laki"]++;
+        else if (jk.includes("p")) gender["Perempuan"]++;
+
+        // Hobi 
+        splitMulti(r.Hobi).forEach(h => {
+            hobi[h] = (hobi[h] || 0) + 1;
+        });
+
+        // Cita-cita
+        splitMulti(r.CitaCita).forEach(c => {
+            cita[c] = (cita[c] || 0) + 1;
+        });
+    });
+
+    // Top 10 Hobi & Cita-cita
+    const topHobi = Object.entries(hobi)
+        .sort((a,b)=>b[1]-a[1])
+        .slice(0,10);
+
+    const topCita = Object.entries(cita)
+        .sort((a,b)=>b[1]-a[1])
+        .slice(0,10);
+
+    return { gender, topHobi, topCita };
+}
+
+// ============================================
+//  RENDER CHART
+// ============================================
+function renderCharts({ gender, topHobi, topCita }) {
+
+    // ===== JENIS KELAMIN =====
+    new Chart(document.getElementById("chartJK"), {
+        type: "bar",
+        data: {
+            labels: ["Laki-laki", "Perempuan"],
+            datasets: [{
+                label: "Jumlah Siswa",
+                data: [gender["Laki-laki"], gender["Perempuan"]],
+                borderWidth: 1
+            }]
+        },
+        options: { scales: { y: { beginAtZero:true } } }
+    });
+
+    // ===== HOBI =====
+    new Chart(document.getElementById("chartHobi"), {
+        type: "bar",
+        data: {
+            labels: topHobi.map(v => v[0]),
+            datasets: [{
+                label: "Jumlah",
+                data: topHobi.map(v => v[1]),
+                borderWidth: 1
+            }]
+        },
+        options: { scales: { y: { beginAtZero:true } } }
+    });
+
+    // ===== CITA-CITA =====
+    new Chart(document.getElementById("chartCita"), {
+        type: "bar",
+        data: {
+            labels: topCita.map(v => v[0]),
+            datasets: [{
+                label: "Jumlah",
+                data: topCita.map(v => v[1]),
+                borderWidth: 1
+            }]
+        },
+        options: { scales: { y: { beginAtZero:true } } }
+    });
+}
+
+// ============================================
+//  MAIN EXECUTION
+// ============================================
+(async function(){
+    const rows = await loadExcel();
+    const processed = processData(rows);
+    renderCharts(processed);
+})();
 </script>
+
+</body>
+</html>
