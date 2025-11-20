@@ -8,7 +8,6 @@
   <style>
     body { padding-bottom: 70px; }
 
-    /* Perbaikan ukuran logo */
     .toplogo {
       height: 40px !important;
       width: auto;
@@ -16,6 +15,7 @@
     }
 
     #clock { font-weight: bold; color: #003f7f; }
+
     .logout-btn {
       background: #ffd84c;
       color: #002855;
@@ -89,6 +89,7 @@
   <!-- ====== Konten Utama ====== -->
   <main class="menu-container">
     <input type="text" id="searchBox" class="search-box" placeholder="Cari nama atau NISN...">
+    
     <div class="card">
       <table id="tabelSiswa">
         <thead>
@@ -145,20 +146,20 @@ function formatTanggalExcel(value) {
   if (value < 30000 || value > 60000) return value;
 
   const date = new Date((value - 25569) * 86400 * 1000);
-  return date.toLocaleDateString("id-ID", { day:"2-digit", month:"long", year:"numeric" });
+  return date.toLocaleDateString("id-ID", {
+    day:"2-digit", month:"long", year:"numeric"
+  });
 }
 
-// Deteksi kolom Excel → kolom tabel HTML
+// Ambil kolom berdasarkan nama fleksibel
 function ambilKolom(obj, ...alt) {
   const keys = Object.keys(obj).map(k => k.toLowerCase().trim());
 
-  // cocok nama persis
   for (let a of alt) {
     let idx = keys.indexOf(a.toLowerCase());
     if (idx !== -1) return obj[Object.keys(obj)[idx]];
   }
 
-  // fuzzy match (mengandung)
   for (let k of Object.keys(obj)) {
     const lower = k.toLowerCase();
     if (alt.some(a => lower.includes(a.toLowerCase()))) return obj[k];
@@ -167,11 +168,10 @@ function ambilKolom(obj, ...alt) {
   return "-";
 }
 
-// Load dari Excel GitHub
+// Load data dari assets/data.xlsx
 async function loadSiswa() {
   try {
-    const filePath =
-      "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/data/data.xlsx";
+    const filePath = "assets/data.xlsx"; // ← Perbaikan utama
 
     const res = await fetch(filePath);
     const buf = await res.arrayBuffer();
@@ -185,10 +185,10 @@ async function loadSiswa() {
 
     data.forEach((row, i) => {
       let nama = ambilKolom(row, "nama", "nama lengkap");
-      let jk = ambilKolom(row, "jk", "jenis kelamin", "gender");
+      let jk = ambilKolom(row, "jk", "jenis kelamin");
       let nisn = ambilKolom(row, "nisn");
-      let tempat = ambilKolom(row, "tempat lahir", "tempat_lahir");
-      let tgl = ambilKolom(row, "tanggal lahir", "tgl lahir", "tanggal", "tgl");
+      let tempat = ambilKolom(row, "tempat lahir");
+      let tgl = ambilKolom(row, "tanggal lahir", "tgl lahir");
       let agama = ambilKolom(row, "agama");
       let alamat = ambilKolom(row, "alamat");
       let transport = ambilKolom(row, "transportasi", "transport");
@@ -210,7 +210,7 @@ async function loadSiswa() {
       tbody.appendChild(tr);
     });
 
-    // pencarian
+    // Pencarian
     const searchBox = document.getElementById("searchBox");
     searchBox.addEventListener("input", () => {
       const val = searchBox.value.toLowerCase();
