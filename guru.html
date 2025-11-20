@@ -40,22 +40,24 @@
     box-shadow: 0 6px 18px rgba(10,79,163,0.06);
     margin-bottom: 20px;
   }
-  #chart {
-    width: 100%;
-    height: 350px;
-  }
 
-  /* 3 grafik dalam 1 baris */
-  .grid-3 {
+  /* 3 kolom grafik */
+  .grafik-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 18px;
+  }
+
+  canvas {
+    width: 100% !important;
+    height: 320px !important;
   }
 </style>
 </head>
 <body>
 <div class="layout">
-  <!-- SIDEBAR MENU -->
+
+  <!-- SIDEBAR -->
   <div class="sidebar">
     <h3>Menu Wali Kelas</h3>
     <a href="pengumuman.html">Pengumuman</a>
@@ -83,8 +85,10 @@
       </div>
     </div>
 
-    <!-- 3 Grafik dalam 1 baris -->
-    <div class="grid-3">
+    <!-- ============================= -->
+    <!--         3 GRAFIK PIE          -->
+    <!-- ============================= -->
+    <div class="grafik-row">
 
       <div class="card">
         <h3>Grafik Jenis Kelamin</h3>
@@ -106,8 +110,9 @@
   </div>
 </div>
 
+<!-- LIBRARY -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <script>
 function logout(){
@@ -115,82 +120,105 @@ function logout(){
   window.location.href='index.html';
 }
 
-// =========================
-// BACA FILE EXCEL (DATA.xlsx)
-// =========================
-fetch("data.xlsx")
-  .then(res => res.arrayBuffer())
-  .then(buffer => {
-    const wb = XLSX.read(buffer, { type: "array" });
-    const ws = wb.Sheets["DATA"];
-    const data = XLSX.utils.sheet_to_json(ws);
+// ==============================
+//     PALLET WARNA PIE CHART
+// ==============================
+const colors = [
+  "#FF6384","#36A2EB","#FFCE56","#4BC0C0",
+  "#9966FF","#FF9F40","#66FF66","#FF6666",
+  "#6699FF","#CC66FF","#FFCC99","#99CC00"
+];
 
-    // HITUNG DATA
-    let jkCount = { "Laki-laki": 0, "Perempuan": 0 };
-    let hobiCount = {};
-    let citaCount = {};
+// =========================================
+//  LOAD FILE EXCEL & PROSES DATA OTOMATIS
+// =========================================
+async function loadExcel() {
+  const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
 
-    data.forEach(row => {
-      // === JENIS KELAMIN (kolom D) ===
-      let jk = row["JENIS KELAMIN"];
-      if (jk) {
-        if (jk.toLowerCase().includes("laki")) jkCount["Laki-laki"]++;
-        if (jk.toLowerCase().includes("perem")) jkCount["Perempuan"]++;
-      }
+  const res = await fetch(url);
+  const buf = await res.arrayBuffer();
+  const wb = XLSX.read(buf, { type: "array" });
 
-      // === HOBI (kolom J) → bisa dipisah koma/slash/strip ===
-      let hobi = row["HOBI"];
-      if (hobi) {
-        hobi.split(/[,/|-]/).forEach(h => {
-          h = h.trim();
-          if (h) {
-            hobiCount[h] = (hobiCount[h] || 0) + 1;
-          }
-        });
-      }
+  const sheet = wb.Sheets["DATA"];
+  const rows = XLSX.utils.sheet_to_json(sheet);
 
-      // === CITA-CITA (kolom K) ===
-      let cita = row["Cita-cita"];
-      if (cita) {
-        citaCount[cita] = (citaCount[cita] || 0) + 1;
-      }
-    });
+  let jkCount = { "Laki-laki": 0, "Perempuan": 0 };
+  let hobiCount = {};
+  let citaCount = {};
 
-    // =======================
-    //  RENDER GRAFIK PIE
-    // =======================
+  rows.forEach(r => {
+    let jk = r["Jenis Kelamin"] || r["JK"] || r["Gender"] || "";
+    let hobi = r["Hobi"] || r["HOBI"] || "";
+    let cita = r["Cita-cita"] || r["CITACITA"] || "";
 
-    new Chart(document.getElementById("chartJK"), {
-      type: "pie",
-      data: {
-        labels: ["Laki-laki", "Perempuan"],
-        datasets: [{
-          data: [jkCount["Laki-laki"], jkCount["Perempuan"]]
-        }]
-      }
-    });
+    // =========== Jenis Kelamin ===========
+    jk = jk.toString().trim();
+    if (/l/i.test(jk)) jkCount["Laki-laki"]++;
+    if (/p/i.test(jk)) jkCount["Perempuan"]++;
 
-    new Chart(document.getElementById("chartHobi"), {
-      type: "pie",
-      data: {
-        labels: Object.keys(hobiCount),
-        datasets: [{
-          data: Object.values(hobiCount)
-        }]
-      }
-    });
+    // =========== Hobi (multi nilai) ===========
+    if (hobi) {
+      hobi.split(/[,/\\|-]/).forEach(h => {
+        h = h.trim();
+        if (h !== "") hobiCount[h] = (hobiCount[h] || 0) + 1;
+      });
+    }
 
-    new Chart(document.getElementById("chartCita"), {
-      type: "pie",
-      data: {
-        labels: Object.keys(citaCount),
-        datasets: [{
-          data: Object.values(citaCount)
-        }]
-      }
-    });
-
+    // =========== Cita-cita ===========
+    if (cita) {
+      cita.split(/[,/\\|-]/).forEach(c => {
+        c = c.trim();
+        if (c !== "") citaCount[c] = (citaCount[c] || 0) + 1;
+      });
+    }
   });
+
+  renderCharts(jkCount, hobiCount, citaCount);
+}
+
+// =========================================
+//          RENDER 3 PIE CHART
+// =========================================
+function renderCharts(jkCount, hobiCount, citaCount) {
+
+  // === Jenis Kelamin PIE ===
+  new Chart(document.getElementById("chartJK"), {
+    type: "pie",
+    data: {
+      labels: ["Laki-laki", "Perempuan"],
+      datasets: [{
+        data: [jkCount["Laki-laki"], jkCount["Perempuan"]],
+        backgroundColor: ["#36A2EB", "#FF6384"]
+      }]
+    }
+  });
+
+  // === Hobi PIE ===
+  new Chart(document.getElementById("chartHobi"), {
+    type: "pie",
+    data: {
+      labels: Object.keys(hobiCount),
+      datasets: [{
+        data: Object.values(hobiCount),
+        backgroundColor: colors.slice(0, Object.keys(hobiCount).length)
+      }]
+    }
+  });
+
+  // === Cita-cita PIE ===
+  new Chart(document.getElementById("chartCita"), {
+    type: "pie",
+    data: {
+      labels: Object.keys(citaCount),
+      datasets: [{
+        data: Object.values(citaCount),
+        backgroundColor: colors.slice(0, Object.keys(citaCount).length)
+      }]
+    }
+  });
+}
+
+loadExcel();
 </script>
 
 </body>
