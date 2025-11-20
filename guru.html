@@ -42,13 +42,11 @@
     box-shadow: 0 6px 18px rgba(10,79,163,0.06);
     margin-bottom: 20px;
   }
-
   .grafik-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 18px;
   }
-
   canvas {
     width: 100% !important;
     height: 300px !important;
@@ -70,7 +68,7 @@
 
     <h3 style="margin-top:28px;">Menu Guru Wali</h3>
 
-    <!-- Profil Siswa sebagai SPA Loader -->
+    <!-- Profil Siswa -->
     <a onclick="loadProfilSiswa()">Profil Siswa</a>
 
     <a href="#">Rekap Nilai</a>
@@ -112,7 +110,6 @@
   </div>
 </div>
 
-
 <!-- LIBRARIES -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -129,10 +126,6 @@ const colors = [
   "#6699FF","#CC66FF","#FFCC99","#99CC00"
 ];
 
-
-// ==============================
-//  LOAD & RENDER DASHBOARD
-// ==============================
 async function loadExcel() {
   const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
 
@@ -173,9 +166,6 @@ async function loadExcel() {
   renderCharts(jkCount, hobiCount, citaCount);
 }
 
-// ==============================
-// RENDER PIE CHARTS
-// ==============================
 function renderCharts(jkCount, hobiCount, citaCount) {
 
   new Chart(document.getElementById("chartJK"), {
@@ -216,23 +206,33 @@ loadExcel();
 
 
 // =====================================================
-//          SPA MODE — LOAD PROFIL SISWA
+//      FIX: MUAT PROFIL SISWA + SCRIPT ASLINYA
 // =====================================================
 async function loadProfilSiswa() {
   const content = document.getElementById("mainContent");
-
   content.innerHTML = "<div class='card'>Memuat Profil Siswa...</div>";
 
   const url = "https://yanuar-moga.github.io/guruwali/biodata.html";
   const res = await fetch(url);
   const html = await res.text();
 
-  // Ambil hanya isi <body> biodata.html agar tidak merusak CSS
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, "text/html");
-  const bodyContent = doc.body.innerHTML;
 
-  content.innerHTML = bodyContent;
+  const bodyHTML = doc.body.innerHTML;
+  const scripts = doc.querySelectorAll("script");
+
+  content.innerHTML = bodyHTML;
+
+  scripts.forEach(oldScript => {
+    const newScript = document.createElement("script");
+    if (oldScript.src) {
+      newScript.src = oldScript.src;
+    } else {
+      newScript.textContent = oldScript.textContent;
+    }
+    document.body.appendChild(newScript);
+  });
 }
 
 </script>
