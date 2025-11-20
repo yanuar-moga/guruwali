@@ -17,33 +17,25 @@ body {
     font-family: Arial, sans-serif;
     background: #e6eef7;
     margin: 0;
-    padding-bottom: 90px; /* ruang untuk floating menu */
+    padding-bottom: 90px;
 }
 
-/* --- KARTU 9:16 --- */
 .card {
     width: 360px;
-    height: 640px; /* FIX 9:16 */
+    height: 640px;
     background: white;
     border-radius: 16px;
     padding: 18px;
     margin: 20px auto;
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     border-top: 8px solid #0d47a1;
-
     display: flex;
     flex-direction: column;
     overflow: hidden;
 }
 
-.header {
-    text-align: center;
-}
-
-.header img {
-    width: 70px;
-}
-
+.header { text-align: center; }
+.header img { width: 70px; }
 .header h2 {
     font-size: 20px;
     margin: 5px 0 0 0;
@@ -60,7 +52,6 @@ body {
     border: 2px solid #0d47a1;
 }
 
-/* --- DATA BOX SCROLL --- */
 .data-box {
     flex: 1;
     overflow-y: auto;
@@ -73,15 +64,12 @@ body {
     padding: 6px 8px;
 }
 
-.row:nth-child(odd) {
-    background: #f5f8ff;
-}
+.row:nth-child(odd) { background: #f5f8ff; }
 
 .label { width: 150px; font-weight: bold; font-size: 13px; }
 .colon { width: 10px; }
 .value { flex: 1; font-size: 13px; }
 
-/* --- FLOATING MENU --- */
 .floating-menu {
     position: fixed;
     bottom: 0;
@@ -124,18 +112,15 @@ body {
 <body>
 
 <div id="card" class="card">
-
     <div class="header">
         <img src="https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/logo.png">
         <h2>Biodata Siswa Kelas 7H</h2>
     </div>
 
     <img id="foto" class="photo" src="" alt="Foto Siswa">
-
     <div id="data" class="data-box"></div>
 </div>
 
-<!-- FLOATING MENU -->
 <div class="floating-menu">
     <button onclick="prev()">◀ Prev</button>
     <button onclick="next()">Next ▶</button>
@@ -152,18 +137,15 @@ body {
 let siswa = [];
 let index = 0;
 
-/* FORMAT TANGGAL */
+/* Format tanggal dari Excel serial */
 function formatTanggal(excelDate) {
     if (!excelDate) return "-";
-
-    // Jika sudah string normal
     if (isNaN(excelDate)) return excelDate;
-
     const date = new Date((excelDate - 25569) * 86400 * 1000);
     return date.toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" });
 }
 
-// Ambil Excel
+/* Muat Excel */
 async function loadExcel() {
     const file = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
     const res = await fetch(file);
@@ -171,11 +153,10 @@ async function loadExcel() {
     const wb = XLSX.read(buf, { type: "array" });
     const sheet = wb.Sheets[wb.SheetNames[0]];
     siswa = XLSX.utils.sheet_to_json(sheet);
-
     showData();
 }
 
-// Tampilkan biodata per siswa
+/* Tampilkan semua kolom Excel otomatis */
 function showData() {
     const s = siswa[index];
     let noFoto = index + 1;
@@ -183,27 +164,25 @@ function showData() {
     document.getElementById("foto").src =
         `https://raw.githubusercontent.com/yanuar-moga/guruwali/main/foto/${noFoto}.jpg`;
 
-    const fields = [
-        "NO", "NAMA LENGKAP", "NAMA PANGGIL", "JENIS KELAMIN", "Tempat Lahir",
-        "Tgl Lahir", "Alamat", "No WA Siswa", "Hobi", "Cita-cita",
-        "NIS", "NISN", "Pelajaran yg disukai", "Pelajaran tdk disukai",
-        "Ekskul", "Kegiatan yg memotivasi di sekolah", "Cara Belajar",
-        "Harapan Orang Tua", "Penerima KIP", "ADA KARTU KIP",
-        "YATIM/PIATU", "MONDOK"
-    ];
-
     let html = "";
-    fields.forEach(k => {
-        let val = s[k] || "-";
 
-        if (k === "Tgl Lahir") val = formatTanggal(val);
+    Object.keys(s).forEach(key => {
+        let val = s[key];
+
+        // deteksi tanggal excel (serial number biasanya 30000–60000)
+        if (typeof val === "number" && val > 30000 && val < 60000) {
+            val = formatTanggal(val);
+        }
+
+        if (!val) val = "-";
 
         html += `
         <div class="row">
-            <div class="label">${k}</div>
+            <div class="label">${key}</div>
             <div class="colon">:</div>
             <div class="value">${val}</div>
-        </div>`;
+        </div>
+        `;
     });
 
     document.getElementById("data").innerHTML = html;
@@ -224,7 +203,7 @@ function toggleMenu() {
     m.style.display = (m.style.display === "none") ? "block" : "none";
 }
 
-/* DOWNLOAD JPG */
+/* Download JPG */
 function downloadJPG() {
     html2canvas(document.getElementById("card"), { scale: 3 }).then(canvas => {
         const a = document.createElement("a");
@@ -234,10 +213,9 @@ function downloadJPG() {
     });
 }
 
-/* DOWNLOAD PDF SATU KARTU */
+/* Download PDF satu kartu */
 function downloadPDFsingle() {
     const { jsPDF } = window.jspdf;
-
     html2canvas(document.getElementById("card"), { scale: 3 }).then(canvas => {
         const pdf = new jsPDF("p", "px", [400, 640]);
         pdf.addImage(canvas.toDataURL("image/jpeg"), "JPEG", 10, 10, 380, 620);
@@ -245,7 +223,7 @@ function downloadPDFsingle() {
     });
 }
 
-/* DOWNLOAD SEMUA KARTU */
+/* Download PDF semua */
 async function downloadPDFall() {
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF("p", "px", [400, 640]);
@@ -253,14 +231,12 @@ async function downloadPDFall() {
     for (let i = 0; i < siswa.length; i++) {
         index = i;
         showData();
-
         await html2canvas(document.getElementById("card"), { scale: 3 })
         .then(canvas => {
             if (i > 0) pdf.addPage();
             pdf.addImage(canvas.toDataURL("image/jpeg"), "JPEG", 10, 10, 380, 620);
         });
     }
-
     pdf.save("Semua-Kartu-Siswa.pdf");
 }
 
