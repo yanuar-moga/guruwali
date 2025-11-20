@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Dashboard Guru</title>
 <link rel="stylesheet" href="style.css" />
+
 <style>
   body {
     margin: 0;
@@ -40,16 +41,35 @@
     box-shadow: 0 6px 18px rgba(10,79,163,0.06);
     margin-bottom: 20px;
   }
-  #chartJK, #chartHobi, #chartCita {
-    width: 100%;
-    height: 350px;
+
+  /* === 3 GRAPH CONTAINER === */
+  .chart-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+  @media (max-width: 900px) {
+    .chart-row {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 600px) {
+    .chart-row {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .chart-box {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 6px 18px rgba(10,79,163,0.06);
   }
 </style>
 </head>
 
 <body>
 <div class="layout">
-
   <!-- SIDEBAR MENU -->
   <div class="sidebar">
     <h3>Menu Wali Kelas</h3>
@@ -70,7 +90,6 @@
 
   <!-- MAIN CONTENT -->
   <div class="content">
-
     <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
       <img src="assets/logo.png" style="width:48px;height:48px;object-fit:contain;" />
       <div>
@@ -79,28 +98,33 @@
       </div>
     </div>
 
-    <!-- Grafik Jenis Kelamin -->
-    <div class="card">
-      <h3>Grafik Jumlah Siswa Berdasarkan Jenis Kelamin</h3>
-      <canvas id="chartJK"></canvas>
-    </div>
+    <!-- 3 Grafik PIE dalam 3 kolom -->
+    <div class="chart-row">
+      
+      <!-- Jenis Kelamin -->
+      <div class="chart-box">
+        <h3>Grafik Jenis Kelamin</h3>
+        <canvas id="chartJK" height="180"></canvas>
+      </div>
 
-    <!-- Grafik Hobi -->
-    <div class="card">
-      <h3>Grafik 10 Hobi Terbanyak</h3>
-      <canvas id="chartHobi"></canvas>
-    </div>
+      <!-- Hobi -->
+      <div class="chart-box">
+        <h3>Grafik Hobi</h3>
+        <canvas id="chartHobi" height="180"></canvas>
+      </div>
 
-    <!-- Grafik Cita-cita -->
-    <div class="card">
-      <h3>Grafik 10 Cita-cita Terbanyak</h3>
-      <canvas id="chartCita"></canvas>
+      <!-- Cita-cita -->
+      <div class="chart-box">
+        <h3>Grafik Cita-cita</h3>
+        <canvas id="chartCita" height="180"></canvas>
+      </div>
+
     </div>
 
   </div>
 </div>
 
-<!-- JS LIB -->
+<!-- XLSX + Chart.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -110,128 +134,99 @@ function logout(){
   window.location.href='index.html';
 }
 
-// ============================================
-//  LOAD DATA EXCEL dari GitHub
-// ============================================
-async function loadExcel() {
-    const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
+// ===============================
+// LOAD EXCEL & GENERATE CHARTS
+// ===============================
+async function loadDataExcel() {
 
-    const resp = await fetch(url);
-    const arrayBuf = await resp.arrayBuffer();
+  const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
+  const res = await fetch(url);
+  const buf = await res.arrayBuffer();
 
-    const wb = XLSX.read(arrayBuf, { type: "array" });
+  const workbook = XLSX.read(buf, { type: "array" });
+  const sheet = workbook.Sheets["DATA"];
+  const data = XLSX.utils.sheet_to_json(sheet);
 
-    // sheet = DATA (sesuai permintaan)
-    const sheet = wb.Sheets["DATA"];
-    const rows = XLSX.utils.sheet_to_json(sheet);
+  let jkCount = { "Laki-laki": 0, "Perempuan": 0 };
+  let hobiCount = {};
+  let citaCount = {};
 
-    return rows;
+  data.forEach(row => {
+
+    // === Jenis Kelamin (D) ===
+    let jk = row["JK"] || row["Jenis Kelamin"] || row["D"];
+    if (jk) {
+      jk = jk.trim();
+      if (jkCount[jk] !== undefined) jkCount[jk]++;
+    }
+
+    // === Hobi (J) ===
+    let hobi = row["Hobi"] || "";
+    if (hobi) {
+      hobi.split(/[,/|-]+/).forEach(h => {
+        h = h.trim();
+        if (h === "") return;
+        hobiCount[h] = (hobiCount[h] || 0) + 1;
+      });
+    }
+
+    // === Cita-cita (K) ===
+    let cita = row["Cita-cita"] || row["Citacita"] || "";
+    if (cita) {
+      cita.split(/[,/|-]+/).forEach(c => {
+        c = c.trim();
+        if (c === "") return;
+        citaCount[c] = (citaCount[c] || 0) + 1;
+      });
+    }
+
+  });
+
+  renderCharts(jkCount, hobiCount, citaCount);
 }
 
-// ============================================
-//  UTILITY SPLIT (koma / strip / slash)
-// ============================================
-function splitMulti(str) {
-    if (!str) return [];
-    return String(str)
-      .split(/[,/|-]+/g)
-      .map(s => s.trim())
-      .filter(s => s.length > 0);
+
+// ===============================
+// RENDER GRAFIK PIE
+// ===============================
+function renderCharts(jkCount, hobiCount, citaCount) {
+
+  // Limit hobi/cita Top 10
+  const topHobi = Object.entries(hobiCount)
+      .sort((a,b)=>b[1]-a[1]).slice(0,10);
+
+  const topCita = Object.entries(citaCount)
+      .sort((a,b)=>b[1]-a[1]).slice(0,10);
+
+  // === Pie: Jenis Kelamin ===
+  new Chart(document.getElementById("chartJK"), {
+    type: "pie",
+    data: {
+      labels: Object.keys(jkCount),
+      datasets: [{ data: Object.values(jkCount) }]
+    }
+  });
+
+  // === Pie: Hobi ===
+  new Chart(document.getElementById("chartHobi"), {
+    type: "pie",
+    data: {
+      labels: topHobi.map(e => e[0]),
+      datasets: [{ data: topHobi.map(e => e[1]) }]
+    }
+  });
+
+  // === Pie: Cita-cita ===
+  new Chart(document.getElementById("chartCita"), {
+    type: "pie",
+    data: {
+      labels: topCita.map(e => e[0]),
+      datasets: [{ data: topCita.map(e => e[1]) }]
+    }
+  });
 }
 
-// ============================================
-//  HITUNG DATA
-// ============================================
-function processData(rows) {
-    const gender = { "Laki-laki": 0, "Perempuan": 0 };
-    const hobi = {};
-    const cita = {};
-
-    rows.forEach(r => {
-        // Jenis kelamin
-        const jk = (r.JK || "").toString().toLowerCase();
-        if (jk.includes("l")) gender["Laki-laki"]++;
-        else if (jk.includes("p")) gender["Perempuan"]++;
-
-        // Hobi 
-        splitMulti(r.Hobi).forEach(h => {
-            hobi[h] = (hobi[h] || 0) + 1;
-        });
-
-        // Cita-cita
-        splitMulti(r.CitaCita).forEach(c => {
-            cita[c] = (cita[c] || 0) + 1;
-        });
-    });
-
-    // Top 10 Hobi & Cita-cita
-    const topHobi = Object.entries(hobi)
-        .sort((a,b)=>b[1]-a[1])
-        .slice(0,10);
-
-    const topCita = Object.entries(cita)
-        .sort((a,b)=>b[1]-a[1])
-        .slice(0,10);
-
-    return { gender, topHobi, topCita };
-}
-
-// ============================================
-//  RENDER CHART
-// ============================================
-function renderCharts({ gender, topHobi, topCita }) {
-
-    // ===== JENIS KELAMIN =====
-    new Chart(document.getElementById("chartJK"), {
-        type: "bar",
-        data: {
-            labels: ["Laki-laki", "Perempuan"],
-            datasets: [{
-                label: "Jumlah Siswa",
-                data: [gender["Laki-laki"], gender["Perempuan"]],
-                borderWidth: 1
-            }]
-        },
-        options: { scales: { y: { beginAtZero:true } } }
-    });
-
-    // ===== HOBI =====
-    new Chart(document.getElementById("chartHobi"), {
-        type: "bar",
-        data: {
-            labels: topHobi.map(v => v[0]),
-            datasets: [{
-                label: "Jumlah",
-                data: topHobi.map(v => v[1]),
-                borderWidth: 1
-            }]
-        },
-        options: { scales: { y: { beginAtZero:true } } }
-    });
-
-    // ===== CITA-CITA =====
-    new Chart(document.getElementById("chartCita"), {
-        type: "bar",
-        data: {
-            labels: topCita.map(v => v[0]),
-            datasets: [{
-                label: "Jumlah",
-                data: topCita.map(v => v[1]),
-                borderWidth: 1
-            }]
-        },
-        options: { scales: { y: { beginAtZero:true } } }
-    });
-}
-
-// ============================================
-//  MAIN EXECUTION
-// ============================================
-(async function(){
-    const rows = await loadExcel();
-    const processed = processData(rows);
-    renderCharts(processed);
-})();
+loadDataExcel();
 </script>
 
 </body>
