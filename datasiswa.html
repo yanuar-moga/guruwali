@@ -5,18 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Data Siswa - Guru Wali Bayu</title>
   <link rel="stylesheet" href="style.css">
-
   <style>
     body { padding-bottom: 70px; }
-    #clock { font-weight: bold; color: #003f7f; }
 
-    /* ====== PERBAIKAN LOGO (lebih kecil & pas) ====== */
+    /* Perbaikan ukuran logo */
     .toplogo {
-      height: 38px;      /* ukuran ideal */
+      height: 40px !important;
       width: auto;
       object-fit: contain;
     }
 
+    #clock { font-weight: bold; color: #003f7f; }
     .logout-btn {
       background: #ffd84c;
       color: #002855;
@@ -119,7 +118,7 @@
     <a href="masalahsiswa.html">Masalah</a>
   </div>
 
-  <!-- ====== Script XLSX ====== -->
+  <!-- ====== Script ====== -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <script>
@@ -140,41 +139,43 @@ function logout() {
   }
 }
 
-// Format tanggal Excel (serial)
+// Format tanggal Excel
 function formatTanggalExcel(value) {
   if (typeof value !== "number") return value;
   if (value < 30000 || value > 60000) return value;
 
   const date = new Date((value - 25569) * 86400 * 1000);
-  return date.toLocaleDateString("id-ID",
-    { day:"2-digit", month:"long", year:"numeric" });
+  return date.toLocaleDateString("id-ID", { day:"2-digit", month:"long", year:"numeric" });
 }
 
-// Ambil kolom Excel fuzzy
-function ambilKolom(excelObj, ...alternatif) {
-  const keys = Object.keys(excelObj).map(k => k.toLowerCase().trim());
+// Deteksi kolom Excel → kolom tabel HTML
+function ambilKolom(obj, ...alt) {
+  const keys = Object.keys(obj).map(k => k.toLowerCase().trim());
 
-  for (let alt of alternatif) {
-    let index = keys.indexOf(alt.toLowerCase());
-    if (index !== -1) return excelObj[Object.keys(excelObj)[index]];
+  // cocok nama persis
+  for (let a of alt) {
+    let idx = keys.indexOf(a.toLowerCase());
+    if (idx !== -1) return obj[Object.keys(obj)[idx]];
   }
 
-  for (let key of Object.keys(excelObj)) {
-    const k = key.toLowerCase();
-    if (alternatif.some(a => k.includes(a.toLowerCase()))) {
-      return excelObj[key];
-    }
+  // fuzzy match (mengandung)
+  for (let k of Object.keys(obj)) {
+    const lower = k.toLowerCase();
+    if (alt.some(a => lower.includes(a.toLowerCase()))) return obj[k];
   }
+
   return "-";
 }
 
-// Muat Excel → Tabel
+// Load dari Excel GitHub
 async function loadSiswa() {
   try {
-    const filePath = "/mnt/data/data_mailmerge_foto.xlsx";
+    const filePath =
+      "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/data/data.xlsx";
+
     const res = await fetch(filePath);
-    const arrayBuffer = await res.arrayBuffer();
-    const workbook = XLSX.read(arrayBuffer, { type:"array" });
+    const buf = await res.arrayBuffer();
+    const workbook = XLSX.read(buf, { type: "array" });
 
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
     const data = XLSX.utils.sheet_to_json(sheet);
@@ -183,14 +184,14 @@ async function loadSiswa() {
     tbody.innerHTML = "";
 
     data.forEach((row, i) => {
-      let nama = ambilKolom(row, "nama", "nama lengkap", "nama_lengkap");
+      let nama = ambilKolom(row, "nama", "nama lengkap");
       let jk = ambilKolom(row, "jk", "jenis kelamin", "gender");
       let nisn = ambilKolom(row, "nisn");
-      let tempat = ambilKolom(row, "tempat lahir", "tempat_lahir", "t_lahir");
-      let tgl = ambilKolom(row, "tgl lahir", "tanggal lahir", "tanggal");
+      let tempat = ambilKolom(row, "tempat lahir", "tempat_lahir");
+      let tgl = ambilKolom(row, "tanggal lahir", "tgl lahir", "tanggal", "tgl");
       let agama = ambilKolom(row, "agama");
       let alamat = ambilKolom(row, "alamat");
-      let trans = ambilKolom(row, "transportasi", "transport");
+      let transport = ambilKolom(row, "transportasi", "transport");
 
       tgl = formatTanggalExcel(tgl);
 
@@ -204,12 +205,12 @@ async function loadSiswa() {
         <td>${tgl}</td>
         <td>${agama}</td>
         <td>${alamat}</td>
-        <td>${trans}</td>
+        <td>${transport}</td>
       `;
       tbody.appendChild(tr);
     });
 
-    // Pencarian
+    // pencarian
     const searchBox = document.getElementById("searchBox");
     searchBox.addEventListener("input", () => {
       const val = searchBox.value.toLowerCase();
