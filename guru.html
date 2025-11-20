@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Dashboard Guru</title>
 <link rel="stylesheet" href="style.css" />
+
 <style>
   body {
     margin: 0;
@@ -29,6 +30,7 @@
     text-decoration: none;
     display: block;
     padding: 8px 0;
+    cursor: pointer;
   }
   .content {
     padding: 22px;
@@ -41,7 +43,6 @@
     margin-bottom: 20px;
   }
 
-  /* 3 kolom grafik */
   .grafik-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -50,9 +51,10 @@
 
   canvas {
     width: 100% !important;
-    height: 320px !important;
+    height: 300px !important;
   }
 </style>
+
 </head>
 <body>
 <div class="layout">
@@ -67,12 +69,10 @@
     <a href="#">Laporan Perkembangan</a>
 
     <h3 style="margin-top:28px;">Menu Guru Wali</h3>
-    <!-- di bagian sidebar menu -->
-<a href="#" id="menuProfil">Profil Siswa</a>
 
-<!-- di bagian content (misalnya di tempat utama) -->
-<div id="profilContainer"></div>
-<a href="#">Profil Siswa</a>
+    <!-- Profil Siswa sebagai SPA Loader -->
+    <a onclick="loadProfilSiswa()">Profil Siswa</a>
+
     <a href="#">Rekap Nilai</a>
     <a href="#">Pelanggaran / Poin</a>
     <a href="#">Jadwal Konsultasi</a>
@@ -81,7 +81,8 @@
   </div>
 
   <!-- MAIN CONTENT -->
-  <div class="content">
+  <div class="content" id="mainContent">
+
     <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
       <img src="assets/logo.png" style="width:48px;height:48px;object-fit:contain;" />
       <div>
@@ -90,11 +91,8 @@
       </div>
     </div>
 
-    <!-- ============================= -->
-    <!--         3 GRAFIK PIE          -->
-    <!-- ============================= -->
+    <!-- 3 GRAFIK PIE -->
     <div class="grafik-row">
-
       <div class="card">
         <h3>Grafik Jenis Kelamin</h3>
         <canvas id="chartJK"></canvas>
@@ -109,13 +107,13 @@
         <h3>Grafik Cita-cita</h3>
         <canvas id="chartCita"></canvas>
       </div>
-
     </div>
 
   </div>
 </div>
 
-<!-- LIBRARY -->
+
+<!-- LIBRARIES -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
@@ -125,18 +123,16 @@ function logout(){
   window.location.href='index.html';
 }
 
-// ==============================
-//     PALLET WARNA PIE CHART
-// ==============================
 const colors = [
   "#FF6384","#36A2EB","#FFCE56","#4BC0C0",
   "#9966FF","#FF9F40","#66FF66","#FF6666",
   "#6699FF","#CC66FF","#FFCC99","#99CC00"
 ];
 
-// =========================================
-//  LOAD FILE EXCEL & PROSES DATA OTOMATIS
-// =========================================
+
+// ==============================
+//  LOAD & RENDER DASHBOARD
+// ==============================
 async function loadExcel() {
   const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
 
@@ -152,28 +148,24 @@ async function loadExcel() {
   let citaCount = {};
 
   rows.forEach(r => {
-    let jk = r["Jenis Kelamin"] || r["JK"] || r["Gender"] || "";
-    let hobi = r["Hobi"] || r["HOBI"] || "";
-    let cita = r["Cita-cita"] || r["CITACITA"] || "";
+    let jk = (r["JK"] || r["Jenis Kelamin"] || "").toString().trim();
+    let hobi = r["Hobi"] || "";
+    let cita = r["Cita-cita"] || "";
 
-    // =========== Jenis Kelamin ===========
-    jk = jk.toString().trim();
-    if (/l/i.test(jk)) jkCount["Laki-laki"]++;
-    if (/p/i.test(jk)) jkCount["Perempuan"]++;
+    if (/^l/i.test(jk)) jkCount["Laki-laki"]++;
+    if (/^p/i.test(jk)) jkCount["Perempuan"]++;
 
-    // =========== Hobi (multi nilai) ===========
     if (hobi) {
-      hobi.split(/[,/\\|-]/).forEach(h => {
+      hobi.split(/[,/|\\-]/).forEach(h => {
         h = h.trim();
-        if (h !== "") hobiCount[h] = (hobiCount[h] || 0) + 1;
+        if (h) hobiCount[h] = (hobiCount[h] || 0) + 1;
       });
     }
 
-    // =========== Cita-cita ===========
     if (cita) {
-      cita.split(/[,/\\|-]/).forEach(c => {
+      cita.split(/[,/|\\-]/).forEach(c => {
         c = c.trim();
-        if (c !== "") citaCount[c] = (citaCount[c] || 0) + 1;
+        if (c) citaCount[c] = (citaCount[c] || 0) + 1;
       });
     }
   });
@@ -181,12 +173,11 @@ async function loadExcel() {
   renderCharts(jkCount, hobiCount, citaCount);
 }
 
-// =========================================
-//          RENDER 3 PIE CHART
-// =========================================
+// ==============================
+// RENDER PIE CHARTS
+// ==============================
 function renderCharts(jkCount, hobiCount, citaCount) {
 
-  // === Jenis Kelamin PIE ===
   new Chart(document.getElementById("chartJK"), {
     type: "pie",
     data: {
@@ -198,72 +189,52 @@ function renderCharts(jkCount, hobiCount, citaCount) {
     }
   });
 
-  // === Hobi PIE ===
   new Chart(document.getElementById("chartHobi"), {
     type: "pie",
     data: {
       labels: Object.keys(hobiCount),
       datasets: [{
         data: Object.values(hobiCount),
-        backgroundColor: colors.slice(0, Object.keys(hobiCount).length)
+        backgroundColor: colors
       }]
     }
   });
 
-  // === Cita-cita PIE ===
   new Chart(document.getElementById("chartCita"), {
     type: "pie",
     data: {
       labels: Object.keys(citaCount),
       datasets: [{
         data: Object.values(citaCount),
-        backgroundColor: colors.slice(0, Object.keys(citaCount).length)
+        backgroundColor: colors
       }]
     }
   });
 }
 
 loadExcel();
-</script>
-<script>
-// Logout (jika sudah ada)
-function logout(){
-  localStorage.removeItem('gw_ann_session_v3');
-  window.location.href = 'index.html';
-}
 
-// Fungsi untuk load HTML eksternal ke dalam container
+
+// =====================================================
+//          SPA MODE — LOAD PROFIL SISWA
+// =====================================================
 async function loadProfilSiswa() {
-  const url = "https://yanuar-moga.github.io/guruwali/biodata.html";  
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error("Gagal fetch biodata: " + response.status);
-    }
-    const html = await response.text();
+  const content = document.getElementById("mainContent");
 
-    // Buat elemen sementara untuk parsing
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
+  content.innerHTML = "<div class='card'>Memuat Profil Siswa...</div>";
 
-    // Ambil elemen body atau bagian spesifik dari biodata.html
-    const content = doc.querySelector("body"); // bisa diganti selector spesifik
-    const container = document.getElementById("profilContainer");
-    container.innerHTML = content.innerHTML;
+  const url = "https://yanuar-moga.github.io/guruwali/biodata.html";
+  const res = await fetch(url);
+  const html = await res.text();
 
-    // Setelah dimasukkan, bisa jalankan JS di dalam biodata (opsional)
-    // Misal: kamu ingin script di dalam biodata juga dieksekusi
+  // Ambil hanya isi <body> biodata.html agar tidak merusak CSS
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, "text/html");
+  const bodyContent = doc.body.innerHTML;
 
-  } catch (err) {
-    console.error("Error load profil siswa:", err);
-  }
+  content.innerHTML = bodyContent;
 }
 
-// Pasang event click pada menu “Profil Siswa”
-document.getElementById("menuProfil").addEventListener("click", (e) => {
-  e.preventDefault();
-  loadProfilSiswa();
-});
 </script>
 
 </body>
