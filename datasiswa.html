@@ -114,13 +114,22 @@ tr:hover {
                 <tr>
                     <th>No</th>
                     <th>Nama</th>
+                    <th>Nama Panggil</th>
                     <th>JK</th>
-                    <th>NISN</th>
                     <th>Tempat Lahir</th>
                     <th>Tgl Lahir</th>
-                    <th>Agama</th>
                     <th>Alamat</th>
-                    <th>Transportasi</th>
+                    <th>WA Siswa</th>
+                    <th>WA Ortu</th>
+                    <th>Hobi</th>
+                    <th>Cita-cita</th>
+                    <th>NIS</th>
+                    <th>NISN</th>
+                    <th>Mapel Suka</th>
+                    <th>Mapel Tidak Suka</th>
+                    <th>Ekskul</th>
+                    <th>Motivasi</th>
+                    <th>Cara Belajar</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -177,13 +186,11 @@ function formatTanggalExcel(value) {
 function ambilKolom(obj, ...alt) {
     const keys = Object.keys(obj).map(k => k.toLowerCase().trim());
 
-    // cocok nama persis
     for (let a of alt) {
         let idx = keys.indexOf(a.toLowerCase());
         if (idx !== -1) return obj[Object.keys(obj)[idx]];
     }
 
-    // fuzzy match
     for (let k of Object.keys(obj)) {
         const lower = k.toLowerCase();
         if (alt.some(a => lower.includes(a.toLowerCase())))
@@ -198,7 +205,7 @@ function ambilKolom(obj, ...alt) {
 // ==========================================
 async function loadSiswa() {
     try {
-        const filePath = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/data/data.xlsx";
+        const filePath = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
 
         const res = await fetch(filePath);
         const buf = await res.arrayBuffer();
@@ -212,14 +219,24 @@ async function loadSiswa() {
         tbody.innerHTML = "";
 
         data.forEach((row, i) => {
-            let nama = ambilKolom(row, "nama", "nama lengkap");
-            let jk = ambilKolom(row, "jk", "jenis kelamin", "gender");
-            let nisn = ambilKolom(row, "nisn");
-            let tempat = ambilKolom(row, "tempat lahir", "tempat_lahir");
-            let tgl = ambilKolom(row, "tanggal lahir", "tgl lahir", "tgl", "tanggal");
-            let agama = ambilKolom(row, "agama");
-            let alamat = ambilKolom(row, "alamat");
-            let transport = ambilKolom(row, "transportasi", "transport");
+
+            let nama           = ambilKolom(row, "nama");
+            let namaPanggil    = ambilKolom(row, "nama panggil", "panggilan");
+            let jk             = ambilKolom(row, "jenis kelamin", "jk");
+            let tempat         = ambilKolom(row, "tempat lahir");
+            let tgl            = ambilKolom(row, "tanggal lahir", "tgl lahir");
+            let alamat         = ambilKolom(row, "alamat");
+            let waSiswa        = ambilKolom(row, "wa siswa");
+            let waOrtu         = ambilKolom(row, "wa ortu");
+            let hobi           = ambilKolom(row, "hobi");
+            let cita           = ambilKolom(row, "cita-cita", "cita cita");
+            let nis            = ambilKolom(row, "nis");
+            let nisn           = ambilKolom(row, "nisn");
+            let mapelSuka      = ambilKolom(row, "mapel suka");
+            let mapelTidakSuka = ambilKolom(row, "mapel tidak suka");
+            let ekskul         = ambilKolom(row, "ekskul");
+            let motivasi       = ambilKolom(row, "motivasi");
+            let caraBelajar    = ambilKolom(row, "cara belajar");
 
             tgl = formatTanggalExcel(tgl);
 
@@ -227,43 +244,19 @@ async function loadSiswa() {
             tr.innerHTML = `
                 <td>${i + 1}</td>
                 <td>${nama}</td>
+                <td>${namaPanggil}</td>
                 <td>${jk}</td>
-                <td>${nisn}</td>
                 <td>${tempat}</td>
                 <td>${tgl}</td>
-                <td>${agama}</td>
                 <td>${alamat}</td>
-                <td>${transport}</td>
-            `;
-
-            tbody.appendChild(tr);
-        });
-
-        // ===============================
-        // PENCARIAN
-        // ===============================
-        const searchBox = document.getElementById("searchBox");
-
-        searchBox.addEventListener("input", () => {
-            const val = searchBox.value.toLowerCase();
-            const rows = tbody.getElementsByTagName("tr");
-
-            for (let r of rows) {
-                const nama = r.cells[1].textContent.toLowerCase();
-                const nisn = r.cells[3].textContent.toLowerCase();
-
-                r.style.display =
-                    (nama.includes(val) || nisn.includes(val)) ? "" : "none";
-            }
-        });
-
-    } catch (err) {
-        console.error("Gagal memuat data Excel:", err);
-    }
-}
-
-loadSiswa();
-</script>
-
-</body>
-</html>
+                <td>${waSiswa}</td>
+                <td>${waOrtu}</td>
+                <td>${hobi}</td>
+                <td>${cita}</td>
+                <td>${nis}</td>
+                <td>${nisn}</td>
+                <td>${mapelSuka}</td>
+                <td>${mapelTidakSuka}</td>
+                <td>${ekskul}</td>
+                <td>${motivasi}</td>
+                <td>${caraBelajar}</td>
