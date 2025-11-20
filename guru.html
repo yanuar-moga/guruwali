@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Dashboard Guru</title>
 <link rel="stylesheet" href="style.css" />
-
 <style>
   body {
     margin: 0;
@@ -41,33 +40,19 @@
     box-shadow: 0 6px 18px rgba(10,79,163,0.06);
     margin-bottom: 20px;
   }
+  #chart {
+    width: 100%;
+    height: 350px;
+  }
 
-  /* === 3 GRAPH CONTAINER === */
-  .chart-row {
+  /* 3 grafik dalam 1 baris */
+  .grid-3 {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 18px;
   }
-  @media (max-width: 900px) {
-    .chart-row {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  @media (max-width: 600px) {
-    .chart-row {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .chart-box {
-    background: #fff;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 6px 18px rgba(10,79,163,0.06);
-  }
 </style>
 </head>
-
 <body>
 <div class="layout">
   <!-- SIDEBAR MENU -->
@@ -98,25 +83,22 @@
       </div>
     </div>
 
-    <!-- 3 Grafik PIE dalam 3 kolom -->
-    <div class="chart-row">
-      
-      <!-- Jenis Kelamin -->
-      <div class="chart-box">
+    <!-- 3 Grafik dalam 1 baris -->
+    <div class="grid-3">
+
+      <div class="card">
         <h3>Grafik Jenis Kelamin</h3>
-        <canvas id="chartJK" height="180"></canvas>
+        <canvas id="chartJK"></canvas>
       </div>
 
-      <!-- Hobi -->
-      <div class="chart-box">
+      <div class="card">
         <h3>Grafik Hobi</h3>
-        <canvas id="chartHobi" height="180"></canvas>
+        <canvas id="chartHobi"></canvas>
       </div>
 
-      <!-- Cita-cita -->
-      <div class="chart-box">
+      <div class="card">
         <h3>Grafik Cita-cita</h3>
-        <canvas id="chartCita" height="180"></canvas>
+        <canvas id="chartCita"></canvas>
       </div>
 
     </div>
@@ -124,9 +106,8 @@
   </div>
 </div>
 
-<!-- XLSX + Chart.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 <script>
 function logout(){
@@ -134,99 +115,82 @@ function logout(){
   window.location.href='index.html';
 }
 
-// ===============================
-// LOAD EXCEL & GENERATE CHARTS
-// ===============================
-async function loadDataExcel() {
+// =========================
+// BACA FILE EXCEL (DATA.xlsx)
+// =========================
+fetch("data.xlsx")
+  .then(res => res.arrayBuffer())
+  .then(buffer => {
+    const wb = XLSX.read(buffer, { type: "array" });
+    const ws = wb.Sheets["DATA"];
+    const data = XLSX.utils.sheet_to_json(ws);
 
-  const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
-  const res = await fetch(url);
-  const buf = await res.arrayBuffer();
+    // HITUNG DATA
+    let jkCount = { "Laki-laki": 0, "Perempuan": 0 };
+    let hobiCount = {};
+    let citaCount = {};
 
-  const workbook = XLSX.read(buf, { type: "array" });
-  const sheet = workbook.Sheets["DATA"];
-  const data = XLSX.utils.sheet_to_json(sheet);
+    data.forEach(row => {
+      // === JENIS KELAMIN (kolom D) ===
+      let jk = row["JENIS KELAMIN"];
+      if (jk) {
+        if (jk.toLowerCase().includes("laki")) jkCount["Laki-laki"]++;
+        if (jk.toLowerCase().includes("perem")) jkCount["Perempuan"]++;
+      }
 
-  let jkCount = { "Laki-laki": 0, "Perempuan": 0 };
-  let hobiCount = {};
-  let citaCount = {};
+      // === HOBI (kolom J) → bisa dipisah koma/slash/strip ===
+      let hobi = row["HOBI"];
+      if (hobi) {
+        hobi.split(/[,/|-]/).forEach(h => {
+          h = h.trim();
+          if (h) {
+            hobiCount[h] = (hobiCount[h] || 0) + 1;
+          }
+        });
+      }
 
-  data.forEach(row => {
+      // === CITA-CITA (kolom K) ===
+      let cita = row["Cita-cita"];
+      if (cita) {
+        citaCount[cita] = (citaCount[cita] || 0) + 1;
+      }
+    });
 
-    // === Jenis Kelamin (D) ===
-    let jk = row["JK"] || row["Jenis Kelamin"] || row["D"];
-    if (jk) {
-      jk = jk.trim();
-      if (jkCount[jk] !== undefined) jkCount[jk]++;
-    }
+    // =======================
+    //  RENDER GRAFIK PIE
+    // =======================
 
-    // === Hobi (J) ===
-    let hobi = row["Hobi"] || "";
-    if (hobi) {
-      hobi.split(/[,/|-]+/).forEach(h => {
-        h = h.trim();
-        if (h === "") return;
-        hobiCount[h] = (hobiCount[h] || 0) + 1;
-      });
-    }
+    new Chart(document.getElementById("chartJK"), {
+      type: "pie",
+      data: {
+        labels: ["Laki-laki", "Perempuan"],
+        datasets: [{
+          data: [jkCount["Laki-laki"], jkCount["Perempuan"]]
+        }]
+      }
+    });
 
-    // === Cita-cita (K) ===
-    let cita = row["Cita-cita"] || row["Citacita"] || "";
-    if (cita) {
-      cita.split(/[,/|-]+/).forEach(c => {
-        c = c.trim();
-        if (c === "") return;
-        citaCount[c] = (citaCount[c] || 0) + 1;
-      });
-    }
+    new Chart(document.getElementById("chartHobi"), {
+      type: "pie",
+      data: {
+        labels: Object.keys(hobiCount),
+        datasets: [{
+          data: Object.values(hobiCount)
+        }]
+      }
+    });
+
+    new Chart(document.getElementById("chartCita"), {
+      type: "pie",
+      data: {
+        labels: Object.keys(citaCount),
+        datasets: [{
+          data: Object.values(citaCount)
+        }]
+      }
+    });
 
   });
-
-  renderCharts(jkCount, hobiCount, citaCount);
-}
-
-
-// ===============================
-// RENDER GRAFIK PIE
-// ===============================
-function renderCharts(jkCount, hobiCount, citaCount) {
-
-  // Limit hobi/cita Top 10
-  const topHobi = Object.entries(hobiCount)
-      .sort((a,b)=>b[1]-a[1]).slice(0,10);
-
-  const topCita = Object.entries(citaCount)
-      .sort((a,b)=>b[1]-a[1]).slice(0,10);
-
-  // === Pie: Jenis Kelamin ===
-  new Chart(document.getElementById("chartJK"), {
-    type: "pie",
-    data: {
-      labels: Object.keys(jkCount),
-      datasets: [{ data: Object.values(jkCount) }]
-    }
-  });
-
-  // === Pie: Hobi ===
-  new Chart(document.getElementById("chartHobi"), {
-    type: "pie",
-    data: {
-      labels: topHobi.map(e => e[0]),
-      datasets: [{ data: topHobi.map(e => e[1]) }]
-    }
-  });
-
-  // === Pie: Cita-cita ===
-  new Chart(document.getElementById("chartCita"), {
-    type: "pie",
-    data: {
-      labels: topCita.map(e => e[0]),
-      datasets: [{ data: topCita.map(e => e[1]) }]
-    }
-  });
-}
-
-loadDataExcel();
 </script>
 
 </body>
