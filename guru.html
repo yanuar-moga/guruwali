@@ -1,43 +1,112 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Dashboard Guru</title>
 <link rel="stylesheet" href="style.css" />
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+  }
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    min-height: 100vh;
+  }
+  .sidebar {
+    background: #0A4FA3;
+    color: #fff;
+    padding: 20px;
+  }
+  .sidebar h3 {
+    margin-top: 0;
+  }
+  .sidebar a {
+    color: #fff;
+    text-decoration: none;
+    display: block;
+    padding: 8px 0;
+  }
+  .content {
+    padding: 22px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 6px 18px rgba(10,79,163,0.06);
+    margin-bottom: 20px;
+  }
+  #chart {
+    width: 100%;
+    height: 350px;
+  }
+</style>
 </head>
 <body>
-  <div style="padding:18px; max-width:980px; margin:12px auto;">
-    <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
-      <div style="display:flex; align-items:center; gap:10px;">
-        <img src="assets/logo.png" style="width:44px;height:44px;object-fit:contain;" alt="logo" />
-        <div>
-          <h2 style="margin:0;color:#0A4FA3">Dashboard Guru</h2>
-          <div style="color:#6c7a89;">Selamat datang, Bayu</div>
-        </div>
-      </div>
-      <div>
-        <button onclick="logout()" style="background:#ff5d5d;color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;">Logout</button>
-      </div>
-    </div>
+<div class="layout">
+  <!-- SIDEBAR MENU -->
+  <div class="sidebar">
+    <h3>Menu Wali Kelas</h3>
+    <a href="pengumuman.html">Pengumuman</a>
+    <a href="curhatsiswa.html">Curhat Siswa</a>
+    <a href="notulen.html">Notulen</a>
+    <a href="#">Data Absensi</a>
+    <a href="#">Laporan Perkembangan</a>
 
-    <div style="margin-top:16px;">
-      <div style="background:#fff;border-radius:12px;padding:14px;box-shadow:0 6px 18px rgba(10,79,163,0.06);">
-        <h3 style="margin-top:0">Menu Cepat</h3>
-        <ul>
-          <li><a href="pengumuman.html">Pengumuman</a></li>
-          <li><a href="curhatsiswa.html">Curhat Siswa</a></li>
-          <li><a href="notulen.html">Notulen</a></li>
-        </ul>
-        <p style="color:#6c7a89">(Halaman admin lengkap bisa dikembangkan lebih lanjut.)</p>
-      </div>
-    </div>
+    <h3 style="margin-top:28px;">Menu Guru Wali</h3>
+    <a href="#">Profil Siswa</a>
+    <a href="#">Rekap Nilai</a>
+    <a href="#">Pelanggaran / Poin</a>
+    <a href="#">Jadwal Konsultasi</a>
+
+    <button onclick="logout()" style="margin-top:30px;background:#ff5d5d;color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer;width:100%;">Logout</button>
   </div>
 
+  <!-- MAIN CONTENT -->
+  <div class="content">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
+      <img src="assets/logo.png" style="width:48px;height:48px;object-fit:contain;" />
+      <div>
+        <h2 style="margin:0;color:#0A4FA3">Dashboard Guru</h2>
+        <div style="color:#6c7a89;">Selamat datang, Bayu</div>
+      </div>
+    </div>
+
+    <!-- Grafik Data Siswa -->
+    <div class="card">
+      <h3>Grafik Data Siswa</h3>
+      <canvas id="chart"></canvas>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 function logout(){
   localStorage.removeItem('gw_ann_session_v3');
   window.location.href='index.html';
 }
+
+// contoh grafik
+const ctx = document.getElementById('chart').getContext('2d');
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: ['Laki-laki', 'Perempuan'],
+    datasets: [{
+      label: 'Jumlah Siswa',
+      data: [14, 18],
+      borderWidth: 1
+    }]
+  },
+  options: {
+    scales: { y: { beginAtZero: true } }
+  }
+});
 </script>
 </body>
 </html>
