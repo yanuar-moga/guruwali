@@ -111,68 +111,119 @@
   </div>
 
   <!-- ====== Script ====== -->
-  <script>
-    // Jam digital real-time
-    function updateClock() {
-      const now = new Date();
-      const jam = String(now.getHours()).padStart(2, '0');
-      const menit = String(now.getMinutes()).padStart(2, '0');
-      const detik = String(now.getSeconds()).padStart(2, '0');
-      document.getElementById("clock").textContent = `${jam}:${menit}:${detik}`;
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-    // Logout
-    function logout() {
-      if (confirm("Yakin ingin logout?")) {
-        localStorage.removeItem('gw_ann_session_v3');
-        window.location.href = 'index.html';
+<script>
+// Jam realtime
+function updateClock() {
+  const now = new Date();
+  document.getElementById("clock").textContent =
+    now.toLocaleTimeString("id-ID", { hour12:false });
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// Logout
+function logout() {
+  if (confirm("Yakin ingin logout?")) {
+    localStorage.removeItem('gw_ann_session_v3');
+    window.location.href = 'index.html';
+  }
+}
+
+// Format tanggal Excel (serial)
+function formatTanggalExcel(value) {
+  if (typeof value !== "number") return value;
+  if (value < 30000 || value > 60000) return value;
+
+  const date = new Date((value - 25569) * 86400 * 1000);
+  return date.toLocaleDateString("id-ID", { day:"2-digit", month:"long", year:"numeric" });
+}
+
+// Fungsi mencocokkan kolom Excel dengan nama tabel HTML
+function ambilKolom(excelObj, ...alternatif) {
+  const keys = Object.keys(excelObj).map(k => k.toLowerCase().trim());
+
+  for (let alt of alternatif) {
+    let index = keys.indexOf(alt.toLowerCase());
+    if (index !== -1) return excelObj[Object.keys(excelObj)[index]];
+  }
+
+  // mode fuzzy match
+  for (let key of Object.keys(excelObj)) {
+    const k = key.toLowerCase();
+    if (alternatif.some(a => k.includes(a.toLowerCase()))) {
+      return excelObj[key];
+    }
+  }
+
+  return "-";
+}
+
+// Muat data Excel langsung → tampil di tabel
+async function loadSiswa() {
+  try {
+    const filePath = "/mnt/data/data_mailmerge_foto.xlsx"; 
+    const res = await fetch(filePath);
+    const arrayBuffer = await res.arrayBuffer();
+    const workbook = XLSX.read(arrayBuffer, { type: "array" });
+
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const data = XLSX.utils.sheet_to_json(sheet);
+
+    const tbody = document.querySelector("#tabelSiswa tbody");
+    tbody.innerHTML = "";
+
+    data.forEach((row, i) => {
+      let nama = ambilKolom(row, "nama", "nama lengkap", "nama_lengkap");
+      let jk = ambilKolom(row, "jk", "jenis kelamin", "gender");
+      let nisn = ambilKolom(row, "nisn");
+      let tempat = ambilKolom(row, "tempat lahir", "tempat_lahir", "t_lahir");
+      let tgl = ambilKolom(row, "tanggal lahir", "tgl lahir", "tgl_lahir", "tanggal");
+      let agama = ambilKolom(row, "agama");
+      let alamat = ambilKolom(row, "alamat", "alamat rumah");
+      let trans = ambilKolom(row, "transportasi", "transport");
+
+      // Format tanggal Excel
+      tgl = formatTanggalExcel(tgl);
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${i + 1}</td>
+        <td>${nama}</td>
+        <td>${jk}</td>
+        <td>${nisn}</td>
+        <td>${tempat}</td>
+        <td>${tgl}</td>
+        <td>${agama}</td>
+        <td>${alamat}</td>
+        <td>${trans}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    // Fitur pencarian
+    const searchBox = document.getElementById("searchBox");
+    searchBox.addEventListener("input", () => {
+      const val = searchBox.value.toLowerCase();
+      const rows = tbody.getElementsByTagName("tr");
+
+      for (let r of rows) {
+        const nama = r.cells[1].textContent.toLowerCase();
+        const nisn = r.cells[3].textContent.toLowerCase();
+        r.style.display = (nama.includes(val) || nisn.includes(val)) ? "" : "none";
       }
-    }
+    });
 
-    // Ambil data siswa dari JSON
-    async function loadSiswa() {
-      try {
-        const res = await fetch('data/siswa.json');
-        const data = await res.json();
-        const tbody = document.querySelector('#tabelSiswa tbody');
-        tbody.innerHTML = '';
+  } catch (err) {
+    console.error("Gagal memuat data Excel:", err);
+  }
+}
 
-        data.forEach(siswa => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${siswa.no}</td>
-            <td>${siswa.nama}</td>
-            <td>${siswa.jk}</td>
-            <td>${siswa.nisn}</td>
-            <td>${siswa.tempat_lahir}</td>
-            <td>${siswa.tgl_lahir}</td>
-            <td>${siswa.agama}</td>
-            <td>${siswa.alamat}</td>
-            <td>${siswa.transportasi}</td>
-          `;
-          tbody.appendChild(tr);
-        });
+loadSiswa();
+</script>
 
-        // Fungsi pencarian
-        const searchBox = document.getElementById('searchBox');
-        searchBox.addEventListener('input', () => {
-          const val = searchBox.value.toLowerCase();
-          const rows = tbody.getElementsByTagName('tr');
-          for (let r of rows) {
-            const nama = r.cells[1].textContent.toLowerCase();
-            const nisn = r.cells[3].textContent.toLowerCase();
-            r.style.display = (nama.includes(val) || nisn.includes(val)) ? '' : 'none';
-          }
-        });
-      } catch (err) {
-        console.error('Gagal memuat data siswa:', err);
-      }
-    }
-
-    loadSiswa();
-  </script>
 
 </body>
 </html>
+
