@@ -22,9 +22,6 @@
     color: #fff;
     padding: 20px;
   }
-  .sidebar h3 {
-    margin-top: 0;
-  }
   .sidebar a {
     color: #fff;
     text-decoration: none;
@@ -42,13 +39,11 @@
     box-shadow: 0 6px 18px rgba(10,79,163,0.06);
     margin-bottom: 20px;
   }
-
   .grafik-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 18px;
   }
-
   canvas {
     width: 100% !important;
     height: 300px !important;
@@ -69,6 +64,7 @@
     <a href="#">Laporan Perkembangan</a>
 
     <h3 style="margin-top:28px;">Menu Guru Wali</h3>
+
     <a onclick="loadProfilSiswa()">Profil Siswa</a>
 
     <a href="#">Rekap Nilai</a>
@@ -89,7 +85,7 @@
       </div>
     </div>
 
-    <!-- 3 GRAFIK DIAGRAM -->
+    <!-- GRAFIK ROW -->
     <div class="grafik-row">
       <div class="card">
         <h3>Grafik Jenis Kelamin</h3>
@@ -97,19 +93,18 @@
       </div>
 
       <div class="card">
-        <h3>Grafik Hobi</h3>
-        <canvas id="chartHobi"></canvas>
+        <h3>Grafik Usia Siswa</h3>
+        <canvas id="chartUsia"></canvas>
       </div>
 
       <div class="card">
-        <h3>Grafik Cita-cita</h3>
-        <canvas id="chartCita"></canvas>
+        <h3>Grafik Penerima KIP</h3>
+        <canvas id="chartKIP"></canvas>
       </div>
     </div>
 
   </div>
 </div>
-
 
 <!-- LIBRARIES -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -121,19 +116,15 @@ function logout(){
   window.location.href='index.html';
 }
 
-// Warna chart
 const colors = [
   "#FF6384","#36A2EB","#FFCE56","#4BC0C0",
   "#9966FF","#FF9F40","#66FF66","#FF6666",
   "#6699FF","#CC66FF","#FFCC99","#99CC00"
 ];
 
-// ========================================================
-//  LOAD DATA EXCEL
-// ========================================================
 async function loadExcel() {
-
   const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
+
   const res = await fetch(url);
   const buf = await res.arrayBuffer();
   const wb = XLSX.read(buf, { type: "array" });
@@ -142,297 +133,41 @@ async function loadExcel() {
   const rows = XLSX.utils.sheet_to_json(sheet);
 
   let jkCount = { "Laki-laki": 0, "Perempuan": 0 };
-  let hobiCount = {};
-  let citaCount = {};
+  let usiaCount = {};
+  let kipCount = { "Penerima KIP": 0, "Tidak Menerima": 0 };
+
+  const currentYear = new Date().getFullYear();
 
   rows.forEach(r => {
 
-    // =============================
-    // DETEKSI KOLOM JENIS KELAMIN
-    // =============================
-    let jk =
-      r["JK"] ||
-      r["Jenis Kelamin"] ||
-      r["JENIS_KELAMIN"] ||
-      r["jenis_kelamin"] ||
-      r["Kelamin"] ||
-      r["JENIS KELAMIN"] ||
-      "";
-
-    jk = jk.toString().trim();
-
+    // ===== JENIS KELAMIN =====
+    let jk = (r["JK"] || r["Jenis Kelamin"] || "").toString().trim();
     if (/^l/i.test(jk)) jkCount["Laki-laki"]++;
     if (/^p/i.test(jk)) jkCount["Perempuan"]++;
 
-    // =============================
-    // HOBI
-    // =============================
-    let hobi = r["Hobi"] || r["HOBI"] || "";
-    if (hobi) {
-      hobi.split(/[,/|\\-]/).forEach(h => {
-        h = h.trim();
-        if (h) hobiCount[h] = (hobiCount[h] || 0) + 1;
-      });
+    // ===== USIA SISWA =====
+    let tglLahir = r["Tgl Lahir"] || r["TGL_LAHIR"] || r["F"];
+    if (tglLahir) {
+      let thn = new Date(tglLahir).getFullYear();
+      let usia = currentYear - thn;
+      usiaCount[usia] = (usiaCount[usia] || 0) + 1;
     }
 
-    // =============================
-    // CITA-CITA
-    // =============================
-    let cita = r["Cita-cita"] || r["CITA_CITA"] || "";
-    if (cita) {
-      cita.split(/[,/|\\-]/).forEach(c => {
-        c = c.trim();
-        if (c) citaCount[c] = (citaCount[c] || 0) + 1;
-      });
-    }
+    // ===== KIP (kolom AA) =====
+    let kip = r["AA"] || r["KIP"] || "";
+    kip = kip.toString().trim().toLowerCase();
 
+    if (kip === "ya" || kip === "1") kipCount["Penerima KIP"]++;
+    else kipCount["Tidak Menerima"]++;
   });
 
-  renderCharts(jkCount, hobiCount, citaCount);
+  renderCharts(jkCount, usiaCount, kipCount);
 }
 
 
-// ========================================================
-//  RENDER DIAGRAM (BAR CHART)
-// ========================================================
-function renderCharts(jkCount, hobiCount, citaCount) {
+function renderCharts(jkCount, usiaCount, kipCount) {
 
   // JENIS KELAMIN
-  new Chart(document.getElementById("chartJK"), {
-    type: "bar",
-    data: {
-      labels: ["Laki-laki", "Perempuan"],
-      datasets: [{
-        label: "Jumlah",
-        data: [jkCount["Laki-laki"], jkCount["Perempuan"]],
-      }]
-    },
-    options: { plugins: { legend: { display: false } } }
-  });
-
-  // HOBI
-  new Chart(document.getElementById("chartHobi"), {
-    type: "bar",
-    data: {
-      labels: Object.keys(hobiCount),
-      datasets: [{
-        label: "Jumlah",
-        data: Object.values(hobiCount),
-      }]
-    },
-    options: { plugins: { legend: { display: false } } }
-  });
-
-  // CITA-CITA
-  new Chart(document.getElementById("chartCita"), {
-    type: "bar",
-    data: {
-      labels: Object.keys(citaCount),
-      datasets: [{
-        label: "Jumlah",
-        data: Object.values(citaCount),
-      }]
-    },
-    options: { plugins: { legend: { display: false } } }
-  });
-}
-
-loadExcel();
-
-
-// =====================================================
-//  SPA MODE — LOAD PROFIL SISWA TANPA MERUSAK TAMPILAN
-// =====================================================
-async function loadProfilSiswa() {
-
-  const content = document.getElementById("mainContent");
-  content.innerHTML = "<div class='card'>Memuat Profil Siswa...</div>";
-
-  const url = "https://yanuar-moga.github.io/guruwali/biodata.html";
-  const res = await fetch(url);
-  const html = await res.text();
-
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, "text/html");
-  const bodyContent = doc.body.innerHTML;
-
-  content.innerHTML = bodyContent;
-}
-
-</script>
-
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Dashboard Guru</title>
-<link rel="stylesheet" href="style.css" />
-
-<style>
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f4f6f9;
-  }
-  .layout {
-    display: grid;
-    grid-template-columns: 240px 1fr;
-    min-height: 100vh;
-  }
-  .sidebar {
-    background: #0A4FA3;
-    color: #fff;
-    padding: 20px;
-  }
-  .sidebar h3 {
-    margin-top: 0;
-  }
-  .sidebar a {
-    color: #fff;
-    text-decoration: none;
-    display: block;
-    padding: 8px 0;
-    cursor: pointer;
-  }
-  .content {
-    padding: 22px;
-  }
-  .card {
-    background: #fff;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 6px 18px rgba(10,79,163,0.06);
-    margin-bottom: 20px;
-  }
-  .grafik-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
-  }
-  canvas {
-    width: 100% !important;
-    height: 300px !important;
-  }
-</style>
-
-</head>
-<body>
-<div class="layout">
-
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <h3>Menu Wali Kelas</h3>
-    <a href="pengumuman.html">Pengumuman</a>
-    <a href="curhatsiswa.html">Curhat Siswa</a>
-    <a href="notulen.html">Notulen</a>
-    <a href="#">Data Absensi</a>
-    <a href="#">Laporan Perkembangan</a>
-
-    <h3 style="margin-top:28px;">Menu Guru Wali</h3>
-
-    <!-- Profil Siswa -->
-    <a onclick="loadProfilSiswa()">Profil Siswa</a>
-
-    <a href="#">Rekap Nilai</a>
-    <a href="#">Pelanggaran / Poin</a>
-    <a href="#">Jadwal Konsultasi</a>
-
-    <button onclick="logout()" style="margin-top:30px;background:#ff5d5d;color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer;width:100%;">Logout</button>
-  </div>
-
-  <!-- MAIN CONTENT -->
-  <div class="content" id="mainContent">
-
-    <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
-      <img src="assets/logo.png" style="width:48px;height:48px;object-fit:contain;" />
-      <div>
-        <h2 style="margin:0;color:#0A4FA3">Dashboard Guru</h2>
-        <div style="color:#6c7a89;">Selamat datang, Bayu</div>
-      </div>
-    </div>
-
-    <!-- 3 GRAFIK PIE -->
-    <div class="grafik-row">
-      <div class="card">
-        <h3>Grafik Jenis Kelamin</h3>
-        <canvas id="chartJK"></canvas>
-      </div>
-
-      <div class="card">
-        <h3>Grafik Hobi</h3>
-        <canvas id="chartHobi"></canvas>
-      </div>
-
-      <div class="card">
-        <h3>Grafik Cita-cita</h3>
-        <canvas id="chartCita"></canvas>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<!-- LIBRARIES -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
-<script>
-function logout(){
-  localStorage.removeItem('gw_ann_session_v3');
-  window.location.href='index.html';
-}
-
-const colors = [
-  "#FF6384","#36A2EB","#FFCE56","#4BC0C0",
-  "#9966FF","#FF9F40","#66FF66","#FF6666",
-  "#6699FF","#CC66FF","#FFCC99","#99CC00"
-];
-
-async function loadExcel() {
-  const url = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
-
-  const res = await fetch(url);
-  const buf = await res.arrayBuffer();
-  const wb = XLSX.read(buf, { type: "array" });
-
-  const sheet = wb.Sheets["DATA"];
-  const rows = XLSX.utils.sheet_to_json(sheet);
-
-  let jkCount = { "Laki-laki": 0, "Perempuan": 0 };
-  let hobiCount = {};
-  let citaCount = {};
-
-  rows.forEach(r => {
-    let jk = (r["JK"] || r["Jenis Kelamin"] || "").toString().trim();
-    let hobi = r["Hobi"] || "";
-    let cita = r["Cita-cita"] || "";
-
-    if (/^l/i.test(jk)) jkCount["Laki-laki"]++;
-    if (/^p/i.test(jk)) jkCount["Perempuan"]++;
-
-    if (hobi) {
-      hobi.split(/[,/|\\-]/).forEach(h => {
-        h = h.trim();
-        if (h) hobiCount[h] = (hobiCount[h] || 0) + 1;
-      });
-    }
-
-    if (cita) {
-      cita.split(/[,/|\\-]/).forEach(c => {
-        c = c.trim();
-        if (c) citaCount[c] = (citaCount[c] || 0) + 1;
-      });
-    }
-  });
-
-  renderCharts(jkCount, hobiCount, citaCount);
-}
-
-function renderCharts(jkCount, hobiCount, citaCount) {
-
   new Chart(document.getElementById("chartJK"), {
     type: "pie",
     data: {
@@ -444,24 +179,26 @@ function renderCharts(jkCount, hobiCount, citaCount) {
     }
   });
 
-  new Chart(document.getElementById("chartHobi"), {
+  // USIA
+  new Chart(document.getElementById("chartUsia"), {
     type: "pie",
     data: {
-      labels: Object.keys(hobiCount),
+      labels: Object.keys(usiaCount),
       datasets: [{
-        data: Object.values(hobiCount),
+        data: Object.values(usiaCount),
         backgroundColor: colors
       }]
     }
   });
 
-  new Chart(document.getElementById("chartCita"), {
+  // PENERIMA KIP
+  new Chart(document.getElementById("chartKIP"), {
     type: "pie",
     data: {
-      labels: Object.keys(citaCount),
+      labels: ["Penerima KIP", "Tidak Menerima"],
       datasets: [{
-        data: Object.values(citaCount),
-        backgroundColor: colors
+        data: [kipCount["Penerima KIP"], kipCount["Tidak Menerima"]],
+        backgroundColor: ["#4BC0C0", "#FFCE56"]
       }]
     }
   });
@@ -470,34 +207,28 @@ function renderCharts(jkCount, hobiCount, citaCount) {
 loadExcel();
 
 
-// =====================================================
-//      FIX: MUAT PROFIL SISWA + SCRIPT ASLINYA
-// =====================================================
+// =========================================================
+//   LOAD PROFIL SISWA TANPA MERUSAK TAMPILAN DASHBOARD
+//   + MENGHAPUS GRAFIK/JS DARI biodata.html
+// =========================================================
 async function loadProfilSiswa() {
+
   const content = document.getElementById("mainContent");
   content.innerHTML = "<div class='card'>Memuat Profil Siswa...</div>";
 
-  const url = "https://yanuar-moga.github.io/guruwali/biodata.html";
-  const res = await fetch(url);
+  const res = await fetch("https://yanuar-moga.github.io/guruwali/biodata.html");
   const html = await res.text();
 
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, "text/html");
 
-  const bodyHTML = doc.body.innerHTML;
-  const scripts = doc.querySelectorAll("script");
+  // HAPUS script, canvas, chart, menu duplikat
+  doc.querySelectorAll("script").forEach(e => e.remove());
+  doc.querySelectorAll("canvas").forEach(e => e.remove());
+  doc.querySelectorAll("#chartJK, #chartHobi, #chartCita").forEach(e => e.remove());
+  doc.querySelectorAll(".grafik-row").forEach(e => e.remove());
 
-  content.innerHTML = bodyHTML;
-
-  scripts.forEach(oldScript => {
-    const newScript = document.createElement("script");
-    if (oldScript.src) {
-      newScript.src = oldScript.src;
-    } else {
-      newScript.textContent = oldScript.textContent;
-    }
-    document.body.appendChild(newScript);
-  });
+  content.innerHTML = doc.body.innerHTML;
 }
 
 </script>
