@@ -1,106 +1,268 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Aplikasi Data Siswa - Revisi</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Siswa - Guru Wali Bayu</title>
 
-<!-- XLSX untuk membaca EXCEL -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link rel="stylesheet" href="style.css">
 
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-        background: #f5f5f5;
-    }
-    h2 {
-        text-align: center;
-        margin-bottom: 20px;
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        background: white;
-    }
-    th, td {
-        border: 1px solid #ccc;
-        padding: 8px;
-        font-size: 14px;
-    }
-    th {
-        background: #eaeaea;
-    }
+body { padding-bottom: 70px; }
+
+/* Perbaikan ukuran logo */
+.toplogo {
+    height: 40px !important;
+    width: auto;
+    object-fit: contain;
+}
+
+#clock {
+    font-weight: bold;
+    color: #003f7f;
+}
+
+.logout-btn {
+    background: #ffd84c;
+    color: #002855;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.logout-btn:hover {
+    background: #ffca2c;
+}
+
+.search-box {
+    width: 90%;
+    max-width: 500px;
+    margin: 15px auto;
+    display: block;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #bbb;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.card {
+    width: 95%;
+    max-width: 1100px;
+    margin: 0 auto 80px auto;
+    background: white;
+    border-radius: 14px;
+    padding: 15px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+th, td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+    font-size: 14px;
+}
+
+th {
+    background: #003f7f;
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+tr:hover {
+    background: #f3f9ff;
+}
 </style>
 </head>
 
-<body>
+<body class="light">
 
-<h2>Data Siswa Kelas - Revisi Kolom</h2>
+<!-- ====== Topbar ====== -->
+<div class="topbar">
+    <div class="top-left">
+        <img src="assets/logo.png" alt="Logo" class="toplogo">
+        <h2>Data Siswa</h2>
+    </div>
 
-<input type="file" id="fileExcel" accept=".xlsx,.xls" />
+    <div class="top-right" style="display:flex;align-items:center;gap:10px;">
+        <span id="clock">00:00:00</span>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+</div>
 
-<br><br>
+<!-- ====== Konten Utama ====== -->
+<main class="menu-container">
 
-<table id="tabelSiswa">
-    <thead>
-        <tr>
-            <th>NO</th>
-            <th>NAMA LENGKAP</th>
-            <th>NISN</th>
-            <th>Pelajaran yg disukai</th>
-            <th>Pelajaran tdk disukai</th>
-            <th>Ekskul</th>
-            <th>Kegiatan yg memotivasi di sekolah</th>
-            <th>Cara Belajar</th>
-            <th>Penerima KIP</th>
-            <th>ADA KARTU KIP</th>
-            <th>YATIM/PIATU</th>
-            <th>MONDOK</th>
-        </tr>
-    </thead>
-    <tbody></tbody>
-</table>
+    <input type="text" id="searchBox" class="search-box" placeholder="Cari nama atau NISN...">
+
+    <div class="card">
+        <table id="tabelSiswa">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Nama</th>
+                    <th>JK</th>
+                    <th>NISN</th>
+                    <th>Tempat Lahir</th>
+                    <th>Tgl Lahir</th>
+                    <th>Agama</th>
+                    <th>Alamat</th>
+                    <th>Transportasi</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+</main>
+
+<!-- ====== Navbar Bawah ====== -->
+<div class="navbar">
+    <a href="guru.html">Beranda</a>
+    <a href="pengumuman.html">Pengumuman</a>
+    <a href="curhatsiswa.html">Curhat</a>
+    <a href="pembinaan.html">Pembinaan</a>
+    <a href="masalahsiswa.html">Masalah</a>
+</div>
+
+<!-- ====== Script ====== -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <script>
-document.getElementById("fileExcel").addEventListener("change", function(e) {
-    let file = e.target.files[0];
-    let reader = new FileReader();
+// Jam realtime
+function updateClock() {
+    const now = new Date();
+    document.getElementById("clock").textContent =
+        now.toLocaleTimeString("id-ID", { hour12:false });
+}
+setInterval(updateClock, 1000);
+updateClock();
 
-    reader.onload = function(event) {
-        let data = new Uint8Array(event.target.result);
-        let workbook = XLSX.read(data, { type: "array" });
+// Logout
+function logout() {
+    if (confirm("Yakin ingin logout?")) {
+        localStorage.removeItem('gw_ann_session_v3');
+        window.location.href = 'index.html';
+    }
+}
 
-        let sheet = workbook.Sheets[workbook.SheetNames[0]];
-        let json = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+// Format tanggal Excel
+function formatTanggalExcel(value) {
+    if (typeof value !== "number") return value;
+    if (value < 30000 || value > 60000) return value;
 
-        let tbody = document.querySelector("#tabelSiswa tbody");
+    const date = new Date((value - 25569) * 86400 * 1000);
+    return date.toLocaleDateString("id-ID", {
+        day:"2-digit",
+        month:"long",
+        year:"numeric"
+    });
+}
+
+// Ambil kolom dengan deteksi fleksibel
+function ambilKolom(obj, ...alt) {
+    const keys = Object.keys(obj).map(k => k.toLowerCase().trim());
+
+    // cocok nama persis
+    for (let a of alt) {
+        let idx = keys.indexOf(a.toLowerCase());
+        if (idx !== -1) return obj[Object.keys(obj)[idx]];
+    }
+
+    // fuzzy match
+    for (let k of Object.keys(obj)) {
+        const lower = k.toLowerCase();
+        if (alt.some(a => lower.includes(a.toLowerCase())))
+            return obj[k];
+    }
+
+    return "-";
+}
+
+// ==========================================
+// LOAD DATA EXCEL DARI GITHUB
+// ==========================================
+async function loadSiswa() {
+    try {
+        const filePath = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/data/data.xlsx";
+
+        const res = await fetch(filePath);
+        const buf = await res.arrayBuffer();
+
+        const workbook = XLSX.read(buf, { type: "array" });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+
+        const data = XLSX.utils.sheet_to_json(sheet);
+
+        const tbody = document.querySelector("#tabelSiswa tbody");
         tbody.innerHTML = "";
 
-        json.forEach((row, index) => {
-            let tr = document.createElement("tr");
+        data.forEach((row, i) => {
+            let nama = ambilKolom(row, "nama", "nama lengkap");
+            let jk = ambilKolom(row, "jk", "jenis kelamin", "gender");
+            let nisn = ambilKolom(row, "nisn");
+            let tempat = ambilKolom(row, "tempat lahir", "tempat_lahir");
+            let tgl = ambilKolom(row, "tanggal lahir", "tgl lahir", "tgl", "tanggal");
+            let agama = ambilKolom(row, "agama");
+            let alamat = ambilKolom(row, "alamat");
+            let transport = ambilKolom(row, "transportasi", "transport");
 
+            tgl = formatTanggalExcel(tgl);
+
+            const tr = document.createElement("tr");
             tr.innerHTML = `
-                <td>${row["NO"] || ""}</td>
-                <td>${row["NAMA LENGKAP"] || ""}</td>
-                <td>${row["NISN"] || ""}</td>
-                <td>${row["Pelajaran yg disukai"] || ""}</td>
-                <td>${row["Pelajaran tdk disukai"] || ""}</td>
-                <td>${row["Ekskul"] || ""}</td>
-                <td>${row["Kegiatan yg memotivasi di sekolah"] || ""}</td>
-                <td>${row["Cara Belajar"] || ""}</td>
-                <td>${row["Penerima KIP"] || ""}</td>
-                <td>${row["ADA KARTU KIP"] || ""}</td>
-                <td>${row["YATIM/PIATU"] || ""}</td>
-                <td>${row["MONDOK"] || ""}</td>
+                <td>${i + 1}</td>
+                <td>${nama}</td>
+                <td>${jk}</td>
+                <td>${nisn}</td>
+                <td>${tempat}</td>
+                <td>${tgl}</td>
+                <td>${agama}</td>
+                <td>${alamat}</td>
+                <td>${transport}</td>
             `;
 
             tbody.appendChild(tr);
         });
-    };
 
-    reader.readAsArrayBuffer(file);
-});
+        // ===============================
+        // PENCARIAN
+        // ===============================
+        const searchBox = document.getElementById("searchBox");
+
+        searchBox.addEventListener("input", () => {
+            const val = searchBox.value.toLowerCase();
+            const rows = tbody.getElementsByTagName("tr");
+
+            for (let r of rows) {
+                const nama = r.cells[1].textContent.toLowerCase();
+                const nisn = r.cells[3].textContent.toLowerCase();
+
+                r.style.display =
+                    (nama.includes(val) || nisn.includes(val)) ? "" : "none";
+            }
+        });
+
+    } catch (err) {
+        console.error("Gagal memuat data Excel:", err);
+    }
+}
+
+loadSiswa();
 </script>
 
 </body>
