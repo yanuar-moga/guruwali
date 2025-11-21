@@ -5,9 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pengumuman - Guru Wali Bayu</title>
   <link rel="stylesheet" href="style.css">
+
   <style>
-    body { padding-bottom: 70px; } /* ruang untuk navbar bawah */
-    #clock { font-weight: bold; color: #003f7f; }
+    body { padding-bottom: 70px; }
+
+    /* Perbaikan logo */
+    .toplogo {
+      height: 40px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    #clock { 
+      font-weight: bold; 
+      color: #003f7f; 
+    }
+
     .logout-btn {
       background: #ffd84c;
       color: #002855;
@@ -18,6 +31,7 @@
       font-weight: 600;
       transition: 0.3s;
     }
+
     .logout-btn:hover { background: #ffca2c; }
   </style>
 </head>
@@ -29,6 +43,7 @@
       <img src="assets/logo.png" alt="Logo" class="toplogo">
       <h2>Pengumuman</h2>
     </div>
+
     <div class="top-right" style="display:flex;align-items:center;gap:10px;">
       <span id="clock">00:00:00</span>
       <button class="logout-btn" onclick="logout()">Logout</button>
