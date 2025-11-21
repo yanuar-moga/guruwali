@@ -10,7 +10,6 @@
 <style>
 body { padding-bottom: 70px; }
 
-/* Perbaikan ukuran logo */
 .toplogo {
     height: 40px !important;
     width: auto;
@@ -62,9 +61,6 @@ body { padding-bottom: 70px; }
 table {
     width: 100%;
     border-collapse: collapse;
-    background: #fff;
-    border-radius: 10px;
-    overflow: hidden;
 }
 
 th, td {
@@ -79,18 +75,12 @@ th {
     color: white;
     position: sticky;
     top: 0;
-    z-index: 2;
-}
-
-tr:hover {
-    background: #f3f9ff;
 }
 </style>
 </head>
 
 <body class="light">
 
-<!-- ====== Topbar ====== -->
 <div class="topbar">
     <div class="top-left">
         <img src="assets/logo.png" alt="Logo" class="toplogo">
@@ -103,7 +93,6 @@ tr:hover {
     </div>
 </div>
 
-<!-- ====== Konten Utama ====== -->
 <main class="menu-container">
 
     <input type="text" id="searchBox" class="search-box" placeholder="Cari nama atau NISN...">
@@ -138,7 +127,6 @@ tr:hover {
 
 </main>
 
-<!-- ====== Navbar Bawah ====== -->
 <div class="navbar">
     <a href="guru.html">Beranda</a>
     <a href="pengumuman.html">Pengumuman</a>
@@ -147,12 +135,9 @@ tr:hover {
     <a href="masalahsiswa.html">Masalah</a>
 </div>
 
-<!-- ====== Script ====== -->
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <script>
-// Jam realtime
 function updateClock() {
     const now = new Date();
     document.getElementById("clock").textContent =
@@ -161,7 +146,6 @@ function updateClock() {
 setInterval(updateClock, 1000);
 updateClock();
 
-// Logout
 function logout() {
     if (confirm("Yakin ingin logout?")) {
         localStorage.removeItem('gw_ann_session_v3');
@@ -169,11 +153,8 @@ function logout() {
     }
 }
 
-// Format tanggal Excel
 function formatTanggalExcel(value) {
     if (typeof value !== "number") return value;
-    if (value < 30000 || value > 60000) return value;
-
     const date = new Date((value - 25569) * 86400 * 1000);
     return date.toLocaleDateString("id-ID", {
         day:"2-digit",
@@ -182,81 +163,68 @@ function formatTanggalExcel(value) {
     });
 }
 
-// Ambil kolom dengan deteksi fleksibel
-function ambilKolom(obj, ...alt) {
-    const keys = Object.keys(obj).map(k => k.toLowerCase().trim());
+async function loadSiswa() {
+    const filePath = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
 
-    for (let a of alt) {
-        let idx = keys.indexOf(a.toLowerCase());
-        if (idx !== -1) return obj[Object.keys(obj)[idx]];
-    }
+    const res = await fetch(filePath);
+    const buf = await res.arrayBuffer();
 
-    for (let k of Object.keys(obj)) {
-        const lower = k.toLowerCase();
-        if (alt.some(a => lower.includes(a.toLowerCase())))
-            return obj[k];
-    }
+    const workbook = XLSX.read(buf, { type: "array" });
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
 
-    return "-";
+    const data = XLSX.utils.sheet_to_json(sheet);
+
+    const tbody = document.querySelector("#tabelSiswa tbody");
+    tbody.innerHTML = "";
+
+    data.forEach((row, i) => {
+
+        let nama           = row["NAMA LENGKAP"];
+        let namaPanggil    = row["NAMA PANGGIL"];
+        let jk             = row["JENIS KELAMIN"];
+        let tempat         = row["Tempat Lahir"];
+        let tgl            = formatTanggalExcel(row["Tgl Lahir"]);
+        let alamat         = row["Alamat"];
+        let waSiswa        = row["No WA Siswa"];
+        let waOrtu         = row["No Wa Ortu"];
+        let hobi           = row["Hobi"];
+        let cita           = row["Cita-cita"];
+        let nis            = row["NIS"];
+        let nisn           = row["NISN"];
+        let mapelSuka      = row["Pelajaran yg disukai"];
+        let mapelTidakSuka = row["Pelajaran tdk disukai"];
+        let ekskul         = row["Ekskul"];
+        let motivasi       = row["Kegiatan yg memotivasi di sekolah"];
+        let caraBelajar    = row["Cara Belajar"];
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${i + 1}</td>
+            <td>${nama}</td>
+            <td>${namaPanggil}</td>
+            <td>${jk}</td>
+            <td>${tempat}</td>
+            <td>${tgl}</td>
+            <td>${alamat}</td>
+            <td>${waSiswa}</td>
+            <td>${waOrtu}</td>
+            <td>${hobi}</td>
+            <td>${cita}</td>
+            <td>${nis}</td>
+            <td>${nisn}</td>
+            <td>${mapelSuka}</td>
+            <td>${mapelTidakSuka}</td>
+            <td>${ekskul}</td>
+            <td>${motivasi}</td>
+            <td>${caraBelajar}</td>
+        `;
+
+        tbody.appendChild(tr);
+    });
 }
 
-// ==========================================
-// LOAD DATA EXCEL DARI GITHUB
-// ==========================================
-async function loadSiswa() {
-    try {
-        const filePath = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
+loadSiswa();
+</script>
 
-        const res = await fetch(filePath);
-        const buf = await res.arrayBuffer();
-
-        const workbook = XLSX.read(buf, { type: "array" });
-        const sheet = workbook.Sheets[workbook.SheetNames[0]];
-
-        const data = XLSX.utils.sheet_to_json(sheet);
-
-        const tbody = document.querySelector("#tabelSiswa tbody");
-        tbody.innerHTML = "";
-
-        data.forEach((row, i) => {
-
-            let nama           = ambilKolom(row, "nama");
-            let namaPanggil    = ambilKolom(row, "nama panggil", "panggilan");
-            let jk             = ambilKolom(row, "jenis kelamin", "jk");
-            let tempat         = ambilKolom(row, "tempat lahir");
-            let tgl            = ambilKolom(row, "tanggal lahir", "tgl lahir");
-            let alamat         = ambilKolom(row, "alamat");
-            let waSiswa        = ambilKolom(row, "wa siswa");
-            let waOrtu         = ambilKolom(row, "wa ortu");
-            let hobi           = ambilKolom(row, "hobi");
-            let cita           = ambilKolom(row, "cita-cita", "cita cita");
-            let nis            = ambilKolom(row, "nis");
-            let nisn           = ambilKolom(row, "nisn");
-            let mapelSuka      = ambilKolom(row, "mapel suka");
-            let mapelTidakSuka = ambilKolom(row, "mapel tidak suka");
-            let ekskul         = ambilKolom(row, "ekskul");
-            let motivasi       = ambilKolom(row, "motivasi");
-            let caraBelajar    = ambilKolom(row, "cara belajar");
-
-            tgl = formatTanggalExcel(tgl);
-
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-                <td>${i + 1}</td>
-                <td>${nama}</td>
-                <td>${namaPanggil}</td>
-                <td>${jk}</td>
-                <td>${tempat}</td>
-                <td>${tgl}</td>
-                <td>${alamat}</td>
-                <td>${waSiswa}</td>
-                <td>${waOrtu}</td>
-                <td>${hobi}</td>
-                <td>${cita}</td>
-                <td>${nis}</td>
-                <td>${nisn}</td>
-                <td>${mapelSuka}</td>
-                <td>${mapelTidakSuka}</td>
-                <td>${ekskul}</td>
-                <td>${motivasi}</td>
-                <td>${caraBelajar}</td>
+</body>
+</html>
