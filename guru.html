@@ -170,23 +170,49 @@ fetch(URL)
 
   data.forEach(r => {
 
-    /* === JENIS KELAMIN === */
-    const jk = (r["JENIS KELAMIN"] || "").toLowerCase();
+    /* ===== JENIS KELAMIN ===== */
+    const jk = (r["JENIS KELAMIN"] || r["Jenis Kelamin"] || "").toLowerCase();
     if(jk.startsWith("l")) L++;
     if(jk.startsWith("p")) P++;
 
-    /* === USIA === */
-    const usia = Number(r["USIA"]);
+    /* ===== USIA ===== */
+    const usia = Number(r["USIA"] || r["Usia"]);
     if(usia === 12) u12++;
     if(usia === 13) u13++;
     if(usia === 14) u14++;
     if(usia === 15) u15++;
 
-    /* === KIP === */
-    if((r["KIP"] || "").toLowerCase() === "ya") kip++;
+    /* ===== PEMILIK KIP ===== */
+    const kipVal = (
+      r["PEMILIK KIP"] ||
+      r["KIP"] ||
+      r["ADA KIP"] ||
+      ""
+    ).toString().toLowerCase();
 
-    /* === YATIM / PIATU === */
-    if((r["YATIM"] || "").toLowerCase() === "ya") yatim++;
+    if(
+      kipVal.includes("ya") ||
+      kipVal.includes("ada") ||
+      kipVal.includes("punya")
+    ){
+      kip++;
+    }
+
+    /* ===== YATIM / PIATU ===== */
+    const yatimVal = (
+      r["YATIM / PIATU"] ||
+      r["YATIM-PIATU"] ||
+      r["YATIM"] ||
+      ""
+    ).toString().toLowerCase();
+
+    if(
+      yatimVal.includes("yatim") ||
+      yatimVal.includes("piatu")
+    ){
+      yatim++;
+    }
+
   });
 
   const total = L + P;
@@ -210,6 +236,7 @@ fetch(URL)
   alert("Gagal memuat data Google Sheet");
 });
 </script>
+
 
 </body>
 </html>
