@@ -6,71 +6,33 @@
 <title>Dashboard Guru</title>
 
 <style>
-:root {
-  --primary:#0A4FA3;
-  --bg:#f4f6f9;
-}
-
-/* RESET */
-* {
-  box-sizing: border-box;
-}
-
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: var(--bg);
+  background: #f4f6f9;
 }
-
-/* LAYOUT */
 .layout {
   display: grid;
   grid-template-columns: 240px 1fr;
   min-height: 100vh;
-  transition: all .3s ease;
 }
-
-/* SIDEBAR */
 .sidebar {
-  background: var(--primary);
+  background: #0A4FA3;
   color: #fff;
   padding: 20px;
 }
-
 .sidebar h3 {
   margin-top: 0;
-  font-size: 16px;
 }
-
 .sidebar a {
   color: #fff;
   text-decoration: none;
   display: block;
   padding: 8px 0;
-  font-size: 14px;
 }
-
-.sidebar a:hover {
-  opacity: .85;
-}
-
-.logout-btn {
-  margin-top: 30px;
-  background: #ff5d5d;
-  color: #fff;
-  border: none;
-  padding: 10px;
-  border-radius: 8px;
-  width: 100%;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-/* CONTENT */
 .content {
   padding: 22px;
 }
-
 .card {
   background: #fff;
   border-radius: 12px;
@@ -78,153 +40,62 @@ body {
   box-shadow: 0 6px 18px rgba(10,79,163,0.06);
   margin-bottom: 20px;
 }
-
-/* HEADER */
-.header {
-  display:flex;
-  align-items:center;
-  gap:12px;
-  margin-bottom:20px;
-}
-
-.header img {
-  width:48px;
-  height:48px;
-}
-
-/* MOBILE HEADER */
-.mobile-header {
-  display:none;
-  align-items:center;
-  gap:12px;
-  padding:14px 18px;
-  background:#fff;
-  box-shadow:0 4px 12px rgba(0,0,0,.08);
-}
-
-.menu-btn {
-  font-size:22px;
-  cursor:pointer;
-  color:var(--primary);
-}
-
-/* RESPONSIVE */
-@media (max-width: 1024px) {
-  .layout {
-    grid-template-columns: 200px 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-  .layout {
-    grid-template-columns: 1fr;
-  }
-
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: -260px;
-    width: 240px;
-    height: 100%;
-    z-index: 1000;
-    transition: left .3s ease;
-  }
-
-  .sidebar.active {
-    left: 0;
-  }
-
-  .content {
-    padding: 16px;
-  }
-
-  .header {
-    display:none;
-  }
-
-  .mobile-header {
-    display:flex;
-  }
-}
-
-@media (max-width: 480px) {
-  .card {
-    padding: 16px;
-  }
-
-  .sidebar a {
-    font-size: 13px;
-  }
-}
 </style>
 </head>
 
 <body>
-
-<!-- MOBILE HEADER -->
-<div class="mobile-header">
-  <span class="menu-btn" onclick="toggleMenu()">☰</span>
-  <strong style="color:#0A4FA3;">Dashboard Guru</strong>
-</div>
-
 <div class="layout">
 
   <!-- SIDEBAR -->
-  <div class="sidebar" id="sidebar">
+    <div class="sidebar" id="sidebar">
 <!-- APP BRAND -->
 <div class="brand">
-  <img src="assets/mb.jpg" alt="Logo Aplikasi" class="brand-logo">
+  <img
+  src="assets/mb.jpg"
+  alt="Logo Aplikasi"
+  class="brand-logo"
+  style="width:180px; height:auto; max-width:100%;">
   <div class="brand-name">Aplikasi Guru Wali</div>
   <div class="brand-version">Versi 1.0 (Build 03 Januari 2026)</div>
   <div class="brand-dev">Dev by MB</div>
 </div>
 
-    <h3>Menu Wali Kelas</h3>
-    <a href="strukturkelas.html">Struktur Kelas</a>
-    <a href="keadaankelas.html">Keadaan Kelas</a>
-    <a href="walikelas.html">Wali Kelas</a>
-    <a href="guru.html">Guru</a>
-    <a href="#">Laporan Perkembangan</a>
-
-    <h3 style="margin-top:28px;">Menu Guru Wali</h3>
-    <a href="biodata.html">Profil Siswa</a>
-    <a href="#">Rekap Nilai</a>
-    <a href="#">Pelanggaran / Poin</a>
-    <a href="#">Jadwal Konsultasi</a>
-
-    <button class="logout-btn" onclick="logout()">Logout</button>
-  </div>
-
   <!-- MAIN CONTENT -->
   <div class="content">
 
-    <!-- HEADER DESKTOP -->
-    <div class="header">
-      <img src="assets/logo.png" />
+    <!-- HEADER -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+      <img src="assets/logo.png" style="width:48px;height:48px;" />
       <div>
         <h2 style="margin:0;color:#0A4FA3">Dashboard Guru</h2>
         <div style="color:#6c7a89;">Selamat datang, Bayu</div>
       </div>
     </div>
 
-    <!-- CARD JADWAL -->
+    <!-- CARD JADWAL GURU -->
     <div class="card">
       <h3>Jadwal Guru</h3>
-      <img src="foto/jadwal_guru.png"
-           style="width:100%;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,.15);" />
+      <div style="text-align:center;">
+        <img 
+          src="foto/jadwal_guru.png"
+          alt="Jadwal Guru"
+          style="max-width:100%;height:auto;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.15);"
+        />
+      </div>
     </div>
 
   </div>
 </div>
 
-<!-- MENU TOGGLE -->
+<!-- LOGOUT -->
 <script>
-function toggleMenu(){
-  document.getElementById('sidebar').classList.toggle('active');
+function logout(){
+  localStorage.removeItem('gw_ann_session_v3');
+  window.location.href = 'index.html';
 }
 </script>
 
-<!-- 🔐 FIREBASE AUTH GUARD -->
+<!-- 🔐 FIREBASE AUTH GUARD (ANTI BYPASS URL) -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -239,10 +110,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
+/* === BLOKIR AKSES JIKA BELUM LOGIN === */
 onAuthStateChanged(auth, (user) => {
-  if (!user) window.location.replace("index.html");
+  if (!user) {
+    window.location.replace("index.html");
+  }
 });
 
+/* === LOGOUT FIREBASE === */
 window.logout = function () {
   signOut(auth).then(() => {
     window.location.replace("index.html");
