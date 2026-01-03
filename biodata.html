@@ -32,18 +32,14 @@ body {
   color: #fff;
   padding: 20px;
 }
-.sidebar h3 {
-  margin-top: 0;
-}
+.sidebar h3 { margin-top: 0; }
 .sidebar a {
   color: #fff;
   text-decoration: none;
   display: block;
   padding: 8px 0;
 }
-.sidebar a:hover {
-  text-decoration: underline;
-}
+.sidebar a:hover { text-decoration: underline; }
 
 /* ===== CONTENT ===== */
 .content {
@@ -51,7 +47,7 @@ body {
   padding-bottom: 120px;
 }
 
-/* ===== CARD BIODATA ===== */
+/* ===== CARD ===== */
 .card {
   width: 360px;
   height: 640px;
@@ -70,7 +66,7 @@ body {
 .header img { width: 70px; }
 .header h2 {
   font-size: 20px;
-  margin: 5px 0 0 0;
+  margin: 5px 0 0;
   color: #0d47a1;
 }
 
@@ -80,7 +76,6 @@ body {
   object-fit: cover;
   border-radius: 10px;
   margin: 10px auto;
-  display: block;
   border: 2px solid #0d47a1;
 }
 
@@ -147,17 +142,13 @@ body {
   <!-- SIDEBAR -->
   <div class="sidebar">
     <h3>Menu Wali Kelas</h3>
-    <a href="https://yanuar-moga.github.io/guruwali/strukturkelas.html">Struktur Kelas</a>
-    <a href="https://yanuar-moga.github.io/guruwali/keadaankelas.html">Keadaan Kelas</a>
-    <a href="https://yanuar-moga.github.io/guruwali/walikelas.html">Wali Kelas</a>
-    <a href="https://yanuar-moga.github.io/guruwali/guru.html">Guru</a>
-    <a href="#">Laporan Perkembangan</a>
+    <a href="strukturkelas.html">Struktur Kelas</a>
+    <a href="keadaankelas.html">Keadaan Kelas</a>
+    <a href="walikelas.html">Wali Kelas</a>
+    <a href="guru.html">Guru</a>
 
     <h3 style="margin-top:28px;">Menu Guru Wali</h3>
-    <a href="https://yanuar-moga.github.io/guruwali/biodata.html">Profil Siswa</a>
-    <a href="#">Rekap Nilai</a>
-    <a href="#">Pelanggaran / Poin</a>
-    <a href="#">Jadwal Konsultasi</a>
+    <a href="biodata.html">Profil Siswa</a>
 
     <button onclick="logout()"
       style="margin-top:30px;background:#ff5d5d;color:#fff;border:none;padding:10px;border-radius:8px;width:100%;">
@@ -167,17 +158,15 @@ body {
 
   <!-- CONTENT -->
   <div class="content">
-
     <div id="card" class="card">
       <div class="header">
         <img src="https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/logo.png">
         <h2>Biodata Siswa Kelas 7H</h2>
       </div>
 
-      <img id="foto" class="photo" src="" alt="Foto Siswa">
+      <img id="foto" class="photo" src="">
       <div id="data" class="data-box"></div>
     </div>
-
   </div>
 </div>
 
@@ -200,56 +189,44 @@ function logout(){
   window.location.href='index.html';
 }
 
-let siswa = [];
-let index = 0;
+let siswa=[], index=0;
 
-function formatTanggal(excelDate) {
-  if (!excelDate) return "-";
-  if (isNaN(excelDate)) return excelDate;
-  const date = new Date((excelDate - 25569) * 86400 * 1000);
-  return date.toLocaleDateString("id-ID",{day:"2-digit",month:"long",year:"numeric"});
+function formatTanggal(excelDate){
+  if(!excelDate) return "-";
+  if(isNaN(excelDate)) return excelDate;
+  const d=new Date((excelDate-25569)*86400*1000);
+  return d.toLocaleDateString("id-ID",{day:"2-digit",month:"long",year:"numeric"});
 }
 
-async function loadExcel() {
-  const file = "https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx";
-  const res = await fetch(file);
-  const buf = await res.arrayBuffer();
-  const wb = XLSX.read(buf,{type:"array"});
-  const sheet = wb.Sheets[wb.SheetNames[0]];
-  siswa = XLSX.utils.sheet_to_json(sheet);
+async function loadExcel(){
+  const res=await fetch("https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx");
+  const buf=await res.arrayBuffer();
+  const wb=XLSX.read(buf,{type:"array"});
+  siswa=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
   showData();
 }
 
-function showData() {
-  const s = siswa[index];
-  document.getElementById("foto").src =
-    `https://raw.githubusercontent.com/yanuar-moga/guruwali/main/foto/${index+1}.jpg`;
-
-  let html = "";
+function showData(){
+  const s=siswa[index];
+  foto.src=`https://raw.githubusercontent.com/yanuar-moga/guruwali/main/foto/${index+1}.jpg`;
+  let html="";
   Object.keys(s).forEach(k=>{
     let v=s[k];
-    if(typeof v==="number" && v>30000 && v<60000) v=formatTanggal(v);
-    if(!v) v="-";
-    html+=`
-      <div class="row">
-        <div class="label">${k}</div>
-        <div class="colon">:</div>
-        <div class="value">${v}</div>
-      </div>`;
+    if(typeof v==="number" && v>30000) v=formatTanggal(v);
+    html+=`<div class="row"><div class="label">${k}</div><div class="colon">:</div><div class="value">${v||"-"}</div></div>`;
   });
-  document.getElementById("data").innerHTML=html;
+  data.innerHTML=html;
 }
 
 function next(){ if(index<siswa.length-1){index++;showData();}}
 function prev(){ if(index>0){index--;showData();}}
 
 function toggleMenu(){
-  const m=document.getElementById("downloadMenu");
-  m.style.display=(m.style.display==="none")?"block":"none";
+  downloadMenu.style.display = downloadMenu.style.display==="block"?"none":"block";
 }
 
 function downloadJPG(){
-  html2canvas(document.getElementById("card"),{scale:3}).then(c=>{
+  html2canvas(card,{scale:3}).then(c=>{
     const a=document.createElement("a");
     a.href=c.toDataURL("image/jpeg");
     a.download=`Kartu-${index+1}.jpg`;
@@ -259,7 +236,7 @@ function downloadJPG(){
 
 function downloadPDFsingle(){
   const {jsPDF}=window.jspdf;
-  html2canvas(document.getElementById("card"),{scale:3}).then(c=>{
+  html2canvas(card,{scale:3}).then(c=>{
     const pdf=new jsPDF("p","px",[400,640]);
     pdf.addImage(c.toDataURL("image/jpeg"),"JPEG",10,10,380,620);
     pdf.save(`Kartu-${index+1}.pdf`);
@@ -271,7 +248,7 @@ async function downloadPDFall(){
   const pdf=new jsPDF("p","px",[400,640]);
   for(let i=0;i<siswa.length;i++){
     index=i;showData();
-    const c=await html2canvas(document.getElementById("card"),{scale:3});
+    const c=await html2canvas(card,{scale:3});
     if(i>0) pdf.addPage();
     pdf.addImage(c.toDataURL("image/jpeg"),"JPEG",10,10,380,620);
   }
@@ -279,6 +256,26 @@ async function downloadPDFall(){
 }
 
 loadExcel();
+</script>
+
+<!-- 🔐 FIREBASE AUTH (BLOKIR BYPASS URL) -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD_Dl5cdFBh_dyhkhthI2gclhWoz4ZHYls",
+  authDomain: "login-2f19a.firebaseapp.com",
+  projectId: "login-2f19a",
+  appId: "1:751593178422:web:1d36294b46d1a954b15f97"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+onAuthStateChanged(auth, (user) => {
+  if (!user) window.location.replace("index.html");
+});
 </script>
 
 </body>
