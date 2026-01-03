@@ -182,25 +182,25 @@ fetch(URL)
 
   data.forEach(r => {
 
-    /* ===== JENIS KELAMIN ===== */
-    const jk = (r["JENIS KELAMIN"] || "").toLowerCase();
-    if(jk.startsWith("l")) L++;
-    if(jk.startsWith("p")) P++;
+    /* ===== JENIS KELAMIN (KOLOM D) ===== */
+    const jk = (r["JENIS KELAMIN"] || "").toLowerCase().trim();
+    if (jk.startsWith("l")) L++;
+    if (jk.startsWith("p")) P++;
 
-    /* ===== USIA ===== */
+    /* ===== USIA (KOLOM G) ===== */
     const usia = Number(r["USIA"]);
-    if(usia === 12) u12++;
-    if(usia === 13) u13++;
-    if(usia === 14) u14++;
-    if(usia === 15) u15++;
+    if (usia === 12) u12++;
+    if (usia === 13) u13++;
+    if (usia === 14) u14++;
+    if (usia === 15) u15++;
 
-    /* ===== PEMILIK KIP ===== */
-    const kipVal = (r["ADA KARTU KIP"] || "").toLowerCase();
-    if(kipVal === "ya" || kipVal === "ada") kip++;
+    /* ===== PEMILIK KIP (KOLOM AC) ===== */
+    const kipVal = (r["ADA KARTU KIP"] || "").toUpperCase().trim();
+    if (kipVal === "KIP") kip++;
 
-    /* ===== YATIM / PIATU ===== */
-    const yatimVal = (r["YATIM/PIATU"] || "").toLowerCase();
-    if(yatimVal !== "") yatim++;
+    /* ===== YATIM / PIATU (KOLOM AD) ===== */
+    const yatimVal = (r["YATIM/PIATU"] || "").trim();
+    if (yatimVal !== "") yatim++;
 
   });
 
