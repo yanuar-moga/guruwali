@@ -31,15 +31,20 @@ body{
   padding:5px;
   object-fit:contain;
 }
-.top-header h1{margin:0;font-size:18px}
-.top-header p{margin:0;font-size:12px;color:#e0e7ff}
+.top-header h1{
+  margin:0;
+  font-size:18px;
+}
+.top-header p{
+  margin:0;
+  font-size:12px;
+  color:#e0e7ff;
+}
 
-/* ===== HAMBURGER ===== */
 .menu-toggle{
   display:none;
   font-size:22px;
   cursor:pointer;
-  margin-right:10px;
 }
 
 /* ===== LAYOUT ===== */
@@ -62,10 +67,10 @@ body{
   text-decoration:none;
   padding:8px 0;
 }
-.sidebar a:hover{opacity:.85}
 
 /* ===== CONTENT ===== */
 .content{padding:22px}
+
 .card{
   background:#fff;
   border-radius:12px;
@@ -74,7 +79,31 @@ body{
   margin-bottom:20px;
 }
 
-/* ===== RESPONSIVE ===== */
+/* ===== STAT GRID ===== */
+.stat-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  margin-top:16px;
+}
+.stat-box{
+  background:#f8fafc;
+  border-radius:10px;
+  padding:18px;
+  text-align:center;
+  box-shadow:0 4px 10px rgba(0,0,0,.05);
+}
+.stat-box h4{
+  margin:0 0 8px;
+  font-size:14px;
+  color:#0A4FA3;
+}
+.stat-box p{
+  margin:0;
+  font-size:20px;
+  font-weight:bold;
+}
+
 @media(max-width:992px){
   .layout{grid-template-columns:200px 1fr}
 }
@@ -91,6 +120,7 @@ body{
     z-index:99;
   }
   .sidebar.active{left:0}
+  .stat-grid{grid-template-columns:1fr 1fr}
 }
 </style>
 </head>
@@ -100,7 +130,7 @@ body{
 <!-- ===== HEADER ===== -->
 <header class="top-header">
   <span class="menu-toggle" onclick="toggleSidebar()">☰</span>
-  <img src="assets/mb.jpg" alt="Logo">
+  <img src="assets/mb.jpg">
   <div>
     <h1>Aplikasi Guru Wali</h1>
     <p>Versi 1.0 (Build 03 Januari 2026) · Dev by MB</p>
@@ -124,9 +154,7 @@ body{
   <a href="#">Pelanggaran / Poin</a>
   <a href="#">Jadwal Konsultasi</a>
 
-  <button onclick="logout()"
-    style="margin-top:24px;width:100%;padding:10px;
-    border:none;border-radius:8px;background:#ff5d5d;color:#fff;">
+  <button onclick="logout()" style="margin-top:24px;width:100%;padding:10px;border:none;border-radius:8px;background:#ff5d5d;color:#fff;">
     Logout
   </button>
 </div>
@@ -142,54 +170,73 @@ body{
     </div>
   </div>
 
+  <!-- ===== KEADAAN SISWA ===== -->
+  <div class="card">
+    <h3>Keadaan Siswa Per Kelas</h3>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <h4>👦👧 Jumlah Siswa</h4>
+        <p id="jk">-</p>
+      </div>
+      <div class="stat-box">
+        <h4>🎂 Total Usia</h4>
+        <p id="usia">-</p>
+      </div>
+      <div class="stat-box">
+        <h4>🎓 Pemilik KIP</h4>
+        <p id="kip">-</p>
+      </div>
+      <div class="stat-box">
+        <h4>🕊️ Yatim / Piatu</h4>
+        <p id="yatim">-</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== JADWAL GURU ===== -->
   <div class="card">
     <h3>Jadwal Guru</h3>
     <div style="text-align:center;">
-      <img src="foto/jadwal_guru.png"
-        style="max-width:100%;border-radius:10px;
-        box-shadow:0 4px 12px rgba(0,0,0,.15);">
+      <img src="foto/jadwal_guru.png" style="max-width:100%;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,.15);">
     </div>
   </div>
 
 </div>
 </div>
 
-<!-- ===== SCRIPT UI ===== -->
 <script>
 function toggleSidebar(){
   document.getElementById("sidebar").classList.toggle("active");
 }
-</script>
+function logout(){
+  window.location.href="index.html";
+}
 
-<!-- ===== FIREBASE AUTH GUARD + LOGOUT (WAJIB DI BAWAH) ===== -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut }
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+/* ===== GOOGLE SHEET ===== */
+const SHEET_ID = "By8wJ7dX0fbW93UPsHDJGUncqok1";
+const SHEET_NAME = "Sheet1";
+const URL = `https://opensheet.elk.sh/${SHEET_ID}/${SHEET_NAME}`;
 
-const firebaseConfig = {
-  apiKey: "AIzaSyD_Dl5cdFBh_dyhkhthI2gclhWoz4ZHYls",
-  authDomain: "login-2f19a.firebaseapp.com",
-  projectId: "login-2f19a",
-  appId: "1:751593178422:web:1d36294b46d1a954b15f97"
-};
+fetch(URL)
+.then(res => res.json())
+.then(data => {
+  let L=0,P=0,usia=0,kip=0,yatim=0;
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-/* 🔐 BLOKIR JIKA BELUM LOGIN */
-onAuthStateChanged(auth, (user) => {
-  if (!user) {
-    window.location.replace("index.html");
-  }
-});
-
-/* ✅ LOGOUT FIREBASE */
-window.logout = function () {
-  signOut(auth).then(() => {
-    window.location.replace("index.html");
+  data.forEach(r=>{
+    if(r.D){
+      if(r.D.toLowerCase().includes("l")) L++;
+      if(r.D.toLowerCase().includes("p")) P++;
+    }
+    if(r.G && !isNaN(r.G)) usia+=Number(r.G);
+    if(r.AC && r.AC.toLowerCase()=="ya") kip++;
+    if(r.AD && r.AD.toLowerCase()=="ya") yatim++;
   });
-};
+
+  jk.innerText = `L: ${L} | P: ${P}`;
+  usia.innerText = usia+" Tahun";
+  kip.innerText = kip+" Siswa";
+  yatim.innerText = yatim+" Siswa";
+});
 </script>
 
 </body>
