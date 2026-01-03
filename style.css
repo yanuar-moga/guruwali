@@ -1,94 +1,72 @@
-:root{
-  --blue-700:#0A4FA3;
-  --blue-500:#1976d2;
-  --muted:#6c7a89;
-  --card-bg:#ffffff;
+/* ===== SIDEBAR BRAND (SEIRAMA DENGAN LOGIN) ===== */
+.sidebar{
+  background: linear-gradient(180deg,var(--blue-700),#083d82);
+  color:#fff;
 }
 
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family: Inter, "Poppins", Arial, sans-serif;
-  background: linear-gradient(180deg,#e8f3ff,#ffffff);
-  color:#12202b;
-  -webkit-font-smoothing:antialiased;
-}
-
-.page-center{
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-}
-
-.login-card{
-  width:100%;
-  max-width:360px;
-  background:var(--card-bg);
-  border-radius:14px;
-  padding:22px;
-  box-shadow:0 8px 30px rgba(10,79,163,0.12);
+/* BRAND HEADER */
+.brand{
+  padding:18px 16px;
   text-align:center;
-  border-top:6px solid var(--blue-700);
+  border-bottom:1px solid rgba(255,255,255,.25);
 }
 
-.logo{
-  width:72px;
-  height:72px;
-  object-fit:contain;
-  margin-bottom:10px;
-}
-
-.title{
-  margin:0;
-  color:var(--blue-700);
-  font-size:20px;
-  font-weight:700;
-}
-
-.form{ margin-top:14px; text-align:left; }
-
-.field{ display:block; margin-bottom:12px; }
-.label-text{
-  display:block;
-  font-size:13px;
-  color:var(--muted);
-  margin-bottom:6px;
-}
-input[type="text"], input[type="password"]{
+/* LOGO FULL WIDTH (KAYA logo.png) */
+.brand-logo{
   width:100%;
-  padding:10px 12px;
-  border-radius:8px;
-  border:1px solid #d9e6fb;
-  background:#fbfeff;
-  font-size:14px;
-  outline:none;
+  max-width:180px;          /* pas utk sidebar 240px */
+  height:auto;
+  object-fit:contain;
+  margin:0 auto 10px auto;
+  background:#ffffff;
+  padding:8px;
+  border-radius:12px;
+  box-shadow:0 6px 18px rgba(0,0,0,.15);
 }
-input:focus{ box-shadow:0 2px 8px rgba(25,118,210,0.12); border-color:var(--blue-500); }
 
-.show-pass{
+/* NAMA APLIKASI */
+.brand-name{
+  font-size:15px;
+  font-weight:700;
+  line-height:1.3;
+  margin-bottom:2px;
+}
+
+/* VERSI & DEV */
+.brand-version{
+  font-size:12px;
+  opacity:.9;
+}
+
+.brand-dev{
+  font-size:11px;
+  opacity:.85;
+  margin-top:4px;
+}
+
+/* USER PANEL (OPSIONAL, SERASI) */
+.user-panel{
   display:flex;
   align-items:center;
-  gap:8px;
-  margin:6px 0 14px 0;
-  color:var(--muted);
+  gap:10px;
+  padding:14px 16px;
+  border-bottom:1px solid rgba(255,255,255,.15);
+}
+
+.user-avatar{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  background:#fff;
+  object-fit:cover;
+}
+
+.user-name{
   font-size:13px;
-}
-
-.btn-primary{
-  width:100%;
-  padding:10px 12px;
-  border-radius:8px;
-  border:none;
-  color:white;
-  background:linear-gradient(90deg,var(--blue-500),var(--blue-700));
   font-weight:700;
-  cursor:pointer;
-  box-shadow:0 6px 18px rgba(10,79,163,0.12);
 }
-.btn-primary:hover{ transform:translateY(-1px); }
 
-.login-note{ margin-top:12px; color:var(--muted); font-size:13px; text-align:center; }
-
-.footer{ margin-top:12px; color:#9aa6b7; font-size:12px; }
+.user-status{
+  font-size:11px;
+  opacity:.85;
+}
