@@ -176,33 +176,31 @@ fetch(URL)
 .then(res => res.json())
 .then(data => {
 
-  let L=0, P=0;
-  let u12=0, u13=0, u14=0, u15=0;
-  let kip=0, yatim=0;
+  let L = 0, P = 0;
+  let u12 = 0, u13 = 0, u14 = 0, u15 = 0;
+  let kip = 0, yatim = 0;
 
   data.forEach(r => {
 
-    /* ===== KOLUMN D : JENIS KELAMIN ===== */
-    const jk = (r.D || "").toString().toLowerCase();
+    /* ===== JENIS KELAMIN ===== */
+    const jk = (r["JENIS KELAMIN"] || "").toLowerCase();
     if(jk.startsWith("l")) L++;
     if(jk.startsWith("p")) P++;
 
-    /* ===== KOLUMN G : USIA ===== */
-    const usia = Number(r.G);
+    /* ===== USIA ===== */
+    const usia = Number(r["USIA"]);
     if(usia === 12) u12++;
     if(usia === 13) u13++;
     if(usia === 14) u14++;
     if(usia === 15) u15++;
 
-    /* ===== KOLUMN AC : PEMILIK KIP ===== */
-    if(r.AC && r.AC.toString().trim() !== ""){
-      kip++;
-    }
+    /* ===== PEMILIK KIP ===== */
+    const kipVal = (r["ADA KARTU KIP"] || "").toLowerCase();
+    if(kipVal === "ya" || kipVal === "ada") kip++;
 
-    /* ===== KOLUMN AD : YATIM / PIATU ===== */
-    if(r.AD && r.AD.toString().trim() !== ""){
-      yatim++;
-    }
+    /* ===== YATIM / PIATU ===== */
+    const yatimVal = (r["YATIM/PIATU"] || "").toLowerCase();
+    if(yatimVal !== "") yatim++;
 
   });
 
@@ -222,11 +220,12 @@ fetch(URL)
   document.getElementById("yatim").innerText = yatim + " Siswa";
 
 })
-.catch(err=>{
+.catch(err => {
   console.error(err);
   alert("Gagal memuat data Google Sheet");
 });
 </script>
+
 
 
 </body>
