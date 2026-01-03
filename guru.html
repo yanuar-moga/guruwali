@@ -2,92 +2,126 @@
 <html lang="id">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Dashboard Guru</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f4f6f9;
+/* ===== RESET ===== */
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#f4f6f9;
 }
 
-/* ===== TOP HEADER APLIKASI ===== */
-.top-header {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  background: #2563eb;
-  padding: 15px 20px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+/* ===== TOP HEADER ===== */
+.top-header{
+  display:flex;
+  align-items:center;
+  gap:15px;
+  background:#2563eb;
+  padding:14px 18px;
+  box-shadow:0 3px 8px rgba(0,0,0,.3);
+  color:#fff;
+}
+.top-header img{
+  width:48px;
+  height:48px;
+  border-radius:10px;
+  background:#fff;
+  padding:5px;
+  object-fit:contain;
+}
+.top-header h1{
+  margin:0;
+  font-size:18px;
+}
+.top-header p{
+  margin:0;
+  font-size:12px;
+  color:#e0e7ff;
 }
 
-.top-header img {
-  width: 50px;
-  height: 50px;
-  border-radius: 10px;
-  background: #fff;
-  object-fit: contain;
-  padding: 5px;
-}
-
-.top-header h1 {
-  margin: 0;
-  font-size: 20px;
-  color: #fff;
-}
-
-.top-header p {
-  margin: 0;
-  font-size: 12px;
-  color: #e0e7ff;
+/* ===== HAMBURGER ===== */
+.menu-toggle{
+  display:none;
+  font-size:22px;
+  cursor:pointer;
+  margin-right:10px;
 }
 
 /* ===== LAYOUT ===== */
-.layout {
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  min-height: calc(100vh - 80px);
+.layout{
+  display:grid;
+  grid-template-columns:240px 1fr;
+  min-height:calc(100vh - 76px);
 }
 
 /* ===== SIDEBAR ===== */
-.sidebar {
-  background: #0A4FA3;
-  color: #fff;
-  padding: 20px;
+.sidebar{
+  background:#0A4FA3;
+  color:#fff;
+  padding:20px;
 }
-
-.sidebar h3 {
-  margin-top: 0;
+.sidebar h3{
+  margin:10px 0;
 }
-
-.sidebar a {
-  color: #fff;
-  text-decoration: none;
-  display: block;
-  padding: 8px 0;
+.sidebar a{
+  display:block;
+  color:#fff;
+  text-decoration:none;
+  padding:8px 0;
+}
+.sidebar a:hover{
+  opacity:.85;
 }
 
 /* ===== CONTENT ===== */
-.content {
-  padding: 22px;
+.content{
+  padding:22px;
+}
+.card{
+  background:#fff;
+  border-radius:12px;
+  padding:20px;
+  box-shadow:0 6px 18px rgba(10,79,163,.06);
+  margin-bottom:20px;
 }
 
-.card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 6px 18px rgba(10,79,163,0.06);
-  margin-bottom: 20px;
+/* ===== RESPONSIVE ===== */
+@media(max-width:992px){
+  .layout{
+    grid-template-columns:200px 1fr;
+  }
+}
+
+@media(max-width:768px){
+  .menu-toggle{display:block}
+  .layout{
+    grid-template-columns:1fr;
+  }
+  .sidebar{
+    position:fixed;
+    top:76px;
+    left:-260px;
+    width:240px;
+    height:100%;
+    transition:.3s;
+    z-index:99;
+  }
+  .sidebar.active{
+    left:0;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<!-- ===== HEADER APLIKASI ===== -->
+<!-- ===== HEADER ===== -->
 <header class="top-header">
-  <img src="assets/mb.jpg" alt="Logo Aplikasi">
+  <span class="menu-toggle" onclick="toggleSidebar()">☰</span>
+  <img src="assets/mb.jpg" alt="Logo">
   <div>
     <h1>Aplikasi Guru Wali</h1>
     <p>Versi 1.0 (Build 03 Januari 2026) · Dev by MB</p>
@@ -96,88 +130,59 @@ body {
 
 <div class="layout">
 
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <h3>Menu Wali Kelas</h3>
-    <a href="https://yanuar-moga.github.io/guruwali/strukturkelas.html">Struktur Kelas</a>
-    <a href="https://yanuar-moga.github.io/guruwali/keadaankelas.html">Keadaan Kelas</a>
-    <a href="https://yanuar-moga.github.io/guruwali/walikelas.html">Wali Kelas</a>
-    <a href="https://yanuar-moga.github.io/guruwali/guru.html">Guru</a>
-    <a href="#">Laporan Perkembangan</a>
+<!-- ===== SIDEBAR ===== -->
+<div class="sidebar" id="sidebar">
+  <h3>Menu Wali Kelas</h3>
+  <a href="/strukturkelas.html">Struktur Kelas</a>
+  <a href="/keadaankelas.html">Keadaan Kelas</a>
+  <a href="/walikelas.html">Wali Kelas</a>
+  <a href="/guru.html">Guru</a>
+  <a href="#">Laporan Perkembangan</a>
 
-    <h3 style="margin-top:28px;">Menu Guru Wali</h3>
-    <a href="https://yanuar-moga.github.io/guruwali/biodata.html">Profil Siswa</a>
-    <a href="#">Rekap Nilai</a>
-    <a href="#">Pelanggaran / Poin</a>
-    <a href="#">Jadwal Konsultasi</a>
+  <h3 style="margin-top:26px;">Menu Guru Wali</h3>
+  <a href=/biodata.html">Profil Siswa</a>
+  <a href="#">Rekap Nilai</a>
+  <a href="#">Pelanggaran / Poin</a>
+  <a href="#">Jadwal Konsultasi</a>
 
-    <button onclick="logout()"
-      style="margin-top:30px;background:#ff5d5d;color:#fff;border:none;padding:10px;border-radius:8px;width:100%;">
-      Logout
-    </button>
-  </div>
-
-  <!-- MAIN CONTENT -->
-  <div class="content">
-
-    <!-- HEADER KONTEN -->
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
-      <img src="assets/logo.png" style="width:48px;height:48px;" />
-      <div>
-        <h2 style="margin:0;color:#0A4FA3">Dashboard Guru</h2>
-        <div style="color:#6c7a89;">Selamat datang, Bayu</div>
-      </div>
-    </div>
-
-    <!-- CARD JADWAL -->
-    <div class="card">
-      <h3>Jadwal Guru</h3>
-      <div style="text-align:center;">
-        <img 
-          src="foto/jadwal_guru.png"
-          alt="Jadwal Guru"
-          style="max-width:100%;height:auto;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.15);"
-        />
-      </div>
-    </div>
-
-  </div>
+  <button onclick="logout()"
+    style="margin-top:24px;width:100%;padding:10px;
+    border:none;border-radius:8px;background:#ff5d5d;color:#fff;">
+    Logout
+  </button>
 </div>
 
-<!-- LOGOUT -->
+<!-- ===== CONTENT ===== -->
+<div class="content">
+
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+    <img src="assets/logo.png" style="width:46px;height:46px;">
+    <div>
+      <h2 style="margin:0;color:#0A4FA3;">Dashboard Guru</h2>
+      <div style="color:#6c7a89;">Selamat datang, Bayu</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Jadwal Guru</h3>
+    <div style="text-align:center;">
+      <img src="foto/jadwal_guru.png"
+        style="max-width:100%;border-radius:10px;
+        box-shadow:0 4px 12px rgba(0,0,0,.15);">
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ===== SCRIPT ===== -->
 <script>
-function logout(){
-  localStorage.removeItem('gw_ann_session_v3');
-  window.location.href = 'index.html';
+function toggleSidebar(){
+  document.getElementById("sidebar").classList.toggle("active");
 }
-</script>
-
-<!-- 🔐 FIREBASE AUTH GUARD -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyD_Dl5cdFBh_dyhkhthI2gclhWoz4ZHYls",
-  authDomain: "login-2f19a.firebaseapp.com",
-  projectId: "login-2f19a",
-  appId: "1:751593178422:web:1d36294b46d1a954b15f97"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-onAuthStateChanged(auth, (user) => {
-  if (!user) {
-    window.location.replace("index.html");
-  }
-});
-
-window.logout = function () {
-  signOut(auth).then(() => {
-    window.location.replace("index.html");
-  });
-};
+function logout(){
+  window.location.href="index.html";
+}
 </script>
 
 </body>
