@@ -21,18 +21,14 @@ body {
   color: #fff;
   padding: 20px;
 }
-.sidebar h3 {
-  margin-top: 0;
-}
+.sidebar h3 { margin-top: 0; }
 .sidebar a {
   color: #fff;
   text-decoration: none;
   display: block;
   padding: 8px 0;
 }
-.content {
-  padding: 22px;
-}
+.content { padding: 22px; }
 .card {
   background: #fff;
   border-radius: 12px;
@@ -40,7 +36,6 @@ body {
   box-shadow: 0 6px 18px rgba(10,79,163,0.06);
   margin-bottom: 20px;
 }
-
 table {
   width: 100%;
   border-collapse: collapse;
@@ -69,14 +64,14 @@ input {
   <!-- SIDEBAR -->
   <div class="sidebar">
     <h3>Menu Wali Kelas</h3>
-    <a href="https://yanuar-moga.github.io/guruwali/strukturkelas.html">Struktur Kelas</a>
-    <a href="https://yanuar-moga.github.io/guruwali/keadaankelas.html">Keadaan Kelas</a>
-    <a href="https://yanuar-moga.github.io/guruwali/walikelas.html">Wali Kelas</a>
-    <a href="https://yanuar-moga.github.io/guruwali/guru.html">Guru</a>
+    <a href="strukturkelas.html">Struktur Kelas</a>
+    <a href="keadaankelas.html">Keadaan Kelas</a>
+    <a href="walikelas.html">Wali Kelas</a>
+    <a href="guru.html">Guru</a>
     <a href="#">Laporan Perkembangan</a>
 
     <h3 style="margin-top:28px;">Menu Guru Wali</h3>
-    <a href="https://yanuar-moga.github.io/guruwali/biodata.html">Profil Siswa</a>
+    <a href="biodata.html">Profil Siswa</a>
     <a href="#">Rekap Nilai</a>
     <a href="#">Pelanggaran / Poin</a>
     <a href="#">Jadwal Konsultasi</a>
@@ -114,11 +109,10 @@ input {
   </div>
 </div>
 
-<!-- ================= GOOGLE SHEETS SCRIPT (TETAP) ================= -->
+<!-- ================= GOOGLE SHEETS SCRIPT ================= -->
 <script>
 const sheetID = "1cSCzgeo-tD7QwDV-RUXTgb393LwyEwb9";
 const sheetName = "DATA";
-
 const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
 
 fetch(url)
@@ -154,6 +148,28 @@ function filterTable() {
     row.style.display = row.innerText.toLowerCase().includes(input) ? "" : "none";
   });
 }
+</script>
+
+<!-- 🔐 FIREBASE AUTH – BLOKIR BYPASS URL -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD_Dl5cdFBh_dyhkhthI2gclhWoz4ZHYls",
+  authDomain: "login-2f19a.firebaseapp.com",
+  projectId: "login-2f19a",
+  appId: "1:751593178422:web:1d36294b46d1a954b15f97"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    window.location.replace("index.html");
+  }
+});
 </script>
 
 </body>
