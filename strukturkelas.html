@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Struktur Kelas</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f6f9;
+}
+header {
+  background: #0A4FA3;
+  color: white;
+  padding: 16px;
+  text-align: center;
+}
+.container {
+  padding: 20px;
+  max-width: 900px;
+  margin: auto;
+}
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th, td {
+  border: 1px solid #ddd;
+  padding: 10px;
+}
+th {
+  background: #0A4FA3;
+  color: white;
+}
+select, textarea {
+  width: 100%;
+  padding: 6px;
+  font-size: 14px;
+}
+button {
+  background: #0A4FA3;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+button:hover {
+  opacity: 0.9;
+}
+.note {
+  font-size: 13px;
+  color: #666;
+  margin-top: 8px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h2>Struktur Kelas</h2>
+  <p>Dropdown Nama Siswa + Log Perubahan</p>
+</header>
+
+<div class="container">
+  <div class="card">
+
+    <table>
+      <thead>
+        <tr>
+          <th>Jabatan</th>
+          <th>Nama Siswa</th>
+          <th>Tugas</th>
+        </tr>
+      </thead>
+      <tbody id="struktur"></tbody>
+    </table>
+
+    <br>
+    <button onclick="simpan()">💾 Simpan & Catat Log</button>
+    <div class="note">
+      Setiap perubahan nama otomatis tercatat di Google Sheet (LOG).
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ==============================
+// KONFIGURASI
+// ==============================
+const SHEET_ID = "1AtbYBditKasZrNeUr0vx-0CKWPiYwOoBpGBUzEJLZx4";
+const SHEET_DATA = "DATA";
+const LOG_API = "https://script.google.com/macros/s/AKfycbxkyeyvnUkwcFpumftzjDnHW7wYron80OerlsZ8Vn4hdIZnrhsQAlTdnTSKYVzV0GlS/exec";
+
+const sheetURL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_DATA}`;
+
+// ==============================
+// STRUKTUR DEFAULT
+// ==============================
+const strukturDefault = [
+  ["Wali Kelas", "Pak Bayu", "Membimbing dan membina siswa dalam aspek akademik dan non-akademik."],
+  ["Ketua Kelas", "", "Mengkoordinasi kegiatan kelas dan menjadi penghubung guru dan siswa."],
+  ["Wakil Ketua Kelas", "", "Membantu ketua kelas dan menggantikannya jika berhalangan."],
+  ["Sekretaris I", "", "Mencatat dan mengelola administrasi kelas."],
+  ["Sekretaris II", "", "Membantu sekretaris I dalam administrasi."],
+  ["Bendahara I", "", "Mengelola keuangan kelas."],
+  ["Bendahara II", "", "Membantu bendahara I."],
+  ["Seksi Keamanan", "", "Menjaga keamanan dan ketertiban kelas."],
+  ["Seksi Kebersihan", "", "Mengatur kebersihan kelas."],
+  ["Seksi Humas / Keagamaan", "", "Mengorganisir kegiatan keagamaan."]
+];
+
+let daftarSiswa = [];
+
+// ==============================
+// AMBIL NAMA SISWA (KOLOM B)
+// ==============================
+fetch(sheetURL)
+  .then(res => res.text())
+  .then(text => {
+    const json = JSON.parse(text.substr(47).slice(0, -2));
+    const rows = json.table.rows;
+
+    rows.forEach(r => {
+      const nama = r.c[1]?.v; // KOLOM B
+      if (nama) daftarSiswa.push(nama);
+    });
+
+    render();
+  });
+
+// ==============================
+// RENDER TABEL
+// ==============================
+function render() {
+  const tbody = document.getElementById("struktur");
+  const data = JSON.parse(localStorage.getItem("strukturKelas")) || strukturDefault;
+
+  tbody.innerHTML = "";
+
+  data.forEach((row, i) => {
+    let opsi = `<option value="">-- Pilih Siswa --</option>`;
+    daftarSiswa.forEach(n => {
+      const sel = n === row[1] ? "selected" : "";
+      opsi += `<option ${sel}>${n}</option>`;
+    });
+
+    tbody.innerHTML += `
+      <tr>
+        <td>${row[0]}</td>
+        <td>
+          ${i === 0
+            ? `<b>${row[1]}</b>`
+            : `<select id="nama${i}">${opsi}</select>`
+          }
+        </td>
+        <td>
+          <textarea id="tugas${i}" rows="2">${row[2]}</textarea>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+// ==============================
+// SIMPAN + LOG
+// ==============================
+function simpan() {
+  const lama = JSON.parse(localStorage.getItem("strukturKelas")) || strukturDefault;
+  const baru = [];
+
+  lama.forEach((row, i) => {
+    const namaBaru = document.getElementById("nama" + i)?.value || row[1];
+    const tugasBaru = document.getElementById("tugas" + i).value;
+
+    baru.push([row[0], namaBaru, tugasBaru]);
+
+    if (namaBaru !== row[1]) {
+      fetch(LOG_API, {
+        method: "POST",
+        body: JSON.stringify({
+          jabatan: row[0],
+          lama: row[1],
+          baru: namaBaru,
+          editor: "Bayu"
+        })
+      });
+    }
+  });
+
+  localStorage.setItem("strukturKelas", JSON.stringify(baru));
+  alert("✅ Data struktur tersimpan & log tercatat");
+}
+</script>
+
+</body>
+</html>
