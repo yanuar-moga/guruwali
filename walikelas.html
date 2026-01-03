@@ -1,122 +1,158 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Dashboard Wali Kelas</title>
+
 <style>
 body {
-  font-family: Arial, sans-serif;
-  background: #f4f6f8;
   margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f6f9;
 }
-header {
-  background: #2c7be5;
-  color: white;
-  padding: 15px;
-  text-align: center;
+.layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 100vh;
 }
-.container {
+.sidebar {
+  background: #0A4FA3;
+  color: #fff;
   padding: 20px;
 }
-.card {
-  background: white;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-h3 {
+.sidebar h3 {
   margin-top: 0;
 }
+.sidebar a {
+  color: #fff;
+  text-decoration: none;
+  display: block;
+  padding: 8px 0;
+}
+.content {
+  padding: 22px;
+}
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 6px 18px rgba(10,79,163,0.06);
+  margin-bottom: 20px;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
+  margin-top: 10px;
 }
-th, td {
-  border: 1px solid #ddd;
+table th, table td {
   padding: 8px;
-  text-align: center;
+  border: 1px solid #ccc;
+  font-size: 14px;
 }
-th {
-  background: #e9ecef;
+table th {
+  background: #0A4FA3;
+  color: white;
+}
+input {
+  padding: 8px;
+  width: 100%;
+  margin-bottom: 10px;
 }
 </style>
 </head>
 
 <body>
+<div class="layout">
 
-<header>
-  <h2>📊 Dashboard Wali Kelas</h2>
-  <p>Keadaan Kelas</p>
-</header>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <h3>Menu Wali Kelas</h3>
+    <a href="#">Pengumuman</a>
+    <a href="#">Curhat Siswa</a>
+    <a href="#">Notulen</a>
+    <a href="#">Data Absensi</a>
+    <a href="#">Laporan Perkembangan</a>
 
-<div class="container">
+    <h3 style="margin-top:28px;">Menu Guru Wali</h3>
+    <a href="#">Profil Siswa</a>
+    <a href="#">Rekap Nilai</a>
+    <a href="#">Pelanggaran / Poin</a>
+    <a href="#">Jadwal Konsultasi</a>
 
-<!-- KEADAAN KELAS -->
-<div class="card">
-<h3>Keadaan Kelas</h3>
-<table>
-<tr><th>Jenis</th><th>Jumlah</th></tr>
-<tr><td>Laki-laki</td><td id="lk">0</td></tr>
-<tr><td>Perempuan</td><td id="pr">0</td></tr>
-<tr><th>Jumlah</th><th id="total">0</th></tr>
-</table>
+    <button style="margin-top:30px;background:#ff5d5d;color:#fff;border:none;padding:10px 14px;border-radius:8px;width:100%;">
+      Logout
+    </button>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="content">
+
+    <!-- HEADER -->
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
+      <img src="assets/logo.png" style="width:48px;height:48px;object-fit:contain;" />
+      <div>
+        <h2 style="margin:0;color:#0A4FA3">Dashboard Wali Kelas</h2>
+        <div style="color:#6c7a89;">Data Siswa (Sheet: DATA)</div>
+      </div>
+    </div>
+
+    <!-- CARD DATA -->
+    <div class="card">
+
+      <input type="text" id="search" placeholder="Cari data..." onkeyup="filterTable()">
+
+      <table id="tabelData">
+        <thead id="thead"></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+
+    </div>
+
+  </div>
 </div>
 
-<!-- UMUR -->
-<div class="card">
-<h3>Jumlah Anak Berdasarkan Umur</h3>
-<table>
-<tr><th>Umur</th><th>Jumlah</th></tr>
-<tr><td>11 Tahun</td><td id="u11">0</td></tr>
-<tr><td>12 Tahun</td><td id="u12">0</td></tr>
-<tr><td>13 Tahun</td><td id="u13">0</td></tr>
-<tr><td>14 Tahun</td><td id="u14">0</td></tr>
-<tr><td>15 Tahun</td><td id="u15">0</td></tr>
-<tr><th>Jumlah Siswa</th><th id="total2">0</th></tr>
-</table>
-</div>
-
-</div>
-
+<!-- ================= GOOGLE SHEETS SCRIPT (TETAP) ================= -->
 <script>
 const sheetID = "1cSCzgeo-tD7QwDV-RUXTgb393LwyEwb9";
 const sheetName = "DATA";
+
 const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
 
 fetch(url)
   .then(res => res.text())
   .then(text => {
     const json = JSON.parse(text.substr(47).slice(0, -2));
-    const cols = json.table.cols.map(c => c.label);
+    const cols = json.table.cols;
     const rows = json.table.rows;
 
-    const idxJK = cols.indexOf("Jenis Kelamin");
-    const idxUmur = cols.indexOf("Umur");
+    // Header
+    let th = "<tr>";
+    cols.forEach(c => th += `<th>${c.label}</th>`);
+    th += "</tr>";
+    document.getElementById("thead").innerHTML = th;
 
-    let lk = 0, pr = 0;
-    let umur = {11:0,12:0,13:0,14:0,15:0};
-
+    // Body
+    let td = "";
     rows.forEach(r => {
-      const jk = r.c[idxJK]?.v?.toString().toLowerCase();
-      const u = parseInt(r.c[idxUmur]?.v);
-
-      if (jk === "l" || jk === "laki-laki") lk++;
-      if (jk === "p" || jk === "perempuan") pr++;
-
-      if (umur[u] !== undefined) umur[u]++;
+      td += "<tr>";
+      r.c.forEach(c => {
+        td += `<td>${c ? c.v : ""}</td>`;
+      });
+      td += "</tr>";
     });
-
-    document.getElementById("lk").innerText = lk;
-    document.getElementById("pr").innerText = pr;
-    document.getElementById("total").innerText = lk + pr;
-
-    document.getElementById("u11").innerText = umur[11];
-    document.getElementById("u12").innerText = umur[12];
-    document.getElementById("u13").innerText = umur[13];
-    document.getElementById("u14").innerText = umur[14];
-    document.getElementById("u15").innerText = umur[15];
-    document.getElementById("total2").innerText = lk + pr;
+    document.getElementById("tbody").innerHTML = td;
   });
+
+function filterTable() {
+  const input = document.getElementById("search").value.toLowerCase();
+  const rows = document.querySelectorAll("#tbody tr");
+
+  rows.forEach(row => {
+    row.style.display = row.innerText.toLowerCase().includes(input) ? "" : "none";
+  });
+}
 </script>
 
 </body>
