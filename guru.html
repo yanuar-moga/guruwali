@@ -213,29 +213,41 @@ function logout(){
 }
 
 /* ===== GOOGLE SHEET ===== */
-const SHEET_ID = "1HxpFxRiuyOehybcPh65mAtNQWrC1yi7iFZ1ZmDQnPZc";
+const SHEET_ID   = "1HxpFxRiuyOehybcPh65mAtNQWrC1yi7iFZ1ZmDQnPZc";
 const SHEET_NAME = "DATA";
 const URL = `https://opensheet.elk.sh/${SHEET_ID}/${SHEET_NAME}`;
 
 fetch(URL)
 .then(res => res.json())
 .then(data => {
-  let L=0,P=0,usia=0,kip=0,yatim=0;
 
-  data.forEach(r=>{
-    if(r.D){
-      if(r.D.toLowerCase().includes("l")) L++;
-      if(r.D.toLowerCase().includes("p")) P++;
-    }
-    if(r.G && !isNaN(r.G)) usia+=Number(r.G);
-    if(r.AC && r.AC.toLowerCase()=="ya") kip++;
-    if(r.AD && r.AD.toLowerCase()=="ya") yatim++;
+  let laki = 0, perempuan = 0;
+  let totalUsia = 0;
+  let kip = 0;
+  let yatim = 0;
+
+  data.forEach(s => {
+
+    if (s["JENIS KELAMIN"] === "Laki-laki") laki++;
+    if (s["JENIS KELAMIN"] === "Perempuan") perempuan++;
+
+    totalUsia += Number(s["USIA"]) || 0;
+
+    if (s["ADA KARTU KIP"] && s["ADA KARTU KIP"].trim() !== "") kip++;
+
+    if (s["YATIM/PIATU"] && s["YATIM/PIATU"].trim() !== "") yatim++;
   });
 
-  jk.innerText = `L: ${L} | P: ${P}`;
-  usia.innerText = usia+" Tahun";
-  kip.innerText = kip+" Siswa";
-  yatim.innerText = yatim+" Siswa";
+  document.getElementById("jk").innerText =
+    `${laki} L / ${perempuan} P`;
+
+  document.getElementById("usia").innerText = totalUsia + " Tahun";
+  document.getElementById("kip").innerText  = kip + " Siswa";
+  document.getElementById("yatim").innerText= yatim + " Siswa";
+})
+.catch(err=>{
+  console.error(err);
+  alert("Gagal memuat data siswa");
 });
 </script>
 
