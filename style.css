@@ -11,17 +11,23 @@
   border-bottom:1px solid rgba(255,255,255,.25);
 }
 
-/* LOGO FULL WIDTH (KAYA logo.png) */
-.brand-logo{
-  width:100%;
-  max-width:180px;          /* pas utk sidebar 240px */
-  height:auto;
-  object-fit:contain;
-  margin:0 auto 10px auto;
-  background:#ffffff;
-  padding:8px;
-  border-radius:12px;
-  box-shadow:0 6px 18px rgba(0,0,0,.15);
+/* LOGO FULL WIDTH (FORCE FIX - ANTI KECIL) */
+.sidebar .brand-logo{
+  display:block !important;
+
+  width:100% !important;
+  max-width:180px !important;     /* pas utk sidebar 240px */
+  min-width:160px !important;     /* PENTING: cegah 16px */
+  height:auto !important;
+
+  object-fit:contain !important;
+
+  margin:0 auto 10px auto !important;
+  padding:8px !important;
+
+  background:#ffffff !important;
+  border-radius:12px !important;
+  box-shadow:0 6px 18px rgba(0,0,0,.15) !important;
 }
 
 /* NAMA APLIKASI */
