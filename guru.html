@@ -109,14 +109,26 @@ body{
 </header>
 
 <div class="layout">
+ <!-- SIDEBAR -->
+  <div class="sidebar">
+    <h3>Menu Wali Kelas</h3>
+    <a href="strukturkelas.html">Struktur Kelas</a>
+    <a href="keadaankelas.html">Keadaan Kelas</a>
+    <a href="walikelas.html">Wali Kelas</a>
+    <a href="guru.html">Guru</a>
+    <a href="#">Laporan Perkembangan</a>
 
-<div class="sidebar">
-  <h3>Menu Wali Kelas</h3>
-  <a href="#">Struktur Kelas</a>
-  <a href="#">Keadaan Kelas</a>
-  <a href="#">Wali Kelas</a>
-  <a href="#">Guru</a>
-</div>
+    <h3 style="margin-top:28px;">Menu Guru Wali</h3>
+    <a href="biodata.html">Profil Siswa</a>
+    <a href="#">Rekap Nilai</a>
+    <a href="#">Pelanggaran / Poin</a>
+    <a href="#">Jadwal Konsultasi</a>
+
+    <button onclick="logout()"
+      style="margin-top:30px;background:#ff5d5d;color:#fff;border:none;padding:10px;border-radius:8px;width:100%;">
+      Logout
+    </button>
+  </div>
 
 <div class="content">
 
@@ -170,46 +182,25 @@ fetch(URL)
 
   data.forEach(r => {
 
-    /* ===== JENIS KELAMIN ===== */
-    const jk = (r["JENIS KELAMIN"] || r["Jenis Kelamin"] || "").toLowerCase();
+    /* ===== KOLUMN D : JENIS KELAMIN ===== */
+    const jk = (r.D || "").toString().toLowerCase();
     if(jk.startsWith("l")) L++;
     if(jk.startsWith("p")) P++;
 
-    /* ===== USIA ===== */
-    const usia = Number(r["USIA"] || r["Usia"]);
+    /* ===== KOLUMN G : USIA ===== */
+    const usia = Number(r.G);
     if(usia === 12) u12++;
     if(usia === 13) u13++;
     if(usia === 14) u14++;
     if(usia === 15) u15++;
 
-    /* ===== PEMILIK KIP ===== */
-    const kipVal = (
-      r["PEMILIK KIP"] ||
-      r["KIP"] ||
-      r["ADA KIP"] ||
-      ""
-    ).toString().toLowerCase();
-
-    if(
-      kipVal.includes("ya") ||
-      kipVal.includes("ada") ||
-      kipVal.includes("punya")
-    ){
+    /* ===== KOLUMN AC : PEMILIK KIP ===== */
+    if(r.AC && r.AC.toString().trim() !== ""){
       kip++;
     }
 
-    /* ===== YATIM / PIATU ===== */
-    const yatimVal = (
-      r["YATIM / PIATU"] ||
-      r["YATIM-PIATU"] ||
-      r["YATIM"] ||
-      ""
-    ).toString().toLowerCase();
-
-    if(
-      yatimVal.includes("yatim") ||
-      yatimVal.includes("piatu")
-    ){
+    /* ===== KOLUMN AD : YATIM / PIATU ===== */
+    if(r.AD && r.AD.toString().trim() !== ""){
       yatim++;
     }
 
