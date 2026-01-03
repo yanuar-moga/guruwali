@@ -31,21 +31,8 @@ body{
   padding:5px;
   object-fit:contain;
 }
-.top-header h1{
-  margin:0;
-  font-size:18px;
-}
-.top-header p{
-  margin:0;
-  font-size:12px;
-  color:#e0e7ff;
-}
-
-.menu-toggle{
-  display:none;
-  font-size:22px;
-  cursor:pointer;
-}
+.top-header h1{margin:0;font-size:18px}
+.top-header p{margin:0;font-size:12px;color:#e0e7ff}
 
 /* ===== LAYOUT ===== */
 .layout{
@@ -84,11 +71,10 @@ body{
   display:grid;
   grid-template-columns:repeat(4,1fr);
   gap:16px;
-  margin-top:16px;
 }
 .stat-box{
   background:#f8fafc;
-  border-radius:10px;
+  border-radius:12px;
   padding:18px;
   text-align:center;
   box-shadow:0 4px 10px rgba(0,0,0,.05);
@@ -100,26 +86,13 @@ body{
 }
 .stat-box p{
   margin:0;
-  font-size:20px;
+  font-size:16px;
   font-weight:bold;
+  line-height:1.5;
 }
 
-@media(max-width:992px){
-  .layout{grid-template-columns:200px 1fr}
-}
 @media(max-width:768px){
-  .menu-toggle{display:block}
   .layout{grid-template-columns:1fr}
-  .sidebar{
-    position:fixed;
-    top:76px;
-    left:-260px;
-    width:240px;
-    height:100%;
-    transition:.3s;
-    z-index:99;
-  }
-  .sidebar.active{left:0}
   .stat-grid{grid-template-columns:1fr 1fr}
 }
 </style>
@@ -129,91 +102,66 @@ body{
 
 <!-- ===== HEADER ===== -->
 <header class="top-header">
-  <span class="menu-toggle" onclick="toggleSidebar()">☰</span>
   <img src="assets/mb.jpg">
   <div>
     <h1>Aplikasi Guru Wali</h1>
-    <p>Versi 1.0 (Build 03 Januari 2026) · Dev by MB</p>
+    <p>Versi 1.0 · Dev by MB</p>
   </div>
 </header>
 
 <div class="layout">
 
 <!-- ===== SIDEBAR ===== -->
-<div class="sidebar" id="sidebar">
+<div class="sidebar">
   <h3>Menu Wali Kelas</h3>
-  <a href="strukturkelas.html">Struktur Kelas</a>
-  <a href="keadaankelas.html">Keadaan Kelas</a>
-  <a href="walikelas.html">Wali Kelas</a>
-  <a href="guru.html">Guru</a>
-  <a href="#">Laporan Perkembangan</a>
-
-  <h3 style="margin-top:26px;">Menu Guru Wali</h3>
-  <a href="biodata.html">Profil Siswa</a>
-  <a href="#">Rekap Nilai</a>
-  <a href="#">Pelanggaran / Poin</a>
-  <a href="#">Jadwal Konsultasi</a>
-
-  <button onclick="logout()" style="margin-top:24px;width:100%;padding:10px;border:none;border-radius:8px;background:#ff5d5d;color:#fff;">
-    Logout
-  </button>
+  <a href="#">Struktur Kelas</a>
+  <a href="#">Keadaan Kelas</a>
+  <a href="#">Wali Kelas</a>
+  <a href="#">Guru</a>
 </div>
 
 <!-- ===== CONTENT ===== -->
 <div class="content">
 
-  <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
-    <img src="assets/logo.png" style="width:46px;height:46px;">
-    <div>
-      <h2 style="margin:0;color:#0A4FA3;">Dashboard Guru</h2>
-      <div style="color:#6c7a89;">Selamat datang, Bayu</div>
-    </div>
-  </div>
-
   <!-- ===== KEADAAN SISWA ===== -->
   <div class="card">
     <h3>Keadaan Siswa Per Kelas</h3>
     <div class="stat-grid">
+
       <div class="stat-box">
         <h4>👦👧 Jumlah Siswa</h4>
         <p id="jk">-</p>
       </div>
+
       <div class="stat-box">
-        <h4>🎂 Total Usia</h4>
+        <h4>🎂 Klasifikasi Usia</h4>
         <p id="usia">-</p>
       </div>
+
       <div class="stat-box">
         <h4>🎓 Pemilik KIP</h4>
         <p id="kip">-</p>
       </div>
+
       <div class="stat-box">
         <h4>🕊️ Yatim / Piatu</h4>
         <p id="yatim">-</p>
       </div>
+
     </div>
   </div>
 
   <!-- ===== JADWAL GURU ===== -->
   <div class="card">
     <h3>Jadwal Guru</h3>
-    <div style="text-align:center;">
-      <img src="foto/jadwal_guru.png" style="max-width:100%;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,.15);">
-    </div>
+    <img src="foto/jadwal_guru.png" style="max-width:100%;border-radius:10px">
   </div>
 
 </div>
 </div>
 
 <script>
-function toggleSidebar(){
-  document.getElementById("sidebar").classList.toggle("active");
-}
-function logout(){
-  window.location.href="index.html";
-}
-
-/* ===== GOOGLE SHEET ===== */
-const SHEET_ID   = "1HxpFxRiuyOehybcPh65mAtNQWrC1yi7iFZ1ZmDQnPZc";
+const SHEET_ID = "1HxpFxRiuyOehybcPh65mAtNQWrC1yi7iFZ1ZmDQnPZc";
 const SHEET_NAME = "DATA";
 const URL = `https://opensheet.elk.sh/${SHEET_ID}/${SHEET_NAME}`;
 
@@ -221,33 +169,49 @@ fetch(URL)
 .then(res => res.json())
 .then(data => {
 
-  let laki = 0, perempuan = 0;
-  let totalUsia = 0;
-  let kip = 0;
-  let yatim = 0;
+  let L=0, P=0;
+  let usia12=0, usia13=0, usia14=0, usia15=0;
+  let kip=0, yatim=0;
 
-  data.forEach(s => {
+  data.forEach(r=>{
+    // Kolom D = Jenis Kelamin
+    if(r.D){
+      if(r.D.toLowerCase().includes("l")) L++;
+      if(r.D.toLowerCase().includes("p")) P++;
+    }
 
-    if (s["JENIS KELAMIN"] === "Laki-laki") laki++;
-    if (s["JENIS KELAMIN"] === "Perempuan") perempuan++;
+    // Kolom G = Usia
+    if(r.G){
+      if(r.G==12) usia12++;
+      if(r.G==13) usia13++;
+      if(r.G==14) usia14++;
+      if(r.G==15) usia15++;
+    }
 
-    totalUsia += Number(s["USIA"]) || 0;
+    // Kolom AC = KIP
+    if(r.AC && r.AC.toLowerCase()=="ya") kip++;
 
-    if (s["ADA KARTU KIP"] && s["ADA KARTU KIP"].trim() !== "") kip++;
-
-    if (s["YATIM/PIATU"] && s["YATIM/PIATU"].trim() !== "") yatim++;
+    // Kolom AD = Yatim / Piatu
+    if(r.AD && r.AD.toLowerCase()=="ya") yatim++;
   });
 
-  document.getElementById("jk").innerText =
-    `${laki} L / ${perempuan} P`;
+  const total = L + P;
 
-  document.getElementById("usia").innerText = totalUsia + " Tahun";
-  document.getElementById("kip").innerText  = kip + " Siswa";
-  document.getElementById("yatim").innerText= yatim + " Siswa";
+  jk.innerHTML = `L: ${L} | P: ${P} <br>(Total: ${total})`;
+
+  usia.innerHTML = `
+    12 th: ${usia12}<br>
+    13 th: ${usia13}<br>
+    14 th: ${usia14}<br>
+    15 th: ${usia15}
+  `;
+
+  kip.innerText = kip + " Siswa";
+  yatim.innerText = yatim + " Siswa";
+
 })
-.catch(err=>{
-  console.error(err);
-  alert("Gagal memuat data siswa");
+.catch(()=>{
+  alert("Gagal memuat data Google Sheet");
 });
 </script>
 
