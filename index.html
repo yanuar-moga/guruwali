@@ -19,8 +19,8 @@
     <form id="loginForm" class="form">
 
       <label class="field">
-        <span class="label-text">User</span>
-        <input id="username" type="text" placeholder="Masukkan User" required />
+        <span class="label-text">User (Email)</span>
+        <input id="username" type="email" placeholder="Masukkan Email" required />
       </label>
 
       <label class="field">
@@ -43,13 +43,56 @@
 
 </main>
 
-<script src="script.js"></script>
+<!-- SHOW / HIDE PASSWORD -->
 <script>
-  // Tampilkan / sembunyikan password
-  document.getElementById('showPassword').addEventListener('change', function () {
-    const p = document.getElementById('password');
-    p.type = this.checked ? 'text' : 'password';
-  });
+document.getElementById('showPassword').addEventListener('change', function () {
+  const p = document.getElementById('password');
+  p.type = this.checked ? 'text' : 'password';
+});
+</script>
+
+<!-- FIREBASE AUTH LOGIN -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { 
+  getAuth,
+  signInWithEmailAndPassword,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+/* === CONFIG FIREBASE (PUNYA KAMU) === */
+const firebaseConfig = {
+  apiKey: "AIzaSyD_Dl5cdFBh_dyhkhthI2gclhWoz4ZHYls",
+  authDomain: "login-2f19a.firebaseapp.com",
+  projectId: "login-2f19a",
+  appId: "1:751593178422:web:1d36294b46d1a954b15f97"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+/* === JIKA SUDAH LOGIN, LANGSUNG KE DASHBOARD === */
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    window.location.replace("guru.html");
+  }
+});
+
+/* === PROSES LOGIN === */
+document.getElementById("loginForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const email = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+
+  signInWithEmailAndPassword(auth, email, password)
+    .then(() => {
+      window.location.href = "guru.html";
+    })
+    .catch((err) => {
+      alert("Login gagal:\n" + err.message);
+    });
+});
 </script>
 
 </body>
