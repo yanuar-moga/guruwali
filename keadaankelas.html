@@ -1,150 +1,50 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Keadaan Kelas</title>
-
-<style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f4f6f9;
-}
-.layout {
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  min-height: 100vh;
-}
-.sidebar {
-  background: #0A4FA3;
-  color: #fff;
-  padding: 20px;
-}
-.sidebar h3 {
-  margin-top: 0;
-}
-.sidebar a {
-  color: #fff;
-  text-decoration: none;
-  display: block;
-  padding: 8px 0;
-}
-.content {
-  padding: 22px;
-}
-.card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 6px 18px rgba(10,79,163,0.06);
-  margin-bottom: 20px;
-}
-h3 {
-  margin-top: 0;
-  color: #0A4FA3;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-th, td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: center;
-}
-th {
-  background: #0A4FA3;
-  color: white;
-}
-</style>
-</head>
-
-<body>
-<div class="layout">
-
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <h3>Menu Wali Kelas</h3>
-    <a href="index.html">Dashboard</a>
-    <a href="keadaan-kelas.html">Keadaan Kelas</a>
-    <a href="#">Data Absensi</a>
-    <a href="#">Rekap Nilai</a>
-
-    <button style="margin-top:30px;background:#ff5d5d;color:#fff;border:none;padding:10px 14px;border-radius:8px;width:100%;">
-      Logout
-    </button>
-  </div>
-
-  <!-- MAIN CONTENT -->
-  <div class="content">
-
-    <!-- HEADER -->
-    <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
-      <img src="assets/logo.png" style="width:48px;height:48px;object-fit:contain;" />
-      <div>
-        <h2 style="margin:0;color:#0A4FA3">Keadaan Kelas</h2>
-        <div style="color:#6c7a89;">Rekap otomatis dari Google Sheets</div>
-      </div>
-    </div>
-
-    <!-- KEADAAN KELAS -->
-    <div class="card">
-      <h3>Jumlah Anak Berdasarkan Jenis Kelamin</h3>
-      <table>
-        <tr><th>Jenis</th><th>Jumlah</th></tr>
-        <tr><td>Laki-laki</td><td id="lk">0</td></tr>
-        <tr><td>Perempuan</td><td id="pr">0</td></tr>
-        <tr><th>Jumlah</th><th id="totalJK">0</th></tr>
-      </table>
-    </div>
-
-    <!-- UMUR -->
-    <div class="card">
-      <h3>Jumlah Anak Berdasarkan Umur</h3>
-      <table>
-        <tr><th>Umur</th><th>Jumlah</th></tr>
-        <tr><td>11 Tahun</td><td id="u11">0</td></tr>
-        <tr><td>12 Tahun</td><td id="u12">0</td></tr>
-        <tr><td>13 Tahun</td><td id="u13">0</td></tr>
-        <tr><td>14 Tahun</td><td id="u14">0</td></tr>
-        <tr><td>15 Tahun</td><td id="u15">0</td></tr>
-        <tr><th>Jumlah Siswa</th><th id="totalUmur">0</th></tr>
-      </table>
-    </div>
-
-  </div>
-</div>
-
-<!-- ================= GOOGLE SHEETS ================= -->
 <script>
 const sheetID = "1cSCzgeo-tD7QwDV-RUXTgb393LwyEwb9";
 const sheetName = "DATA";
 const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
 
+function hitungUsia(tglLahir) {
+  const today = new Date();
+  const birth = new Date(tglLahir);
+
+  let usia = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+    usia--;
+  }
+  return usia;
+}
+
 fetch(url)
   .then(res => res.text())
   .then(text => {
     const json = JSON.parse(text.substr(47).slice(0, -2));
-    const cols = json.table.cols.map(c => c.label);
     const rows = json.table.rows;
-
-    const idxJK = cols.indexOf("Jenis Kelamin");
-    const idxUmur = cols.indexOf("Umur");
 
     let lk = 0, pr = 0;
     let umur = {11:0,12:0,13:0,14:0,15:0};
 
     rows.forEach(r => {
-      const jk = r.c[idxJK]?.v?.toString().toLowerCase();
-      const u = parseInt(r.c[idxUmur]?.v);
+
+      // === KOLOM D (Jenis Kelamin) ===
+      const jk = r.c[3]?.v?.toString().toLowerCase();
+
+      // === KOLOM F (Tanggal Lahir) ===
+      const tgl = r.c[5]?.v;
 
       if (jk === "l" || jk === "laki-laki") lk++;
       if (jk === "p" || jk === "perempuan") pr++;
 
-      if (umur[u] !== undefined) umur[u]++;
+      if (tgl) {
+        const usia = hitungUsia(tgl);
+        if (umur[usia] !== undefined) {
+          umur[usia]++;
+        }
+      }
     });
 
+    // === TAMPILKAN HASIL ===
     document.getElementById("lk").innerText = lk;
     document.getElementById("pr").innerText = pr;
     document.getElementById("totalJK").innerText = lk + pr;
@@ -157,6 +57,3 @@ fetch(url)
     document.getElementById("totalUmur").innerText = lk + pr;
   });
 </script>
-
-</body>
-</html>
