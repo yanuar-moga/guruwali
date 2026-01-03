@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Struktur Kelas</title>
 
 <style>
@@ -11,84 +11,124 @@ body {
   font-family: Arial, sans-serif;
   background: #f4f6f9;
 }
-header {
-  background: #0A4FA3;
-  color: white;
-  padding: 16px;
-  text-align: center;
+.layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 100vh;
 }
-.container {
+.sidebar {
+  background: #0A4FA3;
+  color: #fff;
   padding: 20px;
-  max-width: 900px;
-  margin: auto;
+}
+.sidebar h3 {
+  margin-top: 0;
+}
+.sidebar a {
+  color: #fff;
+  text-decoration: none;
+  display: block;
+  padding: 8px 0;
+}
+.content {
+  padding: 22px;
 }
 .card {
-  background: white;
+  background: #fff;
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  box-shadow: 0 6px 18px rgba(10,79,163,0.06);
+  margin-bottom: 20px;
 }
 table {
   width: 100%;
   border-collapse: collapse;
 }
-th, td {
-  border: 1px solid #ddd;
-  padding: 10px;
+table th, table td {
+  padding: 8px;
+  border: 1px solid #ccc;
 }
-th {
+table th {
   background: #0A4FA3;
   color: white;
 }
 select, textarea {
   width: 100%;
   padding: 6px;
-  font-size: 14px;
 }
 button {
   background: #0A4FA3;
   color: white;
   border: none;
-  padding: 10px 18px;
-  border-radius: 6px;
+  padding: 10px 16px;
+  border-radius: 8px;
   cursor: pointer;
 }
-button:hover {
-  opacity: 0.9;
+button.logout {
+  background: #ff5d5d;
+  width: 100%;
 }
 .note {
   font-size: 13px;
-  color: #666;
+  color: #6c7a89;
   margin-top: 8px;
 }
 </style>
 </head>
 
 <body>
+<div class="layout">
 
-<header>
-  <h2>Struktur Kelas</h2>
-  <p>Dropdown Nama Siswa + Log Perubahan</p>
-</header>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <h3>Menu Wali Kelas</h3>
+    <a href="pengumuman.html">Pengumuman</a>
+    <a href="curhatsiswa.html">Curhat Siswa</a>
+    <a href="notulen.html">Notulen</a>
+    <a href="#">Data Absensi</a>
+    <a href="#">Laporan Perkembangan</a>
 
-<div class="container">
-  <div class="card">
+    <h3 style="margin-top:28px;">Menu Guru Wali</h3>
+    <a href="biodata.html">Profil Siswa</a>
+    <a href="#">Rekap Nilai</a>
+    <a href="#">Pelanggaran / Poin</a>
+    <a href="#">Jadwal Konsultasi</a>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Jabatan</th>
-          <th>Nama Siswa</th>
-          <th>Tugas</th>
-        </tr>
-      </thead>
-      <tbody id="struktur"></tbody>
-    </table>
+    <button class="logout" onclick="logout()" style="margin-top:30px;">Logout</button>
+  </div>
 
-    <br>
-    <button onclick="simpan()">💾 Simpan & Catat Log</button>
-    <div class="note">
-      Setiap perubahan nama otomatis tercatat di Google Sheet (LOG).
+  <!-- MAIN CONTENT -->
+  <div class="content">
+
+    <!-- HEADER -->
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
+      <img src="assets/logo.png" style="width:48px;height:48px;object-fit:contain;" />
+      <div>
+        <h2 style="margin:0;color:#0A4FA3">Struktur Kelas</h2>
+        <div style="color:#6c7a89;">Selamat datang, Bayu</div>
+      </div>
+    </div>
+
+    <!-- KONTEN STRUKTUR -->
+    <div class="card">
+      <h3>Pengurus Kelas</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Jabatan</th>
+            <th>Nama Siswa</th>
+            <th>Tugas</th>
+          </tr>
+        </thead>
+        <tbody id="struktur"></tbody>
+      </table>
+
+      <br>
+      <button onclick="simpan()">💾 Simpan & Catat Log</button>
+      <div class="note">
+        Setiap perubahan nama otomatis tercatat di Google Sheet (LOG).
+      </div>
     </div>
 
   </div>
@@ -109,15 +149,15 @@ const sheetURL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx
 // ==============================
 const strukturDefault = [
   ["Wali Kelas", "Pak Bayu", "Membimbing dan membina siswa dalam aspek akademik dan non-akademik."],
-  ["Ketua Kelas", "", "Mengkoordinasi kegiatan kelas dan menjadi penghubung guru dan siswa."],
-  ["Wakil Ketua Kelas", "", "Membantu ketua kelas dan menggantikannya jika berhalangan."],
-  ["Sekretaris I", "", "Mencatat dan mengelola administrasi kelas."],
-  ["Sekretaris II", "", "Membantu sekretaris I dalam administrasi."],
+  ["Ketua Kelas", "", "Mengkoordinasi kegiatan kelas."],
+  ["Wakil Ketua Kelas", "", "Membantu ketua kelas."],
+  ["Sekretaris I", "", "Administrasi kelas."],
+  ["Sekretaris II", "", "Membantu administrasi."],
   ["Bendahara I", "", "Mengelola keuangan kelas."],
-  ["Bendahara II", "", "Membantu bendahara I."],
-  ["Seksi Keamanan", "", "Menjaga keamanan dan ketertiban kelas."],
+  ["Bendahara II", "", "Membantu bendahara."],
+  ["Seksi Keamanan", "", "Menjaga keamanan kelas."],
   ["Seksi Kebersihan", "", "Mengatur kebersihan kelas."],
-  ["Seksi Humas / Keagamaan", "", "Mengorganisir kegiatan keagamaan."]
+  ["Seksi Humas / Keagamaan", "", "Mengelola kegiatan keagamaan."]
 ];
 
 let daftarSiswa = [];
@@ -132,7 +172,7 @@ fetch(sheetURL)
     const rows = json.table.rows;
 
     rows.forEach(r => {
-      const nama = r.c[1]?.v; // KOLOM B
+      const nama = r.c[1]?.v;
       if (nama) daftarSiswa.push(nama);
     });
 
@@ -140,7 +180,7 @@ fetch(sheetURL)
   });
 
 // ==============================
-// RENDER TABEL
+// RENDER
 // ==============================
 function render() {
   const tbody = document.getElementById("struktur");
@@ -151,22 +191,14 @@ function render() {
   data.forEach((row, i) => {
     let opsi = `<option value="">-- Pilih Siswa --</option>`;
     daftarSiswa.forEach(n => {
-      const sel = n === row[1] ? "selected" : "";
-      opsi += `<option ${sel}>${n}</option>`;
+      opsi += `<option ${n === row[1] ? "selected" : ""}>${n}</option>`;
     });
 
     tbody.innerHTML += `
       <tr>
         <td>${row[0]}</td>
-        <td>
-          ${i === 0
-            ? `<b>${row[1]}</b>`
-            : `<select id="nama${i}">${opsi}</select>`
-          }
-        </td>
-        <td>
-          <textarea id="tugas${i}" rows="2">${row[2]}</textarea>
-        </td>
+        <td>${i === 0 ? `<b>${row[1]}</b>` : `<select id="nama${i}">${opsi}</select>`}</td>
+        <td><textarea id="tugas${i}" rows="2">${row[2]}</textarea></td>
       </tr>
     `;
   });
@@ -199,7 +231,12 @@ function simpan() {
   });
 
   localStorage.setItem("strukturKelas", JSON.stringify(baru));
-  alert("✅ Data struktur tersimpan & log tercatat");
+  alert("✅ Struktur kelas tersimpan & log tercatat");
+}
+
+function logout(){
+  localStorage.removeItem('gw_ann_session_v3');
+  window.location.href='index.html';
 }
 </script>
 
