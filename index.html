@@ -4,63 +4,154 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Login - Aplikasi Guru Wali</title>
-<link rel="stylesheet" href="style.css" />
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg,#e3f2fd,#bbdefb);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* CARD */
+.login-card {
+  width: 360px;
+  background: #fff;
+  border-radius: 18px;
+  padding: 28px 26px 22px;
+  box-shadow: 0 12px 30px rgba(0,0,0,.15);
+  text-align: center;
+}
+
+/* LOGO */
+.logo {
+  width: 80px;
+  margin-bottom: 10px;
+}
+
+.title {
+  margin: 6px 0 18px;
+  color: #0A4FA3;
+  font-size: 22px;
+}
+
+/* FORM */
+.form {
+  text-align: left;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 14px;
+}
+
+.label-text {
+  font-size: 13px;
+  margin-bottom: 5px;
+  color: #444;
+}
+
+input[type="email"],
+input[type="password"] {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  outline: none;
+}
+
+input:focus {
+  border-color: #0A4FA3;
+}
+
+/* SHOW PASSWORD */
+.show-pass {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  margin: 6px 0 18px;
+}
+
+/* BUTTON */
+.btn-primary {
+  width: 100%;
+  padding: 11px;
+  background: #0A4FA3;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: #083d82;
+}
+
+/* FOOTER */
+.footer {
+  margin-top: 18px;
+  font-size: 12px;
+  color: #777;
+}
+</style>
 </head>
 
 <body>
 
-<main class="page-center">
+<div class="login-card">
 
-  <div class="login-card">
+  <img src="assets/logo.png" alt="Logo Sekolah" class="logo" />
+  <h1 class="title">Aplikasi Guru Wali</h1>
 
-    <img src="assets/logo.png" alt="Logo Sekolah" class="logo" />
-    <h1 class="title">Aplikasi Guru Wali</h1>
+  <form id="loginForm" class="form">
 
-    <form id="loginForm" class="form">
+    <div class="field">
+      <span class="label-text">User (Email)</span>
+      <input id="username" type="email" placeholder="Masukkan Email" required />
+    </div>
 
-      <label class="field">
-        <span class="label-text">User (Email)</span>
-        <input id="username" type="email" placeholder="Masukkan Email" required />
-      </label>
+    <div class="field">
+      <span class="label-text">Password</span>
+      <input id="password" type="password" placeholder="Masukkan Password" required />
+    </div>
 
-      <label class="field">
-        <span class="label-text">Password</span>
-        <input id="password" type="password" placeholder="Masukkan password" required />
-      </label>
+    <div class="show-pass">
+      <input type="checkbox" id="showPassword" />
+      <label for="showPassword">Tampilkan Password</label>
+    </div>
 
-      <div class="show-pass">
-        <input type="checkbox" id="showPassword" />
-        <label for="showPassword">Tampilkan Password</label>
-      </div>
+    <button type="submit" class="btn-primary">Masuk</button>
 
-      <button type="submit" class="btn-primary">Masuk</button>
+  </form>
 
-    </form>
+  <div class="footer">© 2025 MB All Rights Reserved</div>
 
-    <div class="footer">© 2025 MB All Rights Reserved</div>
-
-  </div>
-
-</main>
+</div>
 
 <!-- SHOW / HIDE PASSWORD -->
 <script>
 document.getElementById('showPassword').addEventListener('change', function () {
-  const p = document.getElementById('password');
-  p.type = this.checked ? 'text' : 'password';
+  document.getElementById('password').type = this.checked ? 'text' : 'password';
 });
 </script>
 
 <!-- FIREBASE AUTH LOGIN -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { 
-  getAuth,
-  signInWithEmailAndPassword,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-/* === CONFIG FIREBASE (PUNYA KAMU) === */
 const firebaseConfig = {
   apiKey: "AIzaSyD_Dl5cdFBh_dyhkhthI2gclhWoz4ZHYls",
   authDomain: "login-2f19a.firebaseapp.com",
@@ -71,27 +162,21 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-/* === JIKA SUDAH LOGIN, LANGSUNG KE DASHBOARD === */
+/* JIKA SUDAH LOGIN */
 onAuthStateChanged(auth, (user) => {
-  if (user) {
-    window.location.replace("guru.html");
-  }
+  if (user) window.location.replace("guru.html");
 });
 
-/* === PROSES LOGIN === */
-document.getElementById("loginForm").addEventListener("submit", (e) => {
+/* LOGIN */
+document.getElementById("loginForm").addEventListener("submit", e => {
   e.preventDefault();
-
-  const email = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
-
-  signInWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      window.location.href = "guru.html";
-    })
-    .catch((err) => {
-      alert("Login gagal:\n" + err.message);
-    });
+  signInWithEmailAndPassword(
+    auth,
+    username.value,
+    password.value
+  )
+  .then(() => window.location.href = "guru.html")
+  .catch(err => alert("Login gagal:\n" + err.message));
 });
 </script>
 
