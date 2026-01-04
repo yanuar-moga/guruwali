@@ -46,13 +46,14 @@ body{
   min-height:calc(100vh - 76px);
 }
 
-/* ===== SIDEBAR ===== */
+/* ===== SIDEBAR (REVISI) ===== */
 .sidebar{
   background:#0A4FA3;
   color:#fff;
   padding:18px;
 }
 
+/* SEKAT / GRID MENU */
 .menu-group{
   background:rgba(255,255,255,.10);
   border-radius:14px;
@@ -63,12 +64,14 @@ body{
     0 4px 10px rgba(0,0,0,.18);
 }
 
+/* JUDUL */
 .menu-group h3{
   margin:0 0 10px;
   font-size:14px;
   font-weight:bold;
 }
 
+/* TOMBOL MENU UTAMA */
 .menu-group .menu-title{
   background:#ffffff;
   color:#0A4FA3;
@@ -80,6 +83,7 @@ body{
   margin-bottom:8px;
 }
 
+/* SUB MENU */
 .sub-menu{
   margin-left:18px;
 }
@@ -117,6 +121,7 @@ body{
   margin-bottom:20px;
 }
 
+/* ===== STAT GRID ===== */
 .stat-grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -150,7 +155,7 @@ body{
 
 <body>
 
-<!-- ===== FIREBASE AUTH ===== -->
+<!-- ===== FIREBASE AUTH PROTECTION ===== -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut }
@@ -185,9 +190,8 @@ window.logout = function(){
 
 <div class="layout">
 
-<!-- ===== SIDEBAR ===== -->
-<div class="sidebar">
-
+  <!-- ===== SIDEBAR ===== -->
+  <div class="sidebar">
   <!-- HOME (BARU) -->
   <div class="menu-group">
     <h3>Dashboard</h3>
@@ -196,81 +200,81 @@ window.logout = function(){
       <a href="dashboard.html">Home</a>
     </div>
   </div>
-
-  <div class="menu-group">
-    <h3>Guru Informatika</h3>
-    <div class="menu-title">Menu</div>
-    <div class="sub-menu">
-      <a href="modul.html">Modul Ajar</a>
-      <a href="asesmen.html">Asesmen / Kuis</a>
-      <a href="nilai-informatika.html">Rekap Nilai</a>
-      <a href="proyek.html">Proyek Siswa</a>
+   
+    <div class="menu-group">
+      <h3>Guru Informatika</h3>
+      <div class="menu-title">Menu</div>
+      <div class="sub-menu">
+        <a href="modul.html">Modul Ajar</a>
+        <a href="asesmen.html">Asesmen / Kuis</a>
+        <a href="nilai-informatika.html">Rekap Nilai</a>
+        <a href="proyek.html">Proyek Siswa</a>
+      </div>
     </div>
+
+    <div class="menu-group">
+      <h3>Guru Wali</h3>
+      <div class="menu-title">Menu</div>
+      <div class="sub-menu">
+        <a href="guruwali/profil-siswa.html">Profil Siswa</a>
+        <a href="guruwali/perkembangan.html">Perkembangan Akademik</a>
+        <a href="guruwali/catatan.html">Catatan Perilaku</a>
+        <a href="guruwali/konsultasi.html">Jadwal Konsultasi</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <h3>Wali Kelas</h3>
+      <div class="menu-title">Menu</div>
+      <div class="sub-menu">
+        <a href="walikelas/strukturkelas.html">Struktur Kelas</a>
+         <a href="walikelas/biodata.html">Kartu Siswa</a>
+        <a href="walikelas/datasiswa.html">Tabel Data Siswa</a>
+        <a href="walikelas/keadaankelas.html">Keadaan Kelas</a>
+        <a href="walikelas/absensi.html">Rekap Absensi</a>
+        <a href="walikelas/laporan.html">Laporan Perkembangan</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <h3>Pembina Ekstra</h3>
+      <div class="menu-title">Menu</div>
+      <div class="sub-menu">
+        <a href="ekstra/ekstra.html">Data Ekstrakurikuler</a>
+        <a href="ekstra/anggota-ekstra.html">Anggota Ekskul</a>
+        <a href="ekstra/jadwal-ekstra.html">Jadwal Latihan</a>
+        <a href="ekstra/prestasi-ekstra.html">Prestasi</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <h3>Admin Website</h3>
+      <div class="menu-title">Menu</div>
+      <div class="sub-menu">
+        <a href="admin/user.html">Manajemen User</a>
+        <a href="admin/kelas.html">Manajemen Kelas</a>
+        <a href="admin/siswa.html">Data Siswa</a>
+        <a href="admin/setting.html">Pengaturan</a>
+      </div>
+    </div>
+
+<button onclick="logout()"
+  style="margin-top:10px;background:#ff5d5d;color:#fff;border:none;padding:10px;border-radius:12px;width:100%;font-weight:bold;">
+  Logout
+</button>
+
   </div>
 
-  <div class="menu-group">
-    <h3>Guru Wali</h3>
-    <div class="menu-title">Menu</div>
-    <div class="sub-menu">
-      <a href="guruwali/profil-siswa.html">Profil Siswa</a>
-      <a href="guruwali/perkembangan.html">Perkembangan Akademik</a>
-      <a href="guruwali/catatan.html">Catatan Perilaku</a>
-      <a href="guruwali/konsultasi.html">Jadwal Konsultasi</a>
-    </div>
-  </div>
-
-  <div class="menu-group">
-    <h3>Wali Kelas</h3>
-    <div class="menu-title">Menu</div>
-    <div class="sub-menu">
-      <a href="walikelas/strukturkelas.html">Struktur Kelas</a>
-      <a href="walikelas/biodata.html">Kartu Siswa</a>
-      <a href="walikelas/datasiswa.html">Tabel Data Siswa</a>
-      <a href="walikelas/keadaankelas.html">Keadaan Kelas</a>
-      <a href="walikelas/absensi.html">Rekap Absensi</a>
-      <a href="walikelas/laporan.html">Laporan Perkembangan</a>
-    </div>
-  </div>
-
-  <div class="menu-group">
-    <h3>Pembina Ekstra</h3>
-    <div class="menu-title">Menu</div>
-    <div class="sub-menu">
-      <a href="ekstra/ekstra.html">Data Ekstrakurikuler</a>
-      <a href="ekstra/anggota-ekstra.html">Anggota Ekskul</a>
-      <a href="ekstra/jadwal-ekstra.html">Jadwal Latihan</a>
-      <a href="ekstra/prestasi-ekstra.html">Prestasi</a>
-    </div>
-  </div>
-
-  <div class="menu-group">
-    <h3>Admin Website</h3>
-    <div class="menu-title">Menu</div>
-    <div class="sub-menu">
-      <a href="admin/user.html">Manajemen User</a>
-      <a href="admin/kelas.html">Manajemen Kelas</a>
-      <a href="admin/siswa.html">Data Siswa</a>
-      <a href="admin/setting.html">Pengaturan</a>
-    </div>
-  </div>
-
-  <button onclick="logout()"
-    style="margin-top:10px;background:#ff5d5d;color:#fff;border:none;padding:10px;border-radius:12px;width:100%;font-weight:bold;">
-    Logout
-  </button>
-
-</div>
-
-<!-- ===== CONTENT (DASHBOARD TIDAK DIUBAH) ===== -->
+<!-- ===== CONTENT ===== -->
 <div class="content">
 
-  <!-- DATA INFORMATIKA -->
+  <!-- === DATA SISWA MAPEL INFORMATIKA === -->
   <div class="card info-single">
     <h3>📘 Data Siswa Mapel Informatika</h3>
     <p id="info_informatika">Memuat...</p>
   </div>
 
-  <!-- DATA GURU WALI -->
+  <!-- === DATA GURU WALI === -->
   <div class="card">
     <h3>🧑‍🏫 Data Guru Wali</h3>
     <div class="stat-grid">
@@ -285,19 +289,175 @@ window.logout = function(){
     </div>
   </div>
 
-  <!-- DATA WALI KELAS -->
+  <!-- === DATA WALI KELAS === -->
   <div class="card">
     <h3>🏫 Data Wali Kelas</h3>
     <div class="stat-grid">
-      <div class="stat-box"><h4>👦👧 Jumlah Siswa</h4><p id="jk">Memuat...</p></div>
-      <div class="stat-box"><h4>🎂 Klasifikasi Usia</h4><p id="usia">Memuat...</p></div>
-      <div class="stat-box"><h4>🎓 Pemilik KIP</h4><p id="kip">Memuat...</p></div>
-      <div class="stat-box"><h4>🕊️ Yatim / Piatu</h4><p id="yatim">Memuat...</p></div>
+
+      <div class="stat-box">
+        <h4>👦👧 Jumlah Siswa</h4>
+        <p id="jk">Memuat...</p>
+      </div>
+
+      <div class="stat-box">
+        <h4>🎂 Klasifikasi Usia</h4>
+        <p id="usia">Memuat...</p>
+      </div>
+
+      <div class="stat-box">
+        <h4>🎓 Pemilik KIP</h4>
+        <p id="kip">Memuat...</p>
+      </div>
+
+      <div class="stat-box">
+        <h4>🕊️ Yatim / Piatu</h4>
+        <p id="yatim">Memuat...</p>
+      </div>
+
     </div>
   </div>
 
 </div>
 
-</div>
+
+<script>
+// =======================
+// 1️⃣ DATA MAPEL INFORMATIKA (GRID MODE)
+// =======================
+const URL_INFO = "https://opensheet.elk.sh/1rQcTtSG2Q_PX_CEx_NC2Cs5eb8CXxXBEsxqiVSNze2Q/DATA";
+
+fetch(URL_INFO)
+.then(res => res.json())
+.then(data => {
+
+  const kelas = {};
+  let totalL = 0;
+  let totalP = 0;
+
+  data.forEach(r => {
+    const rombel = (r["Rombel"] || "").trim();
+    const jk = (r["Jenis Kelamin"] || "").toLowerCase();
+
+    if (!rombel) return;
+
+    if (!kelas[rombel]) {
+      kelas[rombel] = { L: 0, P: 0 };
+    }
+
+    if (jk.startsWith("l")) {
+      kelas[rombel].L++;
+      totalL++;
+    }
+    if (jk.startsWith("p")) {
+      kelas[rombel].P++;
+      totalP++;
+    }
+  });
+
+  const listKelas = Object.keys(kelas).sort();
+
+  // 🔥 GRID MODE (4 KOLOM)
+  let html = `<div class="stat-grid">`;
+
+  listKelas.forEach(k => {
+    const L = kelas[k].L;
+    const P = kelas[k].P;
+    const T = L + P;
+
+    html += `
+      <div class="stat-box">
+        <h4>📘 Kelas ${k}</h4>
+        L : ${L}<br>
+        P : ${P}<br>
+        <b>Total : ${T}</b>
+      </div>
+    `;
+  });
+
+  html += `</div>
+  <hr>
+  <b>Siswa Laki-laki :</b> ${totalL}<br>
+  <b>Siswa Perempuan :</b> ${totalP}<br>
+  <b>Total :</b> ${totalL + totalP}
+  `;
+
+  document.getElementById("info_informatika").innerHTML = html;
+
+})
+.catch(() => {
+  document.getElementById("info_informatika").innerText = "Gagal memuat data";
+});
+
+// =======================
+// 2️⃣ DATA GURU WALI  
+// =======================
+const URL_WALI = "https://opensheet.elk.sh/1wKL5eDFA1LpU3Il5q-eChpdwQ-sUws2wJsVja3H95Hw/DATA";
+
+fetch(URL_WALI)
+.then(res => res.json())
+.then(data => {
+
+  let L = 0;
+  let P = 0;
+
+  data.forEach(r => {
+    const jk = (r["JENIS KELAMIN"] || "").toLowerCase();
+    if (jk.startsWith("l")) L++;
+    if (jk.startsWith("p")) P++;
+  });
+
+  document.getElementById("wali_L").innerText = L;
+  document.getElementById("wali_P").innerText = P;
+
+})
+.catch(() => {
+  document.getElementById("wali_L").innerText = "Gagal";
+  document.getElementById("wali_P").innerText = "Gagal";
+});
+
+  
+// =======================
+// 3️⃣ DATA WALI KELAS
+// =======================
+fetch("https://opensheet.elk.sh/1HxpFxRiuyOehybcPh65mAtNQWrC1yi7iFZ1ZmDQnPZc/DATA")
+.then(res => res.json())
+.then(data => {
+
+  let L = 0, P = 0;
+  let usia = {12:0,13:0,14:0,15:0};
+  let kip = 0, yatim = 0;
+
+  data.forEach(r => {
+
+    // ✅ AMBIL KOLOM D (JENIS KELAMIN)
+    const jk = (r["JENIS KELAMIN"] || "").toLowerCase().trim();
+
+    if (jk.startsWith("l")) L++;   // L / Laki-laki
+    if (jk.startsWith("p")) P++;   // P / Perempuan
+
+    const u = Number(r["USIA"]);
+    if (usia[u] !== undefined) usia[u]++;
+
+    if ((r["ADA KARTU KIP"] || "").toUpperCase().trim() === "KIP") kip++;
+    if ((r["YATIM/PIATU"] || "").trim() !== "") yatim++;
+  });
+
+  // 👦👧 JUMLAH SISWA
+  document.getElementById("jk").innerHTML =
+    `L:${L} | P:${P}<br>(Total:${L + P})`;
+
+  // 🎂 USIA
+  document.getElementById("usia").innerHTML =
+    `12:${usia[12]}<br>13:${usia[13]}<br>14:${usia[14]}<br>15:${usia[15]}`;
+
+  // 🎓 KIP & 🕊️ YATIM
+  document.getElementById("kip").innerText = kip + " Siswa";
+  document.getElementById("yatim").innerText = yatim + " Siswa";
+})
+.catch(() => {
+  document.getElementById("jk").innerText = "Gagal memuat data";
+});
+</script>
+
 </body>
 </html>
