@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dashboard Guru</title>
+
+<meta http-equiv="Cache-Control" content="no-store" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#f4f6f9;
+}
+
+/* ===== TOP HEADER ===== */
+.top-header{
+  display:flex;
+  align-items:center;
+  gap:15px;
+  background:#2563eb;
+  padding:14px 18px;
+  box-shadow:0 3px 8px rgba(0,0,0,.3);
+  color:#fff;
+}
+.top-header img{
+  width:48px;
+  height:48px;
+  border-radius:10px;
+  background:#fff;
+  padding:5px;
+  object-fit:contain;
+}
+.top-header h1{margin:0;font-size:18px}
+.top-header p{margin:0;font-size:12px;color:#e0e7ff}
+
+/* ===== LAYOUT ===== */
+.layout{
+  display:grid;
+  grid-template-columns:240px 1fr;
+  min-height:calc(100vh - 76px);
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar{
+  background:#0A4FA3;
+  color:#fff;
+  padding:18px;
+}
+
+.menu-group{
+  background:rgba(255,255,255,.10);
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:16px;
+  box-shadow:
+    inset 0 1px 2px rgba(255,255,255,.25),
+    0 4px 10px rgba(0,0,0,.18);
+}
+.menu-group h3{
+  margin:0 0 10px;
+  font-size:14px;
+  font-weight:bold;
+}
+.menu-group .menu-title{
+  background:#ffffff;
+  color:#0A4FA3;
+  padding:8px 12px;
+  border-radius:10px;
+  font-size:13px;
+  font-weight:bold;
+  box-shadow:0 3px 0 #c7d2fe;
+  margin-bottom:8px;
+}
+.sub-menu{margin-left:18px}
+.sub-menu a{
+  display:block;
+  color:#e0e7ff;
+  text-decoration:none;
+  font-size:13px;
+  padding:4px 0 4px 18px;
+  position:relative;
+}
+.sub-menu a::before{
+  content:"▶";
+  position:absolute;
+  left:0;
+  font-size:11px;
+}
+.sub-menu a:hover{text-decoration:underline}
+
+/* ===== CONTENT ===== */
+.content{padding:22px}
+
+/* ===== CARD UMUM ===== */
+.card{
+  background:#fff;
+  border-radius:16px;
+  padding:22px;
+  box-shadow:0 8px 22px rgba(0,0,0,.08);
+  margin-bottom:24px;
+}
+
+/* ===== INFORMATIKA (KHUSUS) ===== */
+.info-single h3{
+  margin-top:0;
+  font-size:18px;
+  color:#1e3a8a;
+  margin-bottom:16px;
+}
+
+/* GRID KELAS */
+.stat-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:18px;
+  margin-top:10px;
+}
+
+/* KARTU KELAS */
+.stat-box{
+  background:#f8fafc;
+  border-radius:16px;
+  padding:18px;
+  box-shadow:0 6px 16px rgba(0,0,0,.08);
+  border-left:6px solid #2563eb;
+  transition:.25s;
+}
+.stat-box:hover{
+  transform:translateY(-4px);
+  box-shadow:0 12px 26px rgba(0,0,0,.15);
+}
+.stat-box h4{
+  margin:0 0 10px;
+  font-size:15px;
+  color:#1e40af;
+}
+.stat-box b{
+  display:block;
+  margin-top:8px;
+  background:#2563eb;
+  color:#fff;
+  padding:6px;
+  border-radius:8px;
+  text-align:center;
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  .layout{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut }
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD_Dl5cdFBh_dyhkhthI2gclhWoz4ZHYls",
+  authDomain: "login-2f19a.firebaseapp.com",
+  projectId: "login-2f19a",
+  appId: "1:751593178422:web:1d36294b46d1a954b15f97"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+onAuthStateChanged(auth, user => {
+  if (!user) window.location.replace("index.html");
+});
+
+window.logout = function(){
+  signOut(auth).then(() => {
+    window.location.href = "https://yanuar-moga.github.io/guruwali/";
+  });
+};
+</script>
+
+<header class="top-header">
+  <img src="assets/mb.jpg">
+  <div>
+    <h1>Aplikasi Guru Wali</h1>
+    <p>Versi 1.0 · Dev by MB</p>
+  </div>
+</header>
+
+<div class="layout">
+
+<div class="sidebar">
+  <!-- SIDEBAR TETAP (TIDAK DIUBAH) -->
+</div>
+
+<div class="content">
+
+  <!-- === DATA SISWA MAPEL INFORMATIKA (REVISI TAMPILAN) === -->
+  <div class="card info-single">
+    <h3>📘 Data Siswa Mapel Informatika</h3>
+    <div id="info_informatika">Memuat...</div>
+  </div>
+
+</div>
+</div>
+
+<script>
+// ===== SCRIPT ASLI (TIDAK DIUBAH) =====
+const URL_INFO = "https://opensheet.elk.sh/1rQcTtSG2Q_PX_CEx_NC2Cs5eb8CXxXBEsxqiVSNze2Q/DATA";
+
+fetch(URL_INFO)
+.then(res => res.json())
+.then(data => {
+
+  const kelas = {};
+  let totalL = 0;
+  let totalP = 0;
+
+  data.forEach(r => {
+    const rombel = (r["Rombel"] || "").trim();
+    const jk = (r["Jenis Kelamin"] || "").toLowerCase();
+
+    if (!rombel) return;
+    if (!kelas[rombel]) kelas[rombel] = { L: 0, P: 0 };
+
+    if (jk.startsWith("l")) { kelas[rombel].L++; totalL++; }
+    if (jk.startsWith("p")) { kelas[rombel].P++; totalP++; }
+  });
+
+  let html = `<div class="stat-grid">`;
+
+  Object.keys(kelas).sort().forEach(k => {
+    const L = kelas[k].L;
+    const P = kelas[k].P;
+    html += `
+      <div class="stat-box">
+        <h4>📘 Kelas ${k}</h4>
+        👦 L : ${L}<br>
+        👧 P : ${P}
+        <b>Total ${L + P} Siswa</b>
+      </div>`;
+  });
+
+  html += `</div>
+  <hr style="margin:20px 0">
+  <b>Total Laki-laki :</b> ${totalL}<br>
+  <b>Total Perempuan :</b> ${totalP}<br>
+  <b>Total Keseluruhan :</b> ${totalL + totalP}`;
+
+  document.getElementById("info_informatika").innerHTML = html;
+});
+</script>
+
+</body>
+</html>
