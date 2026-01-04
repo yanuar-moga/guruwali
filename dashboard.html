@@ -46,20 +46,69 @@ body{
   min-height:calc(100vh - 76px);
 }
 
-/* ===== SIDEBAR ===== */
+/* ===== SIDEBAR (REVISI) ===== */
 .sidebar{
   background:#0A4FA3;
   color:#fff;
-  padding:20px;
+  padding:18px;
 }
-.sidebar h3{margin:16px 0 6px}
-.sidebar a{
+
+/* SEKAT / GRID MENU */
+.menu-group{
+  background:rgba(255,255,255,.10);
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:16px;
+  box-shadow:
+    inset 0 1px 2px rgba(255,255,255,.25),
+    0 4px 10px rgba(0,0,0,.18);
+}
+
+/* JUDUL */
+.menu-group h3{
+  margin:0 0 10px;
+  font-size:14px;
+  font-weight:bold;
+}
+
+/* TOMBOL MENU UTAMA */
+.menu-group .menu-title{
+  background:#ffffff;
+  color:#0A4FA3;
+  padding:8px 12px;
+  border-radius:10px;
+  font-size:13px;
+  font-weight:bold;
+  box-shadow:0 3px 0 #c7d2fe;
+  margin-bottom:8px;
+}
+
+/* SUB MENU */
+.sub-menu{
+  margin-left:18px;
+}
+
+.sub-menu a{
   display:block;
-  color:#fff;
+  color:#e0e7ff;
   text-decoration:none;
-  padding:6px 0;
+  font-size:13px;
+  padding:4px 0;
+  padding-left:18px;
+  position:relative;
 }
-.sidebar a:hover{opacity:.85}
+
+.sub-menu a::before{
+  content:"▶";
+  position:absolute;
+  left:0;
+  font-size:11px;
+  opacity:.85;
+}
+
+.sub-menu a:hover{
+  text-decoration:underline;
+}
 
 /* ===== CONTENT ===== */
 .content{padding:22px}
@@ -122,18 +171,12 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-/* 🔒 PROTEKSI HALAMAN */
 onAuthStateChanged(auth, user => {
-  if (!user) {
-    window.location.replace("index.html");
-  }
+  if (!user) window.location.replace("index.html");
 });
 
-/* 🔓 LOGOUT */
 window.logout = function(){
-  signOut(auth).then(() => {
-    window.location.replace("index.html");
-  });
+  signOut(auth).then(() => window.location.replace("index.html"));
 };
 </script>
 
@@ -150,40 +193,66 @@ window.logout = function(){
   <!-- ===== SIDEBAR ===== -->
   <div class="sidebar">
 
-    <h3>Guru Informatika</h3>
-    <a href="modul.html">Modul Ajar</a>
-    <a href="asesmen.html">Asesmen / Kuis</a>
-    <a href="nilai-informatika.html">Rekap Nilai</a>
-    <a href="proyek.html">Proyek Siswa</a>
+    <div class="menu-group">
+      <h3>Guru Informatika</h3>
+      <div class="menu-title">Menu</div>
+      <div class="sub-menu">
+        <a href="modul.html">Modul Ajar</a>
+        <a href="asesmen.html">Asesmen / Kuis</a>
+        <a href="nilai-informatika.html">Rekap Nilai</a>
+        <a href="proyek.html">Proyek Siswa</a>
+      </div>
+    </div>
 
-    <h3>Guru Wali</h3>
-    <a href="profil-siswa.html">Profil Siswa</a>
-    <a href="perkembangan.html">Perkembangan Akademik</a>
-    <a href="catatan.html">Catatan Perilaku</a>
-    <a href="konsultasi.html">Jadwal Konsultasi</a>
+    <div class="menu-group">
+      <h3>Guru Wali</h3>
+      <div class="menu-title">Menu</div>
+      <div class="sub-menu">
+        <a href="profil-siswa.html">Profil Siswa</a>
+        <a href="perkembangan.html">Perkembangan Akademik</a>
+        <a href="catatan.html">Catatan Perilaku</a>
+        <a href="konsultasi.html">Jadwal Konsultasi</a>
+      </div>
+    </div>
 
-    <h3>Wali Kelas</h3>
-    <a href="strukturkelas.html">Struktur Kelas</a>
-    <a href="keadaankelas.html">Keadaan Kelas</a>
-    <a href="absensi.html">Rekap Absensi</a>
-    <a href="laporan.html">Laporan Perkembangan</a>
+    <div class="menu-group">
+      <h3>Wali Kelas</h3>
+      <div class="menu-title">Menu</div>
+      <div class="sub-menu">
+        <a href="strukturkelas.html">Struktur Kelas</a>
+        <a href="keadaankelas.html">Keadaan Kelas</a>
+        <a href="absensi.html">Rekap Absensi</a>
+        <a href="laporan.html">Laporan Perkembangan</a>
+      </div>
+    </div>
 
-    <h3>Pembina Ekstra</h3>
-    <a href="ekstra.html">Data Ekstrakurikuler</a>
-    <a href="anggota-ekstra.html">Anggota Ekskul</a>
-    <a href="jadwal-ekstra.html">Jadwal Latihan</a>
-    <a href="prestasi-ekstra.html">Prestasi</a>
+    <div class="menu-group">
+      <h3>Pembina Ekstra</h3>
+      <div class="menu-title">Menu</div>
+      <div class="sub-menu">
+        <a href="ekstra.html">Data Ekstrakurikuler</a>
+        <a href="anggota-ekstra.html">Anggota Ekskul</a>
+        <a href="jadwal-ekstra.html">Jadwal Latihan</a>
+        <a href="prestasi-ekstra.html">Prestasi</a>
+      </div>
+    </div>
 
-    <h3>Admin Website</h3>
-    <a href="user.html">Manajemen User</a>
-    <a href="kelas.html">Manajemen Kelas</a>
-    <a href="siswa.html">Data Siswa</a>
-    <a href="setting.html">Pengaturan</a>
+    <div class="menu-group">
+      <h3>Admin Website</h3>
+      <div class="menu-title">Menu</div>
+      <div class="sub-menu">
+        <a href="user.html">Manajemen User</a>
+        <a href="kelas.html">Manajemen Kelas</a>
+        <a href="siswa.html">Data Siswa</a>
+        <a href="setting.html">Pengaturan</a>
+      </div>
+    </div>
 
-    <button onclick="logout()"
-      style="margin-top:30px;background:#ff5d5d;color:#fff;border:none;padding:10px;border-radius:8px;width:100%;">
+    <button onclick="logout"
+      style="margin-top:10px;background:#ff5d5d;color:#fff;border:none;padding:10px;border-radius:12px;width:100%;font-weight:bold;">
       Logout
     </button>
+
   </div>
 
   <!-- ===== CONTENT ===== -->
@@ -224,7 +293,6 @@ window.logout = function(){
   </div>
 </div>
 
-<!-- ===== DATA GOOGLE SHEET ===== -->
 <script>
 const URL = "https://opensheet.elk.sh/1HxpFxRiuyOehybcPh65mAtNQWrC1yi7iFZ1ZmDQnPZc/DATA";
 
