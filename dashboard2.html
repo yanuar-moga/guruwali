@@ -315,131 +315,136 @@ window.logout = function(){
 </div>
 
 <script>
-// =====================================================
-// 1️⃣ DATA MAPEL INFORMATIKA - MODE GRID TABEL (AKTIF)
-// =====================================================
-const URL_INFO = "https://opensheet.elk.sh/1rQcTtSG2Q_PX_CEx_NC2Cs5eb8CXxXBEsxqiVSNze2Q/DATA";
+document.addEventListener("DOMContentLoaded", () => {
 
-fetch(URL_INFO)
-.then(res => res.json())
-.then(data => {
+  // =====================================================
+  // 1️⃣ DATA MAPEL INFORMATIKA - GRID TABLE
+  // =====================================================
+  const URL_INFO = "https://opensheet.elk.sh/1rQcTtSG2Q_PX_CEx_NC2Cs5eb8CXxXBEsxqiVSNze2Q/DATA";
 
-  const kelas = {};
-  let totalL = 0, totalP = 0;
+  fetch(URL_INFO)
+  .then(res => res.json())
+  .then(data => {
 
-  data.forEach(r => {
-    const rombel = (r["Rombel"] || "").trim();
-    const jk = (r["Jenis Kelamin"] || "").toLowerCase();
-    if (!rombel) return;
+    const kelas = {};
+    let totalL = 0, totalP = 0;
 
-    if (!kelas[rombel]) kelas[rombel] = { L:0, P:0 };
-    if (jk.startsWith("l")) { kelas[rombel].L++; totalL++; }
-    if (jk.startsWith("p")) { kelas[rombel].P++; totalP++; }
-  });
+    data.forEach(r => {
+      const rombel = (r["Rombel"] || "").trim();
+      const jk = (r["Jenis Kelamin"] || "").toString().toLowerCase().trim();
 
-  let html = `
-  <div class="grid-table">
-    <div class="grid-cell grid-header">KELAS</div>
-    <div class="grid-cell grid-header">L</div>
-    <div class="grid-cell grid-header">P</div>
-    <div class="grid-cell grid-header">JML</div>
-  `;
+      if (!rombel) return;
 
-  Object.keys(kelas).sort().forEach(k => {
-    const L = kelas[k].L;
-    const P = kelas[k].P;
+      if (!kelas[rombel]) kelas[rombel] = { L:0, P:0 };
+
+      if (jk.startsWith("l")) { kelas[rombel].L++; totalL++; }
+      if (jk.startsWith("p")) { kelas[rombel].P++; totalP++; }
+    });
+
+    let html = `
+      <div class="grid-table">
+        <div class="grid-cell grid-header">KELAS</div>
+        <div class="grid-cell grid-header">L</div>
+        <div class="grid-cell grid-header">P</div>
+        <div class="grid-cell grid-header">JML</div>
+    `;
+
+    Object.keys(kelas).sort().forEach(k => {
+      const L = kelas[k].L;
+      const P = kelas[k].P;
+      html += `
+        <div class="grid-row">
+          <div class="grid-cell">${k}</div>
+          <div class="grid-cell">${L}</div>
+          <div class="grid-cell">${P}</div>
+          <div class="grid-cell jml">${L + P} Siswa</div>
+        </div>
+      `;
+    });
+
     html += `
-    <div class="grid-row">
-      <div class="grid-cell">${k}</div>
-      <div class="grid-cell">${L}</div>
-      <div class="grid-cell">${P}</div>
-      <div class="grid-cell jml">${L + P} Siswa</div>
-    </div>`;
+      <div class="grid-row">
+        <div class="grid-cell grid-total">TOTAL</div>
+        <div class="grid-cell grid-total">${totalL}</div>
+        <div class="grid-cell grid-total">${totalP}</div>
+        <div class="grid-cell grid-total jml">${totalL + totalP} Siswa</div>
+      </div>
+      </div>
+    `;
+
+    document.getElementById("info_informatika").innerHTML = html;
+  })
+  .catch(err => {
+    console.error(err);
+    document.getElementById("info_informatika").innerText =
+      "❌ Gagal memuat data Informatika";
   });
 
-  html += `
-    <div class="grid-row">
-      <div class="grid-cell grid-total">JML</div>
-      <div class="grid-cell grid-total">${totalL}</div>
-      <div class="grid-cell grid-total">${totalP}</div>
-      <div class="grid-cell grid-total jml">${totalL + totalP} Siswa</div>
-    </div>
-  </div>`;
+  // =====================================================
+  // 2️⃣ DATA GURU WALI
+  // =====================================================
+  const URL_WALI = "https://opensheet.elk.sh/1wKL5eDFA1LpU3Il5q-eChpdwQ-sUws2wJsVja3H95Hw/DATA";
 
-  document.getElementById("info_informatika").innerHTML = html;
-});
+  fetch(URL_WALI)
+  .then(res => res.json())
+  .then(data => {
 
-  // =======================
-// 2️⃣ DATA GURU WALI  
-// =======================
-const URL_WALI = "https://opensheet.elk.sh/1wKL5eDFA1LpU3Il5q-eChpdwQ-sUws2wJsVja3H95Hw/DATA";
+    let L = 0, P = 0;
 
-fetch(URL_WALI)
-.then(res => res.json())
-.then(data => {
+    data.forEach(r => {
+      const jk = (r["JENIS KELAMIN"] || "").toString().toLowerCase().trim();
+      if (jk.startsWith("l")) L++;
+      if (jk.startsWith("p")) P++;
+    });
 
-  let L = 0;
-  let P = 0;
-
-  data.forEach(r => {
-    const jk = (r["JENIS KELAMIN"] || "").toLowerCase();
-    if (jk.startsWith("l")) L++;
-    if (jk.startsWith("p")) P++;
+    document.getElementById("wali_L").innerText = L + " Orang";
+    document.getElementById("wali_P").innerText = P + " Orang";
+  })
+  .catch(() => {
+    document.getElementById("wali_L").innerText = "Gagal";
+    document.getElementById("wali_P").innerText = "Gagal";
   });
 
-  document.getElementById("wali_L").innerText = L;
-  document.getElementById("wali_P").innerText = P;
+  // =====================================================
+  // 3️⃣ DATA WALI KELAS
+  // =====================================================
+  fetch("https://opensheet.elk.sh/1HxpFxRiuyOehybcPh65mAtNQWrC1yi7iFZ1ZmDQnPZc/DATA")
+  .then(res => res.json())
+  .then(data => {
 
-})
-.catch(() => {
-  document.getElementById("wali_L").innerText = "Gagal";
-  document.getElementById("wali_P").innerText = "Gagal";
-});
+    let L = 0, P = 0;
+    let usia = {12:0,13:0,14:0,15:0};
+    let kip = 0, yatim = 0;
 
-  
-// =======================
-// 3️⃣ DATA WALI KELAS
-// =======================
-fetch("https://opensheet.elk.sh/1HxpFxRiuyOehybcPh65mAtNQWrC1yi7iFZ1ZmDQnPZc/DATA")
-.then(res => res.json())
-.then(data => {
+    data.forEach(r => {
 
-  let L = 0, P = 0;
-  let usia = {12:0,13:0,14:0,15:0};
-  let kip = 0, yatim = 0;
+      const jk = (r["JENIS KELAMIN"] || "").toString().toLowerCase().trim();
+      if (jk.startsWith("l")) L++;
+      if (jk.startsWith("p")) P++;
 
-  data.forEach(r => {
+      const u = Number(r["USIA"]);
+      if (usia[u] !== undefined) usia[u]++;
 
-    // ✅ AMBIL KOLOM D (JENIS KELAMIN)
-    const jk = (r["JENIS KELAMIN"] || "").toLowerCase().trim();
+      if ((r["ADA KARTU KIP"] || "").toUpperCase().trim() === "KIP") kip++;
+      if ((r["YATIM/PIATU"] || "").trim() !== "") yatim++;
+    });
 
-    if (jk.startsWith("l")) L++;   // L / Laki-laki
-    if (jk.startsWith("p")) P++;   // P / Perempuan
+    document.getElementById("jk").innerHTML =
+      `L:${L} | P:${P}<br><b>Total:${L + P}</b>`;
 
-    const u = Number(r["USIA"]);
-    if (usia[u] !== undefined) usia[u]++;
+    document.getElementById("usia").innerHTML =
+      `12:${usia[12]}<br>13:${usia[13]}<br>14:${usia[14]}<br>15:${usia[15]}`;
 
-    if ((r["ADA KARTU KIP"] || "").toUpperCase().trim() === "KIP") kip++;
-    if ((r["YATIM/PIATU"] || "").trim() !== "") yatim++;
+    document.getElementById("kip").innerText = kip + " Siswa";
+    document.getElementById("yatim").innerText = yatim + " Siswa";
+  })
+  .catch(() => {
+    document.getElementById("jk").innerText = "Gagal memuat data";
   });
 
-  // 👦👧 JUMLAH SISWA
-  document.getElementById("jk").innerHTML =
-    `L:${L} | P:${P}<br>(Total:${L + P})`;
-
-  // 🎂 USIA
-  document.getElementById("usia").innerHTML =
-    `12:${usia[12]}<br>13:${usia[13]}<br>14:${usia[14]}<br>15:${usia[15]}`;
-
-  // 🎓 KIP & 🕊️ YATIM
-  document.getElementById("kip").innerText = kip + " Siswa";
-  document.getElementById("yatim").innerText = yatim + " Siswa";
-})
-.catch(() => {
-  document.getElementById("jk").innerText = "Gagal memuat data";
 });
-
 </script>
+
 
 </body>
 </html>
