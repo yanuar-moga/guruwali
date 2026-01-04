@@ -52,51 +52,10 @@ body{
   padding:18px;
 }
 
-.menu-group{
-  background:rgba(255,255,255,.10);
-  border-radius:14px;
-  padding:14px;
-  margin-bottom:16px;
-  box-shadow:
-    inset 0 1px 2px rgba(255,255,255,.25),
-    0 4px 10px rgba(0,0,0,.18);
-}
-.menu-group h3{
-  margin:0 0 10px;
-  font-size:14px;
-  font-weight:bold;
-}
-.menu-group .menu-title{
-  background:#ffffff;
-  color:#0A4FA3;
-  padding:8px 12px;
-  border-radius:10px;
-  font-size:13px;
-  font-weight:bold;
-  box-shadow:0 3px 0 #c7d2fe;
-  margin-bottom:8px;
-}
-.sub-menu{margin-left:18px}
-.sub-menu a{
-  display:block;
-  color:#e0e7ff;
-  text-decoration:none;
-  font-size:13px;
-  padding:4px 0 4px 18px;
-  position:relative;
-}
-.sub-menu a::before{
-  content:"▶";
-  position:absolute;
-  left:0;
-  font-size:11px;
-}
-.sub-menu a:hover{text-decoration:underline}
-
 /* ===== CONTENT ===== */
 .content{padding:22px}
 
-/* ===== CARD UMUM ===== */
+/* ===== CARD ===== */
 .card{
   background:#fff;
   border-radius:16px;
@@ -105,53 +64,49 @@ body{
   margin-bottom:24px;
 }
 
-/* ===== INFORMATIKA (KHUSUS) ===== */
-.info-single h3{
-  margin-top:0;
-  font-size:18px;
-  color:#1e3a8a;
-  margin-bottom:16px;
-}
-
-/* GRID KELAS */
-.stat-grid{
+/* ===== GRID TABEL INFORMATIKA ===== */
+.grid-table{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:18px;
-  margin-top:10px;
+  grid-template-columns:1fr 1fr 1fr 2fr;
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 6px 16px rgba(0,0,0,.08);
+  margin-top:16px;
 }
 
-/* KARTU KELAS */
-.stat-box{
-  background:#f8fafc;
-  border-radius:16px;
-  padding:18px;
-  box-shadow:0 6px 16px rgba(0,0,0,.08);
-  border-left:6px solid #2563eb;
-  transition:.25s;
-}
-.stat-box:hover{
-  transform:translateY(-4px);
-  box-shadow:0 12px 26px rgba(0,0,0,.15);
-}
-.stat-box h4{
-  margin:0 0 10px;
-  font-size:15px;
-  color:#1e40af;
-}
-.stat-box b{
-  display:block;
-  margin-top:8px;
-  background:#2563eb;
-  color:#fff;
-  padding:6px;
-  border-radius:8px;
+.grid-cell{
+  padding:12px;
   text-align:center;
+  border-bottom:1px solid #eee;
+  background:#fff;
+  font-size:14px;
+}
+
+.grid-header{
+  background:#ffeb3b;
+  font-weight:bold;
+  border-bottom:2px solid #fbc02d;
+}
+
+.grid-row:hover .grid-cell{
+  background:#f1f8ff;
+}
+
+.grid-total{
+  background:#e3f2fd;
+  font-weight:bold;
+}
+
+.jml{
+  font-weight:bold;
 }
 
 /* ===== RESPONSIVE ===== */
 @media(max-width:768px){
   .layout{grid-template-columns:1fr}
+  .grid-table{
+    font-size:13px;
+  }
 }
 </style>
 </head>
@@ -195,22 +150,20 @@ window.logout = function(){
 <div class="layout">
 
 <div class="sidebar">
-  <!-- SIDEBAR TETAP (TIDAK DIUBAH) -->
+  <!-- SIDEBAR TETAP -->
 </div>
 
 <div class="content">
 
-  <!-- === DATA SISWA MAPEL INFORMATIKA (REVISI TAMPILAN) === -->
-  <div class="card info-single">
+  <div class="card">
     <h3>📘 Data Siswa Mapel Informatika</h3>
-    <div id="info_informatika">Memuat...</div>
+    <div id="info_informatika">Memuat data...</div>
   </div>
 
 </div>
 </div>
 
 <script>
-// ===== SCRIPT ASLI (TIDAK DIUBAH) =====
 const URL_INFO = "https://opensheet.elk.sh/1rQcTtSG2Q_PX_CEx_NC2Cs5eb8CXxXBEsxqiVSNze2Q/DATA";
 
 fetch(URL_INFO)
@@ -218,39 +171,44 @@ fetch(URL_INFO)
 .then(data => {
 
   const kelas = {};
-  let totalL = 0;
-  let totalP = 0;
+  let totalL = 0, totalP = 0;
 
   data.forEach(r => {
     const rombel = (r["Rombel"] || "").trim();
     const jk = (r["Jenis Kelamin"] || "").toLowerCase();
-
     if (!rombel) return;
-    if (!kelas[rombel]) kelas[rombel] = { L: 0, P: 0 };
 
+    if (!kelas[rombel]) kelas[rombel] = { L:0, P:0 };
     if (jk.startsWith("l")) { kelas[rombel].L++; totalL++; }
     if (jk.startsWith("p")) { kelas[rombel].P++; totalP++; }
   });
 
-  let html = `<div class="stat-grid">`;
+  let html = `
+  <div class="grid-table">
+    <div class="grid-cell grid-header">KELAS</div>
+    <div class="grid-cell grid-header">L</div>
+    <div class="grid-cell grid-header">P</div>
+    <div class="grid-cell grid-header">JML</div>
+  `;
 
   Object.keys(kelas).sort().forEach(k => {
     const L = kelas[k].L;
     const P = kelas[k].P;
     html += `
-      <div class="stat-box">
-        <h4>📘 Kelas ${k}</h4>
-        👦 L : ${L}<br>
-        👧 P : ${P}
-        <b>Total ${L + P} Siswa</b>
-      </div>`;
+    <div class="grid-row">
+      <div class="grid-cell">${k}</div>
+      <div class="grid-cell">${L}</div>
+      <div class="grid-cell">${P}</div>
+      <div class="grid-cell jml">${L + P} Siswa</div>
+    </div>`;
   });
 
-  html += `</div>
-  <hr style="margin:20px 0">
-  <b>Total Laki-laki :</b> ${totalL}<br>
-  <b>Total Perempuan :</b> ${totalP}<br>
-  <b>Total Keseluruhan :</b> ${totalL + totalP}`;
+  html += `
+    <div class="grid-cell grid-total">JML</div>
+    <div class="grid-cell grid-total">${totalL}</div>
+    <div class="grid-cell grid-total">${totalP}</div>
+    <div class="grid-cell grid-total jml">${totalL + totalP} Siswa</div>
+  </div>`;
 
   document.getElementById("info_informatika").innerHTML = html;
 });
