@@ -141,6 +141,10 @@ body{
   .layout{grid-template-columns:1fr}
   .stat-grid{grid-template-columns:1fr 1fr}
 }
+  .stat-box.left{
+  text-align:left;
+}
+
 </style>
 </head>
 
@@ -284,35 +288,33 @@ window.logout = function(){
   </div>
 
   <!-- === DATA WALI KELAS === -->
-  <div class="card">
-    <h3>🏫 Data Wali Kelas</h3>
-    <div class="stat-grid">
+<div class="card">
+  <h3>🏫 Data Wali Kelas</h3>
+  <div class="stat-grid">
 
-      <div class="stat-box">
-        <h4>👦👧 Jumlah Siswa</h4>
-        <p id="jk">Memuat...</p>
-      </div>
-
-      <div class="stat-box">
-        <h4>🎂 Klasifikasi Usia</h4>
-        <p id="usia">Memuat...</p>
-      </div>
-
-      <div class="stat-box">
-        <h4>🎓 Pemilik KIP</h4>
-        <p id="kip">Memuat...</p>
-      </div>
-
-      <div class="stat-box">
-        <h4>🕊️ Yatim / Piatu</h4>
-        <p id="yatim">Memuat...</p>
-      </div>
-
+    <div class="stat-box left">
+      <h4>👦👧 Jumlah Siswa</h4>
+      <p id="jk">Memuat...</p>
     </div>
-  </div>
 
+    <div class="stat-box left">
+      <h4>🎂 Klasifikasi Usia</h4>
+      <p id="usia">Memuat...</p>
+    </div>
+
+    <div class="stat-box left">
+      <h4>🎓 Pemilik KIP</h4>
+      <p id="kip">Memuat...</p>
+    </div>
+
+    <div class="stat-box left">
+      <h4>🕊️ Yatim / Piatu</h4>
+      <p id="yatim">Memuat...</p>
+    </div>
+
+  </div>
 </div>
-</div>
+
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
