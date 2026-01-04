@@ -312,7 +312,7 @@ window.logout = function(){
 
 <script>
 // =======================
-// 1️⃣ DATA MAPEL INFORMATIKA
+// 1️⃣ DATA MAPEL INFORMATIKA (GRID MODE)
 // =======================
 const URL_INFO = "https://opensheet.elk.sh/1rQcTtSG2Q_PX_CEx_NC2Cs5eb8CXxXBEsxqiVSNze2Q/DATA";
 
@@ -346,42 +346,31 @@ fetch(URL_INFO)
 
   const listKelas = Object.keys(kelas).sort();
 
-  let html = `
-  <table style="width:100%;border-collapse:collapse;text-align:center">
-    <tbody>
-  `;
+  // 🔥 GRID MODE (4 KOLOM)
+  let html = `<div class="stat-grid">`;
 
-  for (let i = 0; i < listKelas.length; i += 4) {
-    html += "<tr>";
+  listKelas.forEach(k => {
+    const L = kelas[k].L;
+    const P = kelas[k].P;
+    const T = L + P;
 
-    listKelas.slice(i, i + 4).forEach(k => {
-      const L = kelas[k].L;
-      const P = kelas[k].P;
-      const T = L + P;
-
-      html += `
-      <td style="border:1px solid #e5e7eb;padding:10px;border-radius:10px">
-        <b>Kelas ${k}</b><br>
+    html += `
+      <div class="stat-box">
+        <h4>📘 Kelas ${k}</h4>
         L : ${L}<br>
         P : ${P}<br>
         <b>Total : ${T}</b>
-      </td>
-      `;
-    });
+      </div>
+    `;
+  });
 
-    html += "</tr>";
-  }
-
-  html += `
-    </tbody>
-  </table>
+  html += `</div>
   <hr>
   <b>Siswa Laki-laki :</b> ${totalL}<br>
   <b>Siswa Perempuan :</b> ${totalP}<br>
   <b>Total :</b> ${totalL + totalP}
   `;
 
-  // 🔥 TARGET YANG BENAR
   document.getElementById("info_informatika").innerHTML = html;
 
 })
