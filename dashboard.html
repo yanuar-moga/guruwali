@@ -424,30 +424,39 @@ fetch("https://opensheet.elk.sh/1HxpFxRiuyOehybcPh65mAtNQWrC1yi7iFZ1ZmDQnPZc/DAT
 .then(res => res.json())
 .then(data => {
 
-  let L=0, P=0;
+  let L = 0, P = 0;
   let usia = {12:0,13:0,14:0,15:0};
-  let kip=0, yatim=0;
+  let kip = 0, yatim = 0;
 
   data.forEach(r => {
-    const jk = (r["JENIS KELAMIN"] || "").toUpperCase();
-    if (jk === "L") L++;
-    if (jk === "P") P++;
+
+    // ✅ AMBIL KOLOM D (JENIS KELAMIN)
+    const jk = (r["JENIS KELAMIN"] || "").toLowerCase().trim();
+
+    if (jk.startsWith("l")) L++;   // L / Laki-laki
+    if (jk.startsWith("p")) P++;   // P / Perempuan
 
     const u = Number(r["USIA"]);
     if (usia[u] !== undefined) usia[u]++;
 
-    if ((r["ADA KARTU KIP"] || "").toUpperCase() === "KIP") kip++;
+    if ((r["ADA KARTU KIP"] || "").toUpperCase().trim() === "KIP") kip++;
     if ((r["YATIM/PIATU"] || "").trim() !== "") yatim++;
   });
 
+  // 👦👧 JUMLAH SISWA
   document.getElementById("jk").innerHTML =
-    `L:${L} | P:${P}<br>(Total:${L+P})`;
+    `L:${L} | P:${P}<br>(Total:${L + P})`;
 
+  // 🎂 USIA
   document.getElementById("usia").innerHTML =
     `12:${usia[12]}<br>13:${usia[13]}<br>14:${usia[14]}<br>15:${usia[15]}`;
 
+  // 🎓 KIP & 🕊️ YATIM
   document.getElementById("kip").innerText = kip + " Siswa";
   document.getElementById("yatim").innerText = yatim + " Siswa";
+})
+.catch(() => {
+  document.getElementById("jk").innerText = "Gagal memuat data";
 });
 </script>
 
