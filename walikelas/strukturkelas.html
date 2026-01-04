@@ -3,129 +3,64 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Struktur Kelas - Dashboard Guru</title>
+<title>Struktur Kelas</title>
 
-<!-- ANTI CACHE -->
 <meta http-equiv="Cache-Control" content="no-store" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
 
 <style>
 *{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background:#f4f6f9;
-}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f6f9}
 
 /* ===== TOP HEADER ===== */
 .top-header{
-  display:flex;
-  align-items:center;
-  gap:15px;
-  background:#2563eb;
-  padding:14px 18px;
-  box-shadow:0 3px 8px rgba(0,0,0,.3);
-  color:#fff;
+  display:flex;align-items:center;gap:15px;
+  background:#2563eb;padding:14px 18px;
+  box-shadow:0 3px 8px rgba(0,0,0,.3);color:#fff
 }
-.top-header img{
-  width:48px;
-  height:48px;
-  border-radius:10px;
-  background:#fff;
-  padding:5px;
-  object-fit:contain;
-}
+.top-header img{width:48px;height:48px;border-radius:10px;background:#fff;padding:5px}
 .top-header h1{margin:0;font-size:18px}
 .top-header p{margin:0;font-size:12px;color:#e0e7ff}
 
 /* ===== LAYOUT ===== */
-.layout{
-  display:grid;
-  grid-template-columns:240px 1fr;
-  min-height:calc(100vh - 76px);
-}
+.layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 76px)}
 
 /* ===== SIDEBAR ===== */
-.sidebar{
-  background:#0A4FA3;
-  color:#fff;
-  padding:18px;
-}
+.sidebar{background:#0A4FA3;color:#fff;padding:18px}
 .menu-group{
-  background:rgba(255,255,255,.10);
-  border-radius:14px;
-  padding:14px;
-  margin-bottom:16px;
+  background:rgba(255,255,255,.1);
+  border-radius:14px;padding:14px;margin-bottom:16px
 }
-.menu-group h3{
-  margin:0 0 10px;
-  font-size:14px;
-}
+.menu-group h3{margin:0 0 10px;font-size:14px}
 .menu-title{
-  background:#fff;
-  color:#0A4FA3;
-  padding:8px 12px;
-  border-radius:10px;
-  font-size:13px;
-  font-weight:bold;
-  margin-bottom:8px;
+  background:#fff;color:#0A4FA3;padding:8px 12px;
+  border-radius:10px;font-size:13px;font-weight:bold;margin-bottom:8px
 }
 .sub-menu a{
-  display:block;
-  color:#e0e7ff;
-  text-decoration:none;
-  font-size:13px;
-  padding:4px 0 4px 18px;
-  position:relative;
+  display:block;color:#e0e7ff;text-decoration:none;
+  font-size:13px;padding:4px 0 4px 18px;position:relative
 }
-.sub-menu a::before{
-  content:"▶";
-  position:absolute;
-  left:0;
-  font-size:11px;
-}
+.sub-menu a::before{content:"▶";position:absolute;left:0;font-size:11px}
 .sub-menu a:hover{text-decoration:underline}
 
 /* ===== CONTENT ===== */
 .content{padding:22px}
 .card{
-  background:#fff;
-  border-radius:12px;
-  padding:20px;
-  box-shadow:0 6px 18px rgba(0,0,0,.06);
-  margin-bottom:20px;
+  background:#fff;border-radius:12px;padding:20px;
+  box-shadow:0 6px 18px rgba(0,0,0,.06)
 }
 
-table{
-  width:100%;
-  border-collapse:collapse;
-}
-th,td{
-  border:1px solid #e5e7eb;
-  padding:8px;
-  font-size:14px;
-}
-th{
-  background:#f1f5f9;
-}
-textarea, select{
-  width:100%;
-  padding:6px;
-}
+table{width:100%;border-collapse:collapse}
+th,td{border:1px solid #e5e7eb;padding:8px;font-size:14px}
+th{background:#f1f5f9}
+select,textarea{width:100%;padding:6px}
+
 button{
-  background:#2563eb;
-  color:#fff;
-  border:none;
-  padding:10px 14px;
-  border-radius:8px;
-  cursor:pointer;
+  background:#2563eb;color:#fff;border:none;
+  padding:10px 14px;border-radius:8px;cursor:pointer
 }
-.note{
-  font-size:12px;
-  color:#6b7280;
-  margin-top:8px;
-}
+.note{font-size:12px;color:#6b7280;margin-top:8px}
 
 @media(max-width:768px){
   .layout{grid-template-columns:1fr}
@@ -141,27 +76,22 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getAuth, onAuthStateChanged, signOut }
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyD_Dl5cdFBh_dyhkhthI2gclhWoz4ZHYls",
-  authDomain: "login-2f19a.firebaseapp.com",
-  projectId: "login-2f19a",
-  appId: "1:751593178422:web:1d36294b46d1a954b15f97"
-};
-
-const app = initializeApp(firebaseConfig);
+const app = initializeApp({
+  apiKey:"AIzaSyD_Dl5cdFBh_dyhkhthI2gclhWoz4ZHYls",
+  authDomain:"login-2f19a.firebaseapp.com",
+  projectId:"login-2f19a",
+  appId:"1:751593178422:web:1d36294b46d1a954b15f97"
+});
 const auth = getAuth(app);
 
-onAuthStateChanged(auth, user => {
-  if (!user) window.location.replace("index.html");
+onAuthStateChanged(auth,user=>{
+  if(!user) location.replace("../dashboard.html");
 });
-
-window.logout = () => {
-  signOut(auth).then(() => window.location.replace("index.html"));
-};
+window.logout=()=>signOut(auth).then(()=>location.replace("../dashboard.html"));
 </script>
 
 <header class="top-header">
-  <img src="assets/mb.jpg">
+  <img src="../assets/mb.jpg">
   <div>
     <h1>Aplikasi Guru Wali</h1>
     <p>Versi 1.0 · Dev by MB</p>
@@ -172,6 +102,15 @@ window.logout = () => {
 
 <!-- ===== SIDEBAR ===== -->
 <div class="sidebar">
+
+  <div class="menu-group">
+    <h3>Menu Utama</h3>
+    <div class="menu-title">Navigasi</div>
+    <div class="sub-menu">
+      <a href="../dashboard.html">🏠 Home</a>
+    </div>
+  </div>
+
   <div class="menu-group">
     <h3>Wali Kelas</h3>
     <div class="menu-title">Menu</div>
@@ -181,7 +120,7 @@ window.logout = () => {
     </div>
   </div>
 
-  <button onclick="logout()" style="width:100%;margin-top:10px;background:#ff5d5d">
+  <button onclick="logout()" style="width:100%;background:#ff5d5d;margin-top:10px">
     Logout
   </button>
 </div>
@@ -189,42 +128,31 @@ window.logout = () => {
 <!-- ===== CONTENT ===== -->
 <div class="content">
 
-<!-- HEADER KONTEN -->
-<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
-  <img src="assets/logo.png" style="width:48px">
-  <div>
-    <h2 style="margin:0;color:#0A4FA3">Struktur Kelas</h2>
-    <div style="color:#6c7a89;">Selamat datang, Bayu</div>
+  <div class="card">
+    <h3>Pengurus Kelas</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Jabatan</th>
+          <th>Nama Siswa</th>
+          <th>Tugas</th>
+        </tr>
+      </thead>
+      <tbody id="struktur"></tbody>
+    </table>
+
+    <br>
+    <button onclick="simpan()">💾 Simpan & Catat Log</button>
+    <div class="note">
+      Setiap perubahan nama otomatis tercatat di Google Sheet (LOG)
+    </div>
   </div>
-</div>
-
-<!-- CARD STRUKTUR -->
-<div class="card">
-  <h3>Pengurus Kelas</h3>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Jabatan</th>
-        <th>Nama Siswa</th>
-        <th>Tugas</th>
-      </tr>
-    </thead>
-    <tbody id="struktur"></tbody>
-  </table>
-
-  <br>
-  <button onclick="simpan()">💾 Simpan & Catat Log</button>
-  <div class="note">
-    Setiap perubahan nama otomatis tercatat di Google Sheet (LOG)
-  </div>
-</div>
 
 </div>
 </div>
 
 <script>
-// ================= KONFIGURASI =================
 const SHEET_ID="1AtbYBditKasZrNeUr0vx-0CKWPiYwOoBpGBUzEJLZx4";
 const LOG_API="https://script.google.com/macros/s/AKfycbxkyeyvnUkwcFpumftzjDnHW7wYron80OerlsZ8Vn4hdIZnrhsQAlTdnTSKYVzV0GlS/exec";
 const sheetURL=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=DATA`;
@@ -233,8 +161,10 @@ const strukturDefault=[
  ["Wali Kelas","Pak Bayu","Membimbing siswa"],
  ["Ketua Kelas","","Koordinasi kelas"],
  ["Wakil Ketua","","Membantu ketua"],
- ["Sekretaris","","Administrasi"],
- ["Bendahara","","Keuangan"]
+ ["Sekretaris I","","Administrasi"],
+ ["Sekretaris II","","Administrasi"],
+ ["Bendahara I","","Keuangan"],
+ ["Bendahara II","","Keuangan"]
 ];
 
 let daftarSiswa=[];
@@ -257,11 +187,11 @@ function render(){
     let opt=`<option value="">-- Pilih --</option>`;
     daftarSiswa.forEach(n=>opt+=`<option ${n===r[1]?"selected":""}>${n}</option>`);
     tbody.innerHTML+=`
-      <tr>
-        <td>${r[0]}</td>
-        <td>${i===0?`<b>${r[1]}</b>`:`<select id="n${i}">${opt}</select>`}</td>
-        <td><textarea id="t${i}">${r[2]}</textarea></td>
-      </tr>`;
+    <tr>
+      <td>${r[0]}</td>
+      <td>${i===0?`<b>${r[1]}</b>`:`<select id="n${i}">${opt}</select>`}</td>
+      <td><textarea id="t${i}">${r[2]}</textarea></td>
+    </tr>`;
   });
 }
 
@@ -273,14 +203,15 @@ function simpan(){
     const tugas=document.getElementById("t"+i).value;
     baru.push([r[0],nama,tugas]);
     if(nama!==r[1]){
-      fetch(LOG_API,{method:"POST",body:JSON.stringify({jabatan:r[0],lama:r[1],baru:nama,editor:"Bayu"})});
+      fetch(LOG_API,{method:"POST",body:JSON.stringify({
+        jabatan:r[0],lama:r[1],baru:nama,editor:"Bayu"
+      })});
     }
   });
   localStorage.setItem("strukturKelas",JSON.stringify(baru));
-  alert("✅ Struktur tersimpan");
+  alert("✅ Struktur kelas tersimpan");
 }
 </script>
 
 </body>
 </html>
-
