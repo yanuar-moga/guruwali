@@ -1,159 +1,21 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aplikasi Guru Wali</title>
-
-<style>
-/* ===== TOP HEADER ===== */
-.top-header{
-  display:flex;
-  align-items:center;
-  gap:15px;
-  background:#2563eb;
-  padding:14px 18px;
-  box-shadow:0 3px 8px rgba(0,0,0,.3);
-  color:#fff;
-}
-.top-header img{
-  width:48px;
-  height:48px;
-  border-radius:10px;
-  background:#fff;
-  padding:5px;
-  object-fit:contain;
-}
-.top-header h1{margin:0;font-size:18px}
-.top-header p{margin:0;font-size:12px;color:#e0e7ff}
-
-/* ===== LAYOUT ===== */
-.layout{
-  display:grid;
-  grid-template-columns:240px 1fr;
-  min-height:calc(100vh - 76px);
-}
-
-/* ===== SIDEBAR ===== */
-.sidebar{
-  background:#0A4FA3;
-  color:#fff;
-  padding:18px;
-}
-
-/* MENU GROUP */
-.menu-group{
-  background:rgba(255,255,255,.10);
-  border-radius:14px;
-  padding:14px;
-  margin-bottom:16px;
-  box-shadow:
-    inset 0 1px 2px rgba(255,255,255,.25),
-    0 4px 10px rgba(0,0,0,.18);
-}
-
-.menu-group h3{
-  margin:0 0 10px;
-  font-size:14px;
-  font-weight:bold;
-}
-
-.menu-group .menu-title{
-  background:#ffffff;
-  color:#0A4FA3;
-  padding:8px 12px;
-  border-radius:10px;
-  font-size:13px;
-  font-weight:bold;
-  box-shadow:0 3px 0 #c7d2fe;
-  margin-bottom:8px;
-}
-
-.sub-menu{
-  margin-left:18px;
-}
-
-.sub-menu a{
-  display:block;
-  color:#e0e7ff;
-  text-decoration:none;
-  font-size:13px;
-  padding:4px 0 4px 18px;
-  position:relative;
-}
-
-.sub-menu a::before{
-  content:"▶";
-  position:absolute;
-  left:0;
-  font-size:11px;
-  opacity:.85;
-}
-
-.sub-menu a:hover{
-  text-decoration:underline;
-}
-
-/* ===== CONTENT ===== */
-.content{padding:22px}
-
-.card{
-  background:#fff;
-  border-radius:12px;
-  padding:20px;
-  box-shadow:0 6px 18px rgba(10,79,163,.06);
-  margin-bottom:20px;
-}
-
-/* ===== STAT GRID ===== */
-.stat-grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:16px;
-}
-.stat-box{
-  background:#f8fafc;
-  border-radius:12px;
-  padding:18px;
-  text-align:center;
-  box-shadow:0 4px 10px rgba(0,0,0,.05);
-}
-.stat-box h4{
-  margin:0 0 8px;
-  font-size:14px;
-  color:#0A4FA3;
-}
-.stat-box p{
-  margin:0;
-  font-size:16px;
-  font-weight:bold;
-  line-height:1.6;
-}
-
-/* ===== RESPONSIVE ===== */
-@media(max-width:768px){
-  .layout{grid-template-columns:1fr}
-  .stat-grid{grid-template-columns:1fr 1fr}
-}
-</style>
-</head>
-
-<body>
-
-<!-- ===== HEADER ===== -->
 <header class="top-header">
-  <img src="assets/mb.jpg" alt="Logo">
+  <img src="assets/mb.jpg">
   <div>
     <h1>Aplikasi Guru Wali</h1>
     <p>Versi 1.0 · Dev by MB</p>
   </div>
 </header>
 
-<!-- ===== LAYOUT ===== -->
 <div class="layout">
+  <div class="sidebar">
 
-  <!-- ===== SIDEBAR ===== -->
-  <aside class="sidebar">
+    <div class="menu-group">
+      <h3>Dashboard</h3>
+      <div class="menu-title">Menu</div>
+      <div class="sub-menu">
+        <a href="dashboard.html">Home</a>
+      </div>
+    </div>
 
     <div class="menu-group">
       <h3>Guru Informatika</h3>
@@ -166,31 +28,56 @@
       </div>
     </div>
 
-    <div class="menu-group">
+<div class="menu-group">
       <h3>Guru Wali</h3>
       <div class="menu-title">Menu</div>
       <div class="sub-menu">
-        <a href="profil-siswa.html">Profil Siswa</a>
-        <a href="perkembangan.html">Perkembangan Akademik</a>
-        <a href="catatan.html">Catatan Perilaku</a>
-        <a href="konsultasi.html">Jadwal Konsultasi</a>
+        <a href="guruwali/profil-siswa.html">Profil Siswa</a>
+        <a href="guruwali/perkembangan.html">Perkembangan Akademik</a>
+        <a href="guruwali/catatan.html">Catatan Perilaku</a>
+        <a href="guruwali/konsultasi.html">Jadwal Konsultasi</a>
       </div>
     </div>
 
-  </aside>
-
-  <!-- ===== CONTENT ===== -->
-  <main class="content">
-    <div class="card">
-      <h2>Dashboard</h2>
-      <p>Selamat datang di Aplikasi Guru Wali</p>
+    <div class="menu-group">
+      <h3>Wali Kelas</h3>
+      <div class="menu-title">Menu</div>
+      <div class="sub-menu">
+        <a href="walikelas/strukturkelas.html">Struktur Kelas</a>
+         <a href="walikelas/biodata.html">Kartu Siswa</a>
+        <a href="walikelas/datasiswa.html">Tabel Data Siswa</a>
+        <a href="walikelas/keadaankelas.html">Keadaan Kelas</a>
+        <a href="walikelas/absensi.html">Rekap Absensi</a>
+        <a href="walikelas/laporan.html">Laporan Perkembangan</a>
+      </div>
     </div>
-  </main>
 
-</div>
-<button onclick="logout()"
-  style="margin-top:10px;background:#ff5d5d;color:#fff;border:none;padding:10px;border-radius:12px;width:100%;font-weight:bold;">
-  Logout
-</button>
-</body>
-</html>
+    <div class="menu-group">
+      <h3>Pembina Ekstra</h3>
+      <div class="menu-title">Menu</div>
+      <div class="sub-menu">
+        <a href="ekstra/ekstra.html">Data Ekstrakurikuler</a>
+        <a href="ekstra/anggota-ekstra.html">Anggota Ekskul</a>
+        <a href="ekstra/jadwal-ekstra.html">Jadwal Latihan</a>
+        <a href="ekstra/prestasi-ekstra.html">Prestasi</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <h3>Admin Website</h3>
+      <div class="menu-title">Menu</div>
+      <div class="sub-menu">
+        <a href="admin/user.html">Manajemen User</a>
+        <a href="admin/kelas.html">Manajemen Kelas</a>
+        <a href="admin/siswa.html">Data Siswa</a>
+        <a href="admin/setting.html">Pengaturan</a>
+      </div>
+    </div>
+
+    
+    <button onclick="logout()"
+      style="margin-top:10px;background:#ff5d5d;color:#fff;border:none;padding:10px;border-radius:12px;width:100%;font-weight:bold;">
+      Logout
+    </button>
+
+  </div>
