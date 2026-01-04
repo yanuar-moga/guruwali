@@ -390,6 +390,34 @@ fetch(URL_INFO)
 });
 
 // =======================
+// 2️⃣ DATA GURU WALI  
+// =======================
+const URL_WALI = "https://opensheet.elk.sh/1wKL5eDFA1LpU3Il5q-eChpdwQ-sUws2wJsVja3H95Hw/DATA";
+
+fetch(URL_WALI)
+.then(res => res.json())
+.then(data => {
+
+  let L = 0;
+  let P = 0;
+
+  data.forEach(r => {
+    const jk = (r["JENIS KELAMIN"] || "").toLowerCase();
+    if (jk.startsWith("l")) L++;
+    if (jk.startsWith("p")) P++;
+  });
+
+  document.getElementById("wali_L").innerText = L;
+  document.getElementById("wali_P").innerText = P;
+
+})
+.catch(() => {
+  document.getElementById("wali_L").innerText = "Gagal";
+  document.getElementById("wali_P").innerText = "Gagal";
+});
+
+  
+// =======================
 // 3️⃣ DATA WALI KELAS
 // =======================
 fetch("https://opensheet.elk.sh/1HxpFxRiuyOehybcPh65mAtNQWrC1yi7iFZ1ZmDQnPZc/DATA")
