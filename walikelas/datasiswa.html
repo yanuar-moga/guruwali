@@ -1,119 +1,53 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aplikasi Guru Wali</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Data Siswa Informatika</title>
+
+<!-- ANTI CACHE -->
+<meta http-equiv="Cache-Control" content="no-store" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+
+<!-- LIBRARY -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
 <style>
+*{box-sizing:border-box}
 body{
   margin:0;
-  font-family:Segoe UI, Arial, sans-serif;
-  background:#f1f5f9;
+  font-family:Arial, sans-serif;
+  background:#f4f6f9;
 }
 
-/* ===== HEADER ===== */
+/* ===== TOP HEADER ===== */
 .top-header{
   display:flex;
   align-items:center;
   gap:15px;
-  padding:15px 20px;
-  background:#1e40af;
-  color:white;
+  background:#2563eb;
+  padding:14px 18px;
+  box-shadow:0 3px 8px rgba(0,0,0,.3);
+  color:#fff;
 }
-
 .top-header img{
   width:48px;
   height:48px;
-  border-radius:8px;
-  object-fit:cover;
+  border-radius:10px;
+  background:#fff;
+  padding:5px;
+  object-fit:contain;
 }
+.top-header h1{margin:0;font-size:18px}
+.top-header p{margin:0;font-size:12px;color:#e0e7ff}
 
 /* ===== LAYOUT ===== */
-.wrapper{
-  display:flex;
+.layout{
+  display:grid;
+  grid-template-columns:240px 1fr;
+  min-height:calc(100vh - 76px);
 }
-
-/* ===== SIDEBAR ===== */
-.sidebar{
-  width:220px;
-  background:#0f172a;
-  color:white;
-  min-height:calc(100vh - 78px);
-  padding:15px;
-}
-
-.sidebar a{
-  display:block;
-  color:white;
-  text-decoration:none;
-  padding:10px;
-  border-radius:6px;
-  margin-bottom:5px;
-}
-
-.sidebar a:hover{
-  background:#1e293b;
-}
-
-/* ===== CONTENT ===== */
-.main-content{
-  flex:1;
-  padding:20px;
-}
-
-/* ===== CARD ===== */
-.card{
-  background:white;
-  border-radius:12px;
-  padding:20px;
-  box-shadow:0 4px 10px rgba(0,0,0,.08);
-}
-
-/* ===== TABLE ===== */
-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:13px;
-}
-
-th,td{
-  border:1px solid #e5e7eb;
-  padding:8px;
-}
-
-thead{
-  background:#2563eb;
-  color:white;
-}
-
-tr:nth-child(even){
-  background:#f8fafc;
-}
-
-/* ===== INPUT ===== */
-input{
-  width:100%;
-  padding:10px;
-  margin-bottom:12px;
-  border-radius:8px;
-  border:1px solid #cbd5e1;
-}
-</style>
-</head>
-
-<body>
-
-<!-- ===== HEADER ===== -->
-<header class="top-header">
-  <img src="assets/mb.jpg" alt="Logo">
-  <div>
-    <h1 style="margin:0;font-size:20px">Aplikasi Guru Wali</h1>
-    <p style="margin:0;font-size:13px">Versi 1.0 · Dev by MB</p>
-  </div>
-</header>
-
-<div class="wrapper">
 
 <!-- ===== SIDEBAR ===== -->
  <div class="sidebar">
@@ -183,77 +117,201 @@ input{
       </div>
     </div>
 
+/* MENU GROUP */
+.menu-group{
+  background:rgba(255,255,255,.10);
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:16px;
+  box-shadow:
+    inset 0 1px 2px rgba(255,255,255,.25),
+    0 4px 10px rgba(0,0,0,.18);
+}
+.menu-group h3{
+  margin:0 0 10px;
+  font-size:14px;
+  font-weight:bold;
+}
+.menu-group .menu-title{
+  background:#ffffff;
+  color:#0A4FA3;
+  padding:8px 12px;
+  border-radius:10px;
+  font-size:13px;
+  font-weight:bold;
+  box-shadow:0 3px 0 #c7d2fe;
+  margin-bottom:8px;
+}
+.sub-menu{
+  margin-left:18px;
+}
+.sub-menu a{
+  display:block;
+  color:#e0e7ff;
+  text-decoration:none;
+  font-size:13px;
+  padding:4px 0 4px 18px;
+  position:relative;
+}
+.sub-menu a::before{
+  content:"▶";
+  position:absolute;
+  left:0;
+  font-size:11px;
+}
+.sub-menu a:hover{text-decoration:underline}
 
-  <!-- ===== CONTENT ===== -->
-  <main class="main-content">
+/* ===== CONTENT ===== */
+.content{padding:22px}
 
-    <div class="card">
-      <h3>📘 Data Siswa Mapel Informatika</h3>
-
-      <input type="text" id="searchInput"
-        placeholder="🔍 Cari nama / kelas / jenis kelamin">
-
-      <div style="overflow-x:auto">
-        <table id="tabelSiswa">
-          <thead>
-            <tr>
-              <th>No</th>
-              <th>Nama</th>
-              <th>JK</th>
-              <th>Kelas</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-
-    </div>
-
-  </main>
-
-</div>
-
-<!-- ===== SCRIPT ===== -->
-<script>
-const GSHEET_URL =
- "https://opensheet.elk.sh/1HxpFxRiuyOehybcPh65mAtNQWrC1yi7iFZ1ZmDQnPZc/DATA";
-
-let allData = [];
-
-fetch(GSHEET_URL)
-  .then(res => res.json())
-  .then(data => {
-    allData = data;
-    renderTable(data);
-  })
-  .catch(() => {
-    document.querySelector("#tabelSiswa tbody").innerHTML =
-      "<tr><td colspan='4'>Gagal memuat data</td></tr>";
-  });
-
-function renderTable(data){
-  const tbody = document.querySelector("#tabelSiswa tbody");
-  tbody.innerHTML = "";
-
-  data.forEach((r,i)=>{
-    tbody.innerHTML += `
-      <tr>
-        <td>${i+1}</td>
-        <td>${r["Nama"] || r["NAMA"] || "-"}</td>
-        <td>${r["JK"] || r["Jenis Kelamin"] || "-"}</td>
-        <td>${r["Kelas"] || r["Rombel"] || "-"}</td>
-      </tr>
-    `;
-  });
+.card{
+  background:#fff;
+  border-radius:12px;
+  padding:20px;
+  box-shadow:0 6px 18px rgba(10,79,163,.06);
+  margin-bottom:20px;
 }
 
-/* SEARCH */
-document.getElementById("searchInput").addEventListener("input",function(){
-  const key = this.value.toLowerCase();
-  const filtered = allData.filter(r =>
-    Object.values(r).join(" ").toLowerCase().includes(key)
-  );
-  renderTable(filtered);
+/* ===== TABLE ===== */
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+}
+th,td{
+  border:1px solid #e5e7eb;
+  padding:8px;
+  text-align:center;
+}
+thead{
+  background:#2563eb;
+  color:#fff;
+}
+tr:nth-child(even){
+  background:#f8fafc;
+}
+
+input{
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  border:1px solid #cbd5e1;
+  margin-bottom:12px;
+}
+
+@media(max-width:768px){
+  .layout{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+
+<header class="top-header">
+  <img src="https://yanuar-moga.github.io/guruwali/assets/mb.jpg">
+  <div>
+    <h1>Aplikasi Guru Wali</h1>
+    <p>Versi 1.0 · Dev by MB</p>
+  </div>
+</header>
+
+<div class="layout">
+
+<!-- ===== SIDEBAR (TETAP) ===== -->
+<div class="sidebar">
+  <div class="menu-group">
+    <h3>Dashboard</h3>
+    <div class="menu-title">Menu</div>
+    <div class="sub-menu">
+      <a href="dashboard.html">Home</a>
+    </div>
+  </div>
+
+  <div class="menu-group">
+    <h3>Guru Informatika</h3>
+    <div class="menu-title">Menu</div>
+    <div class="sub-menu">
+      <a href="#">Data Siswa</a>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CONTENT ===== -->
+<div class="content">
+
+  <div class="card">
+    <h2>📘 Data Siswa Mapel Informatika</h2>
+
+    <input type="text" id="search" placeholder="🔍 Cari nama / kelas">
+
+    <div style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Nama</th>
+            <th>JK</th>
+            <th>Kelas</th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+          <tr><td colspan="4">Memuat data...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <br>
+    <b>Total Laki-laki:</b> <span id="L">0</span> |
+    <b>Perempuan:</b> <span id="P">0</span> |
+    <b>Total:</b> <span id="T">0</span>
+
+  </div>
+
+</div>
+</div>
+
+<script>
+const URL =
+"https://opensheet.elk.sh/1rQcTtSG2Q_PX_CEx_NC2Cs5eb8CXxXBEsxqiVSNze2Q/DATA";
+
+let allData=[];
+
+fetch(URL)
+.then(r=>r.json())
+.then(data=>{
+  allData=data;
+  render(data);
+});
+
+function render(data){
+  const tb=document.getElementById("tbody");
+  let L=0,P=0;
+  tb.innerHTML="";
+
+  data.forEach((r,i)=>{
+    const jk=(r["Jenis Kelamin"]||"").toUpperCase();
+    if(jk==="L") L++;
+    if(jk==="P") P++;
+
+    tb.innerHTML+=`
+      <tr>
+        <td>${i+1}</td>
+        <td>${r["Nama"]||"-"}</td>
+        <td>${jk}</td>
+        <td>${r["Rombel"]||"-"}</td>
+      </tr>`;
+  });
+
+  document.getElementById("L").innerText=L;
+  document.getElementById("P").innerText=P;
+  document.getElementById("T").innerText=L+P;
+}
+
+document.getElementById("search").addEventListener("input",e=>{
+  const k=e.target.value.toLowerCase();
+  render(allData.filter(r=>
+    Object.values(r).join(" ").toLowerCase().includes(k)
+  ));
 });
 </script>
 
