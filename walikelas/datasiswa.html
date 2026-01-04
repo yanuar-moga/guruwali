@@ -1,201 +1,119 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Dashboard Guru</title>
-
-<!-- ANTI CACHE -->
-<meta http-equiv="Cache-Control" content="no-store" />
-<meta http-equiv="Pragma" content="no-cache" />
-<meta http-equiv="Expires" content="0" />
-
-<!-- LIBRARY WAJIB -->
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aplikasi Guru Wali</title>
 
 <style>
-*{box-sizing:border-box}
 body{
   margin:0;
-  font-family:Arial, sans-serif;
-  background:#f4f6f9;
+  font-family:Segoe UI, Arial, sans-serif;
+  background:#f1f5f9;
 }
 
-/* ===== TOP HEADER ===== */
+/* ===== HEADER ===== */
 .top-header{
   display:flex;
   align-items:center;
   gap:15px;
-  background:#2563eb;
-  padding:14px 18px;
-  box-shadow:0 3px 8px rgba(0,0,0,.3);
-  color:#fff;
+  padding:15px 20px;
+  background:#1e40af;
+  color:white;
 }
+
 .top-header img{
   width:48px;
   height:48px;
-  border-radius:10px;
-  background:#fff;
-  padding:5px;
-  object-fit:contain;
+  border-radius:8px;
+  object-fit:cover;
 }
-.top-header h1{margin:0;font-size:18px}
-.top-header p{margin:0;font-size:12px;color:#e0e7ff}
 
 /* ===== LAYOUT ===== */
-.layout{
-  display:grid;
-  grid-template-columns:240px 1fr;
-  min-height:calc(100vh - 76px);
+.wrapper{
+  display:flex;
 }
 
 /* ===== SIDEBAR ===== */
 .sidebar{
-  background:#0A4FA3;
-  color:#fff;
-  padding:18px;
+  width:220px;
+  background:#0f172a;
+  color:white;
+  min-height:calc(100vh - 78px);
+  padding:15px;
 }
 
-/* MENU GROUP */
-.menu-group{
-  background:rgba(255,255,255,.10);
-  border-radius:14px;
-  padding:14px;
-  margin-bottom:16px;
-  box-shadow:
-    inset 0 1px 2px rgba(255,255,255,.25),
-    0 4px 10px rgba(0,0,0,.18);
-}
-.menu-group h3{
-  margin:0 0 10px;
-  font-size:14px;
-  font-weight:bold;
-}
-.menu-group .menu-title{
-  background:#ffffff;
-  color:#0A4FA3;
-  padding:8px 12px;
-  border-radius:10px;
-  font-size:13px;
-  font-weight:bold;
-  box-shadow:0 3px 0 #c7d2fe;
-  margin-bottom:8px;
-}
-.sub-menu{
-  margin-left:18px;
-}
-.sub-menu a{
+.sidebar a{
   display:block;
-  color:#e0e7ff;
+  color:white;
   text-decoration:none;
-  font-size:13px;
-  padding:4px 0 4px 18px;
-  position:relative;
+  padding:10px;
+  border-radius:6px;
+  margin-bottom:5px;
 }
-.sub-menu a::before{
-  content:"▶";
-  position:absolute;
-  left:0;
-  font-size:11px;
+
+.sidebar a:hover{
+  background:#1e293b;
 }
-.sub-menu a:hover{text-decoration:underline}
 
 /* ===== CONTENT ===== */
-.content{padding:22px}
+.main-content{
+  flex:1;
+  padding:20px;
+}
 
+/* ===== CARD ===== */
 .card{
-  background:#fff;
+  background:white;
   border-radius:12px;
   padding:20px;
-  box-shadow:0 6px 18px rgba(10,79,163,.06);
-  margin-bottom:20px;
+  box-shadow:0 4px 10px rgba(0,0,0,.08);
 }
 
-/* === FOTO SEJAJAR DATA (TANPA UBAH TAMPILAN) === */
-.foto-wrap{
-  max-width:600px;
-  margin:0 auto;
-  display:flex;
-  justify-content:center;
+/* ===== TABLE ===== */
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
 }
 
-/* === RAPITKAN DATA BIODATA === */
-#data{
-  max-width:600px;
-  margin:0 auto;
+th,td{
+  border:1px solid #e5e7eb;
+  padding:8px;
 }
 
-.data-row{
-  display:grid;
-  grid-template-columns:170px 10px 1fr;
-  gap:6px;
-  margin-bottom:4px;
-  font-size:14px;
+thead{
+  background:#2563eb;
+  color:white;
 }
 
-.data-label{font-weight:bold}
-.data-colon{text-align:center}
-.data-value{word-break:break-word}
-
-/* FLOATING MENU */
-.floating-menu{
-  position:fixed;
-  bottom:20px;
-  right:20px;
-  z-index:999;
+tr:nth-child(even){
+  background:#f8fafc;
 }
-#downloadMenu{display:none}
 
-@media(max-width:768px){
-  .layout{grid-template-columns:1fr}
-  .data-row{
-    grid-template-columns:130px 8px 1fr;
-    font-size:13px;
-  }
+/* ===== INPUT ===== */
+input{
+  width:100%;
+  padding:10px;
+  margin-bottom:12px;
+  border-radius:8px;
+  border:1px solid #cbd5e1;
 }
 </style>
 </head>
 
 <body>
 
-<!-- ===== FIREBASE AUTH ===== -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut }
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyD_Dl5cdFBh_dyhkhthI2gclhWoz4ZHYls",
-  authDomain: "login-2f19a.firebaseapp.com",
-  projectId: "login-2f19a",
-  appId: "1:751593178422:web:1d36294b46d1a954b15f97"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-onAuthStateChanged(auth, user => {
-  if (!user) window.location.replace("index.html");
-});
-
-window.logout = function(){
-  signOut(auth).then(() => {
-    window.location.replace("index.html");
-  });
-};
-</script>
-
+<!-- ===== HEADER ===== -->
 <header class="top-header">
-  <img src="https://yanuar-moga.github.io/guruwali/assets/mb.jpg">
+  <img src="assets/mb.jpg" alt="Logo">
   <div>
-    <h1>Aplikasi Guru Wali</h1>
-    <p>Versi 1.0 · Dev by MB</p>
+    <h1 style="margin:0;font-size:20px">Aplikasi Guru Wali</h1>
+    <p style="margin:0;font-size:13px">Versi 1.0 · Dev by MB</p>
   </div>
 </header>
 
-<div class="layout">
+<div class="wrapper">
 
 <!-- ===== SIDEBAR ===== -->
  <div class="sidebar">
@@ -266,67 +184,78 @@ window.logout = function(){
     </div>
 
 
-  <button onclick="logout()"
-    style="margin-top:10px;background:#ff5d5d;color:#fff;border:none;padding:10px;border-radius:12px;width:100%;font-weight:bold;">
-    Logout
-  </button>
+  <!-- ===== CONTENT ===== -->
+  <main class="main-content">
+
+    <div class="card">
+      <h3>📘 Data Siswa Mapel Informatika</h3>
+
+      <input type="text" id="searchInput"
+        placeholder="🔍 Cari nama / kelas / jenis kelamin">
+
+      <div style="overflow-x:auto">
+        <table id="tabelSiswa">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Nama</th>
+              <th>JK</th>
+              <th>Kelas</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </main>
+
 </div>
 
-<!-- ===== CONTENT ===== -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
+<!-- ===== SCRIPT ===== -->
 <script>
-function updateClock(){
-    document.getElementById("clock").textContent =
-    new Date().toLocaleTimeString("id-ID",{hour12:false});
-}
-setInterval(updateClock,1000);updateClock();
+const GSHEET_URL =
+ "https://opensheet.elk.sh/1HxpFxRiuyOehybcPh65mAtNQWrC1yi7iFZ1ZmDQnPZc/DATA";
 
-function logout(){
-    if(confirm("Yakin ingin logout?")){
-        localStorage.removeItem("gw_ann_session_v3");
-        window.location.href="index.html";
-    }
-}
+let allData = [];
 
-function formatTanggalExcel(v){
-    if(typeof v!=="number") return v;
-    return new Date((v-25569)*86400*1000)
-    .toLocaleDateString("id-ID",{day:"2-digit",month:"long",year:"numeric"});
-}
+fetch(GSHEET_URL)
+  .then(res => res.json())
+  .then(data => {
+    allData = data;
+    renderTable(data);
+  })
+  .catch(() => {
+    document.querySelector("#tabelSiswa tbody").innerHTML =
+      "<tr><td colspan='4'>Gagal memuat data</td></tr>";
+  });
 
-async function loadSiswa(){
-    const res=await fetch("https://raw.githubusercontent.com/yanuar-moga/guruwali/main/assets/data.xlsx");
-    const buf=await res.arrayBuffer();
-    const wb=XLSX.read(buf,{type:"array"});
-    const data=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-    const tbody=document.querySelector("#tabelSiswa tbody");
-    tbody.innerHTML="";
-    data.forEach((r,i)=>{
-        tbody.innerHTML+=`
-        <tr>
+function renderTable(data){
+  const tbody = document.querySelector("#tabelSiswa tbody");
+  tbody.innerHTML = "";
+
+  data.forEach((r,i)=>{
+    tbody.innerHTML += `
+      <tr>
         <td>${i+1}</td>
-        <td>${r["NAMA LENGKAP"]}</td>
-        <td>${r["NAMA PANGGIL"]}</td>
-        <td>${r["JENIS KELAMIN"]}</td>
-        <td>${r["Tempat Lahir"]}</td>
-        <td>${formatTanggalExcel(r["Tgl Lahir"])}</td>
-        <td>${r["Alamat"]}</td>
-        <td>${r["No WA Siswa"]}</td>
-        <td>${r["No Wa Ortu"]}</td>
-        <td>${r["Hobi"]}</td>
-        <td>${r["Cita-cita"]}</td>
-        <td>${r["NIS"]}</td>
-        <td>${r["NISN"]}</td>
-        <td>${r["Pelajaran yg disukai"]}</td>
-        <td>${r["Pelajaran tdk disukai"]}</td>
-        <td>${r["Ekskul"]}</td>
-        <td>${r["Kegiatan yg memotivasi di sekolah"]}</td>
-        <td>${r["Cara Belajar"]}</td>
-        </tr>`;
-    });
+        <td>${r["Nama"] || r["NAMA"] || "-"}</td>
+        <td>${r["JK"] || r["Jenis Kelamin"] || "-"}</td>
+        <td>${r["Kelas"] || r["Rombel"] || "-"}</td>
+      </tr>
+    `;
+  });
 }
-loadSiswa();
+
+/* SEARCH */
+document.getElementById("searchInput").addEventListener("input",function(){
+  const key = this.value.toLowerCase();
+  const filtered = allData.filter(r =>
+    Object.values(r).join(" ").toLowerCase().includes(key)
+  );
+  renderTable(filtered);
+});
 </script>
+
 </body>
 </html>
