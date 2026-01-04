@@ -149,7 +149,7 @@ window.logout = function(){
 </script>
 
 <header class="top-header">
-  <img src="assets/mb.jpg">
+  <img src="../assets/mb.jpg">
   <div>
     <h1>Aplikasi Guru Wali</h1>
     <p>Versi 1.0 · Dev by MB</p>
@@ -159,7 +159,7 @@ window.logout = function(){
 <div class="layout">
 
   <!-- ===== SIDEBAR ===== -->
-<div class="sidebar">
+<aside class="sidebar">
 
   <div class="menu-group">
     <h3>Dashboard</h3>
@@ -226,15 +226,14 @@ window.logout = function(){
     </div>
   </div>
 
-</div>
+  <!-- ✅ LOGOUT DI DALAM SIDEBAR -->
+  <button onclick="logout()"
+    style="margin-top:10px;background:#ff5d5d;color:#fff;border:none;padding:10px;border-radius:12px;width:100%;font-weight:bold;">
+    Logout
+  </button>
 
+</aside>
 
-    <button onclick="logout()"
-      style="margin-top:10px;background:#ff5d5d;color:#fff;border:none;padding:10px;border-radius:12px;width:100%;font-weight:bold;">
-      Logout
-    </button>
-
-  </aside>
 
   <!-- ===== CONTENT (KOSONG) ===== -->
   <main class="content">
