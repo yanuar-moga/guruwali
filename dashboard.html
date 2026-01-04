@@ -381,12 +381,12 @@ fetch(URL_INFO)
   <b>Total :</b> ${totalL + totalP}
   `;
 
-  document.getElementById("info_L").innerHTML = html;
-  document.getElementById("info_P").innerHTML = "";
+  // 🔥 TARGET YANG BENAR
+  document.getElementById("info_informatika").innerHTML = html;
 
 })
 .catch(() => {
-  document.getElementById("info_L").innerText = "Gagal memuat data";
+  document.getElementById("info_informatika").innerText = "Gagal memuat data";
 });
 
 // =======================
