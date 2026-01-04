@@ -197,80 +197,81 @@ window.logout = function(){
 
 <div class="layout">
 
-<!-- ===== SIDEBAR ===== -->
- <div class="sidebar">
-  <!-- HOME (BARU) -->
+  <!-- ===== SIDEBAR ===== -->
+<aside class="sidebar">
+
   <div class="menu-group">
     <h3>Dashboard</h3>
     <div class="menu-title">Menu</div>
     <div class="sub-menu">
-      <a href="https://yanuar-moga.github.io/guruwali/dashboard.html">Home</a>
+      <a href="../dashboard.html">Home</a>
     </div>
   </div>
-   
-    <div class="menu-group">
-      <h3>Guru Informatika</h3>
-      <div class="menu-title">Menu</div>
-      <div class="sub-menu">
-        <a href="modul.html">Modul Ajar</a>
-        <a href="asesmen.html">Asesmen / Kuis</a>
-        <a href="nilai-informatika.html">Rekap Nilai</a>
-        <a href="proyek.html">Proyek Siswa</a>
-      </div>
+
+  <div class="menu-group">
+    <h3>Guru Informatika</h3>
+    <div class="menu-title">Menu</div>
+    <div class="sub-menu">
+      <a href="../informatika/modulajar.html">Modul Ajar</a>
+      <a href="../informatika/asesmen.html">Asesmen / Kuis</a>
+      <a href="../informatika/nilai-informatika.html">Rekap Nilai</a>
+      <a href="../informatika/proyek.html">Proyek Siswa</a>
     </div>
+  </div>
 
-    <div class="menu-group">
-      <h3>Guru Wali</h3>
-      <div class="menu-title">Menu</div>
-      <div class="sub-menu">
-        <a href="guruwali/profil-siswa.html">Profil Siswa</a>
-        <a href="guruwali/perkembangan.html">Perkembangan Akademik</a>
-        <a href="guruwali/catatan.html">Catatan Perilaku</a>
-        <a href="guruwali/konsultasi.html">Jadwal Konsultasi</a>
-      </div>
+  <div class="menu-group">
+    <h3>Guru Wali</h3>
+    <div class="menu-title">Menu</div>
+    <div class="sub-menu">
+      <a href="../guruwali/profilsiswa.html">Profil Siswa</a>
+      <a href="../guruwali/perkembangan.html">Perkembangan Akademik</a>
+      <a href="../guruwali/catatan.html">Catatan Perilaku</a>
+      <a href="../guruwali/konsultasi.html">Jadwal Konsultasi</a>
     </div>
+  </div>
 
-    <div class="menu-group">
-      <h3>Wali Kelas</h3>
-      <div class="menu-title">Menu</div>
-      <div class="sub-menu">
-        <a href="walikelas/strukturkelas.html">Struktur Kelas</a>
-         <a href="walikelas/biodata.html">Kartu Siswa</a>
-        <a href="walikelas/datasiswa.html">Tabel Data Siswa</a>
-        <a href="walikelas/keadaankelas.html">Keadaan Kelas</a>
-        <a href="walikelas/absensi.html">Rekap Absensi</a>
-        <a href="walikelas/laporan.html">Laporan Perkembangan</a>
-      </div>
+  <div class="menu-group">
+    <h3>Wali Kelas</h3>
+    <div class="menu-title">Menu</div>
+    <div class="sub-menu">
+      <a href="../walikelas/strukturkelas.html">Struktur Kelas</a>
+      <a href="../walikelas/biodata.html">Kartu Siswa</a>
+      <a href="../walikelas/datasiswa.html">Tabel Data Siswa</a>
+      <a href="../walikelas/keadaankelas.html">Keadaan Kelas</a>
+      <a href="../walikelas/absensi.html">Rekap Absensi</a>
+      <a href="../walikelas/laporan.html">Laporan Perkembangan</a>
     </div>
+  </div>
 
-    <div class="menu-group">
-      <h3>Pembina Ekstra</h3>
-      <div class="menu-title">Menu</div>
-      <div class="sub-menu">
-        <a href="ekstra/ekstra.html">Data Ekstrakurikuler</a>
-        <a href="ekstra/anggota-ekstra.html">Anggota Ekskul</a>
-        <a href="ekstra/jadwal-ekstra.html">Jadwal Latihan</a>
-        <a href="ekstra/prestasi-ekstra.html">Prestasi</a>
-      </div>
+  <div class="menu-group">
+    <h3>Pembina Ekstra</h3>
+    <div class="menu-title">Menu</div>
+    <div class="sub-menu">
+      <a href="../ekstra/ekstra.html">Data Ekstrakurikuler</a>
+      <a href="../ekstra/anggota-ekstra.html">Anggota Ekskul</a>
+      <a href="../ekstra/jadwal-ekstra.html">Jadwal Latihan</a>
+      <a href="../ekstra/prestasi-ekstra.html">Prestasi</a>
     </div>
+  </div>
 
-    <div class="menu-group">
-      <h3>Admin Website</h3>
-      <div class="menu-title">Menu</div>
-      <div class="sub-menu">
-        <a href="admin/user.html">Manajemen User</a>
-        <a href="admin/kelas.html">Manajemen Kelas</a>
-        <a href="admin/siswa.html">Data Siswa</a>
-        <a href="admin/setting.html">Pengaturan</a>
-      </div>
+  <div class="menu-group">
+    <h3>Admin Website</h3>
+    <div class="menu-title">Menu</div>
+    <div class="sub-menu">
+      <a href="../admin/user.html">Manajemen User</a>
+      <a href="../admin/kelas.html">Manajemen Kelas</a>
+      <a href="../admin/siswa.html">Data Siswa</a>
+      <a href="../admin/setting.html">Pengaturan</a>
     </div>
+  </div>
 
-
+  <!-- ✅ LOGOUT DI DALAM SIDEBAR -->
   <button onclick="logout()"
     style="margin-top:10px;background:#ff5d5d;color:#fff;border:none;padding:10px;border-radius:12px;width:100%;font-weight:bold;">
     Logout
   </button>
-</div>
+
+</aside>
 
 <!-- ===== CONTENT ===== -->
 <div class="content">
