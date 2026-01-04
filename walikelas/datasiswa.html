@@ -3,15 +3,12 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Data Siswa Informatika</title>
+<title>Dashboard Guru</title>
 
 <!-- ANTI CACHE -->
 <meta http-equiv="Cache-Control" content="no-store" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-
-<!-- LIBRARY -->
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
 <style>
 *{box-sizing:border-box}
@@ -49,84 +46,14 @@ body{
   min-height:calc(100vh - 76px);
 }
 
-  <!-- ===== SIDEBAR ===== -->
-<aside class="sidebar">
+/* ===== SIDEBAR ===== */
+.sidebar{
+  background:#0A4FA3;
+  color:#fff;
+  padding:18px;
+}
 
-  <div class="menu-group">
-    <h3>Dashboard</h3>
-    <div class="menu-title">Menu</div>
-    <div class="sub-menu">
-      <a href="../dashboard.html">Home</a>
-    </div>
-  </div>
-
-  <div class="menu-group">
-    <h3>Guru Informatika</h3>
-    <div class="menu-title">Menu</div>
-    <div class="sub-menu">
-      <a href="../informatika/modulajar.html">Modul Ajar</a>
-      <a href="../informatika/asesmen.html">Asesmen / Kuis</a>
-      <a href="../informatika/nilai-informatika.html">Rekap Nilai</a>
-      <a href="../informatika/proyek.html">Proyek Siswa</a>
-    </div>
-  </div>
-
-  <div class="menu-group">
-    <h3>Guru Wali</h3>
-    <div class="menu-title">Menu</div>
-    <div class="sub-menu">
-      <a href="../guruwali/profilsiswa.html">Profil Siswa</a>
-      <a href="../guruwali/perkembangan.html">Perkembangan Akademik</a>
-      <a href="../guruwali/catatan.html">Catatan Perilaku</a>
-      <a href="../guruwali/konsultasi.html">Jadwal Konsultasi</a>
-    </div>
-  </div>
-
-  <div class="menu-group">
-    <h3>Wali Kelas</h3>
-    <div class="menu-title">Menu</div>
-    <div class="sub-menu">
-      <a href="../walikelas/strukturkelas.html">Struktur Kelas</a>
-      <a href="../walikelas/biodata.html">Kartu Siswa</a>
-      <a href="../walikelas/datasiswa.html">Tabel Data Siswa</a>
-      <a href="../walikelas/keadaankelas.html">Keadaan Kelas</a>
-      <a href="../walikelas/absensi.html">Rekap Absensi</a>
-      <a href="../walikelas/laporan.html">Laporan Perkembangan</a>
-    </div>
-  </div>
-
-  <div class="menu-group">
-    <h3>Pembina Ekstra</h3>
-    <div class="menu-title">Menu</div>
-    <div class="sub-menu">
-      <a href="../ekstra/ekstra.html">Data Ekstrakurikuler</a>
-      <a href="../ekstra/anggota-ekstra.html">Anggota Ekskul</a>
-      <a href="../ekstra/jadwal-ekstra.html">Jadwal Latihan</a>
-      <a href="../ekstra/prestasi-ekstra.html">Prestasi</a>
-    </div>
-  </div>
-
-  <div class="menu-group">
-    <h3>Admin Website</h3>
-    <div class="menu-title">Menu</div>
-    <div class="sub-menu">
-      <a href="../admin/user.html">Manajemen User</a>
-      <a href="../admin/kelas.html">Manajemen Kelas</a>
-      <a href="../admin/siswa.html">Data Siswa</a>
-      <a href="../admin/setting.html">Pengaturan</a>
-    </div>
-  </div>
-
-  <!-- ✅ LOGOUT DI DALAM SIDEBAR -->
-  <button onclick="logout()"
-    style="margin-top:10px;background:#ff5d5d;color:#fff;border:none;padding:10px;border-radius:12px;width:100%;font-weight:bold;">
-    Logout
-  </button>
-
-</aside>
-
-
-/* MENU GROUP */
+/* ===== MENU GROUP ===== */
 .menu-group{
   background:rgba(255,255,255,.10);
   border-radius:14px;
@@ -139,9 +66,8 @@ body{
 .menu-group h3{
   margin:0 0 10px;
   font-size:14px;
-  font-weight:bold;
 }
-.menu-group .menu-title{
+.menu-title{
   background:#ffffff;
   color:#0A4FA3;
   padding:8px 12px;
@@ -168,46 +94,26 @@ body{
   left:0;
   font-size:11px;
 }
-.sub-menu a:hover{text-decoration:underline}
+.sub-menu a:hover{
+  text-decoration:underline;
+}
 
 /* ===== CONTENT ===== */
-.content{padding:22px}
+.content{
+  padding:22px;
+}
 
-.card{
+/* PLACEHOLDER */
+.empty-content{
   background:#fff;
-  border-radius:12px;
-  padding:20px;
-  box-shadow:0 6px 18px rgba(10,79,163,.06);
-  margin-bottom:20px;
-}
-
-/* ===== TABLE ===== */
-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:13px;
-}
-th,td{
-  border:1px solid #e5e7eb;
-  padding:8px;
+  border-radius:14px;
+  padding:40px;
   text-align:center;
-}
-thead{
-  background:#2563eb;
-  color:#fff;
-}
-tr:nth-child(even){
-  background:#f8fafc;
+  color:#64748b;
+  box-shadow:0 6px 18px rgba(10,79,163,.06);
 }
 
-input{
-  width:100%;
-  padding:10px;
-  border-radius:10px;
-  border:1px solid #cbd5e1;
-  margin-bottom:12px;
-}
-
+/* ===== RESPONSIVE ===== */
 @media(max-width:768px){
   .layout{grid-template-columns:1fr}
 }
@@ -216,113 +122,130 @@ input{
 
 <body>
 
+<!-- ===== FIREBASE AUTH ===== -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut }
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD_Dl5cdFBh_dyhkhthI2gclhWoz4ZHYls",
+  authDomain: "login-2f19a.firebaseapp.com",
+  projectId: "login-2f19a",
+  appId: "1:751593178422:web:1d36294b46d1a954b15f97"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+onAuthStateChanged(auth, user => {
+  if (!user) window.location.replace("index.html");
+});
+
+window.logout = function(){
+  signOut(auth).then(() => {
+    window.location.href = "https://yanuar-moga.github.io/guruwali/";
+  });
+};
+</script>
+
+<!-- ===== HEADER ===== -->
 <header class="top-header">
-  <img src="https://yanuar-moga.github.io/guruwali/assets/mb.jpg">
+  <img src="../assets/mb.jpg" alt="Logo">
   <div>
     <h1>Aplikasi Guru Wali</h1>
     <p>Versi 1.0 · Dev by MB</p>
   </div>
 </header>
 
+<!-- ===== MAIN LAYOUT ===== -->
 <div class="layout">
 
-<!-- ===== SIDEBAR (TETAP) ===== -->
-<div class="sidebar">
-  <div class="menu-group">
-    <h3>Dashboard</h3>
-    <div class="menu-title">Menu</div>
-    <div class="sub-menu">
-      <a href="dashboard.html">Home</a>
-    </div>
-  </div>
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar">
 
-  <div class="menu-group">
-    <h3>Guru Informatika</h3>
-    <div class="menu-title">Menu</div>
-    <div class="sub-menu">
-      <a href="#">Data Siswa</a>
-    </div>
-  </div>
-</div>
-
-<!-- ===== CONTENT ===== -->
-<div class="content">
-
-  <div class="card">
-    <h2>📘 Data Siswa Mapel Informatika</h2>
-
-    <input type="text" id="search" placeholder="🔍 Cari nama / kelas">
-
-    <div style="overflow-x:auto">
-      <table>
-        <thead>
-          <tr>
-            <th>No</th>
-            <th>Nama</th>
-            <th>JK</th>
-            <th>Kelas</th>
-          </tr>
-        </thead>
-        <tbody id="tbody">
-          <tr><td colspan="4">Memuat data...</td></tr>
-        </tbody>
-      </table>
+    <div class="menu-group">
+      <h3>Dashboard</h3>
+      <div class="menu-title">Menu</div>
+      <div class="sub-menu">
+        <a href="../dashboard.html">Home</a>
+      </div>
     </div>
 
-    <br>
-    <b>Total Laki-laki:</b> <span id="L">0</span> |
-    <b>Perempuan:</b> <span id="P">0</span> |
-    <b>Total:</b> <span id="T">0</span>
+    <div class="menu-group">
+      <h3>Guru Informatika</h3>
+      <div class="menu-title">Menu</div>
+      <div class="sub-menu">
+        <a href="../informatika/modulajar.html">Modul Ajar</a>
+        <a href="../informatika/asesmen.html">Asesmen / Kuis</a>
+        <a href="../informatika/nilai-informatika.html">Rekap Nilai</a>
+        <a href="../informatika/proyek.html">Proyek Siswa</a>
+      </div>
+    </div>
 
-  </div>
+    <div class="menu-group">
+      <h3>Guru Wali</h3>
+      <div class="menu-title">Menu</div>
+      <div class="sub-menu">
+        <a href="../guruwali/profilsiswa.html">Profil Siswa</a>
+        <a href="../guruwali/perkembangan.html">Perkembangan Akademik</a>
+        <a href="../guruwali/catatan.html">Catatan Perilaku</a>
+        <a href="../guruwali/konsultasi.html">Jadwal Konsultasi</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <h3>Wali Kelas</h3>
+      <div class="menu-title">Menu</div>
+      <div class="sub-menu">
+        <a href="../walikelas/strukturkelas.html">Struktur Kelas</a>
+        <a href="../walikelas/biodata.html">Kartu Siswa</a>
+        <a href="../walikelas/datasiswa.html">Tabel Data Siswa</a>
+        <a href="../walikelas/keadaankelas.html">Keadaan Kelas</a>
+        <a href="../walikelas/absensi.html">Rekap Absensi</a>
+        <a href="../walikelas/laporan.html">Laporan Perkembangan</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <h3>Pembina Ekstra</h3>
+      <div class="menu-title">Menu</div>
+      <div class="sub-menu">
+        <a href="../ekstra/ekstra.html">Data Ekstrakurikuler</a>
+        <a href="../ekstra/anggota-ekstra.html">Anggota Ekskul</a>
+        <a href="../ekstra/jadwal-ekstra.html">Jadwal Latihan</a>
+        <a href="../ekstra/prestasi-ekstra.html">Prestasi</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <h3>Admin Website</h3>
+      <div class="menu-title">Menu</div>
+      <div class="sub-menu">
+        <a href="../admin/user.html">Manajemen User</a>
+        <a href="../admin/kelas.html">Manajemen Kelas</a>
+        <a href="../admin/siswa.html">Data Siswa</a>
+        <a href="../admin/setting.html">Pengaturan</a>
+      </div>
+    </div>
+
+    <!-- LOGOUT -->
+    <button onclick="logout()"
+      style="margin-top:10px;background:#ff5d5d;color:#fff;border:none;padding:10px;border-radius:12px;width:100%;font-weight:bold;">
+      Logout
+    </button>
+
+  </aside>
+
+  <!-- ===== CONTENT ===== -->
+  <main class="content">
+    <div class="empty-content">
+      <h2>📂 Konten Belum Diisi</h2>
+      <p>Silakan tambahkan card, tabel, grafik, atau halaman sesuai kebutuhan.</p>
+    </div>
+  </main>
 
 </div>
-</div>
-
-<script>
-const URL =
-"https://opensheet.elk.sh/1rQcTtSG2Q_PX_CEx_NC2Cs5eb8CXxXBEsxqiVSNze2Q/DATA";
-
-let allData=[];
-
-fetch(URL)
-.then(r=>r.json())
-.then(data=>{
-  allData=data;
-  render(data);
-});
-
-function render(data){
-  const tb=document.getElementById("tbody");
-  let L=0,P=0;
-  tb.innerHTML="";
-
-  data.forEach((r,i)=>{
-    const jk=(r["Jenis Kelamin"]||"").toUpperCase();
-    if(jk==="L") L++;
-    if(jk==="P") P++;
-
-    tb.innerHTML+=`
-      <tr>
-        <td>${i+1}</td>
-        <td>${r["Nama"]||"-"}</td>
-        <td>${jk}</td>
-        <td>${r["Rombel"]||"-"}</td>
-      </tr>`;
-  });
-
-  document.getElementById("L").innerText=L;
-  document.getElementById("P").innerText=P;
-  document.getElementById("T").innerText=L+P;
-}
-
-document.getElementById("search").addEventListener("input",e=>{
-  const k=e.target.value.toLowerCase();
-  render(allData.filter(r=>
-    Object.values(r).join(" ").toLowerCase().includes(k)
-  ));
-});
-</script>
 
 </body>
 </html>
