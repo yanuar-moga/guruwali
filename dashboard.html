@@ -176,7 +176,9 @@ onAuthStateChanged(auth, user => {
 });
 
 window.logout = function(){
-  signOut(auth).then(() => window.location.replace("index.html"));
+  signOut(auth).then(() => {
+    window.location.href = "https://yanuar-moga.github.io/guruwali/";
+  });
 };
 </script>
 
