@@ -259,19 +259,83 @@ window.logout = function(){
 <div class="content">
 
   <!-- === DATA SISWA MAPEL INFORMATIKA === -->
-  <div class="card">
-    <h3>📘 Data Siswa Mapel Informatika</h3>
-    <div class="stat-grid">
-      <div class="stat-box">
-        <h4>👦 Laki-laki</h4>
-        <p id="info_L">Memuat...</p>
-      </div>
-      <div class="stat-box">
-        <h4>👧 Perempuan</h4>
-        <p id="info_P">Memuat...</p>
-      </div>
-    </div>
-  </div>
+<script>
+const URL_INFO = "https://opensheet.elk.sh/1rQcTtSG2Q_PX_CEx_NC2Cs5eb8CXxXBEsxqiVSNze2Q/DATA";
+
+fetch(URL_INFO)
+.then(res => res.json())
+.then(data => {
+
+  const kelas = {};
+  let totalL = 0;
+  let totalP = 0;
+
+  data.forEach(r => {
+    const rombel = (r["Rombel"] || "").trim();
+    const jk = (r["Jenis Kelamin"] || "").toLowerCase();
+
+    if (!rombel) return;
+
+    if (!kelas[rombel]) {
+      kelas[rombel] = { L: 0, P: 0 };
+    }
+
+    if (jk.startsWith("l")) {
+      kelas[rombel].L++;
+      totalL++;
+    }
+    if (jk.startsWith("p")) {
+      kelas[rombel].P++;
+      totalP++;
+    }
+  });
+
+  const listKelas = Object.keys(kelas).sort();
+
+  let html = `
+  <table style="width:100%;border-collapse:collapse;text-align:center">
+    <tbody>
+  `;
+
+  for (let i = 0; i < listKelas.length; i += 4) {
+    html += "<tr>";
+
+    listKelas.slice(i, i + 4).forEach(k => {
+      const L = kelas[k].L;
+      const P = kelas[k].P;
+      const T = L + P;
+
+      html += `
+      <td style="border:1px solid #e5e7eb;padding:10px;border-radius:10px">
+        <b>Kelas ${k}</b><br>
+        L : ${L}<br>
+        P : ${P}<br>
+        <b>Total : ${T}</b>
+      </td>
+      `;
+    });
+
+    html += "</tr>";
+  }
+
+  html += `
+    </tbody>
+  </table>
+  <hr>
+  <b>Siswa Laki-laki :</b> ${totalL}<br>
+  <b>Siswa Perempuan :</b> ${totalP}<br>
+  <b>Total :</b> ${totalL + totalP}
+  `;
+
+  document.getElementById("info_L").innerHTML = html;
+  document.getElementById("info_P").innerHTML = "";
+
+})
+.catch(() => {
+  document.getElementById("info_L").innerText = "Gagal memuat data";
+});
+</script>
+
 
   <!-- === DATA GURU WALI === -->
   <div class="card">
