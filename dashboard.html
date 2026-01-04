@@ -258,8 +258,60 @@ window.logout = function(){
  <!-- ===== CONTENT ===== -->
 <div class="content">
 
-  <!-- === DATA SISWA MAPEL INFORMATIKA === -->
+
+<!-- === DATA SISWA MAPEL INFORMATIKA === --> <div class="card"> <h3>📘 Data Siswa Mapel Informatika</h3> <div class="stat-grid"> <div class="stat-box"> <h4>👦 Laki-laki</h4> <p id="info_L">Memuat...</p> </div> <div class="stat-box"> <h4>👧 Perempuan</h4> <p id="info_P">Memuat...</p> </div> </div> </div>
+
+
+  <!-- === DATA GURU WALI === -->
+  <div class="card">
+    <h3>🧑‍🏫 Data Guru Wali</h3>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <h4>👦 Laki-laki</h4>
+        <p id="wali_L">Memuat...</p>
+      </div>
+      <div class="stat-box">
+        <h4>👧 Perempuan</h4>
+        <p id="wali_P">Memuat...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- === DATA WALI KELAS === -->
+  <div class="card">
+    <h3>🏫 Data Wali Kelas</h3>
+    <div class="stat-grid">
+
+      <div class="stat-box">
+        <h4>👦👧 Jumlah Siswa</h4>
+        <p id="jk">Memuat...</p>
+      </div>
+
+      <div class="stat-box">
+        <h4>🎂 Klasifikasi Usia</h4>
+        <p id="usia">Memuat...</p>
+      </div>
+
+      <div class="stat-box">
+        <h4>🎓 Pemilik KIP</h4>
+        <p id="kip">Memuat...</p>
+      </div>
+
+      <div class="stat-box">
+        <h4>🕊️ Yatim / Piatu</h4>
+        <p id="yatim">Memuat...</p>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+
 <script>
+// =======================
+// 1️⃣ DATA MAPEL INFORMATIKA
+// =======================
 const URL_INFO = "https://opensheet.elk.sh/1rQcTtSG2Q_PX_CEx_NC2Cs5eb8CXxXBEsxqiVSNze2Q/DATA";
 
 fetch(URL_INFO)
@@ -333,87 +385,6 @@ fetch(URL_INFO)
 })
 .catch(() => {
   document.getElementById("info_L").innerText = "Gagal memuat data";
-});
-</script>
-
-
-  <!-- === DATA GURU WALI === -->
-  <div class="card">
-    <h3>🧑‍🏫 Data Guru Wali</h3>
-    <div class="stat-grid">
-      <div class="stat-box">
-        <h4>👦 Laki-laki</h4>
-        <p id="wali_L">Memuat...</p>
-      </div>
-      <div class="stat-box">
-        <h4>👧 Perempuan</h4>
-        <p id="wali_P">Memuat...</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- === DATA WALI KELAS === -->
-  <div class="card">
-    <h3>🏫 Data Wali Kelas</h3>
-    <div class="stat-grid">
-
-      <div class="stat-box">
-        <h4>👦👧 Jumlah Siswa</h4>
-        <p id="jk">Memuat...</p>
-      </div>
-
-      <div class="stat-box">
-        <h4>🎂 Klasifikasi Usia</h4>
-        <p id="usia">Memuat...</p>
-      </div>
-
-      <div class="stat-box">
-        <h4>🎓 Pemilik KIP</h4>
-        <p id="kip">Memuat...</p>
-      </div>
-
-      <div class="stat-box">
-        <h4>🕊️ Yatim / Piatu</h4>
-        <p id="yatim">Memuat...</p>
-      </div>
-
-    </div>
-  </div>
-
-</div>
-
-
-<script>
-// =======================
-// 1️⃣ DATA MAPEL INFORMATIKA
-// =======================
-fetch("https://opensheet.elk.sh/1rQcTtSG2Q_PX_CEx_NC2Cs5eb8CXxXBEsxqiVSNze2Q/Sheet1")
-.then(res => res.json())
-.then(data => {
-  let L=0, P=0;
-  data.forEach(r => {
-    const jk = (r["JENIS KELAMIN"] || "").toUpperCase();
-    if (jk === "L") L++;
-    if (jk === "P") P++;
-  });
-  document.getElementById("info_L").innerText = L + " Siswa";
-  document.getElementById("info_P").innerText = P + " Siswa";
-});
-
-// =======================
-// 2️⃣ DATA GURU WALI
-// =======================
-fetch("https://opensheet.elk.sh/1wKL5eDFA1LpU3Il5q-eChpdwQ-sUws2wJsVja3H95Hw/Sheet1")
-.then(res => res.json())
-.then(data => {
-  let L=0, P=0;
-  data.forEach(r => {
-    const jk = (r["JENIS KELAMIN"] || "").toUpperCase();
-    if (jk === "L") L++;
-    if (jk === "P") P++;
-  });
-  document.getElementById("wali_L").innerText = L + " Siswa";
-  document.getElementById("wali_P").innerText = P + " Siswa";
 });
 
 // =======================
