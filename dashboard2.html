@@ -74,6 +74,11 @@ body{
   margin-top:16px;
 }
 
+/* 🔥 KUNCI UTAMA */
+.grid-row{
+  display:contents;
+}
+
 .grid-cell{
   padding:12px;
   text-align:center;
@@ -104,9 +109,6 @@ body{
 /* ===== RESPONSIVE ===== */
 @media(max-width:768px){
   .layout{grid-template-columns:1fr}
-  .grid-table{
-    font-size:13px;
-  }
 }
 </style>
 </head>
@@ -204,10 +206,12 @@ fetch(URL_INFO)
   });
 
   html += `
-    <div class="grid-cell grid-total">JML</div>
-    <div class="grid-cell grid-total">${totalL}</div>
-    <div class="grid-cell grid-total">${totalP}</div>
-    <div class="grid-cell grid-total jml">${totalL + totalP} Siswa</div>
+    <div class="grid-row">
+      <div class="grid-cell grid-total">JML</div>
+      <div class="grid-cell grid-total">${totalL} Siswa</div>
+      <div class="grid-cell grid-total">${totalP} Siswa</div>
+      <div class="grid-cell grid-total jml">${totalL + totalP} Siswa</div>
+    </div>
   </div>`;
 
   document.getElementById("info_informatika").innerHTML = html;
