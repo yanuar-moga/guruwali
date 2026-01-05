@@ -309,18 +309,17 @@ window.logout = function(){
   </div>
  <!-- === DATA GURU WALI === -->
   <div class="card">
-    <h3>🧑‍🏫 Data Guru Wali</h3>
-    <div class="stat-grid">
-      <div class="stat-box">
-        <h4>👦 Laki-laki</h4>
-        <p id="wali_L">Memuat...</p>
-      </div>
-      <div class="stat-box">
-        <h4>👧 Perempuan</h4>
-        <p id="wali_P">Memuat...</p>
+  <h3>🧑‍🏫 Data Guru Wali</h3>
+  <div class="stat-grid">
+    <div class="stat-box left">
+      <div class="card-header">🧑‍🏫 Rekap Guru Wali</div>
+      <div class="card-body grid-detail" id="guru_wali">
+        Memuat...
       </div>
     </div>
   </div>
+</div>
+
 
 <!-- === DATA WALI KELAS === -->
 <div class="card">
@@ -438,8 +437,12 @@ document.addEventListener("DOMContentLoaded", () => {
       if (jk.startsWith("p")) P++;
     });
 
-    document.getElementById("wali_L").innerText = L + " Orang";
-    document.getElementById("wali_P").innerText = P + " Orang";
+document.getElementById("guru_wali").innerHTML = `
+  <div>Laki-laki</div><div>: ${L} orang</div>
+  <div>Perempuan</div><div>: ${P} orang</div>
+  <div><b>Total</b></div><div><b>: ${L + P} orang</b></div>
+`;
+
   })
   .catch(() => {
     document.getElementById("wali_L").innerText = "Gagal";
