@@ -46,82 +46,85 @@ body{
   min-height:calc(100vh - 76px);
 }
 
-/* ===== SIDEBAR (REVISI) ===== */
+/* ===== SIDEBAR ===== */
 .sidebar{
   background:#0A4FA3;
   color:#fff;
   padding:18px;
 }
 
-/* SEKAT / GRID MENU */
+/* ===== MENU ===== */
 .menu-group{
   background:rgba(255,255,255,.10);
   border-radius:14px;
   padding:14px;
   margin-bottom:16px;
-  box-shadow:
-    inset 0 1px 2px rgba(255,255,255,.25),
-    0 4px 10px rgba(0,0,0,.18);
 }
-
-/* JUDUL */
-.menu-group h3{
-  margin:0 0 10px;
-  font-size:14px;
-  font-weight:bold;
-}
-
-/* TOMBOL MENU UTAMA */
-.menu-group .menu-title{
-  background:#ffffff;
+.menu-group h3{margin:0 0 10px;font-size:14px}
+.menu-title{
+  background:#fff;
   color:#0A4FA3;
   padding:8px 12px;
   border-radius:10px;
   font-size:13px;
   font-weight:bold;
-  box-shadow:0 3px 0 #c7d2fe;
   margin-bottom:8px;
 }
-
-/* SUB MENU */
-.sub-menu{
-  margin-left:18px;
-}
-
 .sub-menu a{
   display:block;
   color:#e0e7ff;
   text-decoration:none;
   font-size:13px;
-  padding:4px 0;
   padding-left:18px;
   position:relative;
 }
-
 .sub-menu a::before{
   content:"▶";
   position:absolute;
   left:0;
   font-size:11px;
-  opacity:.85;
 }
-
-.sub-menu a:hover{
-  text-decoration:underline;
-}
+.sub-menu a:hover{text-decoration:underline}
 
 /* ===== CONTENT ===== */
 .content{padding:22px}
-
 .card{
   background:#fff;
-  border-radius:12px;
-  padding:20px;
-  box-shadow:0 6px 18px rgba(10,79,163,.06);
-  margin-bottom:20px;
+  border-radius:14px;
+  padding:22px;
+  box-shadow:0 8px 22px rgba(0,0,0,.08);
+  margin-bottom:24px;
 }
 
-/* ===== STAT GRID ===== */
+/* ===================================================
+   GRID TABLE (DIAMBIL DARI HTML PERTAMA - TIDAK DIHAPUS)
+   =================================================== */
+.grid-table{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr 2fr;
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 6px 16px rgba(0,0,0,.08);
+  margin-top:16px;
+}
+.grid-row{display:contents}
+.grid-cell{
+  padding:12px;
+  text-align:center;
+  border-bottom:1px solid #eee;
+  background:#fff;
+  font-size:14px;
+}
+.grid-header{
+  background:#ffeb3b;
+  font-weight:bold;
+  border-bottom:2px solid #fbc02d;
+}
+.grid-row:hover .grid-cell{background:#f1f8ff}
+.grid-total{background:#e3f2fd;font-weight:bold}
+.jml{font-weight:bold}
+
+/* ===== STAT GRID (KODE ASLI - TETAP ADA) ===== */
 .stat-grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -132,30 +135,22 @@ body{
   border-radius:12px;
   padding:18px;
   text-align:center;
-  box-shadow:0 4px 10px rgba(0,0,0,.05);
-}
-.stat-box h4{
-  margin:0 0 8px;
-  font-size:14px;
-  color:#0A4FA3;
-}
-.stat-box p{
-  margin:0;
-  font-size:16px;
-  font-weight:bold;
-  line-height:1.6;
 }
 
 @media(max-width:768px){
   .layout{grid-template-columns:1fr}
   .stat-grid{grid-template-columns:1fr 1fr}
 }
+  .stat-box.left{
+  text-align:left;
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- ===== FIREBASE AUTH PROTECTION ===== -->
+<!-- ===== FIREBASE AUTH (ASLI - TIDAK DIUBAH) ===== -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut }
@@ -192,7 +187,7 @@ window.logout = function(){
 
 <div class="layout">
 
- <!-- ===== SIDEBAR ===== -->
+<!-- ===== SIDEBAR ===== -->
 <div class="sidebar">
 
   <div class="menu-group">
@@ -268,16 +263,16 @@ window.logout = function(){
 
 </div>
 
+
 <!-- ===== CONTENT ===== -->
 <div class="content">
 
-  <!-- === DATA SISWA MAPEL INFORMATIKA === -->
-  <div class="card info-single">
+  <!-- === DATA SISWA MAPEL INFORMATIKA (GRID TABLE) === -->
+  <div class="card">
     <h3>📘 Data Siswa Mapel Informatika</h3>
-    <p id="info_informatika">Memuat...</p>
+    <div id="info_informatika">Memuat data...</div>
   </div>
-
-  <!-- === DATA GURU WALI === -->
+ <!-- === DATA GURU WALI === -->
   <div class="card">
     <h3>🧑‍🏫 Data Guru Wali</h3>
     <div class="stat-grid">
@@ -293,174 +288,165 @@ window.logout = function(){
   </div>
 
   <!-- === DATA WALI KELAS === -->
-  <div class="card">
-    <h3>🏫 Data Wali Kelas</h3>
-    <div class="stat-grid">
+<div class="card">
+  <h3>🏫 Data Wali Kelas</h3>
+  <div class="stat-grid">
 
-      <div class="stat-box">
-        <h4>👦👧 Jumlah Siswa</h4>
-        <p id="jk">Memuat...</p>
-      </div>
-
-      <div class="stat-box">
-        <h4>🎂 Klasifikasi Usia</h4>
-        <p id="usia">Memuat...</p>
-      </div>
-
-      <div class="stat-box">
-        <h4>🎓 Pemilik KIP</h4>
-        <p id="kip">Memuat...</p>
-      </div>
-
-      <div class="stat-box">
-        <h4>🕊️ Yatim / Piatu</h4>
-        <p id="yatim">Memuat...</p>
-      </div>
-
+    <div class="stat-box left">
+      <h4>👦👧 Jumlah Siswa</h4>
+      <p id="jk">Memuat...</p>
     </div>
-  </div>
 
+    <div class="stat-box left">
+      <h4>🎂 Klasifikasi Usia</h4>
+      <p id="usia">Memuat...</p>
+    </div>
+
+    <div class="stat-box left">
+      <h4>🎓 Pemilik KIP</h4>
+      <p id="kip">Memuat...</p>
+    </div>
+
+    <div class="stat-box left">
+      <h4>🕊️ Yatim / Piatu</h4>
+      <p id="yatim">Memuat...</p>
+    </div>
+
+  </div>
 </div>
 
 
 <script>
-// =======================
-// 1️⃣ DATA MAPEL INFORMATIKA (GRID MODE)
-// =======================
-const URL_INFO = "https://opensheet.elk.sh/1rQcTtSG2Q_PX_CEx_NC2Cs5eb8CXxXBEsxqiVSNze2Q/DATA";
+document.addEventListener("DOMContentLoaded", () => {
 
-fetch(URL_INFO)
-.then(res => res.json())
-.then(data => {
+  // =====================================================
+  // 1️⃣ DATA MAPEL INFORMATIKA - GRID TABLE
+  // =====================================================
+  const URL_INFO = "https://opensheet.elk.sh/1rQcTtSG2Q_PX_CEx_NC2Cs5eb8CXxXBEsxqiVSNze2Q/DATA";
 
-  const kelas = {};
-  let totalL = 0;
-  let totalP = 0;
+  fetch(URL_INFO)
+  .then(res => res.json())
+  .then(data => {
 
-  data.forEach(r => {
-    const rombel = (r["Rombel"] || "").trim();
-    const jk = (r["Jenis Kelamin"] || "").toLowerCase();
+    const kelas = {};
+    let totalL = 0, totalP = 0;
 
-    if (!rombel) return;
+    data.forEach(r => {
+      const rombel = (r["Rombel"] || "").trim();
+      const jk = (r["Jenis Kelamin"] || "").toString().toLowerCase().trim();
 
-    if (!kelas[rombel]) {
-      kelas[rombel] = { L: 0, P: 0 };
-    }
+      if (!rombel) return;
 
-    if (jk.startsWith("l")) {
-      kelas[rombel].L++;
-      totalL++;
-    }
-    if (jk.startsWith("p")) {
-      kelas[rombel].P++;
-      totalP++;
-    }
-  });
+      if (!kelas[rombel]) kelas[rombel] = { L:0, P:0 };
 
-  const listKelas = Object.keys(kelas).sort();
+      if (jk.startsWith("l")) { kelas[rombel].L++; totalL++; }
+      if (jk.startsWith("p")) { kelas[rombel].P++; totalP++; }
+    });
 
-  // 🔥 GRID MODE (4 KOLOM)
-  let html = `<div class="stat-grid">`;
+    let html = `
+      <div class="grid-table">
+        <div class="grid-cell grid-header">KELAS</div>
+        <div class="grid-cell grid-header">L</div>
+        <div class="grid-cell grid-header">P</div>
+        <div class="grid-cell grid-header">JML</div>
+    `;
 
-  listKelas.forEach(k => {
-    const L = kelas[k].L;
-    const P = kelas[k].P;
-    const T = L + P;
+    Object.keys(kelas).sort().forEach(k => {
+      const L = kelas[k].L;
+      const P = kelas[k].P;
+      html += `
+        <div class="grid-row">
+          <div class="grid-cell">${k}</div>
+          <div class="grid-cell">${L}</div>
+          <div class="grid-cell">${P}</div>
+          <div class="grid-cell jml">${L + P} Siswa</div>
+        </div>
+      `;
+    });
 
     html += `
-      <div class="stat-box">
-        <h4>📘 Kelas ${k}</h4>
-        L : ${L}<br>
-        P : ${P}<br>
-        <b>Total : ${T}</b>
+      <div class="grid-row">
+        <div class="grid-cell grid-total">TOTAL</div>
+        <div class="grid-cell grid-total">${totalL}</div>
+        <div class="grid-cell grid-total">${totalP}</div>
+        <div class="grid-cell grid-total jml">${totalL + totalP} Siswa</div>
+      </div>
       </div>
     `;
+
+    document.getElementById("info_informatika").innerHTML = html;
+  })
+  .catch(err => {
+    console.error(err);
+    document.getElementById("info_informatika").innerText =
+      "❌ Gagal memuat data Informatika";
   });
 
-  html += `</div>
-  <hr>
-  <b>Siswa Laki-laki :</b> ${totalL}<br>
-  <b>Siswa Perempuan :</b> ${totalP}<br>
-  <b>Total :</b> ${totalL + totalP}
-  `;
+  // =====================================================
+  // 2️⃣ DATA GURU WALI
+  // =====================================================
+  const URL_WALI = "https://opensheet.elk.sh/1wKL5eDFA1LpU3Il5q-eChpdwQ-sUws2wJsVja3H95Hw/DATA";
 
-  document.getElementById("info_informatika").innerHTML = html;
+  fetch(URL_WALI)
+  .then(res => res.json())
+  .then(data => {
 
-})
-.catch(() => {
-  document.getElementById("info_informatika").innerText = "Gagal memuat data";
-});
+    let L = 0, P = 0;
 
-// =======================
-// 2️⃣ DATA GURU WALI  
-// =======================
-const URL_WALI = "https://opensheet.elk.sh/1wKL5eDFA1LpU3Il5q-eChpdwQ-sUws2wJsVja3H95Hw/DATA";
+    data.forEach(r => {
+      const jk = (r["JENIS KELAMIN"] || "").toString().toLowerCase().trim();
+      if (jk.startsWith("l")) L++;
+      if (jk.startsWith("p")) P++;
+    });
 
-fetch(URL_WALI)
-.then(res => res.json())
-.then(data => {
-
-  let L = 0;
-  let P = 0;
-
-  data.forEach(r => {
-    const jk = (r["JENIS KELAMIN"] || "").toLowerCase();
-    if (jk.startsWith("l")) L++;
-    if (jk.startsWith("p")) P++;
+    document.getElementById("wali_L").innerText = L + " Orang";
+    document.getElementById("wali_P").innerText = P + " Orang";
+  })
+  .catch(() => {
+    document.getElementById("wali_L").innerText = "Gagal";
+    document.getElementById("wali_P").innerText = "Gagal";
   });
 
-  document.getElementById("wali_L").innerText = L;
-  document.getElementById("wali_P").innerText = P;
+  // =====================================================
+  // 3️⃣ DATA WALI KELAS
+  // =====================================================
+  fetch("https://opensheet.elk.sh/1HxpFxRiuyOehybcPh65mAtNQWrC1yi7iFZ1ZmDQnPZc/DATA")
+  .then(res => res.json())
+  .then(data => {
 
-})
-.catch(() => {
-  document.getElementById("wali_L").innerText = "Gagal";
-  document.getElementById("wali_P").innerText = "Gagal";
-});
+    let L = 0, P = 0;
+    let usia = {12:0,13:0,14:0,15:0};
+    let kip = 0, yatim = 0;
 
-  
-// =======================
-// 3️⃣ DATA WALI KELAS
-// =======================
-fetch("https://opensheet.elk.sh/1HxpFxRiuyOehybcPh65mAtNQWrC1yi7iFZ1ZmDQnPZc/DATA")
-.then(res => res.json())
-.then(data => {
+    data.forEach(r => {
 
-  let L = 0, P = 0;
-  let usia = {12:0,13:0,14:0,15:0};
-  let kip = 0, yatim = 0;
+      const jk = (r["JENIS KELAMIN"] || "").toString().toLowerCase().trim();
+      if (jk.startsWith("l")) L++;
+      if (jk.startsWith("p")) P++;
 
-  data.forEach(r => {
+      const u = Number(r["USIA"]);
+      if (usia[u] !== undefined) usia[u]++;
 
-    // ✅ AMBIL KOLOM D (JENIS KELAMIN)
-    const jk = (r["JENIS KELAMIN"] || "").toLowerCase().trim();
+      if ((r["ADA KARTU KIP"] || "").toUpperCase().trim() === "KIP") kip++;
+      if ((r["YATIM/PIATU"] || "").trim() !== "") yatim++;
+    });
 
-    if (jk.startsWith("l")) L++;   // L / Laki-laki
-    if (jk.startsWith("p")) P++;   // P / Perempuan
+    document.getElementById("jk").innerHTML =
+      `L:${L} | P:${P}<br><b>Total:${L + P}</b>`;
 
-    const u = Number(r["USIA"]);
-    if (usia[u] !== undefined) usia[u]++;
+    document.getElementById("usia").innerHTML =
+      `12:${usia[12]}<br>13:${usia[13]}<br>14:${usia[14]}<br>15:${usia[15]}`;
 
-    if ((r["ADA KARTU KIP"] || "").toUpperCase().trim() === "KIP") kip++;
-    if ((r["YATIM/PIATU"] || "").trim() !== "") yatim++;
+    document.getElementById("kip").innerText = kip + " Siswa";
+    document.getElementById("yatim").innerText = yatim + " Siswa";
+  })
+  .catch(() => {
+    document.getElementById("jk").innerText = "Gagal memuat data";
   });
 
-  // 👦👧 JUMLAH SISWA
-  document.getElementById("jk").innerHTML =
-    `L:${L} | P:${P}<br>(Total:${L + P})`;
-
-  // 🎂 USIA
-  document.getElementById("usia").innerHTML =
-    `12:${usia[12]}<br>13:${usia[13]}<br>14:${usia[14]}<br>15:${usia[15]}`;
-
-  // 🎓 KIP & 🕊️ YATIM
-  document.getElementById("kip").innerText = kip + " Siswa";
-  document.getElementById("yatim").innerText = yatim + " Siswa";
-})
-.catch(() => {
-  document.getElementById("jk").innerText = "Gagal memuat data";
 });
 </script>
+
 
 </body>
 </html>
