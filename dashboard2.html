@@ -145,6 +145,41 @@ body{
   text-align:left;
 }
 
+/* ===== GRID DETAIL (PENGGANTI TABEL) ===== */
+.grid-detail{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:6px 12px;
+  font-size:14px;
+}
+
+.grid-detail div{
+  padding:2px 0;
+}
+
+.card-header{
+  background:#ffeb3b;
+  padding:8px 12px;
+  border-radius:10px 10px 0 0;
+  font-weight:bold;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.card-body{
+  padding:14px;
+}
+
+.center-box{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:28px;
+  font-weight:bold;
+  height:120px;
+}
+
 </style>
 </head>
 
@@ -287,29 +322,33 @@ window.logout = function(){
     </div>
   </div>
 
-  <!-- === DATA WALI KELAS === -->
+<!-- === DATA WALI KELAS === -->
 <div class="card">
   <h3>🏫 Data Wali Kelas</h3>
   <div class="stat-grid">
 
+    <!-- DATA SISWA -->
     <div class="stat-box left">
-      <h4>👦👧 Jumlah Siswa</h4>
-      <p id="jk">Memuat...</p>
+      <div class="card-header">🏫 Data Siswa Kelas 7H</div>
+      <div class="card-body grid-detail" id="jk">Memuat...</div>
     </div>
 
+    <!-- USIA -->
     <div class="stat-box left">
-      <h4>🎂 Klasifikasi Usia</h4>
-      <p id="usia">Memuat...</p>
+      <div class="card-header">🎂 Klasifikasi Usia</div>
+      <div class="card-body grid-detail" id="usia">Memuat...</div>
     </div>
 
-    <div class="stat-box left">
-      <h4>🎓 Pemilik KIP</h4>
-      <p id="kip">Memuat...</p>
+    <!-- KIP -->
+    <div class="stat-box">
+      <div class="card-header">🎓 Pemilik KIP</div>
+      <div class="center-box" id="kip">Memuat...</div>
     </div>
 
-    <div class="stat-box left">
-      <h4>🕊️ Yatim / Piatu</h4>
-      <p id="yatim">Memuat...</p>
+    <!-- YATIM -->
+    <div class="stat-box">
+      <div class="card-header">🕊️ Yatim / Piatu</div>
+      <div class="center-box" id="yatim">Memuat...</div>
     </div>
 
   </div>
@@ -431,11 +470,23 @@ document.addEventListener("DOMContentLoaded", () => {
       if ((r["YATIM/PIATU"] || "").trim() !== "") yatim++;
     });
 
-    document.getElementById("jk").innerHTML =
-      `L:${L} | P:${P}<br><b>Total:${L + P}</b>`;
+    document.getElementById("jk").innerHTML = `
+  <div>Jumlah Siswa</div><div></div>
+  <div>Laki-laki</div><div>: ${L} anak</div>
+  <div>Perempuan</div><div>: ${P} anak</div>
+  <div><b>Total</b></div><div><b>: ${L + P} anak</b></div>
+`;
 
-    document.getElementById("usia").innerHTML =
-      `12:${usia[12]}<br>13:${usia[13]}<br>14:${usia[14]}<br>15:${usia[15]}`;
+document.getElementById("usia").innerHTML = `
+  <div>12 Tahun</div><div>: ${usia[12]} anak</div>
+  <div>13 Tahun</div><div>: ${usia[13]} anak</div>
+  <div>14 Tahun</div><div>: ${usia[14]} anak</div>
+  <div>15 Tahun</div><div>: ${usia[15]} anak</div>
+`;
+
+document.getElementById("kip").innerText = kip + " Siswa";
+document.getElementById("yatim").innerText = yatim + " Siswa";
+
 
     document.getElementById("kip").innerText = kip + " Siswa";
     document.getElementById("yatim").innerText = yatim + " Siswa";
