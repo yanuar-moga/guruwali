@@ -137,10 +137,7 @@ body{
   text-align:center;
 }
 
-@media(max-width:768px){
-  .layout{grid-template-columns:1fr}
-  .stat-grid{grid-template-columns:1fr 1fr}
-}
+
   .stat-box.left{
   text-align:left;
 }
@@ -178,6 +175,52 @@ body{
   font-size:28px;
   font-weight:bold;
   height:120px;
+}
+/* =================================================
+   FIX RESPONSIVE MOBILE (WAJIB)
+   ================================================= */
+@media (max-width: 768px){
+
+  /* Layout jadi 1 kolom */
+  .layout{
+    grid-template-columns: 1fr;
+  }
+
+  /* Sidebar disembunyikan di HP */
+  .sidebar{
+    display: none;
+  }
+
+  /* Padding konten diperkecil */
+  .content{
+    padding: 14px;
+  }
+
+  /* Semua kartu full width */
+  .card{
+    padding: 16px;
+  }
+
+  /* Statistik jadi 1 kolom */
+  .stat-grid{
+    grid-template-columns: 1fr;
+  }
+
+  /* Tabel Informatika bisa di-scroll */
+  .grid-table{
+    display: block;
+    overflow-x: auto;
+  }
+
+  .grid-cell{
+    min-width: 90px;
+    font-size: 13px;
+  }
+
+  /* Header mengecil */
+  .top-header h1{
+    font-size: 16px;
+  }
 }
 
 </style>
