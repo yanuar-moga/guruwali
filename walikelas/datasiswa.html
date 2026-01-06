@@ -103,14 +103,26 @@ body{
   padding:22px;
 }
 
-/* PLACEHOLDER */
-.empty-content{
-  background:#fff;
-  border-radius:14px;
-  padding:40px;
-  text-align:center;
-  color:#64748b;
-  box-shadow:0 6px 18px rgba(10,79,163,.06);
+/* ===== TABLE ===== */
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
+}
+thead th{
+  position:sticky;
+  top:0;
+  background:#2563eb;
+  color:#fff;
+  padding:10px;
+  text-align:left;
+}
+tbody td{
+  padding:8px 10px;
+  border-bottom:1px solid #e5e7eb;
+}
+tbody tr:hover{
+  background:#eef2ff;
 }
 
 /* ===== RESPONSIVE ===== */
@@ -161,91 +173,155 @@ window.logout = function(){
 <!-- ===== MAIN LAYOUT ===== -->
 <div class="layout">
 
-  <!-- ===== SIDEBAR ===== -->
-  <aside class="sidebar">
+ <!-- ===== SIDEBAR ===== -->
+<aside class="sidebar">
 
-    <div class="menu-group">
-      <h3>Dashboard</h3>
-      <div class="menu-title">Menu</div>
-      <div class="sub-menu">
-        <a href="../dashboard.html">Home</a>
-      </div>
+  <div class="menu-group">
+    <h3>Dashboard</h3>
+    <div class="menu-title">Menu</div>
+    <div class="sub-menu">
+      <a href="../dashboard.html">Home</a>
     </div>
+  </div>
 
-    <div class="menu-group">
-      <h3>Guru Informatika</h3>
-      <div class="menu-title">Menu</div>
-      <div class="sub-menu">
-        <a href="../informatika/modulajar.html">Modul Ajar</a>
-        <a href="../informatika/asesmen.html">Asesmen / Kuis</a>
-        <a href="../informatika/nilai-informatika.html">Rekap Nilai</a>
-        <a href="../informatika/proyek.html">Proyek Siswa</a>
-      </div>
+  <div class="menu-group">
+    <h3>Guru Informatika</h3>
+    <div class="menu-title">Menu</div>
+    <div class="sub-menu">
+      <a href="../informatika/modulajar.html">Modul Ajar</a>
+      <a href="../informatika/asesmen.html">Asesmen / Kuis</a>
+      <a href="../informatika/nilai-informatika.html">Rekap Nilai</a>
+      <a href="../informatika/proyek.html">Proyek Siswa</a>
     </div>
+  </div>
 
-    <div class="menu-group">
-      <h3>Guru Wali</h3>
-      <div class="menu-title">Menu</div>
-      <div class="sub-menu">
-        <a href="../guruwali/profilsiswa.html">Profil Siswa</a>
-        <a href="../guruwali/perkembangan.html">Perkembangan Akademik</a>
-        <a href="../guruwali/catatan.html">Catatan Perilaku</a>
-        <a href="../guruwali/konsultasi.html">Jadwal Konsultasi</a>
-      </div>
+  <div class="menu-group">
+    <h3>Guru Wali</h3>
+    <div class="menu-title">Menu</div>
+    <div class="sub-menu">
+      <a href="../guruwali/profilsiswa.html">Profil Siswa</a>
+      <a href="../guruwali/perkembangan.html">Perkembangan Akademik</a>
+      <a href="../guruwali/catatan.html">Catatan Perilaku</a>
+      <a href="../guruwali/konsultasi.html">Jadwal Konsultasi</a>
     </div>
+  </div>
 
-    <div class="menu-group">
-      <h3>Wali Kelas</h3>
-      <div class="menu-title">Menu</div>
-      <div class="sub-menu">
-        <a href="../walikelas/strukturkelas.html">Struktur Kelas</a>
-        <a href="../walikelas/biodata.html">Kartu Siswa</a>
-        <a href="../walikelas/datasiswa.html">Tabel Data Siswa</a>
-        <a href="../walikelas/keadaankelas.html">Keadaan Kelas</a>
-        <a href="../walikelas/absensi.html">Rekap Absensi</a>
-        <a href="../walikelas/laporan.html">Laporan Perkembangan</a>
-      </div>
+  <div class="menu-group">
+    <h3>Wali Kelas</h3>
+    <div class="menu-title">Menu</div>
+    <div class="sub-menu">
+      <a href="../walikelas/strukturkelas.html">Struktur Kelas</a>
+      <a href="../walikelas/biodata.html">Kartu Siswa</a>
+      <a href="../walikelas/datasiswa.html">Tabel Data Siswa</a>
+      <a href="../walikelas/keadaankelas.html">Keadaan Kelas</a>
+      <a href="../walikelas/absensi.html">Rekap Absensi</a>
+      <a href="../walikelas/laporan.html">Laporan Perkembangan</a>
     </div>
+  </div>
 
-    <div class="menu-group">
-      <h3>Pembina Ekstra</h3>
-      <div class="menu-title">Menu</div>
-      <div class="sub-menu">
-        <a href="../ekstra/ekstra.html">Data Ekstrakurikuler</a>
-        <a href="../ekstra/anggota-ekstra.html">Anggota Ekskul</a>
-        <a href="../ekstra/jadwal-ekstra.html">Jadwal Latihan</a>
-        <a href="../ekstra/prestasi-ekstra.html">Prestasi</a>
-      </div>
+  <div class="menu-group">
+    <h3>Pembina Ekstra</h3>
+    <div class="menu-title">Menu</div>
+    <div class="sub-menu">
+      <a href="../ekstra/ekstra.html">Data Ekstrakurikuler</a>
+      <a href="../ekstra/anggota-ekstra.html">Anggota Ekskul</a>
+      <a href="../ekstra/jadwal-ekstra.html">Jadwal Latihan</a>
+      <a href="../ekstra/prestasi-ekstra.html">Prestasi</a>
     </div>
+  </div>
 
-    <div class="menu-group">
-      <h3>Admin Website</h3>
-      <div class="menu-title">Menu</div>
-      <div class="sub-menu">
-        <a href="../admin/user.html">Manajemen User</a>
-        <a href="../admin/kelas.html">Manajemen Kelas</a>
-        <a href="../admin/siswa.html">Data Siswa</a>
-        <a href="../admin/setting.html">Pengaturan</a>
-      </div>
+  <div class="menu-group">
+    <h3>Admin Website</h3>
+    <div class="menu-title">Menu</div>
+    <div class="sub-menu">
+      <a href="../admin/user.html">Manajemen User</a>
+      <a href="../admin/kelas.html">Manajemen Kelas</a>
+      <a href="../admin/siswa.html">Data Siswa</a>
+      <a href="../admin/setting.html">Pengaturan</a>
     </div>
+  </div>
 
-    <!-- LOGOUT -->
-    <button onclick="logout()"
-      style="margin-top:10px;background:#ff5d5d;color:#fff;border:none;padding:10px;border-radius:12px;width:100%;font-weight:bold;">
-      Logout
-    </button>
+  <!-- ✅ LOGOUT DI DALAM SIDEBAR -->
+  <button onclick="logout()"
+    style="margin-top:10px;background:#ff5d5d;color:#fff;border:none;padding:10px;border-radius:12px;width:100%;font-weight:bold;">
+    Logout
+  </button>
 
-  </aside>
+</aside>
 
-  <!-- ===== CONTENT ===== -->
-  <main class="content">
-    <div class="empty-content">
-      <h2>📂 Konten Belum Diisi</h2>
-      <p>Silakan tambahkan card, tabel, grafik, atau halaman sesuai kebutuhan.</p>
-    </div>
-  </main>
+<!-- ===== CONTENT ===== -->
+<main class="content">
+
+  <h2 style="margin-bottom:14px;color:#1e293b">📋 Data Siswa</h2>
+
+  <input type="text" id="searchInput" placeholder="🔍 Cari nama siswa..."
+    style="width:100%;max-width:360px;padding:10px 14px;
+    border-radius:10px;border:1px solid #cbd5f5;margin-bottom:16px;">
+
+  <div style="background:#fff;border-radius:14px;
+              overflow:auto;max-height:520px;
+              box-shadow:0 6px 18px rgba(10,79,163,.08);">
+
+    <table>
+      <thead>
+        <tr id="tableHeader"></tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+
+  </div>
+
+</main>
 
 </div>
+
+<!-- ===== GOOGLE SHEET SCRIPT ===== -->
+<script>
+const sheetId = "1HxpFxRiuyOehybcPh65mAtNQWrC1yi7iFZ1ZmDQnPZc";
+const sheetName = "DATA";
+const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
+
+let allRows = [];
+
+fetch(url)
+  .then(res => res.text())
+  .then(text => {
+    const json = JSON.parse(text.substring(47).slice(0, -2));
+    const cols = json.table.cols;
+    const rows = json.table.rows;
+
+    const header = document.getElementById("tableHeader");
+    cols.forEach(col => {
+      const th = document.createElement("th");
+      th.textContent = col.label;
+      header.appendChild(th);
+    });
+
+    allRows = rows.map(r => r.c.map(c => c ? c.v : ""));
+    renderTable(allRows);
+  });
+
+function renderTable(data){
+  const body = document.getElementById("tableBody");
+  body.innerHTML = "";
+  data.forEach(row => {
+    const tr = document.createElement("tr");
+    row.forEach(cell => {
+      const td = document.createElement("td");
+      td.textContent = cell;
+      tr.appendChild(td);
+    });
+    body.appendChild(tr);
+  });
+}
+
+document.getElementById("searchInput").addEventListener("keyup", function(){
+  const keyword = this.value.toLowerCase();
+  renderTable(
+    allRows.filter(r => r.join(" ").toLowerCase().includes(keyword))
+  );
+});
+</script>
 
 </body>
 </html>
