@@ -236,6 +236,14 @@ window.logout = function(){
 
 
   <!-- ===== CONTENT (KOSONG) ===== -->
+<!-- ===== CONTENT ===== -->
+<main class="content">
+
+  <h1>Nilai Rapor Informatika Kelas 7</h1>
+  <div id="output">Memuat data...</div>
+
+</main>
+
 <script>
 const sheets = [
   { kelas: "Kelas 7A", id: "1aICGeD-syUyBPvyA4G69Y8bWyPCEXv0I" },
@@ -265,30 +273,20 @@ async function loadData() {
       let siswa = [];
 
       rows.forEach(r => {
-        const nama = r.c[5]?.v;   // Kolom F
-        const nilai = r.c[6]?.v;  // Kolom G
+        const nama = r.c[5]?.v;
+        const nilai = r.c[6]?.v;
 
         if (!nama) return;
         if (nama.toString().toUpperCase() === "NAMA SISWA") return;
         if (isNaN(nilai)) return;
 
-        siswa.push({
-          nama: nama,
-          nilai: Number(nilai)
-        });
+        siswa.push({ nama, nilai: Number(nilai) });
       });
 
-      // URUTKAN DARI NILAI TERBESAR
       siswa.sort((a, b) => b.nilai - a.nilai);
 
-      let html = `<h2>${sheet.kelas}</h2>`;
-      html += `
+      let html = `<h2>${sheet.kelas}</h2>
       <table>
-        <colgroup>
-          <col style="width:10%">
-          <col style="width:70%">
-          <col style="width:20%">
-        </colgroup>
         <tr>
           <th>Rangking</th>
           <th>Nama Siswa</th>
@@ -298,8 +296,8 @@ async function loadData() {
       siswa.forEach((s, i) => {
         html += `
         <tr>
-          <td class="rank">${i + 1}</td>
-          <td class="nama">${s.nama}</td>
+          <td>${i + 1}</td>
+          <td style="text-align:left">${s.nama}</td>
           <td>${s.nilai}</td>
         </tr>`;
       });
@@ -307,7 +305,7 @@ async function loadData() {
       html += `</table>`;
       output.innerHTML += html;
 
-    } catch (error) {
+    } catch {
       output.innerHTML += `<p style="color:red">Gagal memuat ${sheet.kelas}</p>`;
     }
   }
@@ -315,6 +313,7 @@ async function loadData() {
 
 loadData();
 </script>
+
 
 
 </div>
