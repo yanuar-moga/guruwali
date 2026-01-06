@@ -116,6 +116,78 @@ body{
 @media(max-width:768px){
   .layout{grid-template-columns:1fr}
 }
+  /* ===== GRID NILAI ===== */
+.nilai-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));
+  gap:20px;
+}
+
+/* ===== CARD KELAS ===== */
+.kelas-card{
+  background:#fff;
+  border-radius:16px;
+  box-shadow:0 6px 18px rgba(0,0,0,.08);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+
+/* HEADER CARD */
+.kelas-header{
+  background:linear-gradient(135deg,#2563eb,#1e40af);
+  color:#fff;
+  padding:12px 16px;
+  font-weight:bold;
+  text-align:center;
+  font-size:15px;
+}
+
+/* BODY CARD */
+.kelas-body{
+  padding:12px;
+  overflow:auto;
+}
+
+/* TABLE KONSISTEN */
+.kelas-body table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+}
+
+.kelas-body th{
+  background:#e5edff;
+  color:#1e3a8a;
+  padding:8px;
+  border:1px solid #dbeafe;
+  text-align:center;
+}
+
+.kelas-body td{
+  padding:6px 8px;
+  border:1px solid #e5e7eb;
+  text-align:center;
+}
+
+.kelas-body td.nama{
+  text-align:left;
+}
+
+.kelas-body tr:nth-child(even){
+  background:#f8fafc;
+}
+
+/* RANK BADGE */
+.rank-badge{
+  background:#2563eb;
+  color:white;
+  border-radius:6px;
+  padding:2px 6px;
+  font-size:12px;
+  font-weight:bold;
+}
+
 </style>
 </head>
 
@@ -234,14 +306,16 @@ window.logout = function(){
 
 </aside>
 
-
-  <!-- ===== CONTENT (KOSONG) ===== -->
 <!-- ===== CONTENT ===== -->
 <main class="content">
+  <h1>📊 Nilai Rapor Informatika Kelas 7</h1>
+  <p style="color:#64748b;margin-bottom:16px">
+    Semester 1 · Data otomatis dari Google Spreadsheet
+  </p>
 
-  <h1>Nilai Rapor Informatika Kelas 7</h1>
-  <div id="output">Memuat data...</div>
-
+  <div id="output" class="nilai-grid">
+    Memuat data...
+  </div>
 </main>
 
 <script>
@@ -260,59 +334,68 @@ const sheets = [
 const output = document.getElementById("output");
 output.innerHTML = "";
 
-async function loadData() {
-  for (const sheet of sheets) {
-    const url = `https://docs.google.com/spreadsheets/d/${sheet.id}/gviz/tq?tqx=out:json`;
-
-    try {
+async function loadData(){
+  for(const sheet of sheets){
+    try{
+      const url = `https://docs.google.com/spreadsheets/d/${sheet.id}/gviz/tq?tqx=out:json`;
       const res = await fetch(url);
       const text = await res.text();
       const json = JSON.parse(text.substr(47).slice(0, -2));
       const rows = json.table.rows;
 
       let siswa = [];
-
-      rows.forEach(r => {
+      rows.forEach(r=>{
         const nama = r.c[5]?.v;
         const nilai = r.c[6]?.v;
-
-        if (!nama) return;
-        if (nama.toString().toUpperCase() === "NAMA SISWA") return;
-        if (isNaN(nilai)) return;
-
-        siswa.push({ nama, nilai: Number(nilai) });
+        if(!nama || isNaN(nilai)) return;
+        if(nama.toUpperCase()==="NAMA SISWA") return;
+        siswa.push({nama, nilai:Number(nilai)});
       });
 
-      siswa.sort((a, b) => b.nilai - a.nilai);
+      siswa.sort((a,b)=>b.nilai-a.nilai);
 
-      let html = `<h2>${sheet.kelas}</h2>
-      <table>
-        <tr>
-          <th>Rangking</th>
-          <th>Nama Siswa</th>
-          <th>Nilai Rapor</th>
-        </tr>`;
+      let card = `
+      <div class="kelas-card">
+        <div class="kelas-header">${sheet.kelas}</div>
+        <div class="kelas-body">
+          <table>
+            <tr>
+              <th>Rank</th>
+              <th>Nama Siswa</th>
+              <th>Nilai</th>
+            </tr>`;
 
-      siswa.forEach((s, i) => {
-        html += `
+      siswa.forEach((s,i)=>{
+        card += `
         <tr>
-          <td>${i + 1}</td>
-          <td style="text-align:left">${s.nama}</td>
+          <td><span class="rank-badge">${i+1}</span></td>
+          <td class="nama">${s.nama}</td>
           <td>${s.nilai}</td>
         </tr>`;
       });
 
-      html += `</table>`;
-      output.innerHTML += html;
+      card += `
+          </table>
+        </div>
+      </div>`;
 
-    } catch {
-      output.innerHTML += `<p style="color:red">Gagal memuat ${sheet.kelas}</p>`;
+      output.innerHTML += card;
+
+    }catch{
+      output.innerHTML += `
+      <div class="kelas-card">
+        <div class="kelas-header">${sheet.kelas}</div>
+        <div class="kelas-body" style="color:red">
+          Gagal memuat data
+        </div>
+      </div>`;
     }
   }
 }
 
 loadData();
 </script>
+
 
 
 
