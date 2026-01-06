@@ -236,12 +236,86 @@ window.logout = function(){
 
 
   <!-- ===== CONTENT (KOSONG) ===== -->
-  <main class="content">
-    <div class="empty-content">
-      <h2>📂 Konten Belum Diisi</h2>
-      <p>Silakan tambahkan card, tabel, grafik, atau halaman sesuai kebutuhan.</p>
-    </div>
-  </main>
+<script>
+const sheets = [
+  { kelas: "Kelas 7A", id: "1aICGeD-syUyBPvyA4G69Y8bWyPCEXv0I" },
+  { kelas: "Kelas 7B", id: "148cNp9xuhjcDxIRvqUwauJ5wS3ad6i1d" },
+  { kelas: "Kelas 7C", id: "11CoFJ_81sqjRA3X6uDUQMJMbpfOYANUN" },
+  { kelas: "Kelas 7D", id: "19tAEWT4NRVy5h8Pp62YnWc8TYXe7jd1o" },
+  { kelas: "Kelas 7E", id: "1byJryH5-SHZ9WFa8nn1m4Qyckf3J6E98" },
+  { kelas: "Kelas 7F", id: "15f13CrIxvfQUdvlRGIjmBcSRlf4UmEjX" },
+  { kelas: "Kelas 7G", id: "1hmn98IT_cjXN_jXEyUxzldwhsesrjfsT" },
+  { kelas: "Kelas 7H", id: "18nhFJ2PbDHyWrSPYBnz1ek3nNBuReTmx" },
+  { kelas: "Kelas 7I", id: "1fdDczC0Zb6yzAW7g219REICX7i0zvlCq" }
+];
+
+const output = document.getElementById("output");
+output.innerHTML = "";
+
+async function loadData() {
+  for (const sheet of sheets) {
+    const url = `https://docs.google.com/spreadsheets/d/${sheet.id}/gviz/tq?tqx=out:json`;
+
+    try {
+      const res = await fetch(url);
+      const text = await res.text();
+      const json = JSON.parse(text.substr(47).slice(0, -2));
+      const rows = json.table.rows;
+
+      let siswa = [];
+
+      rows.forEach(r => {
+        const nama = r.c[5]?.v;   // Kolom F
+        const nilai = r.c[6]?.v;  // Kolom G
+
+        if (!nama) return;
+        if (nama.toString().toUpperCase() === "NAMA SISWA") return;
+        if (isNaN(nilai)) return;
+
+        siswa.push({
+          nama: nama,
+          nilai: Number(nilai)
+        });
+      });
+
+      // URUTKAN DARI NILAI TERBESAR
+      siswa.sort((a, b) => b.nilai - a.nilai);
+
+      let html = `<h2>${sheet.kelas}</h2>`;
+      html += `
+      <table>
+        <colgroup>
+          <col style="width:10%">
+          <col style="width:70%">
+          <col style="width:20%">
+        </colgroup>
+        <tr>
+          <th>Rangking</th>
+          <th>Nama Siswa</th>
+          <th>Nilai Rapor</th>
+        </tr>`;
+
+      siswa.forEach((s, i) => {
+        html += `
+        <tr>
+          <td class="rank">${i + 1}</td>
+          <td class="nama">${s.nama}</td>
+          <td>${s.nilai}</td>
+        </tr>`;
+      });
+
+      html += `</table>`;
+      output.innerHTML += html;
+
+    } catch (error) {
+      output.innerHTML += `<p style="color:red">Gagal memuat ${sheet.kelas}</p>`;
+    }
+  }
+}
+
+loadData();
+</script>
+
 
 </div>
 
