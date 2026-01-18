@@ -3,96 +3,101 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Login - Aplikasi Guru Wali</title>
+<title>Login - Aplikasi Wali Kelas</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600;800&display=swap" rel="stylesheet">
 
 <style>
-* { box-sizing: border-box; }
+*{box-sizing:border-box}
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg,#e3f2fd,#bbdefb);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Inter,Arial,sans-serif;
+  background:linear-gradient(135deg,#020617,#0f172a);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
 }
 
-.login-card {
-  width: 360px;
-  background: #fff;
-  border-radius: 18px;
-  padding: 28px 26px 22px;
-  box-shadow: 0 12px 30px rgba(0,0,0,.15);
-  text-align: center;
+.login-card{
+  width:360px;
+  background:#020617;
+  border-radius:20px;
+  padding:30px 26px 24px;
+  box-shadow:0 25px 60px rgba(0,0,0,.45);
+  text-align:center;
 }
 
-.logo {
-  width: 80px;
-  margin-bottom: 10px;
+.logo{
+  width:80px;
+  margin-bottom:12px;
 }
 
-.title {
-  margin: 6px 0 18px;
-  color: #0A4FA3;
-  font-size: 22px;
+.title{
+  margin:6px 0 20px;
+  color:#38bdf8;
+  font-size:22px;
+  font-weight:800;
 }
 
-.form { text-align: left; }
+.form{text-align:left}
 
-.field {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 14px;
+.field{
+  display:flex;
+  flex-direction:column;
+  margin-bottom:14px;
 }
 
-.label-text {
-  font-size: 13px;
-  margin-bottom: 5px;
-  color: #444;
+.label-text{
+  font-size:13px;
+  margin-bottom:5px;
+  color:#cbd5f5;
 }
 
-.input-field {
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  height: 42px;
-  outline: none;
+.input-field{
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid #1e293b;
+  font-size:14px;
+  height:42px;
+  outline:none;
+  background:#0f172a;
+  color:white;
 }
 
-.input-field:focus {
-  border-color: #0A4FA3;
+.input-field:focus{
+  border-color:#38bdf8;
 }
 
-.show-pass {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  margin: 6px 0 18px;
+.show-pass{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:13px;
+  margin:6px 0 18px;
+  color:#cbd5f5;
 }
 
-.btn-primary {
-  width: 100%;
-  padding: 11px;
-  background: #0A4FA3;
-  border: none;
-  border-radius: 10px;
-  color: white;
-  font-size: 15px;
-  font-weight: bold;
-  cursor: pointer;
+.btn-primary{
+  width:100%;
+  padding:12px;
+  background:linear-gradient(135deg,#38bdf8,#0ea5e9);
+  border:none;
+  border-radius:12px;
+  color:#020617;
+  font-size:15px;
+  font-weight:800;
+  cursor:pointer;
 }
 
-.btn-primary:hover {
-  background: #083d82;
-}
+.btn-primary:hover{opacity:.9}
 
-.footer {
-  margin-top: 18px;
-  font-size: 12px;
-  color: #777;
+.footer{
+  margin-top:18px;
+  font-size:12px;
+  color:#94a3b8;
 }
 </style>
 </head>
@@ -101,25 +106,27 @@ body {
 
 <div class="login-card">
 
-  <img src="assets/logo.png" alt="Logo Sekolah" class="logo" />
+  <!-- OPSIONAL: GANTI LOGO -->
+  <img src="assets/logo.png" alt="Logo Sekolah" class="logo">
+
   <h1 class="title">Aplikasi Guru Wali</h1>
 
   <form id="loginForm" class="form">
 
     <div class="field">
-      <span class="label-text">User (Email)</span>
-      <input id="username" type="email" class="input-field"
-             placeholder="Masukkan Email" required />
+      <span class="label-text">Email</span>
+      <input id="email" type="email" class="input-field"
+             placeholder="email@gmail.com" required>
     </div>
 
     <div class="field">
       <span class="label-text">Password</span>
       <input id="password" type="password" class="input-field"
-             placeholder="Masukkan Password" required />
+             placeholder="••••••••" required>
     </div>
 
     <div class="show-pass">
-      <input type="checkbox" id="showPassword" />
+      <input type="checkbox" id="showPassword">
       <label for="showPassword">Tampilkan Password</label>
     </div>
 
@@ -127,15 +134,14 @@ body {
 
   </form>
 
-  <div class="footer">© 2025 MB All Rights Reserved</div>
+  <div class="footer">© 2026 Sistem Administrasi Sekolah</div>
 
 </div>
 
 <!-- 👁️ SHOW / HIDE PASSWORD -->
 <script>
-document.getElementById('showPassword').addEventListener('change', function () {
-  const pass = document.getElementById('password');
-  pass.type = this.checked ? 'text' : 'password';
+document.getElementById("showPassword").addEventListener("change",function(){
+  password.type = this.checked ? "text" : "password";
 });
 </script>
 
@@ -145,6 +151,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged }
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+/* ✅ FIREBASE CONFIG (SESUAI DATA ANDA) */
 const firebaseConfig = {
   apiKey: "AIzaSyD_Dl5cdFBh_dyhkhthI2gclhWoz4ZHYls",
   authDomain: "login-2f19a.firebaseapp.com",
@@ -155,7 +162,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-/* JIKA SUDAH LOGIN → LANGSUNG KE DASHBOARD */
+/* AUTO REDIRECT JIKA SUDAH LOGIN */
 onAuthStateChanged(auth, user => {
   if (user) {
     window.location.replace("dashboard.html");
@@ -168,10 +175,9 @@ document.getElementById("loginForm").addEventListener("submit", e => {
 
   signInWithEmailAndPassword(
     auth,
-    username.value,
+    email.value,
     password.value
-  )
-  .catch(err => {
+  ).catch(err => {
     alert("Login gagal:\n" + err.message);
   });
 });
