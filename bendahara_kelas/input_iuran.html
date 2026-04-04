@@ -53,7 +53,7 @@ display:block;
 color:#cbd5e1;
 }
 
-/* INPUT FIX FULL WIDTH */
+/* INPUT */
 select, input{
 width:100%;
 padding:12px;
@@ -62,10 +62,9 @@ border:none;
 background:#334155;
 color:white;
 font-size:14px;
-display:block;
 }
 
-/* ROW 2 KOLOM */
+/* ROW */
 .row{
 display:flex;
 gap:12px;
@@ -81,26 +80,77 @@ width:100%;
 padding:14px;
 border:none;
 border-radius:12px;
-background:#22c55e;
 color:white;
 font-weight:bold;
 font-size:15px;
 cursor:pointer;
 margin-top:10px;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:8px;
 }
 
-button:hover{
+/* BUTTON WARNA */
+.btn-simpan{
+background:#22c55e;
+}
+.btn-simpan:hover{
 background:#16a34a;
 }
 
-/* STATUS */
-#status{
-text-align:center;
-margin-top:10px;
-font-size:13px;
+.btn-rekap{
+background:#3b82f6;
+}
+.btn-rekap:hover{
+background:#2563eb;
 }
 
-/* FIX BIAR TIDAK BERANTAKAN */
+/* LOADING SPINNER */
+.spinner{
+width:18px;
+height:18px;
+border:3px solid #fff;
+border-top:3px solid transparent;
+border-radius:50%;
+animation:spin 0.8s linear infinite;
+display:none;
+}
+
+@keyframes spin{
+to{ transform:rotate(360deg); }
+}
+
+/* TOAST */
+.toast{
+position:fixed;
+bottom:20px;
+left:50%;
+transform:translateX(-50%) translateY(100px);
+background:#1e293b;
+padding:14px 20px;
+border-radius:12px;
+box-shadow:0 5px 15px rgba(0,0,0,0.4);
+opacity:0;
+transition:all 0.4s;
+font-size:14px;
+z-index:999;
+}
+
+.toast.show{
+opacity:1;
+transform:translateX(-50%) translateY(0);
+}
+
+.toast.success{
+border-left:5px solid #22c55e;
+}
+
+.toast.error{
+border-left:5px solid #ef4444;
+}
+
+/* FOCUS */
 select:focus, input:focus{
 outline:none;
 box-shadow:0 0 0 2px #22c55e;
@@ -125,7 +175,7 @@ box-shadow:0 0 0 2px #22c55e;
 </select>
 </div>
 
-<!-- ROW GALON & KARTU -->
+<!-- GALON & KARTU -->
 <div class="row">
 
 <div class="col">
@@ -146,19 +196,26 @@ box-shadow:0 0 0 2px #22c55e;
 <input type="number" id="kas" placeholder="Rp">
 </div>
 
-<button onclick="kirim()">Simpan Data</button>
+<!-- BUTTON -->
+<button class="btn-simpan" id="btnSimpan" onclick="kirim()">
+<span id="btnText">Simpan Data</span>
+<div class="spinner" id="spinner"></div>
+</button>
 
-<div id="status"></div>
+<button class="btn-rekap" onclick="lihatRekap()">📊 Lihat Rekap Data</button>
 
 </div>
 
 </div>
+
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
 
 <script>
 
 const URL = "https://script.google.com/macros/s/AKfycbwQ0v3rev6JV1ubaV6E2aGNgN7Ji4uuQxAcs4xsBSuWGKwEsPftfYhwNKf6aY9KYlRkVw/exec";
 
-// LOAD DATA SISWA
+// LOAD SISWA
 async function loadSiswa(){
   const select = document.getElementById("nama");
 
@@ -180,6 +237,17 @@ async function loadSiswa(){
   }
 }
 
+// TOAST FUNCTION
+function showToast(message, type="success"){
+  const toast = document.getElementById("toast");
+  toast.innerText = message;
+  toast.className = "toast show " + type;
+
+  setTimeout(()=>{
+    toast.className = "toast";
+  }, 2500);
+}
+
 // KIRIM DATA
 function kirim(){
 
@@ -189,7 +257,7 @@ function kirim(){
   const kas = document.getElementById("kas").value;
 
   if(!nama){
-    alert("Pilih siswa dulu!");
+    showToast("⚠️ Pilih siswa dulu!", "error");
     return;
   }
 
@@ -216,18 +284,34 @@ function kirim(){
     }));
   }
 
+  // LOADING ON
+  document.getElementById("spinner").style.display = "inline-block";
+  document.getElementById("btnText").innerText = "Menyimpan...";
+  document.getElementById("btnSimpan").disabled = true;
+
   Promise.all(promises)
   .then(()=>{
-    document.getElementById("status").innerText = "✅ Data tersimpan";
+    showToast("✅ Data berhasil disimpan", "success");
 
     document.getElementById("galon").value="";
     document.getElementById("kartu").value="";
     document.getElementById("kas").value="";
   })
   .catch(()=>{
-    document.getElementById("status").innerText = "❌ Gagal simpan";
+    showToast("❌ Gagal menyimpan data", "error");
+  })
+  .finally(()=>{
+    // LOADING OFF
+    document.getElementById("spinner").style.display = "none";
+    document.getElementById("btnText").innerText = "Simpan Data";
+    document.getElementById("btnSimpan").disabled = false;
   });
 
+}
+
+// BUTTON REKAP
+function lihatRekap(){
+  window.open("https://yanuar-moga.github.io/guruwali/bendahara_kelas/cek_iuran","_blank");
 }
 
 window.onload = loadSiswa;
