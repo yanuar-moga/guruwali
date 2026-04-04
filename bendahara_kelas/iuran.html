@@ -6,38 +6,61 @@
 <title>Input Pembayaran</title>
 
 <style>
+
 body{
 font-family:Segoe UI;
 background:#0f172a;
 color:white;
+margin:0;
 display:flex;
 justify-content:center;
 align-items:center;
 height:100vh;
-margin:0;
 }
 
 .container{
+width:90%;
+max-width:700px;
 background:#1e293b;
-padding:25px;
-border-radius:15px;
-width:340px;
+padding:20px;
+border-radius:12px;
 }
 
 h2{
 text-align:center;
-margin-bottom:15px;
+margin-bottom:20px;
 }
 
-select, input, button{
+/* GRID */
+.form-grid{
+display:grid;
+grid-template-columns: repeat(6, 1fr);
+gap:10px;
+}
+
+/* HEADER */
+.header{
+font-weight:bold;
+text-align:center;
+font-size:13px;
+}
+
+/* INPUT */
+select, input{
 width:100%;
-padding:10px;
-margin-top:10px;
+padding:8px;
+border-radius:6px;
+border:none;
+text-align:center;
+}
+
+/* BUTTON */
+button{
+margin-top:15px;
+width:100%;
+padding:12px;
 border:none;
 border-radius:8px;
-}
-
-button{
 background:#22c55e;
 color:white;
 font-weight:bold;
@@ -49,9 +72,10 @@ background:#16a34a;
 }
 
 #status{
-margin-top:10px;
 text-align:center;
+margin-top:10px;
 }
+
 </style>
 
 </head>
@@ -60,21 +84,31 @@ text-align:center;
 <div class="container">
 <h2>Input Pembayaran</h2>
 
-<select id="nama">
-<option>Loading data siswa...</option>
-</select>
+<div class="form-grid">
 
-<select id="jenis">
-<option value="GALON">Bayar Galon</option>
-<option value="KARTU_PELAJAR">Bayar Kartu Pelajar</option>
-<option value="KAS_KELAS">Kas Kelas</option>
-</select>
+<div class="header">Nama Siswa</div>
+<div class="header">Bayar Galon</div>
+<div class="header">Input</div>
+<div class="header">Bayar Kartu</div>
+<div class="header">Input</div>
+<div class="header">Iuran Kas</div>
 
-<input type="number" id="jumlah" placeholder="Jumlah Bayar">
+<select id="nama"></select>
 
-<button onclick="kirim()">Simpan</button>
+<div>✔</div>
+<input type="number" id="galon" placeholder="Rp">
+
+<div>✔</div>
+<input type="number" id="kartu" placeholder="Rp">
+
+<input type="number" id="kas" placeholder="Rp">
+
+</div>
+
+<button onclick="kirim()">Simpan Data</button>
 
 <div id="status"></div>
+
 </div>
 
 <script>
@@ -82,11 +116,14 @@ text-align:center;
 const URL = "PASTE_URL_WEB_APP_KAMU";
 
 // LOAD DATA SISWA
+window.onload = function(){
+
 fetch(URL)
 .then(res => res.json())
 .then(data => {
-  let select = document.getElementById("nama");
-  select.innerHTML = "";
+
+  const select = document.getElementById("nama");
+  select.innerHTML = '<option value="">Pilih Siswa</option>';
 
   data.forEach(nama => {
     let opt = document.createElement("option");
@@ -94,27 +131,74 @@ fetch(URL)
     opt.textContent = nama;
     select.appendChild(opt);
   });
+
 });
+
+}
+
 
 // KIRIM DATA
 function kirim(){
 
-let data = {
-  nama: document.getElementById("nama").value,
-  jenis: document.getElementById("jenis").value,
-  jumlah: document.getElementById("jumlah").value
-};
+const nama = document.getElementById("nama").value;
+const galon = document.getElementById("galon").value;
+const kartu = document.getElementById("kartu").value;
+const kas = document.getElementById("kas").value;
 
-fetch(URL, {
-  method: "POST",
-  body: JSON.stringify(data)
+if(!nama){
+  alert("Pilih siswa dulu!");
+  return;
+}
+
+let promises = [];
+
+// GALON
+if(galon){
+  promises.push(fetch(URL,{
+    method:"POST",
+    body: JSON.stringify({
+      nama:nama,
+      jenis:"GALON",
+      jumlah:galon
+    })
+  }));
+}
+
+// KARTU
+if(kartu){
+  promises.push(fetch(URL,{
+    method:"POST",
+    body: JSON.stringify({
+      nama:nama,
+      jenis:"KARTU_PELAJAR",
+      jumlah:kartu
+    })
+  }));
+}
+
+// KAS
+if(kas){
+  promises.push(fetch(URL,{
+    method:"POST",
+    body: JSON.stringify({
+      nama:nama,
+      jenis:"KAS_KELAS",
+      jumlah:kas
+    })
+  }));
+}
+
+Promise.all(promises)
+.then(()=>{
+  document.getElementById("status").innerText = "✅ Data berhasil disimpan";
+
+  // reset
+  document.getElementById("galon").value="";
+  document.getElementById("kartu").value="";
+  document.getElementById("kas").value="";
 })
-.then(res => res.json())
-.then(res => {
-  document.getElementById("status").innerText = "✅ Berhasil disimpan";
-})
-.catch(err => {
-  document.getElementById("status").innerText = "❌ Gagal kirim";
+.catch(()=>{
+  document.getElementById("status").innerText = "❌ Gagal simpan";
 });
 
 }
