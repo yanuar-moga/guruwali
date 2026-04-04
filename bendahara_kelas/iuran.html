@@ -7,11 +7,15 @@
 
 <style>
 
+*{
+box-sizing:border-box;
+}
+
 body{
 font-family:'Segoe UI', sans-serif;
 background:#0f172a;
 margin:0;
-padding:15px;
+padding:20px;
 color:#fff;
 }
 
@@ -24,42 +28,47 @@ margin:auto;
 /* CARD */
 .card{
 background:#1e293b;
-padding:18px;
-border-radius:14px;
-box-shadow:0 5px 15px rgba(0,0,0,0.3);
-margin-bottom:15px;
+padding:20px;
+border-radius:16px;
+box-shadow:0 8px 20px rgba(0,0,0,0.4);
 }
 
 /* TITLE */
 h2{
 text-align:center;
+margin-bottom:20px;
+}
+
+/* FORM */
+.form-group{
 margin-bottom:15px;
+width:100%;
 }
 
 /* LABEL */
 label{
 font-size:13px;
-margin-bottom:5px;
+margin-bottom:6px;
 display:block;
-color:#cbd5f5;
+color:#cbd5e1;
 }
 
-/* INPUT */
+/* INPUT FIX FULL WIDTH */
 select, input{
 width:100%;
 padding:12px;
 border-radius:10px;
 border:none;
-margin-bottom:12px;
-font-size:14px;
 background:#334155;
 color:white;
+font-size:14px;
+display:block;
 }
 
 /* ROW 2 KOLOM */
 .row{
 display:flex;
-gap:10px;
+gap:12px;
 }
 
 .col{
@@ -71,13 +80,13 @@ button{
 width:100%;
 padding:14px;
 border:none;
-border-radius:10px;
+border-radius:12px;
 background:#22c55e;
 color:white;
 font-weight:bold;
 font-size:15px;
 cursor:pointer;
-transition:0.2s;
+margin-top:10px;
 }
 
 button:hover{
@@ -91,11 +100,10 @@ margin-top:10px;
 font-size:13px;
 }
 
-/* LOADING */
-.loading{
-text-align:center;
-font-size:13px;
-color:#94a3b8;
+/* FIX BIAR TIDAK BERANTAKAN */
+select:focus, input:focus{
+outline:none;
+box-shadow:0 0 0 2px #22c55e;
 }
 
 </style>
@@ -106,18 +114,20 @@ color:#94a3b8;
 <div class="container">
 
 <div class="card">
+
 <h2>💰 Kas Kelas</h2>
 
+<!-- NAMA -->
+<div class="form-group">
 <label>Nama Siswa</label>
 <select id="nama">
 <option>Loading data...</option>
 </select>
-
 </div>
 
-<div class="card">
-
+<!-- ROW GALON & KARTU -->
 <div class="row">
+
 <div class="col">
 <label>💧 Galon</label>
 <input type="number" id="galon" placeholder="Rp">
@@ -127,10 +137,14 @@ color:#94a3b8;
 <label>🎫 Kartu</label>
 <input type="number" id="kartu" placeholder="Rp">
 </div>
+
 </div>
 
+<!-- KAS -->
+<div class="form-group">
 <label>💰 Iuran Kas</label>
 <input type="number" id="kas" placeholder="Rp">
+</div>
 
 <button onclick="kirim()">Simpan Data</button>
 
@@ -146,27 +160,24 @@ const URL = "https://script.google.com/macros/s/AKfycbwQ0v3rev6JV1ubaV6E2aGNgN7J
 
 // LOAD DATA SISWA
 async function loadSiswa(){
-
   const select = document.getElementById("nama");
-  select.innerHTML = "<option>Loading...</option>";
 
-  try {
+  try{
     const res = await fetch(URL + "?t=" + Date.now());
     const data = await res.json();
 
     select.innerHTML = '<option value="">-- Pilih Siswa --</option>';
 
-    data.forEach(nama => {
+    data.forEach(nama=>{
       let opt = document.createElement("option");
       opt.value = nama;
       opt.textContent = nama;
       select.appendChild(opt);
     });
 
-  } catch (err) {
+  }catch(e){
     select.innerHTML = "<option>❌ Gagal load</option>";
   }
-
 }
 
 // KIRIM DATA
@@ -207,7 +218,7 @@ function kirim(){
 
   Promise.all(promises)
   .then(()=>{
-    document.getElementById("status").innerText = "✅ Berhasil disimpan";
+    document.getElementById("status").innerText = "✅ Data tersimpan";
 
     document.getElementById("galon").value="";
     document.getElementById("kartu").value="";
@@ -219,7 +230,6 @@ function kirim(){
 
 }
 
-// INIT
 window.onload = loadSiswa;
 
 </script>
