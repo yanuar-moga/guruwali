@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cek Tagihan Siswa</title>
+
+<style>
+
+body{
+font-family:Segoe UI;
+background:#0f172a;
+color:white;
+margin:0;
+padding:20px;
+}
+
+.container{
+max-width:420px;
+margin:auto;
+}
+
+.card{
+background:#1e293b;
+padding:20px;
+border-radius:15px;
+margin-bottom:15px;
+}
+
+h2{
+text-align:center;
+}
+
+select{
+width:100%;
+padding:12px;
+border-radius:10px;
+border:none;
+margin-top:10px;
+}
+
+/* HASIL */
+.box{
+padding:15px;
+border-radius:12px;
+margin-top:10px;
+}
+
+.lunas{
+background:#14532d;
+}
+
+.belum{
+background:#7f1d1d;
+}
+
+.label{
+font-size:13px;
+opacity:0.8;
+}
+
+.value{
+font-size:18px;
+font-weight:bold;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<div class="card">
+<h2>📊 Cek Tagihan</h2>
+
+<select id="nama">
+<option>Loading...</option>
+</select>
+</div>
+
+<div id="hasil"></div>
+
+</div>
+
+<script>
+
+const URL = "https://script.google.com/macros/s/AKfycbwQ0v3rev6JV1ubaV6E2aGNgN7Ji4uuQxAcs4xsBSuWGKwEsPftfYhwNKf6aY9KYlRkVw/exec";
+
+let dataRekap = [];
+
+// LOAD DATA
+async function load(){
+
+  // nama
+  const res1 = await fetch(URL);
+  const namaList = await res1.json();
+
+  let select = document.getElementById("nama");
+  select.innerHTML = '<option value="">-- Pilih Nama --</option>';
+
+  namaList.forEach(n=>{
+    let opt = document.createElement("option");
+    opt.value = n;
+    opt.textContent = n;
+    select.appendChild(opt);
+  });
+
+  // rekap
+  const res2 = await fetch(URL + "?mode=rekap");
+  dataRekap = await res2.json();
+
+}
+
+// TAMPILKAN
+document.getElementById("nama").onchange = function(){
+
+  const nama = this.value;
+  const siswa = dataRekap.find(d => d.nama === nama);
+
+  if(!siswa) return;
+
+  let html = `
+  <div class="card">
+
+    <div class="box ${siswa.statusGalon=="LUNAS"?"lunas":"belum"}">
+      <div class="label">💧 Galon</div>
+      <div class="value">Sisa: Rp ${siswa.galonSisa}</div>
+      <div>${siswa.statusGalon}</div>
+    </div>
+
+    <div class="box ${siswa.statusKartu=="LUNAS"?"lunas":"belum"}">
+      <div class="label">🎫 Kartu Pelajar</div>
+      <div class="value">Sisa: Rp ${siswa.kartuSisa}</div>
+      <div>${siswa.statusKartu}</div>
+    </div>
+
+    <div class="box">
+      <div class="label">💰 Total Kas</div>
+      <div class="value">Rp ${siswa.kas}</div>
+    </div>
+
+  </div>
+  `;
+
+  document.getElementById("hasil").innerHTML = html;
+
+}
+
+window.onload = load;
+
+</script>
+
+</body>
+</html>
