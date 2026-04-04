@@ -3,67 +3,99 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Input Pembayaran</title>
+<title>Kas Kelas</title>
 
 <style>
 
 body{
-font-family:Segoe UI;
+font-family:'Segoe UI', sans-serif;
 background:#0f172a;
-color:white;
 margin:0;
 padding:15px;
+color:#fff;
 }
 
+/* CONTAINER */
 .container{
-max-width:400px;
+max-width:420px;
 margin:auto;
+}
+
+/* CARD */
+.card{
 background:#1e293b;
-padding:20px;
-border-radius:12px;
-}
-
-h2{
-text-align:center;
-margin-bottom:20px;
-}
-
-.form-group{
+padding:18px;
+border-radius:14px;
+box-shadow:0 5px 15px rgba(0,0,0,0.3);
 margin-bottom:15px;
 }
 
-label{
-display:block;
-margin-bottom:5px;
-font-size:14px;
+/* TITLE */
+h2{
+text-align:center;
+margin-bottom:15px;
 }
 
+/* LABEL */
+label{
+font-size:13px;
+margin-bottom:5px;
+display:block;
+color:#cbd5f5;
+}
+
+/* INPUT */
 select, input{
 width:100%;
-padding:10px;
-border-radius:8px;
+padding:12px;
+border-radius:10px;
 border:none;
+margin-bottom:12px;
 font-size:14px;
+background:#334155;
+color:white;
 }
 
+/* ROW 2 KOLOM */
+.row{
+display:flex;
+gap:10px;
+}
+
+.col{
+flex:1;
+}
+
+/* BUTTON */
 button{
 width:100%;
-padding:12px;
+padding:14px;
 border:none;
-border-radius:8px;
+border-radius:10px;
 background:#22c55e;
 color:white;
 font-weight:bold;
+font-size:15px;
 cursor:pointer;
+transition:0.2s;
 }
 
 button:hover{
 background:#16a34a;
 }
 
+/* STATUS */
 #status{
 text-align:center;
 margin-top:10px;
+font-size:13px;
+}
+
+/* LOADING */
+.loading{
+text-align:center;
+font-size:13px;
+color:#94a3b8;
 }
 
 </style>
@@ -73,33 +105,38 @@ margin-top:10px;
 
 <div class="container">
 
-<h2>Input Pembayaran</h2>
+<div class="card">
+<h2>💰 Kas Kelas</h2>
 
-<div class="form-group">
 <label>Nama Siswa</label>
 <select id="nama">
-<option>Loading data siswa...</option>
+<option>Loading data...</option>
 </select>
+
 </div>
 
-<div class="form-group">
-<label>Bayar Galon</label>
-<input type="number" id="galon" placeholder="Masukkan jumlah">
+<div class="card">
+
+<div class="row">
+<div class="col">
+<label>💧 Galon</label>
+<input type="number" id="galon" placeholder="Rp">
 </div>
 
-<div class="form-group">
-<label>Bayar Kartu Pelajar</label>
-<input type="number" id="kartu" placeholder="Masukkan jumlah">
+<div class="col">
+<label>🎫 Kartu</label>
+<input type="number" id="kartu" placeholder="Rp">
+</div>
 </div>
 
-<div class="form-group">
-<label>Iuran KAS</label>
-<input type="number" id="kas" placeholder="Masukkan jumlah">
-</div>
+<label>💰 Iuran Kas</label>
+<input type="number" id="kas" placeholder="Rp">
 
-<button onclick="kirim()">Simpan</button>
+<button onclick="kirim()">Simpan Data</button>
 
 <div id="status"></div>
+
+</div>
 
 </div>
 
@@ -114,32 +151,22 @@ async function loadSiswa(){
   select.innerHTML = "<option>Loading...</option>";
 
   try {
-
-    const response = await fetch(URL + "?t=" + Date.now());
-    const data = await response.json();
-
-    console.log("DATA SISWA:", data);
+    const res = await fetch(URL + "?t=" + Date.now());
+    const data = await res.json();
 
     select.innerHTML = '<option value="">-- Pilih Siswa --</option>';
 
-    if (!Array.isArray(data)) {
-      select.innerHTML = "<option>❌ Data tidak valid</option>";
-      return;
-    }
-
     data.forEach(nama => {
-      const option = document.createElement("option");
-      option.value = nama;
-      option.textContent = nama;
-      select.appendChild(option);
+      let opt = document.createElement("option");
+      opt.value = nama;
+      opt.textContent = nama;
+      select.appendChild(opt);
     });
 
-  } catch (error) {
-
-    console.log("ERROR:", error);
-    select.innerHTML = "<option>❌ Gagal load data</option>";
-
+  } catch (err) {
+    select.innerHTML = "<option>❌ Gagal load</option>";
   }
+
 }
 
 // KIRIM DATA
@@ -160,39 +187,27 @@ function kirim(){
   if(galon){
     promises.push(fetch(URL,{
       method:"POST",
-      body: JSON.stringify({
-        nama:nama,
-        jenis:"GALON",
-        jumlah:galon
-      })
+      body: JSON.stringify({nama, jenis:"GALON", jumlah:galon})
     }));
   }
 
   if(kartu){
     promises.push(fetch(URL,{
       method:"POST",
-      body: JSON.stringify({
-        nama:nama,
-        jenis:"KARTU_PELAJAR",
-        jumlah:kartu
-      })
+      body: JSON.stringify({nama, jenis:"KARTU_PELAJAR", jumlah:kartu})
     }));
   }
 
   if(kas){
     promises.push(fetch(URL,{
       method:"POST",
-      body: JSON.stringify({
-        nama:nama,
-        jenis:"KAS_KELAS",
-        jumlah:kas
-      })
+      body: JSON.stringify({nama, jenis:"KAS_KELAS", jumlah:kas})
     }));
   }
 
   Promise.all(promises)
   .then(()=>{
-    document.getElementById("status").innerText = "✅ Data berhasil disimpan";
+    document.getElementById("status").innerText = "✅ Berhasil disimpan";
 
     document.getElementById("galon").value="";
     document.getElementById("kartu").value="";
@@ -204,7 +219,7 @@ function kirim(){
 
 }
 
-// JALANKAN
+// INIT
 window.onload = loadSiswa;
 
 </script>
