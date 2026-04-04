@@ -15,7 +15,6 @@ margin:0;
 padding:15px;
 }
 
-/* CONTAINER */
 .container{
 max-width:400px;
 margin:auto;
@@ -24,25 +23,21 @@ padding:20px;
 border-radius:12px;
 }
 
-/* JUDUL */
 h2{
 text-align:center;
 margin-bottom:20px;
 }
 
-/* FORM GROUP */
 .form-group{
 margin-bottom:15px;
 }
 
-/* LABEL */
 label{
 display:block;
 margin-bottom:5px;
 font-size:14px;
 }
 
-/* INPUT */
 select, input{
 width:100%;
 padding:10px;
@@ -51,7 +46,6 @@ border:none;
 font-size:14px;
 }
 
-/* BUTTON */
 button{
 width:100%;
 padding:12px;
@@ -67,7 +61,6 @@ button:hover{
 background:#16a34a;
 }
 
-/* STATUS */
 #status{
 text-align:center;
 margin-top:10px;
@@ -82,25 +75,23 @@ margin-top:10px;
 
 <h2>Input Pembayaran</h2>
 
-<!-- 1 -->
 <div class="form-group">
 <label>Nama Siswa</label>
-<select id="nama"></select>
+<select id="nama">
+<option>Loading data siswa...</option>
+</select>
 </div>
 
-<!-- 2 -->
 <div class="form-group">
 <label>Bayar Galon</label>
 <input type="number" id="galon" placeholder="Masukkan jumlah">
 </div>
 
-<!-- 3 -->
 <div class="form-group">
 <label>Bayar Kartu Pelajar</label>
 <input type="number" id="kartu" placeholder="Masukkan jumlah">
 </div>
 
-<!-- 4 -->
 <div class="form-group">
 <label>Iuran KAS</label>
 <input type="number" id="kas" placeholder="Masukkan jumlah">
@@ -114,94 +105,107 @@ margin-top:10px;
 
 <script>
 
-const URL = "PASTE_URL_WEB_APP_KAMU";
+const URL = "https://script.google.com/macros/s/AKfycbwQ0v3rev6JV1ubaV6E2aGNgN7Ji4uuQxAcs4xsBSuWGKwEsPftfYhwNKf6aY9KYlRkVw/exec";
 
 // LOAD DATA SISWA
-window.onload = function(){
-
-fetch(URL)
-.then(res => res.json())
-.then(data => {
+async function loadSiswa(){
 
   const select = document.getElementById("nama");
-  select.innerHTML = '<option value="">-- Pilih Siswa --</option>';
+  select.innerHTML = "<option>Loading...</option>";
 
-  data.forEach(nama => {
-    let opt = document.createElement("option");
-    opt.value = nama;
-    opt.textContent = nama;
-    select.appendChild(opt);
-  });
+  try {
 
-});
+    const response = await fetch(URL + "?t=" + Date.now());
+    const data = await response.json();
 
+    console.log("DATA SISWA:", data);
+
+    select.innerHTML = '<option value="">-- Pilih Siswa --</option>';
+
+    if (!Array.isArray(data)) {
+      select.innerHTML = "<option>❌ Data tidak valid</option>";
+      return;
+    }
+
+    data.forEach(nama => {
+      const option = document.createElement("option");
+      option.value = nama;
+      option.textContent = nama;
+      select.appendChild(option);
+    });
+
+  } catch (error) {
+
+    console.log("ERROR:", error);
+    select.innerHTML = "<option>❌ Gagal load data</option>";
+
+  }
 }
-
 
 // KIRIM DATA
 function kirim(){
 
-const nama = document.getElementById("nama").value;
-const galon = document.getElementById("galon").value;
-const kartu = document.getElementById("kartu").value;
-const kas = document.getElementById("kas").value;
+  const nama = document.getElementById("nama").value;
+  const galon = document.getElementById("galon").value;
+  const kartu = document.getElementById("kartu").value;
+  const kas = document.getElementById("kas").value;
 
-if(!nama){
-  alert("Pilih siswa dulu!");
-  return;
-}
+  if(!nama){
+    alert("Pilih siswa dulu!");
+    return;
+  }
 
-let promises = [];
+  let promises = [];
 
-// GALON
-if(galon){
-  promises.push(fetch(URL,{
-    method:"POST",
-    body: JSON.stringify({
-      nama:nama,
-      jenis:"GALON",
-      jumlah:galon
-    })
-  }));
-}
+  if(galon){
+    promises.push(fetch(URL,{
+      method:"POST",
+      body: JSON.stringify({
+        nama:nama,
+        jenis:"GALON",
+        jumlah:galon
+      })
+    }));
+  }
 
-// KARTU
-if(kartu){
-  promises.push(fetch(URL,{
-    method:"POST",
-    body: JSON.stringify({
-      nama:nama,
-      jenis:"KARTU_PELAJAR",
-      jumlah:kartu
-    })
-  }));
-}
+  if(kartu){
+    promises.push(fetch(URL,{
+      method:"POST",
+      body: JSON.stringify({
+        nama:nama,
+        jenis:"KARTU_PELAJAR",
+        jumlah:kartu
+      })
+    }));
+  }
 
-// KAS
-if(kas){
-  promises.push(fetch(URL,{
-    method:"POST",
-    body: JSON.stringify({
-      nama:nama,
-      jenis:"KAS_KELAS",
-      jumlah:kas
-    })
-  }));
-}
+  if(kas){
+    promises.push(fetch(URL,{
+      method:"POST",
+      body: JSON.stringify({
+        nama:nama,
+        jenis:"KAS_KELAS",
+        jumlah:kas
+      })
+    }));
+  }
 
-Promise.all(promises)
-.then(()=>{
-  document.getElementById("status").innerText = "✅ Data berhasil disimpan";
+  Promise.all(promises)
+  .then(()=>{
+    document.getElementById("status").innerText = "✅ Data berhasil disimpan";
 
-  document.getElementById("galon").value="";
-  document.getElementById("kartu").value="";
-  document.getElementById("kas").value="";
-})
-.catch(()=>{
-  document.getElementById("status").innerText = "❌ Gagal simpan";
-});
+    document.getElementById("galon").value="";
+    document.getElementById("kartu").value="";
+    document.getElementById("kas").value="";
+  })
+  .catch(()=>{
+    document.getElementById("status").innerText = "❌ Gagal simpan";
+  });
 
 }
+
+// JALANKAN
+window.onload = loadSiswa;
 
 </script>
 
