@@ -12,51 +12,47 @@ font-family:Segoe UI;
 background:#0f172a;
 color:white;
 margin:0;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
+padding:15px;
 }
 
+/* CONTAINER */
 .container{
-width:90%;
-max-width:700px;
+max-width:400px;
+margin:auto;
 background:#1e293b;
 padding:20px;
 border-radius:12px;
 }
 
+/* JUDUL */
 h2{
 text-align:center;
 margin-bottom:20px;
 }
 
-/* GRID */
-.form-grid{
-display:grid;
-grid-template-columns: repeat(6, 1fr);
-gap:10px;
+/* FORM GROUP */
+.form-group{
+margin-bottom:15px;
 }
 
-/* HEADER */
-.header{
-font-weight:bold;
-text-align:center;
-font-size:13px;
+/* LABEL */
+label{
+display:block;
+margin-bottom:5px;
+font-size:14px;
 }
 
 /* INPUT */
 select, input{
 width:100%;
-padding:8px;
-border-radius:6px;
+padding:10px;
+border-radius:8px;
 border:none;
-text-align:center;
+font-size:14px;
 }
 
 /* BUTTON */
 button{
-margin-top:15px;
 width:100%;
 padding:12px;
 border:none;
@@ -71,6 +67,7 @@ button:hover{
 background:#16a34a;
 }
 
+/* STATUS */
 #status{
 text-align:center;
 margin-top:10px;
@@ -82,30 +79,34 @@ margin-top:10px;
 <body>
 
 <div class="container">
+
 <h2>Input Pembayaran</h2>
 
-<div class="form-grid">
-
-<div class="header">Nama Siswa</div>
-<div class="header">Bayar Galon</div>
-<div class="header">Input</div>
-<div class="header">Bayar Kartu</div>
-<div class="header">Input</div>
-<div class="header">Iuran Kas</div>
-
+<!-- 1 -->
+<div class="form-group">
+<label>Nama Siswa</label>
 <select id="nama"></select>
-
-<div>✔</div>
-<input type="number" id="galon" placeholder="Rp">
-
-<div>✔</div>
-<input type="number" id="kartu" placeholder="Rp">
-
-<input type="number" id="kas" placeholder="Rp">
-
 </div>
 
-<button onclick="kirim()">Simpan Data</button>
+<!-- 2 -->
+<div class="form-group">
+<label>Bayar Galon</label>
+<input type="number" id="galon" placeholder="Masukkan jumlah">
+</div>
+
+<!-- 3 -->
+<div class="form-group">
+<label>Bayar Kartu Pelajar</label>
+<input type="number" id="kartu" placeholder="Masukkan jumlah">
+</div>
+
+<!-- 4 -->
+<div class="form-group">
+<label>Iuran KAS</label>
+<input type="number" id="kas" placeholder="Masukkan jumlah">
+</div>
+
+<button onclick="kirim()">Simpan</button>
 
 <div id="status"></div>
 
@@ -123,7 +124,7 @@ fetch(URL)
 .then(data => {
 
   const select = document.getElementById("nama");
-  select.innerHTML = '<option value="">Pilih Siswa</option>';
+  select.innerHTML = '<option value="">-- Pilih Siswa --</option>';
 
   data.forEach(nama => {
     let opt = document.createElement("option");
@@ -192,7 +193,6 @@ Promise.all(promises)
 .then(()=>{
   document.getElementById("status").innerText = "✅ Data berhasil disimpan";
 
-  // reset
   document.getElementById("galon").value="";
   document.getElementById("kartu").value="";
   document.getElementById("kas").value="";
