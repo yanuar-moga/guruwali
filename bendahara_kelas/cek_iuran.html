@@ -32,15 +32,6 @@ border-radius:10px;
 border:none;
 }
 
-.box{
-padding:12px;
-border-radius:10px;
-margin-top:10px;
-}
-
-.lunas{ background:#14532d; }
-.belum{ background:#7f1d1d; }
-
 .grid{
 display:grid;
 grid-template-columns:1fr 1fr;
@@ -61,16 +52,15 @@ font-size:16px;
 font-weight:bold;
 }
 
-/* tabel belum */
+/* tabel */
 table{
 width:100%;
 border-collapse:collapse;
 font-size:13px;
 }
 
-td,th{
-padding:8px;
-background:#1e293b;
+th,td{
+padding:10px;
 vertical-align:top;
 }
 
@@ -79,7 +69,21 @@ background:#334155;
 }
 
 td{
+background:#1e293b;
 border-bottom:1px solid #334155;
+}
+
+.nama{
+font-weight:bold;
+}
+
+.kurang-besar{
+color:#ef4444;
+font-weight:bold;
+}
+
+.kurang-kecil{
+color:#facc15;
 }
 
 small{
@@ -108,14 +112,15 @@ font-size:11px;
 <div id="hasil"></div>
 
 <div class="card">
-<h2>⚠️ Daftar Belum Lunas</h2>
+<h2>⚠️ Daftar Tunggakan</h2>
 
 <table>
 <thead>
 <tr>
+<th>Nama</th>
 <th>💧 Galon</th>
 <th>🎫 Kartu</th>
-<th>🎁 Tali Asih</th>
+<th>🎁 Tali</th>
 </tr>
 </thead>
 <tbody id="belumTable"></tbody>
@@ -139,10 +144,11 @@ function rupiah(angka){
 async function load(){
   try{
 
-    const res1 = await fetch(URL);
-    const namaList = await res1.json();
+    // nama
+    let res1 = await fetch(URL);
+    let namaList = await res1.json();
 
-    const select = document.getElementById("nama");
+    let select = document.getElementById("nama");
     select.innerHTML = '<option value="">-- Pilih Nama --</option>';
 
     namaList.forEach(n=>{
@@ -152,11 +158,13 @@ async function load(){
       select.appendChild(opt);
     });
 
-    const res2 = await fetch(URL + "?mode=rekap");
+    // rekap
+    let res2 = await fetch(URL + "?mode=rekap");
     dataRekap = await res2.json();
 
-    const res3 = await fetch(URL + "?mode=dashboard");
-    const dash = await res3.json();
+    // dashboard
+    let res3 = await fetch(URL + "?mode=dashboard");
+    let dash = await res3.json();
 
     document.getElementById("dashboard").innerHTML = `
       <div class="stat">💧 Lunas<br><div class="value">${dash.sudahGalon}</div></div>
@@ -173,116 +181,73 @@ async function load(){
 
   }catch(e){
     console.error(e);
-    document.getElementById("dashboard").innerHTML = "❌ Gagal load data";
-    document.getElementById("belumTable").innerHTML = "❌ Gagal load data";
+    document.getElementById("belumTable").innerHTML = "<tr><td colspan='4'>❌ Gagal load</td></tr>";
   }
 }
 
-// ================= PILIH SISWA =================
+// ================= DETAIL SISWA =================
 document.getElementById("nama").onchange = function(){
 
-  let siswa = dataRekap.find(d => d.nama === this.value);
-  if(!siswa) return;
+  let s = dataRekap.find(d => d.nama === this.value);
+  if(!s) return;
 
   document.getElementById("hasil").innerHTML = `
   <div class="card">
-
-    <div class="box ${siswa.statusGalon=="LUNAS"?"lunas":"belum"}">
-      💧 Galon<br>
-      Sisa: ${rupiah(siswa.galonSisa)}<br>
-      <b>${siswa.statusGalon}</b>
-    </div>
-
-    <div class="box ${siswa.statusKartu=="LUNAS"?"lunas":"belum"}">
-      🎫 Kartu<br>
-      Sisa: ${rupiah(siswa.kartuSisa)}<br>
-      <b>${siswa.statusKartu}</b>
-    </div>
-
-    <div class="box">
-      💰 Total Kas<br>
-      <b>${rupiah(siswa.kas)}</b>
-    </div>
-
-    <div class="box">
-      🎁 Tali Asih<br>
-      <b>${rupiah(siswa.taliAsih)}</b>
-    </div>
-
-  </div>
-  `;
+    💧 Galon: ${rupiah(s.galonBayar)} | Sisa: ${rupiah(s.galonSisa)}<br>
+    🎫 Kartu: ${rupiah(s.kartuBayar)} | Sisa: ${rupiah(s.kartuSisa)}<br>
+    💰 Kas: ${rupiah(s.kas)}<br>
+    🎁 Tali: ${rupiah(s.taliAsih)}
+  </div>`;
 };
 
-// ================= BELUM LUNAS PRO =================
+// ================= TABEL TUNGGAKAN =================
 function tampilkanBelum(){
 
-  let galon = [];
-  let kartu = [];
-  let tali = [];
+  let sorted = dataRekap.map(s=>{
 
-  let sorted = dataRekap.map(s => {
-
-    let kurangGalon = Number(s.galonSisa || 0);
-    let kurangKartu = Number(s.kartuSisa || 0);
+    let kurangG = Number(s.galonSisa||0);
+    let kurangK = Number(s.kartuSisa||0);
+    let kurangT = s.taliAsih ? 0 : 50000; // asumsi target tali
 
     return {
       ...s,
-      totalKurang: kurangGalon + kurangKartu
+      kurangG, kurangK, kurangT,
+      total: kurangG + kurangK + kurangT
     };
 
-  }).sort((a,b)=> b.totalKurang - a.totalKurang);
+  }).sort((a,b)=> b.total - a.total);
+
+  let html = "";
 
   sorted.forEach(s=>{
 
-    let kurangGalon = Number(s.galonSisa || 0);
-    let kurangKartu = Number(s.kartuSisa || 0);
-    let total = kurangGalon + kurangKartu;
+    let warna = s.total > 50000 ? "kurang-besar" : "kurang-kecil";
 
-    let warna = total > 50000 ? "#ef4444" : "#facc15";
-
-    if(s.statusGalon !== "LUNAS"){
-      galon.push(`
-        <b>${s.nama}</b><br>
-        <small>Bayar: ${rupiah(s.galonBayar)}<br>
-        Kurang: ${rupiah(kurangGalon)}</small><br>
-        <span style="color:${warna}">Total: ${rupiah(total)}</span>
-      `);
-    }
-
-    if(s.statusKartu !== "LUNAS"){
-      kartu.push(`
-        <b>${s.nama}</b><br>
-        <small>Bayar: ${rupiah(s.kartuBayar)}<br>
-        Kurang: ${rupiah(kurangKartu)}</small><br>
-        <span style="color:${warna}">Total: ${rupiah(total)}</span>
-      `);
-    }
-
-    if(!s.taliAsih || s.taliAsih == 0){
-      tali.push(`
-        <b>${s.nama}</b><br>
-        <small>Bayar: ${rupiah(s.taliAsih)}</small>
-      `);
-    }
-
-  });
-
-  let max = Math.max(galon.length, kartu.length, tali.length);
-  let html = "";
-
-  for(let i=0;i<max;i++){
     html += `
     <tr>
-      <td>${galon[i] || "-"}</td>
-      <td>${kartu[i] || "-"}</td>
-      <td>${tali[i] || "-"}</td>
+
+      <td class="nama">${s.nama}<br>
+      <small>Total: <span class="${warna}">${rupiah(s.total)}</span></small>
+      </td>
+
+      <td>
+        Bayar: ${rupiah(s.galonBayar)}<br>
+        Kurang: ${rupiah(s.kurangG)}
+      </td>
+
+      <td>
+        Bayar: ${rupiah(s.kartuBayar)}<br>
+        Kurang: ${rupiah(s.kurangK)}
+      </td>
+
+      <td>
+        Bayar: ${rupiah(s.taliAsih)}<br>
+        Kurang: ${rupiah(s.kurangT)}
+      </td>
+
     </tr>
     `;
-  }
-
-  if(max === 0){
-    html = `<tr><td colspan="3" style="text-align:center;">Semua lunas 🎉</td></tr>`;
-  }
+  });
 
   document.getElementById("belumTable").innerHTML = html;
 }
