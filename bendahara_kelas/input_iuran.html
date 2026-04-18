@@ -21,7 +21,6 @@ max-width:420px;
 margin:auto;
 }
 
-/* CARD */
 .card{
 background:#1e293b;
 padding:20px;
@@ -30,16 +29,9 @@ box-shadow:0 8px 20px rgba(0,0,0,0.4);
 margin-bottom:15px;
 }
 
-h2{
-text-align:center;
-margin-bottom:20px;
-}
+h2{text-align:center;margin-bottom:20px;}
 
-/* FORM */
-.form-group{
-margin-bottom:15px;
-width:100%;
-}
+.form-group{margin-bottom:15px;width:100%;}
 
 label{
 font-size:13px;
@@ -58,16 +50,9 @@ color:white;
 font-size:14px;
 }
 
-.row{
-display:flex;
-gap:12px;
-}
+.row{display:flex;gap:12px;}
+.col{flex:1;}
 
-.col{
-flex:1;
-}
-
-/* BUTTON */
 button{
 width:100%;
 padding:14px;
@@ -84,12 +69,6 @@ margin-top:10px;
 .btn-simpan{background:#22c55e;}
 .btn-rekap{background:#3b82f6;}
 
-button:disabled{
-opacity:0.5;
-cursor:not-allowed;
-}
-
-/* CHECKBOX */
 .checkbox-wrap{
 display:flex;
 align-items:center;
@@ -99,11 +78,6 @@ font-size:13px;
 color:#cbd5e1;
 }
 
-.checkbox-wrap input{
-width:auto;
-}
-
-/* USER BOX */
 .user-box{
 display:flex;
 justify-content:space-between;
@@ -116,16 +90,14 @@ font-size:12px;
 box-shadow:0 4px 10px rgba(0,0,0,0.3);
 }
 
-/* LABEL USER */
 #userLabel{
 display:flex;
 align-items:center;
 gap:6px;
 }
 
-/* LOGOUT KECIL */
 .user-box button{
-width:auto; /* penting */
+width:auto;
 margin-top:0;
 padding:6px 12px;
 font-size:12px;
@@ -133,7 +105,6 @@ border-radius:8px;
 background:#ef4444;
 }
 
-/* TOAST */
 .toast{
 position:fixed;
 bottom:20px;
@@ -153,7 +124,6 @@ transform:translateX(-50%) translateY(0);
 
 .toast.success{border-left:5px solid #22c55e;}
 .toast.error{border-left:5px solid #ef4444;}
-
 </style>
 </head>
 
@@ -161,19 +131,20 @@ transform:translateX(-50%) translateY(0);
 
 <div class="container">
 
-<!-- USER INFO -->
 <div id="userBox" class="user-box" style="display:none;">
 <div id="userLabel">👨‍💼 Login: -</div>
 <button onclick="logout()">Logout</button>
 </div>
 
-<!-- LOGIN -->
+<!-- LOGIN (PAKAI FORM) -->
 <div class="card" id="loginCard">
 <h2>🔐 MASUKAN PIN</h2>
 
+<form onsubmit="login(event)">
+
 <div class="form-group">
 <label>PIN</label>
-<input type="password" id="pin" placeholder="Masukkan PIN">
+<input type="password" id="pin" placeholder="Masukkan PIN" autofocus>
 
 <div class="checkbox-wrap">
 <input type="checkbox" onclick="togglePIN()">
@@ -181,7 +152,9 @@ transform:translateX(-50%) translateY(0);
 </div>
 </div>
 
-<button class="btn-login" onclick="login()">Login</button>
+<button type="submit" class="btn-login">Login</button>
+
+</form>
 </div>
 
 <!-- FORM -->
@@ -249,8 +222,10 @@ async function loadSiswa(){
   });
 }
 
-/* LOGIN */
-async function login(){
+/* LOGIN (SUPPORT ENTER) */
+async function login(e){
+  if(e) e.preventDefault(); // penting
+
   const pin = document.getElementById("pin").value;
 
   if(!pin){
