@@ -104,7 +104,7 @@ font-size:11px;
 
 <table>
 <thead>
-<tr id="headerTable">
+<tr>
 <th>Nama</th>
 <th>🎫 Kartu</th>
 <th>💧 Galon</th>
@@ -124,6 +124,14 @@ const URL = "https://script.google.com/macros/s/AKfycbwQ0v3rev6JV1ubaV6E2aGNgN7J
 
 let dataRekap = [];
 let currentPIN = "";
+
+// ================= FIX KEY DINAMIS =================
+function getDataJenis(dynamic, jenis){
+  const key = Object.keys(dynamic || {}).find(k =>
+    k.toUpperCase().trim() === jenis.toUpperCase().trim()
+  );
+  return dynamic[key] || {bayar:0, target:0};
+}
 
 // ================= LOGIN =================
 function cekLogin(){
@@ -196,16 +204,16 @@ document.getElementById("nama").onchange = function(){
   let s = dataRekap.find(d => d.nama === this.value);
   if(!s) return;
 
-  let html = "";
+  let kartu = getDataJenis(s.dynamic, "KARTU_PELAJAR");
+  let galon = getDataJenis(s.dynamic, "GALON");
+  let tali  = getDataJenis(s.dynamic, "TALI_ASIH");
 
-  Object.keys(s.dynamic || {}).forEach(j=>{
-    let d = s.dynamic[j] || {bayar:0, target:0};
-    let kurang = Math.max(0, d.target - d.bayar);
-
-    html += `${j}: ${rupiah(d.bayar)} | Sisa: ${rupiah(kurang)}<br>`;
-  });
-
-  html += `💰 Kas: ${rupiah(s.kas)}`;
+  let html = `
+  🎫 Kartu: ${rupiah(kartu.bayar)} | Sisa: ${rupiah(kartu.target - kartu.bayar)}<br>
+  💧 Galon: ${rupiah(galon.bayar)} | Sisa: ${rupiah(galon.target - galon.bayar)}<br>
+  🎁 Tali: ${rupiah(tali.bayar)} | Sisa: ${rupiah(tali.target - tali.bayar)}<br>
+  💰 Kas: ${rupiah(s.kas)}
+  `;
 
   document.getElementById("hasil").innerHTML =
   `<div class="card">${html}</div>`;
@@ -216,9 +224,9 @@ function tampilkanBelum(){
 
   let sorted = dataRekap.map(s=>{
 
-    let kartu = s.dynamic["KARTU_PELAJAR"] || {bayar:0,target:0};
-    let galon = s.dynamic["GALON"] || {bayar:0,target:0};
-    let tali  = s.dynamic["TALI_ASIH"] || {bayar:0,target:0};
+    let kartu = getDataJenis(s.dynamic, "KARTU_PELAJAR");
+    let galon = getDataJenis(s.dynamic, "GALON");
+    let tali  = getDataJenis(s.dynamic, "TALI_ASIH");
 
     let kurangK = Math.max(0, kartu.target - kartu.bayar);
     let kurangG = Math.max(0, galon.target - galon.bayar);
