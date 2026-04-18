@@ -72,7 +72,7 @@ border-bottom:1px solid #334155;
 
 .nama{font-weight:bold;}
 .kurang-besar{color:#ef4444;font-weight:bold;}
-.kurang-kecil{color:#facc15;}
+.kurang-kecil{color:#22c55e;font-weight:bold;}
 
 small{
 color:#94a3b8;
@@ -123,6 +123,7 @@ let dataRekap = [];
 let currentPIN = "";
 let jenisList = [];
 
+// ================= LOGIN =================
 function cekLogin(){
 
   const pin = localStorage.getItem("pin");
@@ -137,13 +138,16 @@ function cekLogin(){
   load();
 }
 
+// ================= FORMAT =================
 function rupiah(angka){
   return "Rp " + Number(angka || 0).toLocaleString("id-ID");
 }
 
+// ================= LOAD =================
 async function load(){
   try{
 
+    // ===== ambil nama =====
     let res1 = await fetch(URL);
     let namaList = await res1.json();
 
@@ -157,14 +161,16 @@ async function load(){
       select.appendChild(opt);
     });
 
+    // ===== ambil rekap =====
     let res2 = await fetch(URL + "?mode=rekap");
     dataRekap = await res2.json();
 
     if(dataRekap.length){
-      jenisList = Object.keys(dataRekap[0].dynamic || {});
+      jenisList = Object.keys(dataRekap[0].dynamic || {}).sort();
       buatHeader();
     }
 
+    // ===== dashboard =====
     let res3 = await fetch(URL + "?mode=dashboard");
     let dash = await res3.json();
 
@@ -187,6 +193,7 @@ async function load(){
   }
 }
 
+// ================= HEADER =================
 function buatHeader(){
   let h = "<th>Nama</th>";
 
@@ -197,6 +204,7 @@ function buatHeader(){
   document.getElementById("headerTable").innerHTML = h;
 }
 
+// ================= DETAIL =================
 document.getElementById("nama").onchange = function(){
 
   let s = dataRekap.find(d => d.nama === this.value);
@@ -211,12 +219,11 @@ document.getElementById("nama").onchange = function(){
     html += `${j}: ${rupiah(d.bayar)} | Sisa: ${rupiah(kurang)}<br>`;
   });
 
-  html += `💰 Kas: ${rupiah(s.kas)}`;
-
   document.getElementById("hasil").innerHTML = `
   <div class="card">${html}</div>`;
 };
 
+// ================= TUNGGAKAN =================
 function tampilkanBelum(){
 
   let sorted = dataRekap.map(s=>{
@@ -240,7 +247,7 @@ function tampilkanBelum(){
 
   sorted.forEach(s=>{
 
-    let warna = s.total > 50000 ? "kurang-besar" : "kurang-kecil";
+    let warna = s.total > 0 ? "kurang-besar" : "kurang-kecil";
 
     let cols = "";
 
@@ -263,6 +270,7 @@ function tampilkanBelum(){
   document.getElementById("belumTable").innerHTML = html;
 }
 
+// ================= INIT =================
 window.onload = cekLogin;
 
 </script>
