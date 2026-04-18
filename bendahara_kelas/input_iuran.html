@@ -16,7 +16,7 @@ padding:20px;
 color:#fff;
 }
 
-.container{max-width:420px;margin:auto;}
+.container{max-width:420px;margin:auto;position:relative;}
 
 .card{
 background:#1e293b;
@@ -71,8 +71,8 @@ opacity:0.5;
 cursor:not-allowed;
 }
 
-/* CHECKBOX */
-.checkbox-group{
+/* CHECKBOX RAPI */
+.checkbox-wrap{
 display:flex;
 align-items:center;
 gap:8px;
@@ -81,36 +81,29 @@ font-size:13px;
 color:#cbd5e1;
 }
 
-input[type="checkbox"]{
-transform:scale(1.2);
-cursor:pointer;
+.checkbox-wrap input{
+width:auto;
 }
 
-/* USER PANEL KANAN ATAS */
-.user-panel{
-position:fixed;
-top:15px;
-right:15px;
+/* USER INFO KANAN ATAS */
+.user-box{
+position:absolute;
+top:0;
+right:0;
 background:#1e293b;
-padding:12px 14px;
+padding:10px 14px;
 border-radius:12px;
-box-shadow:0 5px 15px rgba(0,0,0,0.4);
-font-size:13px;
+font-size:12px;
 text-align:right;
-display:none;
+box-shadow:0 4px 10px rgba(0,0,0,0.3);
 }
 
-.user-panel b{
-display:block;
-margin-bottom:6px;
-}
-
-.user-panel button{
+.user-box button{
+margin-top:5px;
 padding:6px 10px;
 font-size:12px;
 border-radius:8px;
 background:#ef4444;
-margin-top:5px;
 }
 
 /* TOAST */
@@ -133,19 +126,19 @@ transform:translateX(-50%) translateY(0);
 
 .toast.success{border-left:5px solid #22c55e;}
 .toast.error{border-left:5px solid #ef4444;}
+
 </style>
 </head>
 
 <body>
 
-<!-- USER PANEL -->
-<div class="user-panel" id="userPanel">
-  Login sebagai:
-  <b id="userTop">-</b>
-  <button onclick="logout()">Logout</button>
-</div>
-
 <div class="container">
+
+<!-- USER INFO -->
+<div id="userBox" class="user-box" style="display:none;">
+<div id="userLabel">-</div>
+<button onclick="logout()">Logout</button>
+</div>
 
 <!-- LOGIN -->
 <div class="card" id="loginCard">
@@ -155,10 +148,11 @@ transform:translateX(-50%) translateY(0);
 <label>PIN</label>
 <input type="password" id="pin" placeholder="Masukkan PIN">
 
-<div class="checkbox-group">
-  <input type="checkbox" onclick="togglePIN()">
-  <span>Tampilkan PIN</span>
+<div class="checkbox-wrap">
+<input type="checkbox" onclick="togglePIN()">
+<span>Tampilkan PIN</span>
 </div>
+
 </div>
 
 <button class="btn-login" onclick="login()">Login</button>
@@ -231,7 +225,6 @@ async function loadSiswa(){
 
 // LOGIN
 async function login(){
-
   const pin = document.getElementById("pin").value;
 
   if(!pin){
@@ -242,7 +235,7 @@ async function login(){
   try{
     const res = await fetch(URL,{
       method:"POST",
-      body: JSON.stringify({jenis:"TEST", pin})
+      body: JSON.stringify({ jenis:"TEST", pin })
     });
 
     const result = await res.json();
@@ -270,9 +263,8 @@ async function login(){
 function masukApp(user){
   document.getElementById("loginCard").style.display="none";
   document.getElementById("formCard").style.display="block";
-
-  document.getElementById("userPanel").style.display="block";
-  document.getElementById("userTop").innerText = user || "-";
+  document.getElementById("userBox").style.display="block";
+  document.getElementById("userLabel").innerText = "Login: " + user;
 }
 
 // AUTO LOGIN
@@ -283,7 +275,7 @@ async function cekLogin(){
     try{
       const res = await fetch(URL,{
         method:"POST",
-        body: JSON.stringify({jenis:"TEST", pin})
+        body: JSON.stringify({ jenis:"TEST", pin })
       });
 
       const result = await res.json();
@@ -309,6 +301,7 @@ function logout(){
 
 // KIRIM
 function kirim(){
+
   const nama = document.getElementById("nama").value;
   const galon = document.getElementById("galon").value;
   const kartu = document.getElementById("kartu").value;
@@ -327,13 +320,31 @@ function kirim(){
 
   let req = [];
 
-  if(galon) req.push(fetch(URL,{method:"POST",body:JSON.stringify({nama,jenis:"GALON",jumlah:galon,pin:currentPIN})}));
-  if(kartu) req.push(fetch(URL,{method:"POST",body:JSON.stringify({nama,jenis:"KARTU_PELAJAR",jumlah:kartu,pin:currentPIN})}));
-  if(kas)   req.push(fetch(URL,{method:"POST",body:JSON.stringify({nama,jenis:"KAS_KELAS",jumlah:kas,pin:currentPIN})}));
-  if(tali)  req.push(fetch(URL,{method:"POST",body:JSON.stringify({nama,jenis:"TALI_ASIH",jumlah:tali,pin:currentPIN})}));
+  if(galon){
+    req.push(fetch(URL,{method:"POST",body: JSON.stringify({nama,jenis:"GALON",jumlah:galon,pin:currentPIN})}));
+  }
+
+  if(kartu){
+    req.push(fetch(URL,{method:"POST",body: JSON.stringify({nama,jenis:"KARTU_PELAJAR",jumlah:kartu,pin:currentPIN})}));
+  }
+
+  if(kas){
+    req.push(fetch(URL,{method:"POST",body: JSON.stringify({nama,jenis:"KAS_KELAS",jumlah:kas,pin:currentPIN})}));
+  }
+
+  if(tali){
+    req.push(fetch(URL,{method:"POST",body: JSON.stringify({nama,jenis:"TALI_ASIH",jumlah:tali,pin:currentPIN})}));
+  }
 
   Promise.all(req)
-  .then(()=> showToast("Berhasil disimpan", "success"))
+  .then(()=>{
+    showToast("Berhasil disimpan", "success");
+
+    document.getElementById("galon").value="";
+    document.getElementById("kartu").value="";
+    document.getElementById("kas").value="";
+    document.getElementById("tali").value="";
+  })
   .catch(()=> showToast("Gagal", "error"));
 }
 
