@@ -50,6 +50,12 @@ color:white;
 font-size:14px;
 }
 
+/* FIX CHECKBOX */
+input[type="checkbox"]{
+width:auto;
+padding:0;
+}
+
 .row{display:flex;gap:12px;}
 .col{flex:1;}
 
@@ -136,7 +142,7 @@ transform:translateX(-50%) translateY(0);
 <button onclick="logout()">Logout</button>
 </div>
 
-<!-- LOGIN (PAKAI FORM) -->
+<!-- LOGIN -->
 <div class="card" id="loginCard">
 <h2>🔐 MASUKAN PIN</h2>
 
@@ -222,9 +228,9 @@ async function loadSiswa(){
   });
 }
 
-/* LOGIN (SUPPORT ENTER) */
+/* LOGIN */
 async function login(e){
-  if(e) e.preventDefault(); // penting
+  if(e) e.preventDefault();
 
   const pin = document.getElementById("pin").value;
 
