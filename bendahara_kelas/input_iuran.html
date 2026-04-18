@@ -50,6 +50,7 @@ color:white;
 font-size:14px;
 }
 
+/* FIX CHECKBOX */
 input[type="checkbox"]{
 width:auto;
 padding:0;
@@ -171,7 +172,6 @@ transform:translateX(-50%) translateY(0);
 <select id="nama"></select>
 </div>
 
-<!-- FORM LAMA (TIDAK DIHAPUS) -->
 <div class="row">
 <div class="col">
 <label>💧 Galon</label>
@@ -194,9 +194,6 @@ transform:translateX(-50%) translateY(0);
 <input type="number" id="tali">
 </div>
 
-<!-- 🔥 TAMBAHAN DINAMIS -->
-<div id="dynamicForm"></div>
-
 <button class="btn-simpan" onclick="kirim()">Simpan</button>
 <button class="btn-rekap" onclick="lihatRekap()">📊 Rekap</button>
 
@@ -211,17 +208,16 @@ transform:translateX(-50%) translateY(0);
 const URL = "https://script.google.com/macros/s/AKfycbwQ0v3rev6JV1ubaV6E2aGNgN7Ji4uuQxAcs4xsBSuWGKwEsPftfYhwNKf6aY9KYlRkVw/exec";
 
 let currentPIN = "";
-let jenisList = [];
 
+/* TOGGLE PIN */
 function togglePIN(){
   const input = document.getElementById("pin");
   input.type = input.type === "password" ? "text" : "password";
 }
 
-// ================= LOAD SISWA + JENIS =================
+/* LOAD SISWA */
 async function loadSiswa(){
-
-  const res = await fetch(URL);
+  const res = await fetch(URL + "?t=" + Date.now());
   const data = await res.json();
 
   const nama = document.getElementById("nama");
@@ -230,36 +226,9 @@ async function loadSiswa(){
   data.forEach(n=>{
     nama.innerHTML += `<option>${n}</option>`;
   });
-
-  // 🔥 ambil jenis dari rekap
-  const r = await fetch(URL + "?mode=rekap");
-  const d = await r.json();
-
-  if(d.length){
-    jenisList = Object.keys(d[0].dynamic || {});
-    buatFormDinamis();
-  }
 }
 
-// ================= FORM DINAMIS =================
-function buatFormDinamis(){
-
-  let html = "";
-
-  jenisList.forEach(j=>{
-    if(["GALON","KARTU_PELAJAR","KAS_KELAS","TALI_ASIH"].includes(j)) return;
-
-    html += `
-    <div class="form-group">
-      <label>${j}</label>
-      <input type="number" id="dyn_${j}">
-    </div>`;
-  });
-
-  document.getElementById("dynamicForm").innerHTML = html;
-}
-
-// ================= LOGIN =================
+/* LOGIN */
 async function login(e){
   if(e) e.preventDefault();
 
@@ -270,27 +239,34 @@ async function login(e){
     return;
   }
 
-  const res = await fetch(URL,{
-    method:"POST",
-    body: JSON.stringify({ jenis:"TEST", pin })
-  });
+  try{
+    const res = await fetch(URL,{
+      method:"POST",
+      body: JSON.stringify({ jenis:"TEST", pin })
+    });
 
-  const result = await res.json();
+    const result = await res.json();
 
-  if(result.status === "error"){
-    showToast("PIN salah!", "error");
-    return;
+    if(result.status === "error"){
+      showToast("PIN salah!", "error");
+      return;
+    }
+
+    localStorage.setItem("pin", pin);
+    localStorage.setItem("user", result.user);
+
+    currentPIN = pin;
+
+    masukApp(result.user);
+
+    showToast("Login berhasil", "success");
+
+  }catch{
+    showToast("Server error", "error");
   }
-
-  localStorage.setItem("pin", pin);
-  localStorage.setItem("user", result.user);
-
-  currentPIN = pin;
-  masukApp(result.user);
-
-  showToast("Login berhasil", "success");
 }
 
+/* MASUK APP */
 function masukApp(user){
   document.getElementById("loginCard").style.display="none";
   document.getElementById("formCard").style.display="block";
@@ -298,60 +274,88 @@ function masukApp(user){
   document.getElementById("userLabel").innerHTML = "👨‍💼 Login: " + user;
 }
 
-// ================= KIRIM =================
+/* AUTO LOGIN */
+async function cekLogin(){
+  const pin = localStorage.getItem("pin");
+
+  if(pin){
+    try{
+      const res = await fetch(URL,{
+        method:"POST",
+        body: JSON.stringify({ jenis:"TEST", pin })
+      });
+
+      const result = await res.json();
+
+      if(result.status === "success"){
+        currentPIN = pin;
+        masukApp(result.user);
+      }else{
+        logout();
+      }
+
+    }catch{
+      logout();
+    }
+  }
+}
+
+/* LOGOUT */
+function logout(){
+  localStorage.clear();
+  location.reload();
+}
+
+/* KIRIM */
 function kirim(){
 
   const nama = document.getElementById("nama").value;
+  const galon = document.getElementById("galon").value;
+  const kartu = document.getElementById("kartu").value;
+  const kas = document.getElementById("kas").value;
+  const tali = document.getElementById("tali").value;
 
   if(!nama){
     showToast("Pilih siswa!", "error");
     return;
   }
 
+  if(!galon && !kartu && !kas && !tali){
+    showToast("Isi minimal 1 data!", "error");
+    return;
+  }
+
   let req = [];
 
-  const map = {
-    GALON: document.getElementById("galon").value,
-    KARTU_PELAJAR: document.getElementById("kartu").value,
-    KAS_KELAS: document.getElementById("kas").value,
-    TALI_ASIH: document.getElementById("tali").value
-  };
+  if(galon){
+    req.push(fetch(URL,{method:"POST",body: JSON.stringify({nama,jenis:"GALON",jumlah:galon,pin:currentPIN})}));
+  }
 
-  // lama
-  Object.keys(map).forEach(j=>{
-    if(map[j]){
-      req.push(fetch(URL,{
-        method:"POST",
-        body: JSON.stringify({nama,jenis:j,jumlah:map[j],pin:currentPIN})
-      }));
-    }
-  });
+  if(kartu){
+    req.push(fetch(URL,{method:"POST",body: JSON.stringify({nama,jenis:"KARTU_PELAJAR",jumlah:kartu,pin:currentPIN})}));
+  }
 
-  // 🔥 dinamis
-  jenisList.forEach(j=>{
-    if(map[j]) return;
+  if(kas){
+    req.push(fetch(URL,{method:"POST",body: JSON.stringify({nama,jenis:"KAS_KELAS",jumlah:kas,pin:currentPIN})}));
+  }
 
-    const val = document.getElementById("dyn_"+j)?.value;
-    if(val){
-      req.push(fetch(URL,{
-        method:"POST",
-        body: JSON.stringify({nama,jenis:j,jumlah:val,pin:currentPIN})
-      }));
-    }
-  });
+  if(tali){
+    req.push(fetch(URL,{method:"POST",body: JSON.stringify({nama,jenis:"TALI_ASIH",jumlah:tali,pin:currentPIN})}));
+  }
 
-  Promise.all(req).then(()=>{
-    showToast("Berhasil disimpan","success");
-    document.querySelectorAll("input").forEach(i=> i.value="");
-  });
+  Promise.all(req)
+  .then(()=>{
+    showToast("Berhasil disimpan", "success");
+
+    document.getElementById("galon").value="";
+    document.getElementById("kartu").value="";
+    document.getElementById("kas").value="";
+    document.getElementById("tali").value="";
+  })
+  .catch(()=> showToast("Gagal", "error"));
 }
 
-// ================= LAIN =================
-function logout(){
-  localStorage.clear();
-  location.reload();
-}
-
+/* TOAST */
 function showToast(msg,type){
   const t = document.getElementById("toast");
   t.innerText = msg;
@@ -359,11 +363,16 @@ function showToast(msg,type){
   setTimeout(()=> t.className="toast",2500);
 }
 
+/* REKAP */
 function lihatRekap(){
   window.open("https://yanuar-moga.github.io/guruwali/bendahara_kelas/cek_iuran","_blank");
 }
 
-window.onload = loadSiswa;
+/* INIT */
+window.onload = ()=>{
+  loadSiswa();
+  cekLogin();
+}
 
 </script>
 
