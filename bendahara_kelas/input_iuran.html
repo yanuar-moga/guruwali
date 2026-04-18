@@ -90,7 +90,6 @@ transform:translateX(-50%) translateY(0);
 
 .toast.success{border-left:5px solid #22c55e;}
 .toast.error{border-left:5px solid #ef4444;}
-
 </style>
 </head>
 
@@ -140,6 +139,11 @@ Login sebagai: <b id="userLabel">-</b>
 <input type="number" id="kas">
 </div>
 
+<div class="form-group">
+<label>🎁 Tali Asih</label>
+<input type="number" id="tali">
+</div>
+
 <button class="btn-simpan" onclick="kirim()">Simpan</button>
 <button class="btn-rekap" onclick="lihatRekap()">📊 Rekap</button>
 <button onclick="logout()">Logout</button>
@@ -180,7 +184,6 @@ async function login(){
     return;
   }
 
-  // 🔥 TEST PIN KE SERVER
   try{
     const res = await fetch(URL,{
       method:"POST",
@@ -197,14 +200,12 @@ async function login(){
       return;
     }
 
-    // SIMPAN
     localStorage.setItem("pin", pin);
+    localStorage.setItem("user", result.user);
+
     currentPIN = pin;
 
-    document.getElementById("loginCard").style.display="none";
-    document.getElementById("formCard").style.display="block";
-
-    document.getElementById("userLabel").innerText = result.user || "User";
+    masukApp(result.user);
 
     showToast("Login berhasil", "success");
 
@@ -213,21 +214,48 @@ async function login(){
   }
 }
 
+// ================= MASUK APP =================
+function masukApp(user){
+  document.getElementById("loginCard").style.display="none";
+  document.getElementById("formCard").style.display="block";
+  document.getElementById("userLabel").innerText = user || "-";
+}
+
 // ================= AUTO LOGIN =================
-function cekLogin(){
+async function cekLogin(){
+
   const pin = localStorage.getItem("pin");
 
   if(pin){
-    currentPIN = pin;
 
-    document.getElementById("loginCard").style.display="none";
-    document.getElementById("formCard").style.display="block";
+    try{
+      const res = await fetch(URL,{
+        method:"POST",
+        body: JSON.stringify({
+          jenis:"TEST",
+          pin: pin
+        })
+      });
+
+      const result = await res.json();
+
+      if(result.status === "success"){
+        currentPIN = pin;
+        masukApp(result.user);
+      }else{
+        logout();
+      }
+
+    }catch{
+      logout();
+    }
   }
 }
 
 // ================= LOGOUT =================
 function logout(){
   localStorage.removeItem("pin");
+  localStorage.removeItem("user");
   location.reload();
 }
 
@@ -238,9 +266,15 @@ function kirim(){
   const galon = document.getElementById("galon").value;
   const kartu = document.getElementById("kartu").value;
   const kas = document.getElementById("kas").value;
+  const tali = document.getElementById("tali").value;
 
   if(!nama){
     showToast("Pilih siswa!", "error");
+    return;
+  }
+
+  if(!galon && !kartu && !kas && !tali){
+    showToast("Isi minimal 1 data!", "error");
     return;
   }
 
@@ -267,8 +301,23 @@ function kirim(){
     }));
   }
 
+  if(tali){
+    req.push(fetch(URL,{
+      method:"POST",
+      body: JSON.stringify({nama, jenis:"TALI_ASIH", jumlah:tali, pin: currentPIN})
+    }));
+  }
+
   Promise.all(req)
-  .then(()=> showToast("Berhasil disimpan", "success"))
+  .then(()=>{
+    showToast("Berhasil disimpan", "success");
+
+    // reset input
+    document.getElementById("galon").value="";
+    document.getElementById("kartu").value="";
+    document.getElementById("kas").value="";
+    document.getElementById("tali").value="";
+  })
   .catch(()=> showToast("Gagal", "error"));
 }
 
