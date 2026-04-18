@@ -6,7 +6,6 @@
 <title>Cek Tagihan</title>
 
 <style>
-
 body{
 font-family:Segoe UI;
 background:#0f172a;
@@ -15,10 +14,7 @@ margin:0;
 padding:15px;
 }
 
-.container{
-max-width:420px;
-margin:auto;
-}
+.container{max-width:420px;margin:auto;}
 
 .card{
 background:#1e293b;
@@ -27,10 +23,7 @@ border-radius:15px;
 margin-bottom:15px;
 }
 
-h2{
-text-align:center;
-margin-bottom:10px;
-}
+h2{text-align:center;margin-bottom:10px;}
 
 select{
 width:100%;
@@ -39,7 +32,6 @@ border-radius:10px;
 border:none;
 }
 
-/* BOX */
 .box{
 padding:12px;
 border-radius:10px;
@@ -49,7 +41,6 @@ margin-top:10px;
 .lunas{ background:#14532d; }
 .belum{ background:#7f1d1d; }
 
-/* DASHBOARD */
 .grid{
 display:grid;
 grid-template-columns:1fr 1fr;
@@ -70,7 +61,6 @@ font-size:16px;
 font-weight:bold;
 }
 
-/* LIST BELUM */
 .list-item{
 background:#334155;
 padding:10px;
@@ -78,21 +68,18 @@ border-radius:10px;
 margin-top:8px;
 font-size:13px;
 }
-
 </style>
-
 </head>
+
 <body>
 
 <div class="container">
 
-<!-- DASHBOARD -->
 <div class="card">
 <h2>📊 Statistik Kelas</h2>
 <div class="grid" id="dashboard">Loading...</div>
 </div>
 
-<!-- PILIH NAMA -->
 <div class="card">
 <h2>👤 Cek Tagihan</h2>
 <select id="nama">
@@ -100,10 +87,8 @@ font-size:13px;
 </select>
 </div>
 
-<!-- HASIL -->
 <div id="hasil"></div>
 
-<!-- BELUM LUNAS -->
 <div class="card">
 <h2>⚠️ Belum Lunas</h2>
 <div id="belumList">Loading...</div>
@@ -117,50 +102,64 @@ const URL = "https://script.google.com/macros/s/AKfycbwQ0v3rev6JV1ubaV6E2aGNgN7J
 
 let dataRekap = [];
 
-// FORMAT RUPIAH
 function rupiah(angka){
-  return "Rp " + Number(angka).toLocaleString("id-ID");
+  return "Rp " + Number(angka || 0).toLocaleString("id-ID");
 }
 
-// LOAD DATA
+// ================= LOAD =================
 async function load(){
+  try{
 
-  // nama siswa
-  let res1 = await fetch(URL);
-  let namaList = await res1.json();
+    // ===== NAMA =====
+    const res1 = await fetch(URL);
+    if(!res1.ok) throw "Gagal ambil nama";
 
-  let select = document.getElementById("nama");
-  select.innerHTML = '<option value="">-- Pilih Nama --</option>';
+    const namaList = await res1.json();
 
-  namaList.forEach(n=>{
-    let opt = document.createElement("option");
-    opt.value = n;
-    opt.textContent = n;
-    select.appendChild(opt);
-  });
+    const select = document.getElementById("nama");
+    select.innerHTML = '<option value="">-- Pilih Nama --</option>';
 
-  // rekap siswa
-  let res2 = await fetch(URL + "?mode=rekap");
-  dataRekap = await res2.json();
+    namaList.forEach(n=>{
+      let opt = document.createElement("option");
+      opt.value = n;
+      opt.textContent = n;
+      select.appendChild(opt);
+    });
 
-  // dashboard
-  let res3 = await fetch(URL + "?mode=dashboard");
-  let dash = await res3.json();
+    // ===== REKAP =====
+    const res2 = await fetch(URL + "?mode=rekap");
+    if(!res2.ok) throw "Gagal rekap";
 
-  document.getElementById("dashboard").innerHTML = `
-    <div class="stat">💧 Lunas<br><div class="value">${dash.sudahGalon}</div></div>
-    <div class="stat">💧 Belum<br><div class="value">${dash.belumGalon}</div></div>
-    <div class="stat">🎫 Lunas<br><div class="value">${dash.sudahKartu}</div></div>
-    <div class="stat">🎫 Belum<br><div class="value">${dash.belumKartu}</div></div>
-    <div class="stat">💰 Galon<br><div class="value">${rupiah(dash.totalGalon)}</div></div>
-    <div class="stat">🎫 Kartu<br><div class="value">${rupiah(dash.totalKartu)}</div></div>
-    <div class="stat" style="grid-column:1/3">💰 Total Kas<br><div class="value">${rupiah(dash.totalKas)}</div></div>
-  `;
+    dataRekap = await res2.json();
 
-  tampilkanBelum();
+    // ===== DASHBOARD =====
+    const res3 = await fetch(URL + "?mode=dashboard");
+    if(!res3.ok) throw "Gagal dashboard";
+
+    const dash = await res3.json();
+
+    document.getElementById("dashboard").innerHTML = `
+      <div class="stat">💧 Lunas<br><div class="value">${dash.sudahGalon}</div></div>
+      <div class="stat">💧 Belum<br><div class="value">${dash.belumGalon}</div></div>
+      <div class="stat">🎫 Lunas<br><div class="value">${dash.sudahKartu}</div></div>
+      <div class="stat">🎫 Belum<br><div class="value">${dash.belumKartu}</div></div>
+      <div class="stat">💰 Galon<br><div class="value">${rupiah(dash.totalGalon)}</div></div>
+      <div class="stat">🎫 Kartu<br><div class="value">${rupiah(dash.totalKartu)}</div></div>
+      <div class="stat">💰 Kas<br><div class="value">${rupiah(dash.totalKas)}</div></div>
+      <div class="stat">🎁 Tali<br><div class="value">${rupiah(dash.totalTali)}</div></div>
+    `;
+
+    tampilkanBelum();
+
+  }catch(e){
+    console.error(e);
+
+    document.getElementById("dashboard").innerHTML = "❌ Gagal load data";
+    document.getElementById("belumList").innerHTML = "❌ Gagal load data";
+  }
 }
 
-// TAMPILKAN DATA SISWA
+// ================= PILIH SISWA =================
 document.getElementById("nama").onchange = function(){
 
   let siswa = dataRekap.find(d => d.nama === this.value);
@@ -186,14 +185,19 @@ document.getElementById("nama").onchange = function(){
       <b>${rupiah(siswa.kas)}</b>
     </div>
 
+    <div class="box">
+      🎁 Tali Asih<br>
+      <b>${rupiah(siswa.taliAsih)}</b>
+    </div>
+
   </div>
   `;
 };
 
-// LIST BELUM LUNAS
+// ================= BELUM LUNAS =================
 function tampilkanBelum(){
 
-  let belum = dataRekap.filter(s => 
+  let belum = dataRekap.filter(s =>
     s.statusGalon !== "LUNAS" || s.statusKartu !== "LUNAS"
   );
 
