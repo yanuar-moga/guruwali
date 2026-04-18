@@ -6,10 +6,7 @@
 <title>Kas Kelas</title>
 
 <style>
-
-*{
-box-sizing:border-box;
-}
+*{box-sizing:border-box;}
 
 body{
 font-family:'Segoe UI', sans-serif;
@@ -20,10 +17,7 @@ color:#fff;
 }
 
 /* CONTAINER */
-.container{
-max-width:420px;
-margin:auto;
-}
+.container{max-width:420px;margin:auto;}
 
 /* CARD */
 .card{
@@ -31,19 +25,14 @@ background:#1e293b;
 padding:20px;
 border-radius:16px;
 box-shadow:0 8px 20px rgba(0,0,0,0.4);
+margin-bottom:15px;
 }
 
 /* TITLE */
-h2{
-text-align:center;
-margin-bottom:20px;
-}
+h2{text-align:center;margin-bottom:20px;}
 
 /* FORM */
-.form-group{
-margin-bottom:15px;
-width:100%;
-}
+.form-group{margin-bottom:15px;width:100%;}
 
 /* LABEL */
 label{
@@ -65,14 +54,8 @@ font-size:14px;
 }
 
 /* ROW */
-.row{
-display:flex;
-gap:12px;
-}
-
-.col{
-flex:1;
-}
+.row{display:flex;gap:12px;}
+.col{flex:1;}
 
 /* BUTTON */
 button{
@@ -85,40 +68,17 @@ font-weight:bold;
 font-size:15px;
 cursor:pointer;
 margin-top:10px;
-display:flex;
-align-items:center;
-justify-content:center;
-gap:8px;
 }
 
 /* BUTTON WARNA */
-.btn-simpan{
-background:#22c55e;
-}
-.btn-simpan:hover{
-background:#16a34a;
-}
+.btn-login{background:#f59e0b;}
+.btn-simpan{background:#22c55e;}
+.btn-rekap{background:#3b82f6;}
 
-.btn-rekap{
-background:#3b82f6;
-}
-.btn-rekap:hover{
-background:#2563eb;
-}
-
-/* LOADING SPINNER */
-.spinner{
-width:18px;
-height:18px;
-border:3px solid #fff;
-border-top:3px solid transparent;
-border-radius:50%;
-animation:spin 0.8s linear infinite;
-display:none;
-}
-
-@keyframes spin{
-to{ transform:rotate(360deg); }
+/* DISABLED */
+button:disabled{
+opacity:0.5;
+cursor:not-allowed;
 }
 
 /* TOAST */
@@ -130,11 +90,8 @@ transform:translateX(-50%) translateY(100px);
 background:#1e293b;
 padding:14px 20px;
 border-radius:12px;
-box-shadow:0 5px 15px rgba(0,0,0,0.4);
 opacity:0;
 transition:all 0.4s;
-font-size:14px;
-z-index:999;
 }
 
 .toast.show{
@@ -142,113 +99,131 @@ opacity:1;
 transform:translateX(-50%) translateY(0);
 }
 
-.toast.success{
-border-left:5px solid #22c55e;
-}
-
-.toast.error{
-border-left:5px solid #ef4444;
-}
-
-/* FOCUS */
-select:focus, input:focus{
-outline:none;
-box-shadow:0 0 0 2px #22c55e;
-}
+.toast.success{border-left:5px solid #22c55e;}
+.toast.error{border-left:5px solid #ef4444;}
 
 </style>
-
 </head>
+
 <body>
 
 <div class="container">
 
-<div class="card">
+<!-- LOGIN -->
+<div class="card" id="loginCard">
+<h2>🔐 Login Bendahara</h2>
 
-<h2>💰 Kas Kelas</h2>
-
-<!-- NAMA -->
 <div class="form-group">
-<label>Nama Siswa</label>
-<select id="nama">
-<option>Loading data...</option>
-</select>
+<label>Nama</label>
+<select id="loginNama"></select>
 </div>
 
-<!-- GALON & KARTU -->
-<div class="row">
+<div class="form-group">
+<label>PIN</label>
+<input type="password" id="pin" placeholder="Masukkan PIN">
+</div>
 
+<button class="btn-login" onclick="login()">Login</button>
+</div>
+
+<!-- FORM -->
+<div class="card" id="formCard" style="display:none;">
+<h2>💰 Kas Kelas</h2>
+
+<div class="form-group">
+<label>Nama Siswa</label>
+<select id="nama"></select>
+</div>
+
+<div class="row">
 <div class="col">
 <label>💧 Galon</label>
-<input type="number" id="galon" placeholder="Rp">
+<input type="number" id="galon">
 </div>
 
 <div class="col">
 <label>🎫 Kartu</label>
-<input type="number" id="kartu" placeholder="Rp">
+<input type="number" id="kartu">
+</div>
 </div>
 
-</div>
-
-<!-- KAS -->
 <div class="form-group">
-<label>💰 Iuran Kas</label>
-<input type="number" id="kas" placeholder="Rp">
+<label>💰 Kas</label>
+<input type="number" id="kas">
 </div>
 
-<!-- BUTTON -->
-<button class="btn-simpan" id="btnSimpan" onclick="kirim()">
-<span id="btnText">Simpan Data</span>
-<div class="spinner" id="spinner"></div>
-</button>
-
-<button class="btn-rekap" onclick="lihatRekap()">📊 Lihat Rekap Data</button>
+<button class="btn-simpan" id="btnSimpan" onclick="kirim()">Simpan</button>
+<button class="btn-rekap" onclick="lihatRekap()">📊 Rekap</button>
 
 </div>
 
 </div>
 
-<!-- TOAST -->
 <div id="toast" class="toast"></div>
 
 <script>
 
 const URL = "https://script.google.com/macros/s/AKfycbwQ0v3rev6JV1ubaV6E2aGNgN7Ji4uuQxAcs4xsBSuWGKwEsPftfYhwNKf6aY9KYlRkVw/exec";
 
-// LOAD SISWA
+let currentUser = "";
+let currentPIN = "";
+
+// ================= LOAD SISWA =================
 async function loadSiswa(){
-  const select = document.getElementById("nama");
+  const res = await fetch(URL + "?t=" + Date.now());
+  const data = await res.json();
 
-  try{
-    const res = await fetch(URL + "?t=" + Date.now());
-    const data = await res.json();
+  const nama = document.getElementById("nama");
+  const loginNama = document.getElementById("loginNama");
 
-    select.innerHTML = '<option value="">-- Pilih Siswa --</option>';
+  nama.innerHTML = '<option value="">-- Pilih Siswa --</option>';
+  loginNama.innerHTML = '<option value="">-- Pilih Nama --</option>';
 
-    data.forEach(nama=>{
-      let opt = document.createElement("option");
-      opt.value = nama;
-      opt.textContent = nama;
-      select.appendChild(opt);
-    });
+  data.forEach(n=>{
+    nama.innerHTML += `<option>${n}</option>`;
+    loginNama.innerHTML += `<option>${n}</option>`;
+  });
+}
 
-  }catch(e){
-    select.innerHTML = "<option>❌ Gagal load</option>";
+// ================= LOGIN =================
+function login(){
+
+  const nama = document.getElementById("loginNama").value;
+  const pin = document.getElementById("pin").value;
+
+  if(!nama || !pin){
+    showToast("Isi nama & PIN!", "error");
+    return;
+  }
+
+  // SIMPAN SESSION
+  localStorage.setItem("user", nama);
+  localStorage.setItem("pin", pin);
+
+  currentUser = nama;
+  currentPIN = pin;
+
+  document.getElementById("loginCard").style.display = "none";
+  document.getElementById("formCard").style.display = "block";
+
+  showToast("Login berhasil", "success");
+}
+
+// ================= AUTO LOGIN =================
+function cekLogin(){
+  const user = localStorage.getItem("user");
+  const pin = localStorage.getItem("pin");
+
+  if(user && pin){
+    currentUser = user;
+    currentPIN = pin;
+
+    document.getElementById("loginCard").style.display = "none";
+    document.getElementById("formCard").style.display = "block";
   }
 }
 
-// TOAST FUNCTION
-function showToast(message, type="success"){
-  const toast = document.getElementById("toast");
-  toast.innerText = message;
-  toast.className = "toast show " + type;
-
-  setTimeout(()=>{
-    toast.className = "toast";
-  }, 2500);
-}
-
-// KIRIM DATA
+// ================= KIRIM =================
 function kirim(){
 
   const nama = document.getElementById("nama").value;
@@ -257,64 +232,72 @@ function kirim(){
   const kas = document.getElementById("kas").value;
 
   if(!nama){
-    showToast("⚠️ Pilih siswa dulu!", "error");
+    showToast("Pilih siswa!", "error");
     return;
   }
 
-  let promises = [];
+  let req = [];
 
   if(galon){
-    promises.push(fetch(URL,{
+    req.push(fetch(URL,{
       method:"POST",
-      body: JSON.stringify({nama, jenis:"GALON", jumlah:galon})
+      body: JSON.stringify({
+        nama,
+        jenis:"GALON",
+        jumlah:galon,
+        pin: currentPIN
+      })
     }));
   }
 
   if(kartu){
-    promises.push(fetch(URL,{
+    req.push(fetch(URL,{
       method:"POST",
-      body: JSON.stringify({nama, jenis:"KARTU_PELAJAR", jumlah:kartu})
+      body: JSON.stringify({
+        nama,
+        jenis:"KARTU_PELAJAR",
+        jumlah:kartu,
+        pin: currentPIN
+      })
     }));
   }
 
   if(kas){
-    promises.push(fetch(URL,{
+    req.push(fetch(URL,{
       method:"POST",
-      body: JSON.stringify({nama, jenis:"KAS_KELAS", jumlah:kas})
+      body: JSON.stringify({
+        nama,
+        jenis:"KAS_KELAS",
+        jumlah:kas,
+        pin: currentPIN
+      })
     }));
   }
 
-  // LOADING ON
-  document.getElementById("spinner").style.display = "inline-block";
-  document.getElementById("btnText").innerText = "Menyimpan...";
-  document.getElementById("btnSimpan").disabled = true;
-
-  Promise.all(promises)
-  .then(()=>{
-    showToast("✅ Data berhasil disimpan", "success");
-
-    document.getElementById("galon").value="";
-    document.getElementById("kartu").value="";
-    document.getElementById("kas").value="";
-  })
-  .catch(()=>{
-    showToast("❌ Gagal menyimpan data", "error");
-  })
-  .finally(()=>{
-    // LOADING OFF
-    document.getElementById("spinner").style.display = "none";
-    document.getElementById("btnText").innerText = "Simpan Data";
-    document.getElementById("btnSimpan").disabled = false;
-  });
-
+  Promise.all(req)
+  .then(()=> showToast("Berhasil disimpan", "success"))
+  .catch(()=> showToast("Gagal", "error"));
 }
 
-// BUTTON REKAP
+// ================= TOAST =================
+function showToast(msg,type){
+  const t = document.getElementById("toast");
+  t.innerText = msg;
+  t.className = "toast show " + type;
+
+  setTimeout(()=> t.className="toast",2500);
+}
+
+// ================= REKAP =================
 function lihatRekap(){
   window.open("https://yanuar-moga.github.io/guruwali/bendahara_kelas/cek_iuran","_blank");
 }
 
-window.onload = loadSiswa;
+// ================= INIT =================
+window.onload = ()=>{
+  loadSiswa();
+  cekLogin();
+}
 
 </script>
 
