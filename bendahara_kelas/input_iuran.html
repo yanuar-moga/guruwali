@@ -16,10 +16,8 @@ padding:20px;
 color:#fff;
 }
 
-/* CONTAINER */
 .container{max-width:420px;margin:auto;}
 
-/* CARD */
 .card{
 background:#1e293b;
 padding:20px;
@@ -28,13 +26,10 @@ box-shadow:0 8px 20px rgba(0,0,0,0.4);
 margin-bottom:15px;
 }
 
-/* TITLE */
 h2{text-align:center;margin-bottom:20px;}
 
-/* FORM */
 .form-group{margin-bottom:15px;width:100%;}
 
-/* LABEL */
 label{
 font-size:13px;
 margin-bottom:6px;
@@ -42,7 +37,6 @@ display:block;
 color:#cbd5e1;
 }
 
-/* INPUT */
 select, input{
 width:100%;
 padding:12px;
@@ -53,11 +47,9 @@ color:white;
 font-size:14px;
 }
 
-/* ROW */
 .row{display:flex;gap:12px;}
 .col{flex:1;}
 
-/* BUTTON */
 button{
 width:100%;
 padding:14px;
@@ -70,18 +62,15 @@ cursor:pointer;
 margin-top:10px;
 }
 
-/* BUTTON WARNA */
 .btn-login{background:#f59e0b;}
 .btn-simpan{background:#22c55e;}
 .btn-rekap{background:#3b82f6;}
 
-/* DISABLED */
 button:disabled{
 opacity:0.5;
 cursor:not-allowed;
 }
 
-/* TOAST */
 .toast{
 position:fixed;
 bottom:20px;
@@ -114,11 +103,6 @@ transform:translateX(-50%) translateY(0);
 <h2>🔐 Login Bendahara</h2>
 
 <div class="form-group">
-<label>Nama</label>
-<select id="loginNama"></select>
-</div>
-
-<div class="form-group">
 <label>PIN</label>
 <input type="password" id="pin" placeholder="Masukkan PIN">
 </div>
@@ -129,6 +113,10 @@ transform:translateX(-50%) translateY(0);
 <!-- FORM -->
 <div class="card" id="formCard" style="display:none;">
 <h2>💰 Kas Kelas</h2>
+
+<div style="text-align:center;margin-bottom:10px;font-size:13px;color:#94a3b8;">
+Login sebagai: <b id="userLabel">-</b>
+</div>
 
 <div class="form-group">
 <label>Nama Siswa</label>
@@ -152,8 +140,9 @@ transform:translateX(-50%) translateY(0);
 <input type="number" id="kas">
 </div>
 
-<button class="btn-simpan" id="btnSimpan" onclick="kirim()">Simpan</button>
+<button class="btn-simpan" onclick="kirim()">Simpan</button>
 <button class="btn-rekap" onclick="lihatRekap()">📊 Rekap</button>
+<button onclick="logout()">Logout</button>
 
 </div>
 
@@ -165,7 +154,6 @@ transform:translateX(-50%) translateY(0);
 
 const URL = "https://script.google.com/macros/s/AKfycbwQ0v3rev6JV1ubaV6E2aGNgN7Ji4uuQxAcs4xsBSuWGKwEsPftfYhwNKf6aY9KYlRkVw/exec";
 
-let currentUser = "";
 let currentPIN = "";
 
 // ================= LOAD SISWA =================
@@ -174,53 +162,73 @@ async function loadSiswa(){
   const data = await res.json();
 
   const nama = document.getElementById("nama");
-  const loginNama = document.getElementById("loginNama");
 
   nama.innerHTML = '<option value="">-- Pilih Siswa --</option>';
-  loginNama.innerHTML = '<option value="">-- Pilih Nama --</option>';
 
   data.forEach(n=>{
     nama.innerHTML += `<option>${n}</option>`;
-    loginNama.innerHTML += `<option>${n}</option>`;
   });
 }
 
 // ================= LOGIN =================
-function login(){
+async function login(){
 
-  const nama = document.getElementById("loginNama").value;
   const pin = document.getElementById("pin").value;
 
-  if(!nama || !pin){
-    showToast("Isi nama & PIN!", "error");
+  if(!pin){
+    showToast("Masukkan PIN!", "error");
     return;
   }
 
-  // SIMPAN SESSION
-  localStorage.setItem("user", nama);
-  localStorage.setItem("pin", pin);
+  // 🔥 TEST PIN KE SERVER
+  try{
+    const res = await fetch(URL,{
+      method:"POST",
+      body: JSON.stringify({
+        jenis:"TEST",
+        pin: pin
+      })
+    });
 
-  currentUser = nama;
-  currentPIN = pin;
+    const result = await res.json();
 
-  document.getElementById("loginCard").style.display = "none";
-  document.getElementById("formCard").style.display = "block";
+    if(result.status === "error"){
+      showToast("PIN salah!", "error");
+      return;
+    }
 
-  showToast("Login berhasil", "success");
+    // SIMPAN
+    localStorage.setItem("pin", pin);
+    currentPIN = pin;
+
+    document.getElementById("loginCard").style.display="none";
+    document.getElementById("formCard").style.display="block";
+
+    document.getElementById("userLabel").innerText = result.user || "User";
+
+    showToast("Login berhasil", "success");
+
+  }catch(e){
+    showToast("Server error", "error");
+  }
 }
 
 // ================= AUTO LOGIN =================
 function cekLogin(){
-  const user = localStorage.getItem("user");
   const pin = localStorage.getItem("pin");
 
-  if(user && pin){
-    currentUser = user;
+  if(pin){
     currentPIN = pin;
 
-    document.getElementById("loginCard").style.display = "none";
-    document.getElementById("formCard").style.display = "block";
+    document.getElementById("loginCard").style.display="none";
+    document.getElementById("formCard").style.display="block";
   }
+}
+
+// ================= LOGOUT =================
+function logout(){
+  localStorage.removeItem("pin");
+  location.reload();
 }
 
 // ================= KIRIM =================
@@ -241,36 +249,21 @@ function kirim(){
   if(galon){
     req.push(fetch(URL,{
       method:"POST",
-      body: JSON.stringify({
-        nama,
-        jenis:"GALON",
-        jumlah:galon,
-        pin: currentPIN
-      })
+      body: JSON.stringify({nama, jenis:"GALON", jumlah:galon, pin: currentPIN})
     }));
   }
 
   if(kartu){
     req.push(fetch(URL,{
       method:"POST",
-      body: JSON.stringify({
-        nama,
-        jenis:"KARTU_PELAJAR",
-        jumlah:kartu,
-        pin: currentPIN
-      })
+      body: JSON.stringify({nama, jenis:"KARTU_PELAJAR", jumlah:kartu, pin: currentPIN})
     }));
   }
 
   if(kas){
     req.push(fetch(URL,{
       method:"POST",
-      body: JSON.stringify({
-        nama,
-        jenis:"KAS_KELAS",
-        jumlah:kas,
-        pin: currentPIN
-      })
+      body: JSON.stringify({nama, jenis:"KAS_KELAS", jumlah:kas, pin: currentPIN})
     }));
   }
 
