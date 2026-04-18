@@ -52,7 +52,6 @@ font-size:16px;
 font-weight:bold;
 }
 
-/* tabel */
 table{
 width:100%;
 border-collapse:collapse;
@@ -64,27 +63,16 @@ padding:10px;
 vertical-align:top;
 }
 
-th{
-background:#334155;
-}
+th{background:#334155;}
 
 td{
 background:#1e293b;
 border-bottom:1px solid #334155;
 }
 
-.nama{
-font-weight:bold;
-}
-
-.kurang-besar{
-color:#ef4444;
-font-weight:bold;
-}
-
-.kurang-kecil{
-color:#facc15;
-}
+.nama{font-weight:bold;}
+.kurang-besar{color:#ef4444;font-weight:bold;}
+.kurang-kecil{color:#facc15;}
 
 small{
 color:#94a3b8;
@@ -135,7 +123,24 @@ font-size:11px;
 const URL = "https://script.google.com/macros/s/AKfycbwQ0v3rev6JV1ubaV6E2aGNgN7Ji4uuQxAcs4xsBSuWGKwEsPftfYhwNKf6aY9KYlRkVw/exec";
 
 let dataRekap = [];
+let currentPIN = "";
 
+// ================= CEK LOGIN =================
+function cekLogin(){
+
+  const pin = localStorage.getItem("pin");
+
+  if(!pin){
+    alert("Silakan login dulu di halaman input!");
+    window.location.href = "input_iuran";
+    return;
+  }
+
+  currentPIN = pin;
+  load();
+}
+
+// ================= FORMAT =================
 function rupiah(angka){
   return "Rp " + Number(angka || 0).toLocaleString("id-ID");
 }
@@ -144,7 +149,6 @@ function rupiah(angka){
 async function load(){
   try{
 
-    // nama
     let res1 = await fetch(URL);
     let namaList = await res1.json();
 
@@ -158,11 +162,9 @@ async function load(){
       select.appendChild(opt);
     });
 
-    // rekap
     let res2 = await fetch(URL + "?mode=rekap");
     dataRekap = await res2.json();
 
-    // dashboard
     let res3 = await fetch(URL + "?mode=dashboard");
     let dash = await res3.json();
 
@@ -185,7 +187,7 @@ async function load(){
   }
 }
 
-// ================= DETAIL SISWA =================
+// ================= DETAIL =================
 document.getElementById("nama").onchange = function(){
 
   let s = dataRekap.find(d => d.nama === this.value);
@@ -200,20 +202,16 @@ document.getElementById("nama").onchange = function(){
   </div>`;
 };
 
-// ================= TABEL TUNGGAKAN =================
+// ================= TUNGGAKAN =================
 function tampilkanBelum(){
 
   let sorted = dataRekap.map(s=>{
 
     let kurangG = Number(s.galonSisa||0);
     let kurangK = Number(s.kartuSisa||0);
-    let kurangT = s.taliAsih ? 0 : 50000; // asumsi target tali
+    let kurangT = s.taliAsih ? 0 : 50000;
 
-    return {
-      ...s,
-      kurangG, kurangK, kurangT,
-      total: kurangG + kurangK + kurangT
-    };
+    return {...s, kurangG, kurangK, kurangT, total: kurangG + kurangK + kurangT};
 
   }).sort((a,b)=> b.total - a.total);
 
@@ -225,34 +223,21 @@ function tampilkanBelum(){
 
     html += `
     <tr>
-
       <td class="nama">${s.nama}<br>
       <small>Total: <span class="${warna}">${rupiah(s.total)}</span></small>
       </td>
 
-      <td>
-        Bayar: ${rupiah(s.galonBayar)}<br>
-        Kurang: ${rupiah(s.kurangG)}
-      </td>
-
-      <td>
-        Bayar: ${rupiah(s.kartuBayar)}<br>
-        Kurang: ${rupiah(s.kurangK)}
-      </td>
-
-      <td>
-        Bayar: ${rupiah(s.taliAsih)}<br>
-        Kurang: ${rupiah(s.kurangT)}
-      </td>
-
-    </tr>
-    `;
+      <td>Bayar: ${rupiah(s.galonBayar)}<br>Kurang: ${rupiah(s.kurangG)}</td>
+      <td>Bayar: ${rupiah(s.kartuBayar)}<br>Kurang: ${rupiah(s.kurangK)}</td>
+      <td>Bayar: ${rupiah(s.taliAsih)}<br>Kurang: ${rupiah(s.kurangT)}</td>
+    </tr>`;
   });
 
   document.getElementById("belumTable").innerHTML = html;
 }
 
-window.onload = load;
+// ================= INIT =================
+window.onload = cekLogin;
 
 </script>
 
