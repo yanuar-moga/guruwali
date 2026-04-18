@@ -7,129 +7,20 @@
 
 <style>
 *{box-sizing:border-box;}
-
-body{
-font-family:'Segoe UI', sans-serif;
-background:#0f172a;
-margin:0;
-padding:20px;
-color:#fff;
+body{font-family:'Segoe UI';background:#0f172a;color:#fff;margin:0;padding:20px;}
+.container{max-width:420px;margin:auto;}
+.card{background:#1e293b;padding:20px;border-radius:16px;margin-bottom:15px;}
+h2{text-align:center;}
+input,select{
+width:100%;padding:12px;margin-top:5px;
+border-radius:10px;border:none;background:#334155;color:white;
 }
-
-.container{
-max-width:420px;
-margin:auto;
-}
-
-.card{
-background:#1e293b;
-padding:20px;
-border-radius:16px;
-box-shadow:0 8px 20px rgba(0,0,0,0.4);
-margin-bottom:15px;
-}
-
-h2{text-align:center;margin-bottom:20px;}
-
-.form-group{margin-bottom:15px;width:100%;}
-
-label{
-font-size:13px;
-margin-bottom:6px;
-display:block;
-color:#cbd5e1;
-}
-
-select, input{
-width:100%;
-padding:12px;
-border-radius:10px;
-border:none;
-background:#334155;
-color:white;
-font-size:14px;
-}
-
-/* FIX CHECKBOX */
-input[type="checkbox"]{
-width:auto;
-padding:0;
-}
-
-.row{display:flex;gap:12px;}
-.col{flex:1;}
-
 button{
-width:100%;
-padding:14px;
-border:none;
-border-radius:12px;
-color:white;
-font-weight:bold;
-font-size:15px;
-cursor:pointer;
-margin-top:10px;
+width:100%;padding:14px;margin-top:10px;
+border:none;border-radius:12px;font-weight:bold;color:white;
 }
-
 .btn-login{background:#f59e0b;}
 .btn-simpan{background:#22c55e;}
-.btn-rekap{background:#3b82f6;}
-
-.checkbox-wrap{
-display:flex;
-align-items:center;
-gap:8px;
-margin-top:8px;
-font-size:13px;
-color:#cbd5e1;
-}
-
-.user-box{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:12px;
-background:#1e293b;
-padding:10px 14px;
-border-radius:12px;
-font-size:12px;
-box-shadow:0 4px 10px rgba(0,0,0,0.3);
-}
-
-#userLabel{
-display:flex;
-align-items:center;
-gap:6px;
-}
-
-.user-box button{
-width:auto;
-margin-top:0;
-padding:6px 12px;
-font-size:12px;
-border-radius:8px;
-background:#ef4444;
-}
-
-.toast{
-position:fixed;
-bottom:20px;
-left:50%;
-transform:translateX(-50%) translateY(100px);
-background:#1e293b;
-padding:14px 20px;
-border-radius:12px;
-opacity:0;
-transition:all 0.4s;
-}
-
-.toast.show{
-opacity:1;
-transform:translateX(-50%) translateY(0);
-}
-
-.toast.success{border-left:5px solid #22c55e;}
-.toast.error{border-left:5px solid #ef4444;}
 </style>
 </head>
 
@@ -137,241 +28,128 @@ transform:translateX(-50%) translateY(0);
 
 <div class="container">
 
-<div id="userBox" class="user-box" style="display:none;">
-<div id="userLabel">👨‍💼 Login: -</div>
-<button onclick="logout()">Logout</button>
-</div>
-
-<!-- LOGIN -->
 <div class="card" id="loginCard">
-<h2>🔐 MASUKAN PIN</h2>
-
-<form onsubmit="login(event)">
-
-<div class="form-group">
-<label>PIN</label>
-<input type="password" id="pin" placeholder="Masukkan PIN" autofocus>
-
-<div class="checkbox-wrap">
-<input type="checkbox" onclick="togglePIN()">
-<span>Tampilkan PIN</span>
-</div>
+<h2>🔐 Login</h2>
+<input type="password" id="pin" placeholder="PIN">
+<button class="btn-login" onclick="login()">Login</button>
 </div>
 
-<button type="submit" class="btn-login">Login</button>
-
-</form>
-</div>
-
-<!-- FORM -->
 <div class="card" id="formCard" style="display:none;">
-<h2>💰 Kas Kelas</h2>
+<h2>💰 Input Iuran</h2>
 
-<div class="form-group">
-<label>Nama Siswa</label>
 <select id="nama"></select>
-</div>
 
-<div class="row">
-<div class="col">
-<label>💧 Galon</label>
-<input type="number" id="galon">
-</div>
-
-<div class="col">
-<label>🎫 Kartu</label>
-<input type="number" id="kartu">
-</div>
-</div>
-
-<div class="form-group">
-<label>💰 Kas</label>
-<input type="number" id="kas">
-</div>
-
-<div class="form-group">
-<label>🎁 Tali Asih</label>
-<input type="number" id="tali">
-</div>
+<div id="formIuran"></div>
 
 <button class="btn-simpan" onclick="kirim()">Simpan</button>
-<button class="btn-rekap" onclick="lihatRekap()">📊 Rekap</button>
-
 </div>
 
 </div>
-
-<div id="toast" class="toast"></div>
 
 <script>
 
 const URL = "https://script.google.com/macros/s/AKfycbwQ0v3rev6JV1ubaV6E2aGNgN7Ji4uuQxAcs4xsBSuWGKwEsPftfYhwNKf6aY9KYlRkVw/exec";
 
-let currentPIN = "";
+let currentPIN="";
+let jenisList=[];
 
-/* TOGGLE PIN */
-function togglePIN(){
-  const input = document.getElementById("pin");
-  input.type = input.type === "password" ? "text" : "password";
-}
+// ================= LOGIN =================
+async function login(){
 
-/* LOAD SISWA */
-async function loadSiswa(){
-  const res = await fetch(URL + "?t=" + Date.now());
-  const data = await res.json();
+  let pin = document.getElementById("pin").value;
 
-  const nama = document.getElementById("nama");
-  nama.innerHTML = '<option value="">-- Pilih Siswa --</option>';
-
-  data.forEach(n=>{
-    nama.innerHTML += `<option>${n}</option>`;
+  let res = await fetch(URL,{
+    method:"POST",
+    body: JSON.stringify({jenis:"TEST", pin})
   });
-}
 
-/* LOGIN */
-async function login(e){
-  if(e) e.preventDefault();
+  let r = await res.json();
 
-  const pin = document.getElementById("pin").value;
-
-  if(!pin){
-    showToast("Masukkan PIN!", "error");
+  if(r.status==="error"){
+    alert("PIN salah");
     return;
   }
 
-  try{
-    const res = await fetch(URL,{
-      method:"POST",
-      body: JSON.stringify({ jenis:"TEST", pin })
-    });
+  currentPIN = pin;
 
-    const result = await res.json();
-
-    if(result.status === "error"){
-      showToast("PIN salah!", "error");
-      return;
-    }
-
-    localStorage.setItem("pin", pin);
-    localStorage.setItem("user", result.user);
-
-    currentPIN = pin;
-
-    masukApp(result.user);
-
-    showToast("Login berhasil", "success");
-
-  }catch{
-    showToast("Server error", "error");
-  }
-}
-
-/* MASUK APP */
-function masukApp(user){
   document.getElementById("loginCard").style.display="none";
   document.getElementById("formCard").style.display="block";
-  document.getElementById("userBox").style.display="flex";
-  document.getElementById("userLabel").innerHTML = "👨‍💼 Login: " + user;
+
+  load();
 }
 
-/* AUTO LOGIN */
-async function cekLogin(){
-  const pin = localStorage.getItem("pin");
+// ================= LOAD =================
+async function load(){
 
-  if(pin){
-    try{
-      const res = await fetch(URL,{
-        method:"POST",
-        body: JSON.stringify({ jenis:"TEST", pin })
-      });
+  // ambil siswa
+  let s = await fetch(URL);
+  let siswa = await s.json();
 
-      const result = await res.json();
+  let select = document.getElementById("nama");
+  select.innerHTML="<option>-- pilih --</option>";
 
-      if(result.status === "success"){
-        currentPIN = pin;
-        masukApp(result.user);
-      }else{
-        logout();
-      }
+  siswa.forEach(n=>{
+    select.innerHTML += `<option>${n}</option>`;
+  });
 
-    }catch{
-      logout();
-    }
+  // ambil jenis dari REKAP
+  let r = await fetch(URL+"?mode=rekap");
+  let data = await r.json();
+
+  if(data.length){
+    jenisList = Object.keys(data[0].dynamic || {});
+    buatForm();
   }
 }
 
-/* LOGOUT */
-function logout(){
-  localStorage.clear();
-  location.reload();
+// ================= FORM DINAMIS =================
+function buatForm(){
+
+  let html="";
+
+  jenisList.forEach(j=>{
+    html += `
+      <div>
+        <label>${j}</label>
+        <input type="number" id="${j}">
+      </div>
+    `;
+  });
+
+  document.getElementById("formIuran").innerHTML = html;
 }
 
-/* KIRIM */
+// ================= KIRIM =================
 function kirim(){
 
-  const nama = document.getElementById("nama").value;
-  const galon = document.getElementById("galon").value;
-  const kartu = document.getElementById("kartu").value;
-  const kas = document.getElementById("kas").value;
-  const tali = document.getElementById("tali").value;
+  let nama = document.getElementById("nama").value;
 
   if(!nama){
-    showToast("Pilih siswa!", "error");
+    alert("Pilih siswa");
     return;
   }
 
-  if(!galon && !kartu && !kas && !tali){
-    showToast("Isi minimal 1 data!", "error");
-    return;
-  }
+  let req=[];
 
-  let req = [];
+  jenisList.forEach(j=>{
+    let val = document.getElementById(j).value;
 
-  if(galon){
-    req.push(fetch(URL,{method:"POST",body: JSON.stringify({nama,jenis:"GALON",jumlah:galon,pin:currentPIN})}));
-  }
+    if(val){
+      req.push(fetch(URL,{
+        method:"POST",
+        body: JSON.stringify({
+          nama,
+          jenis:j,
+          jumlah:val,
+          pin:currentPIN
+        })
+      }));
+    }
+  });
 
-  if(kartu){
-    req.push(fetch(URL,{method:"POST",body: JSON.stringify({nama,jenis:"KARTU_PELAJAR",jumlah:kartu,pin:currentPIN})}));
-  }
-
-  if(kas){
-    req.push(fetch(URL,{method:"POST",body: JSON.stringify({nama,jenis:"KAS_KELAS",jumlah:kas,pin:currentPIN})}));
-  }
-
-  if(tali){
-    req.push(fetch(URL,{method:"POST",body: JSON.stringify({nama,jenis:"TALI_ASIH",jumlah:tali,pin:currentPIN})}));
-  }
-
-  Promise.all(req)
-  .then(()=>{
-    showToast("Berhasil disimpan", "success");
-
-    document.getElementById("galon").value="";
-    document.getElementById("kartu").value="";
-    document.getElementById("kas").value="";
-    document.getElementById("tali").value="";
-  })
-  .catch(()=> showToast("Gagal", "error"));
-}
-
-/* TOAST */
-function showToast(msg,type){
-  const t = document.getElementById("toast");
-  t.innerText = msg;
-  t.className = "toast show " + type;
-  setTimeout(()=> t.className="toast",2500);
-}
-
-/* REKAP */
-function lihatRekap(){
-  window.open("https://yanuar-moga.github.io/guruwali/bendahara_kelas/cek_iuran","_blank");
-}
-
-/* INIT */
-window.onload = ()=>{
-  loadSiswa();
-  cekLogin();
+  Promise.all(req).then(()=>{
+    alert("Berhasil");
+  });
 }
 
 </script>
