@@ -104,11 +104,8 @@ font-size:11px;
 
 <table>
 <thead>
-<tr>
+<tr id="headerTable">
 <th>Nama</th>
-<th>💧 Galon</th>
-<th>🎫 Kartu</th>
-<th>🎁 Tali</th>
 </tr>
 </thead>
 <tbody id="belumTable"></tbody>
@@ -124,8 +121,8 @@ const URL = "https://script.google.com/macros/s/AKfycbwQ0v3rev6JV1ubaV6E2aGNgN7J
 
 let dataRekap = [];
 let currentPIN = "";
+let jenisList = [];
 
-// ================= CEK LOGIN =================
 function cekLogin(){
 
   const pin = localStorage.getItem("pin");
@@ -140,12 +137,10 @@ function cekLogin(){
   load();
 }
 
-// ================= FORMAT =================
 function rupiah(angka){
   return "Rp " + Number(angka || 0).toLocaleString("id-ID");
 }
 
-// ================= LOAD =================
 async function load(){
   try{
 
@@ -165,6 +160,11 @@ async function load(){
     let res2 = await fetch(URL + "?mode=rekap");
     dataRekap = await res2.json();
 
+    if(dataRekap.length){
+      jenisList = Object.keys(dataRekap[0].dynamic || {});
+      buatHeader();
+    }
+
     let res3 = await fetch(URL + "?mode=dashboard");
     let dash = await res3.json();
 
@@ -183,35 +183,56 @@ async function load(){
 
   }catch(e){
     console.error(e);
-    document.getElementById("belumTable").innerHTML = "<tr><td colspan='4'>❌ Gagal load</td></tr>";
+    document.getElementById("belumTable").innerHTML = "<tr><td colspan='10'>❌ Gagal load</td></tr>";
   }
 }
 
-// ================= DETAIL =================
+function buatHeader(){
+  let h = "<th>Nama</th>";
+
+  jenisList.forEach(j=>{
+    h += `<th>${j}</th>`;
+  });
+
+  document.getElementById("headerTable").innerHTML = h;
+}
+
 document.getElementById("nama").onchange = function(){
 
   let s = dataRekap.find(d => d.nama === this.value);
   if(!s) return;
 
+  let html = "";
+
+  jenisList.forEach(j=>{
+    let d = s.dynamic[j] || {bayar:0, target:0};
+    let kurang = Math.max(0, d.target - d.bayar);
+
+    html += `${j}: ${rupiah(d.bayar)} | Sisa: ${rupiah(kurang)}<br>`;
+  });
+
+  html += `💰 Kas: ${rupiah(s.kas)}`;
+
   document.getElementById("hasil").innerHTML = `
-  <div class="card">
-    💧 Galon: ${rupiah(s.galonBayar)} | Sisa: ${rupiah(s.galonSisa)}<br>
-    🎫 Kartu: ${rupiah(s.kartuBayar)} | Sisa: ${rupiah(s.kartuSisa)}<br>
-    💰 Kas: ${rupiah(s.kas)}<br>
-    🎁 Tali: ${rupiah(s.taliAsih)}
-  </div>`;
+  <div class="card">${html}</div>`;
 };
 
-// ================= TUNGGAKAN =================
 function tampilkanBelum(){
 
   let sorted = dataRekap.map(s=>{
 
-    let kurangG = Number(s.galonSisa||0);
-    let kurangK = Number(s.kartuSisa||0);
-    let kurangT = s.taliAsih ? 0 : 50000;
+    let total = 0;
+    let detail = {};
 
-    return {...s, kurangG, kurangK, kurangT, total: kurangG + kurangK + kurangT};
+    jenisList.forEach(j=>{
+      let d = s.dynamic[j] || {bayar:0, target:0};
+      let kurang = Math.max(0, d.target - d.bayar);
+
+      detail[j] = kurang;
+      total += kurang;
+    });
+
+    return {...s, detail, total};
 
   }).sort((a,b)=> b.total - a.total);
 
@@ -221,22 +242,27 @@ function tampilkanBelum(){
 
     let warna = s.total > 50000 ? "kurang-besar" : "kurang-kecil";
 
+    let cols = "";
+
+    jenisList.forEach(j=>{
+      let bayar = s.dynamic[j]?.bayar || 0;
+      let kurang = s.detail[j] || 0;
+
+      cols += `<td>Bayar: ${rupiah(bayar)}<br>Kurang: ${rupiah(kurang)}</td>`;
+    });
+
     html += `
     <tr>
       <td class="nama">${s.nama}<br>
       <small>Total: <span class="${warna}">${rupiah(s.total)}</span></small>
       </td>
-
-      <td>Bayar: ${rupiah(s.galonBayar)}<br>Kurang: ${rupiah(s.kurangG)}</td>
-      <td>Bayar: ${rupiah(s.kartuBayar)}<br>Kurang: ${rupiah(s.kurangK)}</td>
-      <td>Bayar: ${rupiah(s.taliAsih)}<br>Kurang: ${rupiah(s.kurangT)}</td>
+      ${cols}
     </tr>`;
   });
 
   document.getElementById("belumTable").innerHTML = html;
 }
 
-// ================= INIT =================
 window.onload = cekLogin;
 
 </script>
