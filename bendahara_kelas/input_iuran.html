@@ -7,20 +7,128 @@
 
 <style>
 *{box-sizing:border-box;}
-body{font-family:'Segoe UI';background:#0f172a;color:#fff;margin:0;padding:20px;}
-.container{max-width:420px;margin:auto;}
-.card{background:#1e293b;padding:20px;border-radius:16px;margin-bottom:15px;}
-h2{text-align:center;}
-input,select{
-width:100%;padding:12px;margin-top:5px;
-border-radius:10px;border:none;background:#334155;color:white;
+
+body{
+font-family:'Segoe UI', sans-serif;
+background:#0f172a;
+margin:0;
+padding:20px;
+color:#fff;
 }
+
+.container{
+max-width:420px;
+margin:auto;
+}
+
+.card{
+background:#1e293b;
+padding:20px;
+border-radius:16px;
+box-shadow:0 8px 20px rgba(0,0,0,0.4);
+margin-bottom:15px;
+}
+
+h2{text-align:center;margin-bottom:20px;}
+
+.form-group{margin-bottom:15px;width:100%;}
+
+label{
+font-size:13px;
+margin-bottom:6px;
+display:block;
+color:#cbd5e1;
+}
+
+select, input{
+width:100%;
+padding:12px;
+border-radius:10px;
+border:none;
+background:#334155;
+color:white;
+font-size:14px;
+}
+
+input[type="checkbox"]{
+width:auto;
+padding:0;
+}
+
+.row{display:flex;gap:12px;}
+.col{flex:1;}
+
 button{
-width:100%;padding:14px;margin-top:10px;
-border:none;border-radius:12px;font-weight:bold;color:white;
+width:100%;
+padding:14px;
+border:none;
+border-radius:12px;
+color:white;
+font-weight:bold;
+font-size:15px;
+cursor:pointer;
+margin-top:10px;
 }
+
 .btn-login{background:#f59e0b;}
 .btn-simpan{background:#22c55e;}
+.btn-rekap{background:#3b82f6;}
+
+.checkbox-wrap{
+display:flex;
+align-items:center;
+gap:8px;
+margin-top:8px;
+font-size:13px;
+color:#cbd5e1;
+}
+
+.user-box{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:12px;
+background:#1e293b;
+padding:10px 14px;
+border-radius:12px;
+font-size:12px;
+box-shadow:0 4px 10px rgba(0,0,0,0.3);
+}
+
+#userLabel{
+display:flex;
+align-items:center;
+gap:6px;
+}
+
+.user-box button{
+width:auto;
+margin-top:0;
+padding:6px 12px;
+font-size:12px;
+border-radius:8px;
+background:#ef4444;
+}
+
+.toast{
+position:fixed;
+bottom:20px;
+left:50%;
+transform:translateX(-50%) translateY(100px);
+background:#1e293b;
+padding:14px 20px;
+border-radius:12px;
+opacity:0;
+transition:all 0.4s;
+}
+
+.toast.show{
+opacity:1;
+transform:translateX(-50%) translateY(0);
+}
+
+.toast.success{border-left:5px solid #22c55e;}
+.toast.error{border-left:5px solid #ef4444;}
 </style>
 </head>
 
@@ -28,129 +136,234 @@ border:none;border-radius:12px;font-weight:bold;color:white;
 
 <div class="container">
 
-<div class="card" id="loginCard">
-<h2>🔐 Login</h2>
-<input type="password" id="pin" placeholder="PIN">
-<button class="btn-login" onclick="login()">Login</button>
+<div id="userBox" class="user-box" style="display:none;">
+<div id="userLabel">👨‍💼 Login: -</div>
+<button onclick="logout()">Logout</button>
 </div>
 
+<!-- LOGIN -->
+<div class="card" id="loginCard">
+<h2>🔐 MASUKAN PIN</h2>
+
+<form onsubmit="login(event)">
+
+<div class="form-group">
+<label>PIN</label>
+<input type="password" id="pin" placeholder="Masukkan PIN" autofocus>
+
+<div class="checkbox-wrap">
+<input type="checkbox" onclick="togglePIN()">
+<span>Tampilkan PIN</span>
+</div>
+</div>
+
+<button type="submit" class="btn-login">Login</button>
+
+</form>
+</div>
+
+<!-- FORM -->
 <div class="card" id="formCard" style="display:none;">
-<h2>💰 Input Iuran</h2>
+<h2>💰 Kas Kelas</h2>
 
+<div class="form-group">
+<label>Nama Siswa</label>
 <select id="nama"></select>
+</div>
 
-<div id="formIuran"></div>
+<!-- FORM LAMA (TIDAK DIHAPUS) -->
+<div class="row">
+<div class="col">
+<label>💧 Galon</label>
+<input type="number" id="galon">
+</div>
+
+<div class="col">
+<label>🎫 Kartu</label>
+<input type="number" id="kartu">
+</div>
+</div>
+
+<div class="form-group">
+<label>💰 Kas</label>
+<input type="number" id="kas">
+</div>
+
+<div class="form-group">
+<label>🎁 Tali Asih</label>
+<input type="number" id="tali">
+</div>
+
+<!-- 🔥 TAMBAHAN DINAMIS -->
+<div id="dynamicForm"></div>
 
 <button class="btn-simpan" onclick="kirim()">Simpan</button>
+<button class="btn-rekap" onclick="lihatRekap()">📊 Rekap</button>
+
 </div>
 
 </div>
+
+<div id="toast" class="toast"></div>
 
 <script>
 
 const URL = "https://script.google.com/macros/s/AKfycbwQ0v3rev6JV1ubaV6E2aGNgN7Ji4uuQxAcs4xsBSuWGKwEsPftfYhwNKf6aY9KYlRkVw/exec";
 
-let currentPIN="";
-let jenisList=[];
+let currentPIN = "";
+let jenisList = [];
 
-// ================= LOGIN =================
-async function login(){
-
-  let pin = document.getElementById("pin").value;
-
-  let res = await fetch(URL,{
-    method:"POST",
-    body: JSON.stringify({jenis:"TEST", pin})
-  });
-
-  let r = await res.json();
-
-  if(r.status==="error"){
-    alert("PIN salah");
-    return;
-  }
-
-  currentPIN = pin;
-
-  document.getElementById("loginCard").style.display="none";
-  document.getElementById("formCard").style.display="block";
-
-  load();
+function togglePIN(){
+  const input = document.getElementById("pin");
+  input.type = input.type === "password" ? "text" : "password";
 }
 
-// ================= LOAD =================
-async function load(){
+// ================= LOAD SISWA + JENIS =================
+async function loadSiswa(){
 
-  // ambil siswa
-  let s = await fetch(URL);
-  let siswa = await s.json();
+  const res = await fetch(URL);
+  const data = await res.json();
 
-  let select = document.getElementById("nama");
-  select.innerHTML="<option>-- pilih --</option>";
+  const nama = document.getElementById("nama");
+  nama.innerHTML = '<option value="">-- Pilih Siswa --</option>';
 
-  siswa.forEach(n=>{
-    select.innerHTML += `<option>${n}</option>`;
+  data.forEach(n=>{
+    nama.innerHTML += `<option>${n}</option>`;
   });
 
-  // ambil jenis dari REKAP
-  let r = await fetch(URL+"?mode=rekap");
-  let data = await r.json();
+  // 🔥 ambil jenis dari rekap
+  const r = await fetch(URL + "?mode=rekap");
+  const d = await r.json();
 
-  if(data.length){
-    jenisList = Object.keys(data[0].dynamic || {});
-    buatForm();
+  if(d.length){
+    jenisList = Object.keys(d[0].dynamic || {});
+    buatFormDinamis();
   }
 }
 
 // ================= FORM DINAMIS =================
-function buatForm(){
+function buatFormDinamis(){
 
-  let html="";
+  let html = "";
 
   jenisList.forEach(j=>{
+    if(["GALON","KARTU_PELAJAR","KAS_KELAS","TALI_ASIH"].includes(j)) return;
+
     html += `
-      <div>
-        <label>${j}</label>
-        <input type="number" id="${j}">
-      </div>
-    `;
+    <div class="form-group">
+      <label>${j}</label>
+      <input type="number" id="dyn_${j}">
+    </div>`;
   });
 
-  document.getElementById("formIuran").innerHTML = html;
+  document.getElementById("dynamicForm").innerHTML = html;
+}
+
+// ================= LOGIN =================
+async function login(e){
+  if(e) e.preventDefault();
+
+  const pin = document.getElementById("pin").value;
+
+  if(!pin){
+    showToast("Masukkan PIN!", "error");
+    return;
+  }
+
+  const res = await fetch(URL,{
+    method:"POST",
+    body: JSON.stringify({ jenis:"TEST", pin })
+  });
+
+  const result = await res.json();
+
+  if(result.status === "error"){
+    showToast("PIN salah!", "error");
+    return;
+  }
+
+  localStorage.setItem("pin", pin);
+  localStorage.setItem("user", result.user);
+
+  currentPIN = pin;
+  masukApp(result.user);
+
+  showToast("Login berhasil", "success");
+}
+
+function masukApp(user){
+  document.getElementById("loginCard").style.display="none";
+  document.getElementById("formCard").style.display="block";
+  document.getElementById("userBox").style.display="flex";
+  document.getElementById("userLabel").innerHTML = "👨‍💼 Login: " + user;
 }
 
 // ================= KIRIM =================
 function kirim(){
 
-  let nama = document.getElementById("nama").value;
+  const nama = document.getElementById("nama").value;
 
   if(!nama){
-    alert("Pilih siswa");
+    showToast("Pilih siswa!", "error");
     return;
   }
 
-  let req=[];
+  let req = [];
 
+  const map = {
+    GALON: document.getElementById("galon").value,
+    KARTU_PELAJAR: document.getElementById("kartu").value,
+    KAS_KELAS: document.getElementById("kas").value,
+    TALI_ASIH: document.getElementById("tali").value
+  };
+
+  // lama
+  Object.keys(map).forEach(j=>{
+    if(map[j]){
+      req.push(fetch(URL,{
+        method:"POST",
+        body: JSON.stringify({nama,jenis:j,jumlah:map[j],pin:currentPIN})
+      }));
+    }
+  });
+
+  // 🔥 dinamis
   jenisList.forEach(j=>{
-    let val = document.getElementById(j).value;
+    if(map[j]) return;
 
+    const val = document.getElementById("dyn_"+j)?.value;
     if(val){
       req.push(fetch(URL,{
         method:"POST",
-        body: JSON.stringify({
-          nama,
-          jenis:j,
-          jumlah:val,
-          pin:currentPIN
-        })
+        body: JSON.stringify({nama,jenis:j,jumlah:val,pin:currentPIN})
       }));
     }
   });
 
   Promise.all(req).then(()=>{
-    alert("Berhasil");
+    showToast("Berhasil disimpan","success");
+    document.querySelectorAll("input").forEach(i=> i.value="");
   });
 }
+
+// ================= LAIN =================
+function logout(){
+  localStorage.clear();
+  location.reload();
+}
+
+function showToast(msg,type){
+  const t = document.getElementById("toast");
+  t.innerText = msg;
+  t.className = "toast show " + type;
+  setTimeout(()=> t.className="toast",2500);
+}
+
+function lihatRekap(){
+  window.open("https://yanuar-moga.github.io/guruwali/bendahara_kelas/cek_iuran","_blank");
+}
+
+window.onload = loadSiswa;
 
 </script>
 
