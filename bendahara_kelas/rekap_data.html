@@ -166,13 +166,17 @@ dataRekap = raw.slice(1);
 let res3 = await fetch(URL + "?mode=dashboard");
 let dash = await res3.json();
 
-// tampilkan dashboard DINAMIS
 let dashHTML = "";
+
 Object.keys(dash).forEach(k=>{
+let isUang = k.includes("TOTAL");
+
 dashHTML += `
 <div class="stat">
 ${k}
-<div class="value">${rupiah(dash[k])}</div>
+<div class="value">
+${isUang ? rupiah(dash[k]) : dash[k]}
+</div>
 </div>`;
 });
 
@@ -195,7 +199,6 @@ let siswa = dataRekap.find(r => r[idxNama] === this.value);
 
 if(!siswa) return;
 
-// ambil kolom dinamis
 let html = `<div class="card">`;
 
 for(let i=1;i<headers.length;i+=3){
@@ -217,11 +220,15 @@ function tampilkanBelum(){
 
 let idxNama = headers.indexOf("NAMA SISWA");
 
+// cari index jenis penting
+const idxGalon = headers.findIndex(h => h.includes("GALON BAYAR"));
+const idxKartu = headers.findIndex(h => h.includes("KARTU BAYAR"));
+const idxTali = headers.findIndex(h => h.includes("TALI BAYAR"));
+
 let sorted = dataRekap.map(r=>{
 
 let total = 0;
 
-// ambil semua sisa
 for(let i=2;i<headers.length;i+=3){
 total += Number(r[i] || 0);
 }
@@ -236,9 +243,9 @@ sorted.forEach(s=>{
 
 let warna = s.total > 50000 ? "kurang-besar" : "kurang-kecil";
 
-let g = s.row[2] || 0;
-let k = s.row[5] || 0;
-let t = s.row[8] || 0;
+let kurangG = idxGalon !== -1 ? s.row[idxGalon+1] : 0;
+let kurangK = idxKartu !== -1 ? s.row[idxKartu+1] : 0;
+let kurangT = idxTali !== -1 ? s.row[idxTali+1] : 0;
 
 html += `
 <tr>
@@ -247,9 +254,9 @@ ${s.nama}<br>
 <small>Total: <span class="${warna}">${rupiah(s.total)}</span></small>
 </td>
 
-<td>Kurang: ${rupiah(g)}</td>
-<td>Kurang: ${rupiah(k)}</td>
-<td>Kurang: ${rupiah(t)}</td>
+<td>Kurang: ${rupiah(kurangG)}</td>
+<td>Kurang: ${rupiah(kurangK)}</td>
+<td>Kurang: ${rupiah(kurangT)}</td>
 </tr>`;
 });
 
