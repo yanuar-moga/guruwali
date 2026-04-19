@@ -98,15 +98,7 @@ font-size:11px;
 <div class="card">
 <h2>⚠️ Daftar Tunggakan</h2>
 <table>
-<thead>
-<tr>
-<th>Nama</th>
-<th>💧 Galon</th>
-<th>🎫 Kartu</th>
-<th>🎁 Tali</th>
-<th>📦 Other</th>
-</tr>
-</thead>
+<thead id="thead"></thead>
 <tbody id="belumTable"></tbody>
 </table>
 </div>
@@ -142,7 +134,7 @@ return "Rp " + Number(angka || 0).toLocaleString("id-ID");
 async function load(){
 try{
 
-// ===== LOAD SISWA =====
+// ===== SISWA =====
 let res1 = await fetch(URL);
 let namaList = await res1.json();
 
@@ -156,14 +148,25 @@ opt.textContent = n;
 select.appendChild(opt);
 });
 
-// ===== LOAD REKAP =====
+// ===== REKAP =====
 let res2 = await fetch(URL + "?mode=rekap");
 let raw = await res2.json();
 
 headers = raw[0];
 dataRekap = raw.slice(1);
 
-// ===== LOAD DASHBOARD (FILTER BELUM) =====
+// ===== BUAT HEADER TABEL DINAMIS =====
+let thHTML = "<tr><th>Nama</th>";
+
+for(let i=1;i<headers.length;i+=3){
+let jenis = headers[i].replace(" BAYAR","");
+thHTML += `<th>${jenis}</th>`;
+}
+
+thHTML += "</tr>";
+document.getElementById("thead").innerHTML = thHTML;
+
+// ===== DASHBOARD =====
 let res3 = await fetch(URL + "?mode=dashboard");
 let dash = await res3.json();
 
@@ -181,17 +184,17 @@ ${k.replace("JUMLAH SISWA ","")}
 
 document.getElementById("dashboard").innerHTML = dashHTML;
 
-// ===== TAMPILKAN TUNGGAKAN =====
+// ===== TABEL =====
 tampilkanBelum();
 
 }catch(e){
 console.error(e);
 document.getElementById("belumTable").innerHTML =
-"<tr><td colspan='5'>❌ Gagal load</td></tr>";
+"<tr><td colspan='10'>❌ Gagal load</td></tr>";
 }
 }
 
-// ================= DETAIL SISWA =================
+// ================= DETAIL =================
 document.getElementById("nama").onchange = function(){
 
 let idxNama = headers.indexOf("NAMA SISWA");
@@ -206,8 +209,7 @@ let jenis = headers[i].replace(" BAYAR","");
 let bayar = Number(siswa[i] || 0);
 let sisa = Number(siswa[i+1] || 0);
 
-html += `
-${jenis}: ${rupiah(bayar)} | Sisa: ${rupiah(sisa)}<br>`;
+html += `${jenis}: ${rupiah(bayar)} | Sisa: ${rupiah(sisa)}<br>`;
 }
 
 html += `</div>`;
@@ -220,26 +222,15 @@ function tampilkanBelum(){
 
 let idxNama = headers.indexOf("NAMA SISWA");
 
-// DETEKSI INDEX DINAMIS
-const idxGalon = headers.findIndex(h => h.includes("GALON BAYAR"));
-const idxKartu = headers.findIndex(h => h.includes("KARTU BAYAR"));
-const idxTali = headers.findIndex(h => h.includes("TALI BAYAR"));
-const idxOther = headers.findIndex(h => h.includes("OTHER BAYAR"));
-
 let sorted = dataRekap.map(r=>{
 
 let total = 0;
 
-// jumlahkan semua sisa
 for(let i=2;i<headers.length;i+=3){
 total += Number(r[i] || 0);
 }
 
-return {
-nama:r[idxNama],
-row:r,
-total
-};
+return {nama:r[idxNama], row:r, total};
 
 }).sort((a,b)=> b.total - a.total);
 
@@ -249,24 +240,23 @@ sorted.forEach(s=>{
 
 let warna = s.total > 50000 ? "kurang-besar" : "kurang-kecil";
 
-// AMBIL SISA (ANTI NaN)
-let kurangG = idxGalon !== -1 ? Number(s.row[idxGalon+1] || 0) : 0;
-let kurangK = idxKartu !== -1 ? Number(s.row[idxKartu+1] || 0) : 0;
-let kurangT = idxTali !== -1 ? Number(s.row[idxTali+1] || 0) : 0;
-let kurangO = idxOther !== -1 ? Number(s.row[idxOther+1] || 0) : 0;
-
-html += `
+let rowHTML = `
 <tr>
 <td class="nama">
 ${s.nama}<br>
 <small>Total: <span class="${warna}">${rupiah(s.total)}</span></small>
-</td>
+</td>`;
 
-<td>${rupiah(kurangG)}</td>
-<td>${rupiah(kurangK)}</td>
-<td>${rupiah(kurangT)}</td>
-<td>${rupiah(kurangO)}</td>
-</tr>`;
+// LOOP DINAMIS SEMUA JENIS
+for(let i=1;i<headers.length;i+=3){
+let sisa = Number(s.row[i+1] || 0);
+rowHTML += `<td>${rupiah(sisa)}</td>`;
+}
+
+rowHTML += "</tr>";
+
+html += rowHTML;
+
 });
 
 document.getElementById("belumTable").innerHTML = html;
