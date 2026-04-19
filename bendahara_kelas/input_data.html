@@ -16,10 +16,7 @@ padding:20px;
 color:#fff;
 }
 
-.container{
-max-width:420px;
-margin:auto;
-}
+.container{max-width:420px;margin:auto;}
 
 .card{
 background:#1e293b;
@@ -169,33 +166,8 @@ transform:translateX(-50%) translateY(0);
 <select id="nama"></select>
 </div>
 
-<div class="row">
-<div class="col">
-<label>💧 Galon</label>
-<input type="number" id="galon">
-</div>
-
-<div class="col">
-<label>🎫 Kartu</label>
-<input type="number" id="kartu">
-</div>
-</div>
-
-<div class="form-group">
-<label>💰 Kas</label>
-<input type="number" id="kas">
-</div>
-
-<div class="form-group">
-<label>🎁 Tali Asih</label>
-<input type="number" id="tali">
-</div>
-
-<!-- ✅ TAMBAHAN OTHER -->
-<div class="form-group">
-<label>📦 Other</label>
-<input type="number" id="other">
-</div>
+<!-- 🔥 DINAMIS INPUT -->
+<div id="formJenis"></div>
 
 <button class="btn-simpan" onclick="kirim()">Simpan</button>
 <button class="btn-rekap" onclick="lihatRekap()">📊 Rekap</button>
@@ -211,6 +183,7 @@ transform:translateX(-50%) translateY(0);
 const URL = "https://script.google.com/macros/s/AKfycbwQ0v3rev6JV1ubaV6E2aGNgN7Ji4uuQxAcs4xsBSuWGKwEsPftfYhwNKf6aY9KYlRkVw/exec";
 
 let currentPIN = "";
+let jenisList = [];
 
 /* TOGGLE PIN */
 function togglePIN(){
@@ -220,7 +193,7 @@ function togglePIN(){
 
 /* LOAD SISWA */
 async function loadSiswa(){
-  const res = await fetch(URL + "?t=" + Date.now());
+  const res = await fetch(URL);
   const data = await res.json();
 
   const nama = document.getElementById("nama");
@@ -228,6 +201,32 @@ async function loadSiswa(){
 
   data.forEach(n=>{
     nama.innerHTML += `<option>${n}</option>`;
+  });
+}
+
+/* LOAD JENIS DARI TARGET */
+async function loadJenis(){
+  const res = await fetch(URL + "?mode=rekap");
+  const raw = await res.json();
+
+  const headers = raw[0];
+
+  jenisList = [];
+
+  for(let i=1;i<headers.length;i+=3){
+    let jenis = headers[i].replace(" BAYAR","");
+    jenisList.push(jenis);
+  }
+
+  const container = document.getElementById("formJenis");
+  container.innerHTML = "";
+
+  jenisList.forEach(jenis=>{
+    container.innerHTML += `
+    <div class="form-group">
+      <label>💰 ${jenis}</label>
+      <input type="number" id="input_${jenis}">
+    </div>`;
   });
 }
 
@@ -242,33 +241,25 @@ async function login(e){
     return;
   }
 
-  try{
-    const res = await fetch(URL,{
-      method:"POST",
-      body: JSON.stringify({ jenis:"TEST", pin })
-    });
+  const res = await fetch(URL,{
+    method:"POST",
+    body: JSON.stringify({ jenis:"TEST", pin })
+  });
 
-    const result = await res.json();
+  const result = await res.json();
 
-    if(result.status === "error"){
-      showToast("PIN salah!", "error");
-      return;
-    }
-
-    localStorage.setItem("pin", pin);
-    localStorage.setItem("user", result.user);
-
-    currentPIN = pin;
-    masukApp(result.user);
-
-    showToast("Login berhasil", "success");
-
-  }catch{
-    showToast("Server error", "error");
+  if(result.status === "error"){
+    showToast("PIN salah!", "error");
+    return;
   }
+
+  localStorage.setItem("pin", pin);
+  currentPIN = pin;
+
+  masukApp(result.user);
 }
 
-/* MASUK APP */
+/* MASUK */
 function masukApp(user){
   document.getElementById("loginCard").style.display="none";
   document.getElementById("formCard").style.display="block";
@@ -281,22 +272,17 @@ async function cekLogin(){
   const pin = localStorage.getItem("pin");
 
   if(pin){
-    try{
-      const res = await fetch(URL,{
-        method:"POST",
-        body: JSON.stringify({ jenis:"TEST", pin })
-      });
+    const res = await fetch(URL,{
+      method:"POST",
+      body: JSON.stringify({ jenis:"TEST", pin })
+    });
 
-      const result = await res.json();
+    const result = await res.json();
 
-      if(result.status === "success"){
-        currentPIN = pin;
-        masukApp(result.user);
-      }else{
-        logout();
-      }
-
-    }catch{
+    if(result.status === "success"){
+      currentPIN = pin;
+      masukApp(result.user);
+    }else{
       logout();
     }
   }
@@ -308,72 +294,46 @@ function logout(){
   location.reload();
 }
 
-/* KIRIM DATA */
+/* KIRIM */
 function kirim(){
 
   const nama = document.getElementById("nama").value;
-  const galon = document.getElementById("galon").value;
-  const kartu = document.getElementById("kartu").value;
-  const kas = document.getElementById("kas").value;
-  const tali = document.getElementById("tali").value;
-  const other = document.getElementById("other").value;
 
   if(!nama){
     showToast("Pilih siswa!", "error");
     return;
   }
 
-  if(!galon && !kartu && !kas && !tali && !other){
-    showToast("Isi minimal 1 data!", "error");
-    return;
-  }
-
   let req = [];
 
-  if(galon){
-    req.push(fetch(URL,{
-      method:"POST",
-      body: JSON.stringify({nama,jenis:"GALON",jumlah:galon,pin:currentPIN})
-    }));
-  }
+  jenisList.forEach(jenis=>{
+    const val = document.getElementById("input_"+jenis).value;
 
-  if(kartu){
-    req.push(fetch(URL,{
-      method:"POST",
-      body: JSON.stringify({nama,jenis:"KARTU_PELAJAR",jumlah:kartu,pin:currentPIN})
-    }));
-  }
+    if(val){
+      req.push(fetch(URL,{
+        method:"POST",
+        body: JSON.stringify({
+          nama,
+          jenis,
+          jumlah:val,
+          pin:currentPIN
+        })
+      }));
+    }
+  });
 
-  if(kas){
-    req.push(fetch(URL,{
-      method:"POST",
-      body: JSON.stringify({nama,jenis:"KAS_KELAS",jumlah:kas,pin:currentPIN})
-    }));
-  }
-
-  if(tali){
-    req.push(fetch(URL,{
-      method:"POST",
-      body: JSON.stringify({nama,jenis:"TALI_ASIH",jumlah:tali,pin:currentPIN})
-    }));
-  }
-
-  if(other){
-    req.push(fetch(URL,{
-      method:"POST",
-      body: JSON.stringify({nama,jenis:"OTHER",jumlah:other,pin:currentPIN})
-    }));
+  if(req.length === 0){
+    showToast("Isi minimal 1 data!", "error");
+    return;
   }
 
   Promise.all(req)
   .then(()=>{
     showToast("Berhasil disimpan", "success");
 
-    document.getElementById("galon").value="";
-    document.getElementById("kartu").value="";
-    document.getElementById("kas").value="";
-    document.getElementById("tali").value="";
-    document.getElementById("other").value="";
+    jenisList.forEach(j=>{
+      document.getElementById("input_"+j).value="";
+    });
   })
   .catch(()=> showToast("Gagal", "error"));
 }
@@ -394,6 +354,7 @@ function lihatRekap(){
 /* INIT */
 window.onload = ()=>{
   loadSiswa();
+  loadJenis();
   cekLogin();
 }
 
