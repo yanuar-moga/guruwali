@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cek Tagihan</title>
+
+<style>
+body{
+font-family:Segoe UI;
+background:#0f172a;
+color:white;
+margin:0;
+padding:15px;
+}
+.container{max-width:420px;margin:auto;}
+.card{
+background:#1e293b;
+padding:15px;
+border-radius:15px;
+margin-bottom:15px;
+}
+h2{text-align:center;margin-bottom:10px;}
+
+select{
+width:100%;
+padding:12px;
+border-radius:10px;
+border:none;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-top:10px;
+}
+
+.stat{
+background:#334155;
+padding:10px;
+border-radius:10px;
+text-align:center;
+font-size:13px;
+}
+
+.value{
+font-size:16px;
+font-weight:bold;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+font-size:13px;
+}
+
+th,td{
+padding:10px;
+vertical-align:top;
+}
+
+th{background:#334155;}
+td{
+background:#1e293b;
+border-bottom:1px solid #334155;
+}
+
+.nama{font-weight:bold;}
+.kurang-besar{color:#ef4444;font-weight:bold;}
+.kurang-kecil{color:#facc15;}
+
+small{
+color:#94a3b8;
+font-size:11px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+<h2>📊 Statistik Kelas</h2>
+<div class="grid" id="dashboard">Loading...</div>
+</div>
+
+<div class="card">
+<h2>👤 Cek Tagihan</h2>
+<select id="nama">
+<option>Loading...</option>
+</select>
+</div>
+
+<div id="hasil"></div>
+
+<div class="card">
+<h2>⚠️ Daftar Tunggakan</h2>
+<table>
+<thead>
+<tr>
+<th>Nama</th>
+<th>💧 Galon</th>
+<th>🎫 Kartu</th>
+<th>🎁 Tali</th>
+</tr>
+</thead>
+<tbody id="belumTable"></tbody>
+</table>
+</div>
+
+</div>
+
+<script>
+
+const URL = "https://script.google.com/macros/s/AKfycbwQ0v3rev6JV1ubaV6E2aGNgN7Ji4uuQxAcs4xsBSuWGKwEsPftfYhwNKf6aY9KYlRkVw/exec";
+
+let dataRekap = [];
+let headers = [];
+
+// ================= LOGIN =================
+function cekLogin(){
+const pin = localStorage.getItem("pin");
+
+if(!pin){
+alert("Silakan login dulu!");
+window.location.href = "input_iuran";
+return;
+}
+
+load();
+}
+
+// ================= FORMAT =================
+function rupiah(angka){
+return "Rp " + Number(angka || 0).toLocaleString("id-ID");
+}
+
+// ================= LOAD =================
+async function load(){
+try{
+
+// ===== SISWA =====
+let res1 = await fetch(URL);
+let namaList = await res1.json();
+
+let select = document.getElementById("nama");
+select.innerHTML = '<option value="">-- Pilih Nama --</option>';
+
+namaList.forEach(n=>{
+let opt = document.createElement("option");
+opt.value = n;
+opt.textContent = n;
+select.appendChild(opt);
+});
+
+// ===== REKAP =====
+let res2 = await fetch(URL + "?mode=rekap");
+let raw = await res2.json();
+
+headers = raw[0];
+dataRekap = raw.slice(1);
+
+// ===== DASHBOARD =====
+let res3 = await fetch(URL + "?mode=dashboard");
+let dash = await res3.json();
+
+// tampilkan dashboard DINAMIS
+let dashHTML = "";
+Object.keys(dash).forEach(k=>{
+dashHTML += `
+<div class="stat">
+${k}
+<div class="value">${rupiah(dash[k])}</div>
+</div>`;
+});
+
+document.getElementById("dashboard").innerHTML = dashHTML;
+
+// ===== TABEL BELUM =====
+tampilkanBelum();
+
+}catch(e){
+console.error(e);
+document.getElementById("belumTable").innerHTML = "<tr><td colspan='4'>❌ Gagal load</td></tr>";
+}
+}
+
+// ================= DETAIL =================
+document.getElementById("nama").onchange = function(){
+
+let idxNama = headers.indexOf("NAMA SISWA");
+let siswa = dataRekap.find(r => r[idxNama] === this.value);
+
+if(!siswa) return;
+
+// ambil kolom dinamis
+let html = `<div class="card">`;
+
+for(let i=1;i<headers.length;i+=3){
+let jenis = headers[i].replace(" BAYAR","");
+let bayar = siswa[i];
+let sisa = siswa[i+1];
+
+html += `
+${jenis}: ${rupiah(bayar)} | Sisa: ${rupiah(sisa)}<br>`;
+}
+
+html += `</div>`;
+
+document.getElementById("hasil").innerHTML = html;
+};
+
+// ================= TUNGGAKAN =================
+function tampilkanBelum(){
+
+let idxNama = headers.indexOf("NAMA SISWA");
+
+let sorted = dataRekap.map(r=>{
+
+let total = 0;
+
+// ambil semua sisa
+for(let i=2;i<headers.length;i+=3){
+total += Number(r[i] || 0);
+}
+
+return {nama:r[idxNama], row:r, total};
+
+}).sort((a,b)=> b.total - a.total);
+
+let html = "";
+
+sorted.forEach(s=>{
+
+let warna = s.total > 50000 ? "kurang-besar" : "kurang-kecil";
+
+let g = s.row[2] || 0;
+let k = s.row[5] || 0;
+let t = s.row[8] || 0;
+
+html += `
+<tr>
+<td class="nama">
+${s.nama}<br>
+<small>Total: <span class="${warna}">${rupiah(s.total)}</span></small>
+</td>
+
+<td>Kurang: ${rupiah(g)}</td>
+<td>Kurang: ${rupiah(k)}</td>
+<td>Kurang: ${rupiah(t)}</td>
+</tr>`;
+});
+
+document.getElementById("belumTable").innerHTML = html;
+}
+
+// ================= INIT =================
+window.onload = cekLogin;
+
+</script>
+
+</body>
+</html>
