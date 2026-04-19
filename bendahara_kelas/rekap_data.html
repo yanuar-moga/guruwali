@@ -82,7 +82,7 @@ font-size:11px;
 <div class="container">
 
 <div class="card">
-<h2>📊 Statistik Kelas</h2>
+<h2>📊 Statistik Kelas (Belum Bayar)</h2>
 <div class="grid" id="dashboard">Loading...</div>
 </div>
 
@@ -104,6 +104,7 @@ font-size:11px;
 <th>💧 Galon</th>
 <th>🎫 Kartu</th>
 <th>🎁 Tali</th>
+<th>📦 Other</th>
 </tr>
 </thead>
 <tbody id="belumTable"></tbody>
@@ -141,7 +142,7 @@ return "Rp " + Number(angka || 0).toLocaleString("id-ID");
 async function load(){
 try{
 
-// ===== SISWA =====
+// ===== LOAD SISWA =====
 let res1 = await fetch(URL);
 let namaList = await res1.json();
 
@@ -155,43 +156,42 @@ opt.textContent = n;
 select.appendChild(opt);
 });
 
-// ===== REKAP =====
+// ===== LOAD REKAP =====
 let res2 = await fetch(URL + "?mode=rekap");
 let raw = await res2.json();
 
 headers = raw[0];
 dataRekap = raw.slice(1);
 
-// ===== DASHBOARD =====
+// ===== LOAD DASHBOARD (FILTER BELUM) =====
 let res3 = await fetch(URL + "?mode=dashboard");
 let dash = await res3.json();
 
 let dashHTML = "";
 
 Object.keys(dash).forEach(k=>{
-let isUang = k.includes("TOTAL");
-
+if(k.includes("BELUM")){
 dashHTML += `
 <div class="stat">
-${k}
-<div class="value">
-${isUang ? rupiah(dash[k]) : dash[k]}
-</div>
+${k.replace("JUMLAH SISWA ","")}
+<div class="value">${dash[k]}</div>
 </div>`;
+}
 });
 
 document.getElementById("dashboard").innerHTML = dashHTML;
 
-// ===== TABEL BELUM =====
+// ===== TAMPILKAN TUNGGAKAN =====
 tampilkanBelum();
 
 }catch(e){
 console.error(e);
-document.getElementById("belumTable").innerHTML = "<tr><td colspan='4'>❌ Gagal load</td></tr>";
+document.getElementById("belumTable").innerHTML =
+"<tr><td colspan='5'>❌ Gagal load</td></tr>";
 }
 }
 
-// ================= DETAIL =================
+// ================= DETAIL SISWA =================
 document.getElementById("nama").onchange = function(){
 
 let idxNama = headers.indexOf("NAMA SISWA");
@@ -203,8 +203,8 @@ let html = `<div class="card">`;
 
 for(let i=1;i<headers.length;i+=3){
 let jenis = headers[i].replace(" BAYAR","");
-let bayar = siswa[i];
-let sisa = siswa[i+1];
+let bayar = Number(siswa[i] || 0);
+let sisa = Number(siswa[i+1] || 0);
 
 html += `
 ${jenis}: ${rupiah(bayar)} | Sisa: ${rupiah(sisa)}<br>`;
@@ -220,20 +220,26 @@ function tampilkanBelum(){
 
 let idxNama = headers.indexOf("NAMA SISWA");
 
-// cari index jenis penting
+// DETEKSI INDEX DINAMIS
 const idxGalon = headers.findIndex(h => h.includes("GALON BAYAR"));
 const idxKartu = headers.findIndex(h => h.includes("KARTU BAYAR"));
 const idxTali = headers.findIndex(h => h.includes("TALI BAYAR"));
+const idxOther = headers.findIndex(h => h.includes("OTHER BAYAR"));
 
 let sorted = dataRekap.map(r=>{
 
 let total = 0;
 
+// jumlahkan semua sisa
 for(let i=2;i<headers.length;i+=3){
 total += Number(r[i] || 0);
 }
 
-return {nama:r[idxNama], row:r, total};
+return {
+nama:r[idxNama],
+row:r,
+total
+};
 
 }).sort((a,b)=> b.total - a.total);
 
@@ -243,9 +249,11 @@ sorted.forEach(s=>{
 
 let warna = s.total > 50000 ? "kurang-besar" : "kurang-kecil";
 
-let kurangG = idxGalon !== -1 ? s.row[idxGalon+1] : 0;
-let kurangK = idxKartu !== -1 ? s.row[idxKartu+1] : 0;
-let kurangT = idxTali !== -1 ? s.row[idxTali+1] : 0;
+// AMBIL SISA (ANTI NaN)
+let kurangG = idxGalon !== -1 ? Number(s.row[idxGalon+1] || 0) : 0;
+let kurangK = idxKartu !== -1 ? Number(s.row[idxKartu+1] || 0) : 0;
+let kurangT = idxTali !== -1 ? Number(s.row[idxTali+1] || 0) : 0;
+let kurangO = idxOther !== -1 ? Number(s.row[idxOther+1] || 0) : 0;
 
 html += `
 <tr>
@@ -254,9 +262,10 @@ ${s.nama}<br>
 <small>Total: <span class="${warna}">${rupiah(s.total)}</span></small>
 </td>
 
-<td>Kurang: ${rupiah(kurangG)}</td>
-<td>Kurang: ${rupiah(kurangK)}</td>
-<td>Kurang: ${rupiah(kurangT)}</td>
+<td>${rupiah(kurangG)}</td>
+<td>${rupiah(kurangK)}</td>
+<td>${rupiah(kurangT)}</td>
+<td>${rupiah(kurangO)}</td>
 </tr>`;
 });
 
