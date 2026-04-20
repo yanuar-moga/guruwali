@@ -74,6 +74,8 @@ small{
 color:#94a3b8;
 font-size:11px;
 }
+
+.loading{text-align:center;color:#94a3b8;}
 </style>
 </head>
 
@@ -83,7 +85,7 @@ font-size:11px;
 
 <div class="card">
 <h2>📊 Statistik Kelas (Belum Bayar)</h2>
-<div class="grid" id="dashboard">Loading...</div>
+<div class="grid" id="dashboard"><div class="loading">Loading...</div></div>
 </div>
 
 <div class="card">
@@ -111,6 +113,7 @@ const URL = "https://script.google.com/macros/s/AKfycbwQ0v3rev6JV1ubaV6E2aGNgN7J
 
 let dataRekap = [];
 let headers = [];
+let idxNama = 0;
 
 // ================= LOGIN =================
 function cekLogin(){
@@ -152,10 +155,21 @@ select.appendChild(opt);
 let res2 = await fetch(URL + "?mode=rekap");
 let raw = await res2.json();
 
+if(!Array.isArray(raw) || raw.length === 0){
+throw "Data rekap kosong";
+}
+
 headers = raw[0];
 dataRekap = raw.slice(1);
 
-// ===== BUAT HEADER TABEL DINAMIS =====
+// 🔥 cari index nama (lebih fleksibel)
+idxNama = headers.findIndex(h => 
+h.toString().toUpperCase().includes("NAMA")
+);
+
+if(idxNama === -1) idxNama = 0;
+
+// ===== HEADER TABEL =====
 let thHTML = "<tr><th>Nama</th>";
 
 for(let i=1;i<headers.length;i+=3){
@@ -173,14 +187,18 @@ let dash = await res3.json();
 let dashHTML = "";
 
 Object.keys(dash).forEach(k=>{
-if(k.includes("BELUM")){
+
+if(k.toUpperCase().includes("BELUM")){
 dashHTML += `
 <div class="stat">
 ${k.replace("JUMLAH SISWA ","")}
 <div class="value">${dash[k]}</div>
 </div>`;
 }
+
 });
+
+if(!dashHTML) dashHTML = "<div class='loading'>Tidak ada data</div>";
 
 document.getElementById("dashboard").innerHTML = dashHTML;
 
@@ -189,6 +207,7 @@ tampilkanBelum();
 
 }catch(e){
 console.error(e);
+document.getElementById("dashboard").innerHTML = "❌ Error";
 document.getElementById("belumTable").innerHTML =
 "<tr><td colspan='10'>❌ Gagal load</td></tr>";
 }
@@ -197,10 +216,12 @@ document.getElementById("belumTable").innerHTML =
 // ================= DETAIL =================
 document.getElementById("nama").onchange = function(){
 
-let idxNama = headers.indexOf("NAMA SISWA");
 let siswa = dataRekap.find(r => r[idxNama] === this.value);
 
-if(!siswa) return;
+if(!siswa){
+document.getElementById("hasil").innerHTML = "";
+return;
+}
 
 let html = `<div class="card">`;
 
@@ -209,7 +230,12 @@ let jenis = headers[i].replace(" BAYAR","");
 let bayar = Number(siswa[i] || 0);
 let sisa = Number(siswa[i+1] || 0);
 
-html += `${jenis}: ${rupiah(bayar)} | Sisa: ${rupiah(sisa)}<br>`;
+html += `
+<div>
+<b>${jenis}</b><br>
+Bayar: ${rupiah(bayar)}<br>
+Sisa: ${rupiah(sisa)}
+</div><br>`;
 }
 
 html += `</div>`;
@@ -219,8 +245,6 @@ document.getElementById("hasil").innerHTML = html;
 
 // ================= TUNGGAKAN =================
 function tampilkanBelum(){
-
-let idxNama = headers.indexOf("NAMA SISWA");
 
 let sorted = dataRekap.map(r=>{
 
@@ -247,7 +271,6 @@ ${s.nama}<br>
 <small>Total: <span class="${warna}">${rupiah(s.total)}</span></small>
 </td>`;
 
-// LOOP DINAMIS SEMUA JENIS
 for(let i=1;i<headers.length;i+=3){
 let sisa = Number(s.row[i+1] || 0);
 rowHTML += `<td>${rupiah(sisa)}</td>`;
@@ -259,7 +282,8 @@ html += rowHTML;
 
 });
 
-document.getElementById("belumTable").innerHTML = html;
+document.getElementById("belumTable").innerHTML = html || 
+"<tr><td colspan='10'>Tidak ada data</td></tr>";
 }
 
 // ================= INIT =================
