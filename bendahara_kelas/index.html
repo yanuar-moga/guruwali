@@ -16,70 +16,76 @@
     .navbar { background: #1e293b !important; border-bottom: 1px solid #334155; }
     .table-container { background: #1e293b; border-radius: 15px; padding: 20px; margin-top: 20px; }
     .table { color: white; border-color: #334155; }
-    .table thead th { background: #334155; color: #cbd5e1; font-size: 11px; text-transform: uppercase; text-align: center; }
+    .table thead th { background: #334155; color: #cbd5e1; font-size: 11px; text-transform: uppercase; text-align: center; position: sticky; top: 0; }
     .table tbody td { border-color: #334155; vertical-align: middle; font-size: 13px; }
     .badge-lunas { background-color: #22c55e; color: white; padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: bold; }
     .badge-belum { background-color: #ef4444; color: white; padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: bold; }
-    #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); z-index: 9999; display: flex; justify-content: center; align-items: center; }
+    #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
   </style>
 </head>
 <body>
 
+  <!-- LOADING ANIMATION -->
   <div id="loader" class="hidden">
     <div class="text-center">
       <div class="spinner-border text-warning" role="status"></div>
-      <p class="mt-2 text-warning fw-bold">Menghubungkan ke Server...</p>
+      <p class="mt-2 text-warning fw-bold" id="loaderText">Menghubungkan ke Server...</p>
     </div>
   </div>
 
-  <!-- LOGIN -->
+  <!-- HALAMAN LOGIN -->
   <div id="loginPage" class="container" style="max-width: 400px; margin-top: 100px;">
-    <div class="card p-4">
+    <div class="card p-4 shadow-lg">
       <div class="text-center mb-4">
-        <i class="fas fa-key fa-3x text-warning mb-3"></i>
+        <i class="fas fa-user-shield fa-3x text-warning mb-3"></i>
         <h4 class="fw-bold">KAS KELAS 7H</h4>
-        <p class="text-muted small">Masukkan PIN Wali Kelas / Bendahara</p>
+        <p class="text-muted small">Masukkan PIN Akses</p>
       </div>
-      <input type="password" id="pinInput" class="form-control text-center mb-3" placeholder="••••••" style="font-size: 24px;">
-      <button onclick="prosesLogin()" class="btn btn-warning w-100 py-2 fw-bold">MASUK</button>
+      <input type="password" id="pinInput" class="form-control text-center mb-3" placeholder="••••••" style="font-size: 24px;" inputmode="numeric">
+      <button onclick="prosesLogin()" class="btn btn-warning w-100 py-2 fw-bold text-dark">MASUK</button>
     </div>
   </div>
 
-  <!-- DASHBOARD -->
+  <!-- DASHBOARD UTAMA -->
   <div id="mainPage" class="hidden">
     <nav class="navbar px-3 sticky-top">
-      <span class="navbar-brand mb-0 h1 text-white small"><i class="fas fa-school me-2"></i>7H - SPENSAMO</span>
+      <span class="navbar-brand mb-0 h1 text-white small"><i class="fas fa-school me-2 text-warning"></i>KAS 7H - SPENSAMO</span>
       <div class="d-flex align-items-center">
-        <span id="userDisplay" class="me-3 small text-info"></span>
+        <span id="userDisplay" class="me-3 small text-info fw-bold"></span>
         <button onclick="location.reload()" class="btn btn-outline-danger btn-sm">Keluar</button>
       </div>
     </nav>
 
     <div class="container-fluid mt-4">
-      <!-- FORM BENDAHARA -->
+      
+      <!-- FORM INPUT (HANYA BENDAHARA) -->
       <div id="inputSection" class="row mb-4 hidden">
         <div class="col-12">
           <div class="card border-0 shadow">
-            <div class="card-header bg-success text-white fw-bold">
-              <i class="fas fa-plus-circle me-1"></i> INPUT IURAN
+            <div class="card-header bg-success text-white fw-bold py-3">
+              <i class="fas fa-plus-circle me-2"></i>INPUT PEMBAYARAN
             </div>
             <div class="card-body">
               <div class="row g-2">
                 <div class="col-md-4">
+                  <label class="small mb-1">Nama Siswa</label>
                   <select id="siswaSelect" class="form-select"></select>
                 </div>
                 <div class="col-md-3">
+                  <label class="small mb-1">Jenis Iuran</label>
                   <select id="jenisSelect" class="form-select">
+                    <option value="KAS_KELAS">KAS KELAS</option>
                     <option value="GALON">GALON</option>
                     <option value="KARTU_PELAJAR">KARTU PELAJAR</option>
                     <option value="TALI_ASIH">TALI ASIH</option>
-                    <option value="KAS_KELAS">KAS KELAS</option>
+                    <option value="OTHER">LAINNYA</option>
                   </select>
                 </div>
                 <div class="col-md-3">
-                  <input type="number" id="jumlahInput" class="form-control" placeholder="Nominal Rp">
+                  <label class="small mb-1">Nominal (Rp)</label>
+                  <input type="number" id="jumlahInput" class="form-control" placeholder="Contoh: 5000">
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-2 d-flex align-items-end">
                   <button onclick="simpanKeSheet()" class="btn btn-success w-100 fw-bold">SIMPAN</button>
                 </div>
               </div>
@@ -88,18 +94,23 @@
         </div>
       </div>
 
-      <!-- REKAP DATA -->
+      <!-- TABEL REKAP -->
       <div class="row">
         <div class="col-12">
           <div class="card table-container">
             <div class="d-flex justify-content-between align-items-center mb-3">
-              <h6 class="mb-0 fw-bold">REKAPITULASI IURAN</h6>
-              <input type="text" id="cariSiswa" class="form-control form-control-sm w-50" placeholder="Cari nama..." onkeyup="filter()">
+              <h6 class="mb-0 fw-bold"><i class="fas fa-table me-2 text-info"></i>REKAPITULASI</h6>
+              <div class="input-group w-50">
+                <span class="input-group-text bg-dark border-0"><i class="fas fa-search text-muted small"></i></span>
+                <input type="text" id="cariSiswa" class="form-control form-control-sm" placeholder="Cari nama..." onkeyup="filter()">
+              </div>
             </div>
             <div class="table-responsive">
               <table class="table table-hover" id="tabelRekap">
                 <thead></thead>
-                <tbody id="isiTabel"></tbody>
+                <tbody id="isiTabel">
+                  <tr><td colspan="20" class="text-center py-4 text-muted small">Memuat data rekap...</td></tr>
+                </tbody>
               </table>
             </div>
           </div>
@@ -109,42 +120,53 @@
   </div>
 
   <script>
-    function toggleLoad(s) { document.getElementById('loader').classList[s ? 'remove' : 'add']('hidden'); }
+    function toggleLoad(s, text = "Memproses...") { 
+      document.getElementById('loaderText').innerText = text;
+      document.getElementById('loader').classList[s ? 'remove' : 'add']('hidden'); 
+    }
 
+    // 1. FUNGSI LOGIN
     function prosesLogin() {
-      const pin = document.getElementById('pinInput').value;
-      if(!pin) return;
-      toggleLoad(true);
+      const pin = document.getElementById('pinInput').value.trim();
+      if(!pin) { alert("PIN tidak boleh kosong!"); return; }
+      
+      toggleLoad(true, "Memverifikasi PIN...");
 
       google.script.run
         .withSuccessHandler(res => {
-          toggleLoad(false);
           if(res.status === "success") {
             document.getElementById('loginPage').classList.add('hidden');
             document.getElementById('mainPage').classList.remove('hidden');
             document.getElementById('userDisplay').innerText = res.user;
 
+            // Cek apakah user adalah Bendahara
             if(res.role === "BENDAHARA") {
               document.getElementById('inputSection').classList.remove('hidden');
               loadSiswa();
             }
             loadRekap();
           } else {
-            alert(res.message);
+            toggleLoad(false);
+            alert("GAGAL: " + res.message);
           }
         })
-        .withFailureHandler(e => { toggleLoad(false); alert(e.message); })
+        .withFailureHandler(e => { 
+          toggleLoad(false); 
+          alert("Error Koneksi: " + e.message); 
+        })
         .checkLogin(pin);
     }
 
+    // 2. AMBIL DAFTAR SISWA (HANYA BENDAHARA)
     function loadSiswa() {
       google.script.run.withSuccessHandler(list => {
         const s = document.getElementById('siswaSelect');
-        s.innerHTML = '<option value="">-- Pilih Siswa --</option>';
+        s.innerHTML = '<option value="" disabled selected>-- Pilih Siswa --</option>';
         list.forEach(n => s.innerHTML += `<option value="${n}">${n}</option>`);
       }).getSiswaList();
     }
 
+    // 3. SIMPAN DATA
     function simpanKeSheet() {
       const data = {
         nama: document.getElementById('siswaSelect').value,
@@ -152,41 +174,60 @@
         jumlah: document.getElementById('jumlahInput').value,
         user: document.getElementById('userDisplay').innerText
       };
-      if(!data.nama || !data.jumlah) return alert("Lengkapi data!");
       
-      toggleLoad(true);
+      if(!data.nama || !data.jumlah) { alert("Lengkapi Nama dan Nominal!"); return; }
+      
+      toggleLoad(true, "Menyimpan Data...");
       google.script.run.withSuccessHandler(res => {
-        toggleLoad(false);
         if(res === "success") {
-          alert("Berhasil!");
+          alert("Data Berhasil Disimpan!");
           document.getElementById('jumlahInput').value = "";
-          loadRekap();
-        } else { alert("Gagal: " + res); }
+          loadRekap(); // Refresh tabel
+        } else { 
+          toggleLoad(false);
+          alert("Gagal Simpan: " + res); 
+        }
       }).simpanIuran(data);
     }
 
+    // 4. LOAD TABEL REKAP
     function loadRekap() {
       google.script.run.withSuccessHandler(data => {
         const thead = document.querySelector('#tabelRekap thead');
         const tbody = document.querySelector('#tabelRekap tbody');
         
+        if(!data || data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" class="text-center">Data kosong</td></tr>';
+          toggleLoad(false);
+          return;
+        }
+
+        // Header
         thead.innerHTML = `<tr>${data[0].map(h => `<th>${h}</th>`).join('')}</tr>`;
         
+        // Body
         let html = "";
         for(let i = 1; i < data.length; i++) {
           html += `<tr>`;
           data[i].forEach((cell, idx) => {
-            if(cell === "LUNAS") html += `<td class="text-center"><span class="badge-lunas">LUNAS</span></td>`;
-            else if(cell === "BELUM") html += `<td class="text-center"><span class="badge-belum">BELUM</span></td>`;
-            else if(!isNaN(cell) && cell !== "" && idx !== 0) html += `<td class="text-end">Rp ${Number(cell).toLocaleString('id-ID')}</td>`;
-            else html += `<td>${cell}</td>`;
+            if(cell === "LUNAS") {
+              html += `<td class="text-center"><span class="badge-lunas">LUNAS</span></td>`;
+            } else if(cell === "BELUM") {
+              html += `<td class="text-center"><span class="badge-belum">BELUM</span></td>`;
+            } else if(!isNaN(cell) && cell !== "" && idx !== 0) {
+              html += `<td class="text-end fw-bold text-warning">Rp ${Number(cell).toLocaleString('id-ID')}</td>`;
+            } else {
+              html += `<td class="${idx === 0 ? 'fw-bold text-info' : ''}">${cell}</td>`;
+            }
           });
           html += `</tr>`;
         }
         tbody.innerHTML = html;
+        toggleLoad(false);
       }).getRekapData();
     }
 
+    // 5. FITUR CARI NAMA
     function filter() {
       const val = document.getElementById("cariSiswa").value.toUpperCase();
       const tr = document.getElementById("isiTabel").getElementsByTagName("tr");
@@ -196,7 +237,10 @@
       }
     }
 
-    document.getElementById('pinInput').addEventListener('keypress', e => { if(e.key === 'Enter') prosesLogin(); });
+    // ENTER UNTUK LOGIN
+    document.getElementById('pinInput').addEventListener('keypress', e => { 
+      if(e.key === 'Enter') prosesLogin(); 
+    });
   </script>
 </body>
 </html>
