@@ -4,89 +4,87 @@
   <base target="_top">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistem Kas 7H SPENSAMO</title>
+  <title>Kas 7H SPENSAMO</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/all.min.css">
   <style>
-    :root { --bg-dark: #0f172a; --card-bg: #1e293b; --text-light: #f8fafc; --accent: #f59e0b; }
-    body { background-color: var(--bg-dark); color: var(--text-light); font-family: 'Segoe UI', sans-serif; min-height: 100vh; }
+    :root { --dark: #0f172a; --card: #1e293b; --accent: #f59e0b; }
+    body { background-color: var(--dark); color: white; font-family: 'Segoe UI', sans-serif; }
     .hidden { display: none !important; }
-    .card { background-color: var(--card-bg); border: none; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
-    .btn-warning { background-color: var(--accent); border: none; font-weight: 600; color: #1e293b; }
+    .card { background-color: var(--card); border: none; border-radius: 1rem; }
+    .btn-warning { background-color: var(--accent); border: none; font-weight: bold; color: #1e293b; }
     .table { color: #e2e8f0; font-size: 0.85rem; }
     .table thead th { background-color: #334155; color: var(--accent); border-bottom: 2px solid var(--accent); text-align: center; }
-    .badge-status { padding: 0.4em 0.8em; border-radius: 0.5rem; font-size: 0.7rem; font-weight: bold; }
-    .bg-lunas { background-color: #059669; }
-    .bg-belum { background-color: #dc2626; }
-    #loader { position: fixed; inset: 0; background: rgba(15,23,42,0.95); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    .badge-status { padding: 5px 10px; border-radius: 6px; font-weight: bold; font-size: 10px; }
+    #loader { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
   </style>
 </head>
 <body>
 
-  <!-- Screen Loading -->
+  <!-- Overlay Loading -->
   <div id="loader" class="hidden">
-    <div class="spinner-border text-warning" style="width: 3rem; height: 3rem;" role="status"></div>
-    <p class="mt-3 fw-bold text-warning" id="loaderText">Menghubungkan ke Server...</p>
+    <div class="spinner-border text-warning" style="width: 3rem; height: 3rem;"></div>
+    <p class="mt-3 fw-bold text-warning" id="loaderText">Menghubungkan...</p>
   </div>
 
-  <!-- Halaman Login -->
+  <!-- Screen Login -->
   <div id="loginPage" class="container mt-5">
     <div class="row justify-content-center">
-      <div class="col-md-5 col-lg-4">
-        <div class="card p-4 text-center">
-          <div class="mb-3"><i class="fas fa-wallet fa-3x text-warning"></i></div>
-          <h4 class="fw-bold mb-1">KAS KELAS 7H</h4>
+      <div class="col-md-5 col-lg-4 text-center">
+        <div class="card p-4 shadow-lg">
+          <i class="fas fa-shield-alt fa-3x text-warning mb-3"></i>
+          <h4 class="fw-bold">KAS KELAS 7H</h4>
           <p class="text-muted small mb-4">SMP NEGERI 1 MOGA</p>
-          <input type="password" id="pin" class="form-control form-control-lg text-center mb-3" placeholder="PIN AKSES" inputmode="numeric">
-          <button onclick="handleLogin()" class="btn btn-warning w-100 py-2">LOGIN</button>
-          <div id="loginMsg" class="text-danger mt-3 small fw-bold"></div>
+          <input type="password" id="pinInput" class="form-control form-control-lg text-center mb-3" placeholder="MASUKKAN PIN" inputmode="numeric">
+          <button onclick="prosesLogin()" class="btn btn-warning w-100 py-2">MASUK</button>
+          <div id="msgError" class="text-danger mt-3 small fw-bold"></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Halaman Utama -->
-  <div id="mainPage" class="hidden">
-    <nav class="navbar px-3 sticky-top shadow-sm bg-dark border-bottom border-warning">
+  <!-- Dashboard Utama -->
+  <div id="dashboardPage" class="hidden">
+    <nav class="navbar px-3 bg-dark border-bottom border-warning shadow-sm">
       <div class="container-fluid">
-        <span class="navbar-brand text-white fw-bold"><i class="fas fa-university me-2 text-warning"></i>7H SPENSAMO</span>
+        <span class="navbar-brand text-white fw-bold"><i class="fas fa-coins text-warning me-2"></i>7H SPENSAMO</span>
         <div class="d-flex align-items-center">
-          <span id="userName" class="me-3 small text-info fw-bold"></span>
-          <button onclick="location.reload()" class="btn btn-sm btn-outline-danger"><i class="fas fa-sign-out-alt"></i></button>
+          <span id="labelUser" class="me-3 small text-info fw-bold"></span>
+          <button onclick="location.reload()" class="btn btn-sm btn-outline-danger"><i class="fas fa-power-off"></i></button>
         </div>
       </div>
     </nav>
 
-    <div class="container-fluid mt-4 px-lg-4">
-      <!-- Area Input Bendahara -->
-      <div id="adminArea" class="card p-3 mb-4 hidden border-start border-warning border-4">
-        <h6 class="fw-bold text-warning mb-3"><i class="fas fa-plus-circle me-2"></i>INPUT PEMBAYARAN</h6>
+    <div class="container-fluid mt-4">
+      <!-- Panel Input Bendahara -->
+      <div id="panelBendahara" class="card p-3 mb-4 hidden border-start border-warning border-4">
+        <h6 class="text-warning fw-bold mb-3"><i class="fas fa-plus me-2"></i>TAMBAH IURAN</h6>
         <div class="row g-2">
-          <div class="col-md-4"><select id="inpNama" class="form-select"></select></div>
+          <div class="col-md-4"><select id="selNama" class="form-select"></select></div>
           <div class="col-md-3">
-            <select id="inpJenis" class="form-select">
+            <select id="selJenis" class="form-select">
               <option value="KAS_KELAS">KAS KELAS</option>
               <option value="GALON">GALON</option>
-              <option value="KARTU_PELAJAR">KARTU PELAJAR</option>
+              <option value="KARTU_PELAJAR">KARTU</option>
               <option value="TALI_ASIH">TALI ASIH</option>
               <option value="OTHER">LAIN-LAIN</option>
             </select>
           </div>
-          <div class="col-md-3"><input type="number" id="inpJumlah" class="form-control" placeholder="Nominal (Rp)"></div>
-          <div class="col-md-2"><button onclick="submitIuran()" class="btn btn-warning w-100">SIMPAN</button></div>
+          <div class="col-md-3"><input type="number" id="numJumlah" class="form-control" placeholder="Nominal Rp"></div>
+          <div class="col-md-2"><button onclick="simpanData()" class="btn btn-warning w-100">SIMPAN</button></div>
         </div>
       </div>
 
-      <!-- Tabel Rekapitulasi -->
-      <div class="card p-3">
+      <!-- Tabel Data -->
+      <div class="card p-3 shadow">
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <h6 class="fw-bold mb-0"><i class="fas fa-table me-2 text-warning"></i>REKAP PEMBAYARAN</h6>
-          <input type="text" id="searchBox" class="form-control w-50" placeholder="Cari nama..." onkeyup="searchTable()">
+          <h6 class="fw-bold mb-0 text-white-50 small">REKAPITULASI PEMBAYARAN</h6>
+          <input type="text" id="cariNama" class="form-control w-50" placeholder="Cari Siswa..." onkeyup="filterTabel()">
         </div>
         <div class="table-responsive">
-          <table class="table table-hover align-middle" id="rekapTable">
+          <table class="table table-hover align-middle" id="tabelRekap">
             <thead></thead>
-            <tbody id="rekapBody"></tbody>
+            <tbody id="bodyRekap"></tbody>
           </table>
         </div>
       </div>
@@ -94,95 +92,96 @@
   </div>
 
   <script>
-    const setLoader = (show, text = "") => {
-      document.getElementById('loaderText').innerText = text;
+    const loader = (show, txt = "") => {
+      document.getElementById('loaderText').innerText = txt;
       document.getElementById('loader').classList[show ? 'remove' : 'add']('hidden');
     }
 
-    function handleLogin() {
-      const pin = document.getElementById('pin').value;
-      if(!pin) return;
+    function prosesLogin() {
+      const pin = document.getElementById('pinInput').value;
+      if (!pin) return;
       
-      setLoader(true, "Memverifikasi...");
+      loader(true, "Memverifikasi PIN...");
       google.script.run
         .withSuccessHandler(res => {
-          if(res.status === "success") {
+          if (res.status === "success") {
             document.getElementById('loginPage').classList.add('hidden');
-            document.getElementById('mainPage').classList.remove('hidden');
-            document.getElementById('userName').innerText = res.user;
+            document.getElementById('dashboardPage').classList.remove('hidden');
+            document.getElementById('labelUser').innerText = res.user;
 
-            if(res.role === "BENDAHARA") {
-              document.getElementById('adminArea').classList.remove('hidden');
+            if (res.role === "BENDAHARA") {
+              document.getElementById('panelBendahara').classList.remove('hidden');
               google.script.run.withSuccessHandler(list => {
-                const sel = document.getElementById('inpNama');
-                sel.innerHTML = list.map(n => `<option value="${n}">${n}</option>`).join('');
+                const el = document.getElementById('selNama');
+                el.innerHTML = list.map(n => `<option value="${n}">${n}</option>`).join('');
               }).getSiswaList();
             }
-            refreshTable();
+            muatTabel();
           } else {
-            setLoader(false);
-            document.getElementById('loginMsg').innerText = res.message;
+            loader(false);
+            document.getElementById('msgError').innerText = res.message;
           }
         })
-        .withFailureHandler(err => { setLoader(false); alert("Error: " + err); })
+        .withFailureHandler(err => { loader(false); alert("Gagal Login: " + err); })
         .checkLogin(pin);
     }
 
-    function refreshTable() {
-      setLoader(true, "Sinkronisasi Data...");
+    function muatTabel() {
+      loader(true, "Sinkronisasi Data...");
       google.script.run
         .withSuccessHandler(data => {
-          const thead = document.querySelector("#rekapTable thead");
-          const tbody = document.getElementById("rekapBody");
+          const thead = document.querySelector("#tabelRekap thead");
+          const tbody = document.getElementById("bodyRekap");
           
           thead.innerHTML = `<tr>${data[0].map(h => `<th>${h}</th>`).join('')}</tr>`;
           
           let html = "";
-          for(let i = 1; i < data.length; i++) {
+          for (let i = 1; i < data.length; i++) {
             html += `<tr>`;
             data[i].forEach((cell, idx) => {
-              if(cell === "LUNAS") html += `<td class="text-center"><span class="badge-status bg-lunas">LUNAS</span></td>`;
-              else if(cell === "BELUM") html += `<td class="text-center"><span class="badge-status bg-belum">BELUM</span></td>`;
-              else if(!isNaN(cell) && cell !== "" && idx > 0) html += `<td class="text-end fw-bold text-warning">Rp ${Number(cell).toLocaleString('id-ID')}</td>`;
+              if (cell === "LUNAS") html += `<td class="text-center"><span class="badge-status bg-success">LUNAS</span></td>`;
+              else if (cell === "BELUM") html += `<td class="text-center"><span class="badge-status bg-danger">BELUM</span></td>`;
+              else if (!isNaN(cell) && cell !== "" && idx > 0) html += `<td class="text-end fw-bold text-warning">Rp ${Number(cell).toLocaleString('id-ID')}</td>`;
               else html += `<td class="${idx === 0 ? 'fw-bold text-info' : ''}">${cell || "-"}</td>`;
             });
             html += `</tr>`;
           }
           tbody.innerHTML = html;
-          setLoader(false);
+          loader(false);
         })
-        .withFailureHandler(err => { setLoader(false); alert(err); })
+        .withFailureHandler(err => { loader(false); alert("Tabel Gagal Dimuat: " + err); })
         .getRekapData();
     }
 
-    function submitIuran() {
-      const val = {
-        nama: document.getElementById('inpNama').value,
-        jenis: document.getElementById('inpJenis').value,
-        jumlah: document.getElementById('inpJumlah').value,
-        user: document.getElementById('userName').innerText
+    function simpanData() {
+      const payload = {
+        nama: document.getElementById('selNama').value,
+        jenis: document.getElementById('selJenis').value,
+        jumlah: document.getElementById('numJumlah').value,
+        user: document.getElementById('labelUser').innerText
       };
-      if(!val.jumlah) return alert("Masukkan nominal!");
+      if (!payload.jumlah) return alert("Nominal wajib diisi!");
 
-      setLoader(true, "Menyimpan Data...");
+      loader(true, "Menyimpan Iuran...");
       google.script.run
         .withSuccessHandler(res => {
-          if(res === "success") {
-            document.getElementById('inpJumlah').value = "";
-            refreshTable();
-          } else { setLoader(false); alert(res); }
+          if (res === "success") {
+            document.getElementById('numJumlah').value = "";
+            alert("Berhasil disimpan!");
+            muatTabel();
+          } else { loader(false); alert(res); }
         })
-        .simpanIuran(val);
+        .simpanIuran(payload);
     }
 
-    function searchTable() {
-      const q = document.getElementById("searchBox").value.toUpperCase();
-      document.querySelectorAll("#rekapBody tr").forEach(row => {
-        row.style.display = row.cells[0].innerText.toUpperCase().includes(q) ? "" : "none";
+    function filterTabel() {
+      const q = document.getElementById("cariNama").value.toUpperCase();
+      document.querySelectorAll("#bodyRekap tr").forEach(row => {
+        row.style.display = row.cells[0].innerText.toUpperCase().indexOf(q) > -1 ? "" : "none";
       });
     }
 
-    document.getElementById('pin').addEventListener('keypress', e => { if(e.key === 'Enter') handleLogin(); });
+    document.getElementById('pinInput').addEventListener('keypress', e => { if(e.key === 'Enter') prosesLogin(); });
   </script>
 </body>
 </html>
