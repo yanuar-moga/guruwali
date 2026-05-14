@@ -10,131 +10,144 @@
   <style>
     body {
       font-family: 'Poppins', sans-serif;
-      background-color: #f0f2f5;
-      color: #333;
+      background-color: #f8fafc;
+      color: #334155;
       margin: 0;
       padding: 0;
     }
     .header-app {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
       color: white;
-      padding: 30px 20px;
+      padding: 35px 20px;
       text-align: center;
       border-radius: 0 0 30px 30px;
+      box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
     }
     .container {
-      max-width: 600px;
+      max-width: 700px;
       padding: 20px;
     }
     .card {
       border: none;
       border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.03);
       margin-bottom: 20px;
     }
     .btn-primary {
-      background: #667eea;
+      background: #4f46e5;
       border: none;
       padding: 12px;
       border-radius: 12px;
       font-weight: 600;
+      transition: all 0.3s;
     }
-    .btn-primary:hover { background: #5a67d8; }
-    .nav-pills .nav-link.active { background-color: #764ba2; }
-    .nav-pills .nav-link { color: #764ba2; font-weight: 500; font-size: 0.9rem; }
+    .btn-primary:hover { background: #4338ca; transform: translateY(-1px); }
+    .nav-pills .nav-link.active { background-color: #7c3aed; box-shadow: 0 4px 10px rgba(124, 58, 237, 0.3); }
+    .nav-pills .nav-link { color: #64748b; font-weight: 500; font-size: 0.9rem; border-radius: 10px; }
     .hidden { display: none; }
     .pin-input {
-      letter-spacing: 10px;
+      letter-spacing: 8px;
       text-align: center;
       font-size: 1.5rem;
       font-weight: bold;
+      border-radius: 12px;
     }
     .status-badge {
-      font-size: 0.75rem;
-      padding: 4px 8px;
-      border-radius: 20px;
+      font-size: 0.7rem;
+      padding: 5px 10px;
+      border-radius: 12px;
+      font-weight: 600;
+      display: inline-block;
+      white-space: nowrap;
     }
-    .fade-in {
-      animation: fadeIn 0.5s;
-    }
+    .bg-lunas { background-color: #dcfce7; color: #15803d; }
+    .bg-sisa { background-color: #fee2e2; color: #b91c1c; }
+    .fade-in { animation: fadeIn 0.4s ease-out; }
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
+      from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    .table-responsive { border-radius: 15px; }
+    th { text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.75rem; }
   </style>
 </head>
 <body>
 
-  <div class="header-app shadow">
+  <div class="header-app">
     <h3 class="mb-0">💰 E-Bendahara</h3>
-    <p class="small opacity-75">Sistem Keuangan Kelas Digital</p>
+    <p class="small opacity-75 mb-0">Manajemen Keuangan Kelas Digital</p>
   </div>
 
   <div class="container">
     <!-- SECTION LOGIN -->
     <div id="loginSection" class="card p-4 fade-in">
       <div class="text-center mb-4">
-        <h5 class="fw-bold">Akses Masuk</h5>
-        <p class="text-muted small">Silakan masukkan PIN Anda</p>
+        <h5 class="fw-bold">Selamat Datang</h5>
+        <p class="text-muted small">Masukkan PIN Keamanan untuk akses</p>
       </div>
       <div class="mb-3">
         <input type="password" id="pinInput" class="form-control pin-input" placeholder="••••••" inputmode="numeric" maxlength="6">
       </div>
-      <button onclick="login()" id="btnLogin" class="btn btn-primary w-100 shadow-sm">MASUK KE PANEL</button>
+      <button onclick="login()" id="btnLogin" class="btn btn-primary w-100 shadow-sm">BUKA PANEL KAS</button>
     </div>
 
     <!-- MAIN PANEL -->
     <div id="mainSection" class="hidden fade-in">
-      <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <small class="text-muted d-block" id="roleLabel"></small>
-          <strong id="userNameLabel"></strong>
+          <span class="badge bg-primary-subtle text-primary mb-1" id="roleLabel"></span>
+          <h5 class="fw-bold mb-0" id="userNameLabel"></h5>
         </div>
-        <button onclick="logoutManual()" class="btn btn-outline-danger btn-sm rounded-pill px-3">Logout</button>
+        <button onclick="logoutManual()" class="btn btn-outline-danger btn-sm rounded-pill px-3">Keluar</button>
       </div>
 
-      <ul class="nav nav-pills nav-fill mb-3 card p-2 flex-row shadow-sm">
+      <ul class="nav nav-pills nav-fill mb-4 card p-2 flex-row shadow-sm bg-white">
         <li class="nav-item">
-          <button class="nav-link active" id="tabInBtn" onclick="showTab('input')">Input</button>
+          <button class="nav-link active" id="tabInBtn" onclick="showTab('input')">Input Data</button>
         </li>
         <li class="nav-item">
-          <button class="nav-link" id="tabRekapBtn" onclick="loadRekap()">Rekap</button>
+          <button class="nav-link" id="tabRekapBtn" onclick="loadRekap()">Rekap Iuran</button>
         </li>
         <li class="nav-item">
-          <button class="nav-link" id="tabTotalBtn" onclick="loadTotalDana()">Total</button>
+          <button class="nav-link" id="tabTotalBtn" onclick="loadTotalDana()">Total Saldo</button>
         </li>
       </ul>
 
-      <!-- TAB INPUT (TABLE MODE) -->
-      <div id="tabInput" class="card p-3 shadow-sm">
+      <!-- TAB INPUT -->
+      <div id="tabInput" class="card p-3 shadow-sm fade-in">
         <div class="mb-3 border-bottom pb-3">
-          <label class="form-label small fw-bold">Pilih Siswa</label>
-          <select id="siswaSelect" class="form-select shadow-sm"></select>
+          <label class="form-label small fw-bold text-secondary">Pilih Nama Siswa</label>
+          <select id="siswaSelect" class="form-select border-0 bg-light shadow-none" style="border-radius: 10px;"></select>
         </div>
         
-        <table class="table table-sm align-middle">
-          <thead class="table-light text-secondary">
-            <tr>
-              <th class="ps-2">Kategori</th>
-              <th style="width: 160px;">Nominal (Rp)</th>
-            </tr>
-          </thead>
-          <tbody id="inputTableBody">
-            <!-- Dinamis oleh Script -->
-          </tbody>
-        </table>
+        <div class="table-responsive">
+          <table class="table table-borderless align-middle">
+            <thead class="bg-light">
+              <tr class="text-muted">
+                <th class="ps-3">Kategori</th>
+                <th style="width: 150px;">Nominal (Rp)</th>
+              </tr>
+            </thead>
+            <tbody id="inputTableBody">
+              <!-- Dinamis oleh Script -->
+            </tbody>
+          </table>
+        </div>
         
-        <button onclick="simpanMulti()" id="btnSimpan" class="btn btn-primary w-100 mt-2 shadow-sm">SIMPAN SEMUA</button>
+        <button onclick="simpanMulti()" id="btnSimpan" class="btn btn-primary w-100 mt-3 shadow-sm">SIMPAN TRANSAKSI</button>
       </div>
 
       <!-- TAB REKAP -->
       <div id="tabRekap" class="hidden fade-in">
         <div class="card p-0 overflow-hidden shadow-sm">
-          <div class="p-3 bg-light border-bottom">
-            <h6 class="mb-0 fw-bold text-center">Data Pelunasan (Sisa Bayar)</h6>
+          <div class="p-3 bg-white border-bottom d-flex justify-content-between align-items-center">
+            <h6 class="mb-0 fw-bold">Monitoring Pelunasan</h6>
+            <span class="badge bg-secondary-subtle text-secondary" style="font-size: 0.65rem;">Auto-Sync</span>
           </div>
           <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0" id="tableRekap" style="font-size: 0.85rem;"></table>
+            <table class="table table-hover align-middle mb-0" id="tableRekap" style="font-size: 0.82rem;">
+              <!-- Data Rekap Muncul Di Sini -->
+            </table>
           </div>
         </div>
       </div>
@@ -155,64 +168,62 @@
     let sessionID = "";
 
     async function callGAS(action, payload = {}) {
-      const response = await fetch(GAS_URL, {
-        method: "POST",
-        body: JSON.stringify({ action: action, ...payload })
-      });
-      const res = await response.json();
-      if (res.status === "success") return res.data;
-      throw new Error(res.message);
+      try {
+        const response = await fetch(GAS_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: action, ...payload })
+        });
+        const res = await response.json();
+        if (res.status === "success") return res.data;
+        throw new Error(res.message);
+      } catch (err) {
+        console.error(err);
+        return null;
+      }
     }
 
     async function login() {
       const pin = document.getElementById('pinInput').value;
       const btn = document.getElementById('btnLogin');
-      if(!pin) return alert("Masukkan PIN!");
+      if(!pin) return alert("Masukkan PIN Anda!");
 
       btn.disabled = true;
-      btn.innerText = 'Mengecek...';
+      btn.innerText = 'Memverifikasi...';
 
-      try {
-        const res = await callGAS("login", { pin: pin });
-        if(res) {
-          role = res.role;
-          namaUser = res.nama;
-          sessionID = res.sessionID;
-          
-          document.getElementById('loginSection').classList.add('hidden');
-          document.getElementById('mainSection').classList.remove('hidden');
-          document.getElementById('roleLabel').innerText = role;
-          document.getElementById('userNameLabel').innerText = namaUser;
-          
-          initApp();
-        } else {
-          alert("PIN Salah!");
-          btn.disabled = false;
-          btn.innerText = 'MASUK KE PANEL';
-        }
-      } catch (e) {
-        alert("Gagal koneksi server!");
+      const res = await callGAS("login", { pin: pin });
+      if(res) {
+        role = res.role;
+        namaUser = res.nama;
+        sessionID = res.sessionID;
+        
+        document.getElementById('loginSection').classList.add('hidden');
+        document.getElementById('mainSection').classList.remove('hidden');
+        document.getElementById('roleLabel').innerText = role;
+        document.getElementById('userNameLabel').innerText = namaUser;
+        
+        initApp();
+      } else {
+        alert("PIN tidak terdaftar atau salah!");
         btn.disabled = false;
+        btn.innerText = 'BUKA PANEL KAS';
       }
     }
 
     async function initApp() {
-      // Build Input Table
       let html = "";
       categories.forEach(kat => {
         html += `<tr>
-          <td class="ps-2 fw-bold small text-secondary">${kat}</td>
-          <td><input type="number" class="form-control form-control-sm iuran-input shadow-sm" data-kat="${kat}" placeholder="0"></td>
+          <td class="ps-3"><div class="fw-bold small">${kat}</div></td>
+          <td><input type="number" class="form-control form-control-sm iuran-input bg-light border-0" data-kat="${kat}" placeholder="0" style="border-radius: 8px;"></td>
         </tr>`;
       });
       document.getElementById('inputTableBody').innerHTML = html;
 
-      // Load Siswa
-      try {
-        const res = await callGAS("getInitialData");
-        let sOpt = res.siswa.map(s => `<option value="${s[0]}">${s[0]}. ${s[1]}</option>`).join('');
+      const res = await callGAS("getInitialData");
+      if(res) {
+        let sOpt = res.siswa.map(s => `<option value="${s[0]}">${s[1]}</option>`).join('');
         document.getElementById('siswaSelect').innerHTML = sOpt;
-      } catch (e) { console.error("Error data awal"); }
+      }
     }
 
     async function simpanMulti() {
@@ -222,81 +233,81 @@
         if(inp.value > 0) items.push({ kategori: inp.dataset.kat, jumlah: inp.value });
       });
 
-      if(items.length === 0) return alert("Isi minimal satu nominal!");
+      if(items.length === 0) return alert("Input nominal minimal di salah satu kategori!");
 
       const btn = document.getElementById('btnSimpan');
       btn.disabled = true;
-      btn.innerText = "Mengirim...";
+      btn.innerText = "Mengirim Data...";
 
       const payload = {
         absen: document.getElementById('siswaSelect').value,
-        namaSiswa: document.getElementById('siswaSelect').options[document.getElementById('siswaSelect').selectedIndex].text.split('. ')[1],
+        namaSiswa: document.getElementById('siswaSelect').options[document.getElementById('siswaSelect').selectedIndex].text,
         role: role,
         namaUser: namaUser,
         items: items
       };
 
-      try {
-        const msg = await callGAS("saveMulti", { data: payload });
-        alert(msg);
+      const msg = await callGAS("saveMulti", { data: payload });
+      if(msg) {
+        alert("Berhasil: " + msg);
         inputs.forEach(inp => inp.value = "");
-      } catch (e) {
-        alert("Gagal simpan!");
+      } else {
+        alert("Terjadi kesalahan saat menyimpan.");
       }
       btn.disabled = false;
-      btn.innerText = "SIMPAN SEMUA";
+      btn.innerText = "SIMPAN TRANSAKSI";
     }
 
     async function loadRekap() {
       showTab('rekap');
       const table = document.getElementById('tableRekap');
-      table.innerHTML = '<tr><td class="p-4 text-center">Memuat data...</td></tr>';
+      table.innerHTML = '<tr><td class="p-5 text-center"><div class="spinner-border text-primary spinner-border-sm"></div><br><small class="text-muted">Menghitung sisa iuran...</small></td></tr>';
       
-      try {
-        const res = await callGAS("rekap");
-        let html = `<thead class="table-light text-nowrap"><tr><th class="ps-3">Siswa</th>`;
-        res.kategori.forEach(k => html += `<th class="text-center">${k}</th>`);
-        html += `</tr></thead><tbody>`;
-        
-        res.rekap.forEach(r => {
-          html += `<tr><td class="ps-3 fw-bold">${r.nama}<br><small class="text-muted">Absen ${r.absen}</small></td>`;
-          res.kategori.forEach(k => {
-            let status = r.iuran[k];
-            let isLunas = status === "LUNAS";
-            html += `<td class="text-center">
-              <span class="status-badge ${isLunas ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'}">
-                ${status}
-              </span>
-            </td>`;
-          });
-          html += `</tr>`;
+      const res = await callGAS("rekap");
+      if(!res) return table.innerHTML = '<tr><td class="p-4 text-center text-danger">Gagal sinkron data.</td></tr>';
+
+      let html = `<thead class="table-light text-nowrap"><tr><th class="ps-3">Nama Siswa</th>`;
+      res.kategori.forEach(k => html += `<th class="text-center">${k}</th>`);
+      html += `</tr></thead><tbody>`;
+      
+      res.rekap.forEach(r => {
+        html += `<tr><td class="ps-3"><div class="fw-bold text-dark">${r.nama}</div><div class="text-muted" style="font-size: 0.65rem;">Absen ${r.absen}</div></td>`;
+        res.kategori.forEach(k => {
+          let status = r.iuran[k];
+          let isLunas = status === "LUNAS";
+          html += `<td class="text-center">
+            <span class="status-badge ${isLunas ? 'bg-lunas' : 'bg-sisa'}">
+              ${status}
+            </span>
+          </td>`;
         });
-        table.innerHTML = html + "</tbody>";
-      } catch (e) { table.innerHTML = '<tr><td class="p-4 text-center text-danger">Gagal memuat.</td></tr>'; }
+        html += `</tr>`;
+      });
+      table.innerHTML = html + "</tbody>";
     }
 
     async function loadTotalDana() {
       showTab('total');
       const container = document.getElementById('totalDanaContainer');
-      container.innerHTML = '<div class="card p-4 text-center">Memuat saldo...</div>';
+      container.innerHTML = '<div class="card p-4 text-center">Menghitung saldo masuk...</div>';
       
-      try {
-        const res = await callGAS("totalDana");
-        let html = `<div class="card p-3 shadow-sm"><ul class="list-group list-group-flush">`;
-        let grandTotal = 0;
-        for(let kat in res) {
-          grandTotal += res[kat];
-          html += `<li class="list-group-item d-flex justify-content-between align-items-center">
-            <span class="text-secondary fw-bold">${kat}</span>
-            <span class="fw-bold">Rp${res[kat].toLocaleString()}</span>
-          </li>`;
-        }
-        html += `<li class="list-group-item d-flex justify-content-between align-items-center bg-light">
-            <strong class="text-primary">TOTAL SALDO</strong>
-            <span class="badge bg-primary fs-6">Rp${grandTotal.toLocaleString()}</span>
-          </li></ul></div>`;
-        container.innerHTML = html;
-      } catch (e) { container.innerHTML = '<div class="card p-4 text-center text-danger">Gagal memuat saldo.</div>'; }
+      const res = await callGAS("totalDana");
+      if(!res) return container.innerHTML = '<div class="card p-4 text-center text-danger">Gagal memuat saldo.</div>';
+
+      let html = `<div class="card p-3 shadow-sm border-0"><div class="list-group list-group-flush">`;
+      let grandTotal = 0;
+      for(let kat in res) {
+        grandTotal += res[kat];
+        html += `<div class="list-group-item d-flex justify-content-between align-items-center border-0 py-3">
+          <div class="text-secondary fw-bold small">${kat}</div>
+          <div class="fw-bold">Rp${res[kat].toLocaleString()}</div>
+        </div>`;
+      }
+      html += `<div class="list-group-item d-flex justify-content-between align-items-center bg-primary text-white rounded-4 mt-2 py-3 px-3 shadow">
+          <div class="fw-bold">TOTAL SALDO</div>
+          <div class="fs-5 fw-bold">Rp${grandTotal.toLocaleString()}</div>
+        </div></div></div>`;
+      container.innerHTML = html;
     }
 
     function showTab(t) {
