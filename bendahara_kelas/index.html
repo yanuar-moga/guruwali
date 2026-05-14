@@ -17,6 +17,9 @@
       color: #334155;
       margin: 0;
       padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
     .header-app {
       background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
@@ -29,6 +32,7 @@
     .container {
       max-width: 700px;
       padding: 20px;
+      flex: 1; /* Membuat container mengambil sisa ruang agar footer tetap di bawah */
     }
     .card {
       border: none;
@@ -72,6 +76,15 @@
     }
     .table-responsive { border-radius: 15px; }
     th { text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.75rem; }
+    
+    /* Style untuk Footer */
+    .footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.75rem;
+      color: #94a3b8;
+      background: transparent;
+    }
   </style>
 </head>
 <body>
@@ -162,6 +175,12 @@
     </div>
   </div>
 
+  <!-- FOOTER -->
+  <div class="footer">
+    <div>Aplikasi e bendahara v 1.0 (Build 14 Mei 2026)</div>
+    <div>Apps by MB © 2026 MB All Rights Reserved</div>
+  </div>
+
   <script>
     // URL Deployment GAS Anda
     const GAS_URL = "https://script.google.com/macros/s/AKfycbyt3p4O8Wbjwlg1ILlq7PMvYUA2na3TWcaMB54PEH11zHw9rBRoKOI4nnTRFz8pdURNZQ/exec";
@@ -171,7 +190,6 @@
     let namaUser = "";
     let sessionID = "";
 
-    // CEK SESI SAAT RELOAD
     window.onload = function() {
       checkSession();
     };
@@ -222,7 +240,6 @@
         namaUser = res.nama;
         sessionID = res.sessionID;
         
-        // Simpan ke browser
         localStorage.setItem("ebendahara_session", JSON.stringify({
           role: role,
           nama: namaUser,
