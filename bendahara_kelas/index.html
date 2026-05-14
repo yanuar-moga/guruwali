@@ -1,187 +1,268 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-  <base target="_top">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kas 7H SPENSAMO</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/all.min.css">
+  <title>E-Bendahara Kelas</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
-    :root { --dark: #0f172a; --card: #1e293b; --accent: #f59e0b; }
-    body { background-color: var(--dark); color: white; font-family: 'Segoe UI', sans-serif; }
-    .hidden { display: none !important; }
-    .card { background-color: var(--card); border: none; border-radius: 1rem; }
-    .btn-warning { background-color: var(--accent); border: none; font-weight: bold; color: #1e293b; }
-    .table { color: #e2e8f0; font-size: 0.85rem; }
-    .table thead th { background-color: #334155; color: var(--accent); border-bottom: 2px solid var(--accent); text-align: center; }
-    .badge-status { padding: 5px 10px; border-radius: 6px; font-weight: bold; font-size: 10px; }
-    #loader { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f0f2f5;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px; /* Nyaman di PC, pas di HP */
+      padding: 20px;
+    }
+    .card {
+      border: none;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .header-app {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+      border-radius: 0 0 30px 30px;
+      margin-bottom: -20px;
+    }
+    .btn-primary {
+      background: #667eea;
+      border: none;
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .btn-primary:hover {
+      background: #5a67d8;
+      transform: translateY(-2px);
+    }
+    .nav-pills .nav-link {
+      color: #764ba2;
+      border-radius: 10px;
+      font-weight: 500;
+    }
+    .nav-pills .nav-link.active {
+      background-color: #764ba2;
+    }
+    .form-control, .form-select {
+      border-radius: 10px;
+      padding: 12px;
+      border: 1px solid #e2e8f0;
+    }
+    .hidden { display: none; }
+    .status-badge {
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      border-radius: 20px;
+    }
+    .table-responsive {
+      border-radius: 15px;
+    }
+    #loginSection {
+      margin-top: 50px;
+    }
+    .pin-input {
+      letter-spacing: 10px;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
 
-  <!-- Overlay Loading -->
-  <div id="loader" class="hidden">
-    <div class="spinner-border text-warning" style="width: 3rem; height: 3rem;"></div>
-    <p class="mt-3 fw-bold text-warning" id="loaderText">Menghubungkan...</p>
+  <div class="header-app shadow">
+    <h3 class="mb-0">💰 E-Bendahara</h3>
+    <p class="small opacity-75">Sistem Keuangan Kelas Digital</p>
   </div>
 
-  <!-- Screen Login -->
-  <div id="loginPage" class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-md-5 col-lg-4 text-center">
-        <div class="card p-4 shadow-lg">
-          <i class="fas fa-shield-alt fa-3x text-warning mb-3"></i>
-          <h4 class="fw-bold">KAS KELAS 7H</h4>
-          <p class="text-muted small mb-4">SMP NEGERI 1 MOGA</p>
-          <input type="password" id="pinInput" class="form-control form-control-lg text-center mb-3" placeholder="MASUKKAN PIN" inputmode="numeric">
-          <button onclick="prosesLogin()" class="btn btn-warning w-100 py-2">MASUK</button>
-          <div id="msgError" class="text-danger mt-3 small fw-bold"></div>
-        </div>
+  <div class="container">
+    <!-- SECTION LOGIN -->
+    <div id="loginSection" class="card p-4 animate__animated animate__fadeIn">
+      <div class="text-center mb-4">
+        <h5 class="fw-bold">Selamat Datang</h5>
+        <p class="text-muted small">Silakan masukkan PIN akses Anda</p>
       </div>
+      <div class="mb-3">
+        <input type="password" id="pinInput" class="form-control pin-input" placeholder="••••••" inputmode="numeric" maxlength="6">
+      </div>
+      <button onclick="login()" id="btnLogin" class="btn btn-primary w-100">MASUK KE PANEL</button>
     </div>
-  </div>
 
-  <!-- Dashboard Utama -->
-  <div id="dashboardPage" class="hidden">
-    <nav class="navbar px-3 bg-dark border-bottom border-warning shadow-sm">
-      <div class="container-fluid">
-        <span class="navbar-brand text-white fw-bold"><i class="fas fa-coins text-warning me-2"></i>7H SPENSAMO</span>
-        <div class="d-flex align-items-center">
-          <span id="labelUser" class="me-3 small text-info fw-bold"></span>
-          <button onclick="location.reload()" class="btn btn-sm btn-outline-danger"><i class="fas fa-power-off"></i></button>
+    <!-- MAIN PANEL -->
+    <div id="mainSection" class="hidden">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="user-info">
+          <small class="text-muted d-block" id="roleLabel"></small>
+          <strong id="userNameLabel"></strong>
         </div>
+        <button onclick="logoutManual()" class="btn btn-outline-danger btn-sm rounded-pill">Logout</button>
       </div>
-    </nav>
 
-    <div class="container-fluid mt-4">
-      <!-- Panel Input Bendahara -->
-      <div id="panelBendahara" class="card p-3 mb-4 hidden border-start border-warning border-4">
-        <h6 class="text-warning fw-bold mb-3"><i class="fas fa-plus me-2"></i>TAMBAH IURAN</h6>
-        <div class="row g-2">
-          <div class="col-md-4"><select id="selNama" class="form-select"></select></div>
-          <div class="col-md-3">
-            <select id="selJenis" class="form-select">
-              <option value="KAS_KELAS">KAS KELAS</option>
-              <option value="GALON">GALON</option>
-              <option value="KARTU_PELAJAR">KARTU</option>
-              <option value="TALI_ASIH">TALI ASIH</option>
-              <option value="OTHER">LAIN-LAIN</option>
-            </select>
+      <ul class="nav nav-pills nav-fill mb-3 card p-2 flex-row" id="pills-tab" role="tablist">
+        <li class="nav-item">
+          <button class="nav-link active" onclick="showTab('input')">Input Data</button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link" onclick="loadRekap()">Rekapitulasi</button>
+        </li>
+      </ul>
+
+      <!-- TAB INPUT -->
+      <div id="tabInput" class="card p-4">
+        <div class="mb-3">
+          <label class="form-label small fw-bold">Pilih Siswa</label>
+          <select id="siswaSelect" class="form-select shadow-sm"></select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label small fw-bold">Kategori Iuran</label>
+          <select id="katSelect" class="form-select shadow-sm"></select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label small fw-bold">Nominal Pembayaran</label>
+          <div class="input-group">
+            <span class="input-group-text">Rp</span>
+            <input type="number" id="jumlahInput" class="form-control shadow-sm" placeholder="0">
           </div>
-          <div class="col-md-3"><input type="number" id="numJumlah" class="form-control" placeholder="Nominal Rp"></div>
-          <div class="col-md-2"><button onclick="simpanData()" class="btn btn-warning w-100">SIMPAN</button></div>
         </div>
+        <button onclick="simpan()" id="btnSimpan" class="btn btn-primary w-100 mt-2">SIMPAN TRANSAKSI</button>
       </div>
 
-      <!-- Tabel Data -->
-      <div class="card p-3 shadow">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h6 class="fw-bold mb-0 text-white-50 small">REKAPITULASI PEMBAYARAN</h6>
-          <input type="text" id="cariNama" class="form-control w-50" placeholder="Cari Siswa..." onkeyup="filterTabel()">
-        </div>
-        <div class="table-responsive">
-          <table class="table table-hover align-middle" id="tabelRekap">
-            <thead></thead>
-            <tbody id="bodyRekap"></tbody>
-          </table>
+      <!-- TAB REKAP -->
+      <div id="tabRekap" class="hidden animate__animated animate__fadeIn">
+        <div class="card p-0 overflow-hidden">
+          <div class="p-3 bg-light border-bottom">
+            <h6 class="mb-0 fw-bold">Status Pelunasan Siswa</h6>
+            <small class="text-muted">Menampilkan sisa tagihan per kategori</small>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" id="tableRekap" style="font-size: 0.85rem;">
+              <!-- Data dimuat via Script -->
+            </table>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    const loader = (show, txt = "") => {
-      document.getElementById('loaderText').innerText = txt;
-      document.getElementById('loader').classList[show ? 'remove' : 'add']('hidden');
-    }
+    let role = "";
+    let namaUser = "";
+    let sessionID = "";
 
-    function prosesLogin() {
+    function login() {
       const pin = document.getElementById('pinInput').value;
-      if (!pin) return;
-      
-      loader(true, "Memverifikasi PIN...");
-      google.script.run
-        .withSuccessHandler(res => {
-          if (res.status === "success") {
-            document.getElementById('loginPage').classList.add('hidden');
-            document.getElementById('dashboardPage').classList.remove('hidden');
-            document.getElementById('labelUser').innerText = res.user;
+      const btn = document.getElementById('btnLogin');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Mencocokkan...';
 
-            if (res.role === "BENDAHARA") {
-              document.getElementById('panelBendahara').classList.remove('hidden');
-              google.script.run.withSuccessHandler(list => {
-                const el = document.getElementById('selNama');
-                el.innerHTML = list.map(n => `<option value="${n}">${n}</option>`).join('');
-              }).getSiswaList();
-            }
-            muatTabel();
-          } else {
-            loader(false);
-            document.getElementById('msgError').innerText = res.message;
-          }
-        })
-        .withFailureHandler(err => { loader(false); alert("Gagal Login: " + err); })
-        .checkLogin(pin);
+      google.script.run.withSuccessHandler(res => {
+        if(res) {
+          role = res.role;
+          namaUser = res.nama;
+          sessionID = res.sessionID;
+          document.getElementById('loginSection').classList.add('hidden');
+          document.getElementById('mainSection').classList.remove('hidden');
+          document.getElementById('roleLabel').innerText = role;
+          document.getElementById('userNameLabel').innerText = namaUser;
+          initApp();
+        } else { 
+          alert("PIN Salah atau Tidak Terdaftar!"); 
+          btn.disabled = false;
+          btn.innerText = 'MASUK KE PANEL';
+        }
+      }).checkLogin(pin);
     }
 
-    function muatTabel() {
-      loader(true, "Sinkronisasi Data...");
-      google.script.run
-        .withSuccessHandler(data => {
-          const thead = document.querySelector("#tabelRekap thead");
-          const tbody = document.getElementById("bodyRekap");
-          
-          thead.innerHTML = `<tr>${data[0].map(h => `<th>${h}</th>`).join('')}</tr>`;
-          
-          let html = "";
-          for (let i = 1; i < data.length; i++) {
-            html += `<tr>`;
-            data[i].forEach((cell, idx) => {
-              if (cell === "LUNAS") html += `<td class="text-center"><span class="badge-status bg-success">LUNAS</span></td>`;
-              else if (cell === "BELUM") html += `<td class="text-center"><span class="badge-status bg-danger">BELUM</span></td>`;
-              else if (!isNaN(cell) && cell !== "" && idx > 0) html += `<td class="text-end fw-bold text-warning">Rp ${Number(cell).toLocaleString('id-ID')}</td>`;
-              else html += `<td class="${idx === 0 ? 'fw-bold text-info' : ''}">${cell || "-"}</td>`;
-            });
-            html += `</tr>`;
-          }
-          tbody.innerHTML = html;
-          loader(false);
-        })
-        .withFailureHandler(err => { loader(false); alert("Tabel Gagal Dimuat: " + err); })
-        .getRekapData();
+    function initApp() {
+      google.script.run.withSuccessHandler(res => {
+        let sOpt = res.siswa.map(s => `<option value="${s[0]}">${s[0]}. ${s[1]}</option>`).join('');
+        let kOpt = res.target.map(k => `<option value="${k[0]}">${k[0]}</option>`).join('');
+        document.getElementById('siswaSelect').innerHTML = sOpt;
+        document.getElementById('katSelect').innerHTML = kOpt;
+      }).getInitialData();
     }
 
-    function simpanData() {
-      const payload = {
-        nama: document.getElementById('selNama').value,
-        jenis: document.getElementById('selJenis').value,
-        jumlah: document.getElementById('numJumlah').value,
-        user: document.getElementById('labelUser').innerText
+    function simpan() {
+      const data = {
+        absen: document.getElementById('siswaSelect').value,
+        namaSiswa: document.getElementById('siswaSelect').options[document.getElementById('siswaSelect').selectedIndex].text.split('. ')[1],
+        kategori: document.getElementById('katSelect').value,
+        jumlah: document.getElementById('jumlahInput').value,
+        role: role,
+        namaUser: namaUser
       };
-      if (!payload.jumlah) return alert("Nominal wajib diisi!");
+      
+      if(!data.jumlah) return alert("Masukkan nominal uang!");
+      
+      const btn = document.getElementById('btnSimpan');
+      btn.disabled = true;
+      btn.innerText = "Mengirim...";
 
-      loader(true, "Menyimpan Iuran...");
-      google.script.run
-        .withSuccessHandler(res => {
-          if (res === "success") {
-            document.getElementById('numJumlah').value = "";
-            alert("Berhasil disimpan!");
-            muatTabel();
-          } else { loader(false); alert(res); }
-        })
-        .simpanIuran(payload);
+      google.script.run.withSuccessHandler(msg => {
+        alert(msg);
+        document.getElementById('jumlahInput').value = "";
+        btn.disabled = false;
+        btn.innerText = "SIMPAN TRANSAKSI";
+      }).saveTransaction(data);
     }
 
-    function filterTabel() {
-      const q = document.getElementById("cariNama").value.toUpperCase();
-      document.querySelectorAll("#bodyRekap tr").forEach(row => {
-        row.style.display = row.cells[0].innerText.toUpperCase().indexOf(q) > -1 ? "" : "none";
-      });
+    function loadRekap() {
+      showTab('rekap');
+      const table = document.getElementById('tableRekap');
+      table.innerHTML = '<div class="p-4 text-center"><div class="spinner-border text-primary"></div><p>Menghitung data...</p></div>';
+      
+      google.script.run.withSuccessHandler(res => {
+        let html = `<thead class="table-light"><tr><th class="ps-3">Siswa</th>`;
+        res.kategori.forEach(k => html += `<th class="text-center">${k}</th>`);
+        html += `</tr></thead><tbody>`;
+        
+        res.rekap.forEach(r => {
+          html += `<tr><td class="ps-3 fw-bold">${r.nama}<br><small class="text-muted">Absen ${r.absen}</small></td>`;
+          res.kategori.forEach(k => {
+            let status = r.iuran[k];
+            let isLunas = status === "LUNAS";
+            html += `<td class="text-center">
+              <span class="status-badge ${isLunas ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'}">
+                ${status}
+              </span>
+            </td>`;
+          });
+          html += `</tr>`;
+        });
+        table.innerHTML = html + "</tbody>";
+      }).getRekap();
     }
 
-    document.getElementById('pinInput').addEventListener('keypress', e => { if(e.key === 'Enter') prosesLogin(); });
+    function showTab(t) {
+      document.getElementById('tabInput').classList.toggle('hidden', t !== 'input');
+      document.getElementById('tabRekap').classList.toggle('hidden', t !== 'rekap');
+      
+      const tabs = document.querySelectorAll('.nav-link');
+      tabs[0].classList.toggle('active', t === 'input');
+      tabs[1].classList.toggle('active', t === 'rekap');
+    }
+
+    function logoutManual() {
+      if (sessionID) {
+        google.script.run.withSuccessHandler(() => location.reload()).recordLogout(sessionID);
+      } else {
+        location.reload();
+      }
+    }
+
+    window.addEventListener('beforeunload', () => {
+      if (sessionID) google.script.run.recordLogout(sessionID);
+    });
   </script>
 </body>
 </html>
