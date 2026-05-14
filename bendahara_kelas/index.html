@@ -163,12 +163,35 @@
   </div>
 
   <script>
+    // URL Deployment GAS Anda
     const GAS_URL = "https://script.google.com/macros/s/AKfycbyt3p4O8Wbjwlg1ILlq7PMvYUA2na3TWcaMB54PEH11zHw9rBRoKOI4nnTRFz8pdURNZQ/exec";
     const categories = ["KAS", "GALON", "KARTU PELAJAR", "TALI ASIH", "LAIN 1", "LAIN 2"];
 
     let role = "";
     let namaUser = "";
     let sessionID = "";
+
+    // CEK SESI SAAT RELOAD
+    window.onload = function() {
+      checkSession();
+    };
+
+    function checkSession() {
+      const savedSession = localStorage.getItem("ebendahara_session");
+      if (savedSession) {
+        const data = JSON.parse(savedSession);
+        role = data.role;
+        namaUser = data.nama;
+        sessionID = data.sessionID;
+
+        document.getElementById('loginSection').classList.add('hidden');
+        document.getElementById('mainSection').classList.remove('hidden');
+        document.getElementById('roleLabel').innerText = role;
+        document.getElementById('userNameLabel').innerText = namaUser;
+        
+        initApp();
+      }
+    }
 
     async function callGAS(action, payload = {}) {
       try {
@@ -199,6 +222,13 @@
         namaUser = res.nama;
         sessionID = res.sessionID;
         
+        // Simpan ke browser
+        localStorage.setItem("ebendahara_session", JSON.stringify({
+          role: role,
+          nama: namaUser,
+          sessionID: sessionID
+        }));
+
         document.getElementById('loginSection').classList.add('hidden');
         document.getElementById('mainSection').classList.remove('hidden');
         document.getElementById('roleLabel').innerText = role;
@@ -218,7 +248,7 @@
         Swal.fire({
           icon: 'error',
           title: 'Akses Ditolak',
-          text: 'PIN Salah atau tidak terdaftar!',
+          text: 'PIN Salah!',
           confirmButtonColor: '#4f46e5'
         });
         btn.disabled = false;
@@ -251,12 +281,7 @@
       });
 
       if(items.length === 0) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Data Kosong',
-          text: 'Isi nominal di salah satu kategori!',
-          confirmButtonColor: '#4f46e5'
-        });
+        Swal.fire({ icon: 'warning', title: 'Data Kosong', text: 'Isi nominal dulu!', confirmButtonColor: '#4f46e5' });
         return;
       }
 
@@ -275,21 +300,11 @@
       try {
         const msg = await callGAS("saveMulti", { data: payload });
         if(msg) {
-          Swal.fire({
-            icon: 'success',
-            title: 'Berhasil!',
-            text: 'Iuran ' + payload.namaSiswa + ' telah dicatat.',
-            confirmButtonColor: '#7c3aed'
-          });
+          Swal.fire({ icon: 'success', title: 'Berhasil!', text: 'Data iuran tersimpan.', confirmButtonColor: '#7c3aed' });
           inputs.forEach(inp => inp.value = "");
         }
       } catch (err) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Gagal',
-          text: 'Terjadi kesalahan sistem.',
-          confirmButtonColor: '#ef4444'
-        });
+        Swal.fire({ icon: 'error', title: 'Gagal', text: 'Koneksi bermasalah.', confirmButtonColor: '#ef4444' });
       }
       
       btn.disabled = false;
@@ -299,10 +314,10 @@
     async function loadRekap() {
       showTab('rekap');
       const table = document.getElementById('tableRekap');
-      table.innerHTML = '<tr><td class="p-5 text-center"><div class="spinner-border text-primary spinner-border-sm"></div><br><small class="text-muted">Menghitung sisa iuran...</small></td></tr>';
+      table.innerHTML = '<tr><td class="p-5 text-center"><div class="spinner-border text-primary spinner-border-sm"></div><br><small class="text-muted">Sinkronisasi...</small></td></tr>';
       
       const res = await callGAS("rekap");
-      if(!res) return table.innerHTML = '<tr><td class="p-4 text-center text-danger">Gagal sinkron data.</td></tr>';
+      if(!res) return table.innerHTML = '<tr><td class="p-4 text-center text-danger">Gagal memuat data.</td></tr>';
 
       let html = `<thead class="table-light text-nowrap"><tr><th class="ps-3">Nama Siswa</th>`;
       res.kategori.forEach(k => html += `<th class="text-center">${k}</th>`);
@@ -313,11 +328,7 @@
         res.kategori.forEach(k => {
           let status = r.iuran[k];
           let isLunas = status === "LUNAS";
-          html += `<td class="text-center">
-            <span class="status-badge ${isLunas ? 'bg-lunas' : 'bg-sisa'}">
-              ${status}
-            </span>
-          </td>`;
+          html += `<td class="text-center"><span class="status-badge ${isLunas ? 'bg-lunas' : 'bg-sisa'}">${status}</span></td>`;
         });
         html += `</tr>`;
       });
@@ -327,10 +338,10 @@
     async function loadTotalDana() {
       showTab('total');
       const container = document.getElementById('totalDanaContainer');
-      container.innerHTML = '<div class="card p-4 text-center"><div class="spinner-border text-primary mx-auto mb-2"></div><br>Menghitung saldo...</div>';
+      container.innerHTML = '<div class="card p-4 text-center"><div class="spinner-border text-primary mx-auto mb-2"></div><br>Menghitung...</div>';
       
       const res = await callGAS("totalDana");
-      if(!res) return container.innerHTML = '<div class="card p-4 text-center text-danger">Gagal memuat saldo.</div>';
+      if(!res) return container.innerHTML = '<div class="card p-4 text-center text-danger">Gagal.</div>';
 
       let html = `<div class="card p-3 shadow-sm border-0"><div class="list-group list-group-flush">`;
       let grandTotal = 0;
@@ -360,7 +371,7 @@
     function logoutManual() {
       Swal.fire({
         title: 'Keluar?',
-        text: "Sesi Anda akan diakhiri.",
+        text: "Sesi akan dihapus.",
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#4f46e5',
@@ -369,6 +380,7 @@
       }).then((result) => {
         if (result.isConfirmed) {
           if (sessionID) callGAS("logout", { sessionID: sessionID });
+          localStorage.removeItem("ebendahara_session");
           location.reload();
         }
       });
