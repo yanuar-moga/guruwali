@@ -13,13 +13,16 @@
     .header-app { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: white; padding: 35px 20px; text-align: center; border-radius: 0 0 30px 30px; box-shadow: 0 4px 15px rgba(79,70,229,0.3); }
     .container { max-width: 700px; padding: 20px; flex: 1; }
     .card { border: none; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.03); margin-bottom: 20px; }
-    .btn-primary { background: #4f46e5; border: none; padding: 12px; border-radius: 12px; font-weight: 600; }
+    .btn-primary { background: #4f46e5; border: none; padding: 12px; border-radius: 12px; font-weight: 600; transition: 0.3s; }
+    .btn-primary:hover { background: #4338ca; transform: translateY(-2px); }
     .hidden { display: none !important; }
-    .pin-input { letter-spacing: 8px; text-align: center; font-size: 1.5rem; font-weight: bold; border-radius: 12px; }
-    .status-badge { font-size: 0.75rem; padding: 5px 12px; border-radius: 12px; font-weight: 600; }
+    .pin-input { letter-spacing: 8px; text-align: center; font-size: 1.5rem; font-weight: bold; border-radius: 12px; border: 2px solid #e2e8f0; }
+    .status-badge { font-size: 0.75rem; padding: 5px 12px; border-radius: 12px; font-weight: 600; display: inline-block; }
     .bg-lunas { background-color: #dcfce7; color: #15803d; }
     .bg-sisa { background-color: #fee2e2; color: #b91c1c; }
     .footer { text-align: center; padding: 20px; font-size: 0.75rem; color: #94a3b8; }
+    /* Style khusus Siswa */
+    .card-siswa { background: white; border-left: 5px solid #4f46e5; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
   </style>
 </head>
 <body>
@@ -30,7 +33,7 @@
   </div>
 
   <div class="container">
-    <!-- LOGIN SECTION -->
+    <!-- 1. LOGIN SECTION -->
     <div id="loginSection" class="card p-4">
       <div class="text-center mb-4">
         <h5 class="fw-bold">Selamat Datang</h5>
@@ -40,7 +43,7 @@
       <button onclick="login()" id="btnLogin" class="btn btn-primary w-100">MASUK KE SISTEM</button>
     </div>
 
-    <!-- MAIN PANEL -->
+    <!-- 2. MAIN PANEL -->
     <div id="mainSection" class="hidden">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -50,19 +53,20 @@
         <button onclick="logout()" class="btn btn-outline-danger btn-sm rounded-pill px-3">Keluar</button>
       </div>
 
-      <!-- NAVIGASI (Hanya muncul untuk Pengurus) -->
+      <!-- NAVIGASI ADMIN (Bendahara/Wali Kelas/Tamu) -->
       <ul id="navAdmin" class="nav nav-pills nav-fill mb-4 card p-2 flex-row shadow-sm bg-white">
         <li class="nav-item"><button class="nav-link active" id="tabInBtn" onclick="showTab('input')">Input</button></li>
         <li class="nav-item"><button class="nav-link" id="tabRekapBtn" onclick="loadRekap()">Rekap</button></li>
         <li class="nav-item"><button class="nav-link" id="tabTotalBtn" onclick="loadTotalDana()">Saldo</button></li>
       </ul>
 
-      <!-- PANEL SISWA (Hanya muncul untuk Siswa) -->
-      <div id="panelSiswa" class="hidden text-center mb-4">
-        <div class="alert alert-info py-2 small">Kamu sedang melihat tagihan pribadimu.</div>
+      <!-- PANEL KHUSUS SISWA -->
+      <div id="panelSiswa" class="hidden">
+        <div class="alert alert-primary mb-3 small">Berikut adalah rincian pembayaran iuran kamu:</div>
+        <div id="siswaResultContainer"></div>
       </div>
 
-      <!-- CONTENT AREAS -->
+      <!-- CONTENT AREAS (ADMIN/BENDAHARA) -->
       <div id="tabInput" class="card p-3 shadow-sm">
         <div class="d-flex gap-2 mb-3">
           <button id="modeIuran" onclick="switchMode('iuran')" class="btn btn-sm btn-primary flex-fill rounded-pill">Iuran</button>
@@ -86,24 +90,26 @@
         <button onclick="prosesSimpan()" id="btnSimpan" class="btn btn-primary w-100 mt-3">SIMPAN TRANSAKSI</button>
       </div>
 
+      <!-- TAB REKAP (ADMIN/BENDAHARA) -->
       <div id="tabRekap" class="hidden">
         <div class="card p-0 overflow-hidden">
           <div class="table-responsive">
-            <table class="table align-middle mb-0" id="tableRekap" style="font-size: 0.8rem;"></table>
+            <table class="table align-middle mb-0" id="tableRekap" style="font-size: 0.75rem;"></table>
           </div>
         </div>
       </div>
 
-      <div id="tabTotal" class="hidden"><div id="totalDanaContainer"></div></div>
+      <!-- TAB TOTAL (SALDO) -->
+      <div id="tabTotal" class="hidden">
+        <div id="totalDanaContainer"></div>
+      </div>
     </div>
   </div>
 
-  <div class="footer">
-    Apps by MB © 2026 - Digitalizing 7H
-  </div>
+  <div class="footer">Apps by MB © 2026 - Digitalizing 7H</div>
 
   <script>
-    const GAS_URL = "URL_GAS_ANDA_DI_SINI"; // GANTI DENGAN URL GAS ANDA
+    const GAS_URL = "URL_GAS_ANDA"; // GANTI DENGAN URL WEB APP ANDA
     let role = "", namaUser = "", sessionID = "", userAbsen = "", currentMode = "iuran";
 
     window.onload = checkSession;
@@ -121,18 +127,22 @@
       const pin = document.getElementById('pinInput').value;
       if(!pin) return;
       const btn = document.getElementById('btnLogin');
-      btn.disabled = true; btn.innerHTML = 'Verifikasi...';
+      btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Verifikasi...';
 
-      const res = await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "login", pin }) });
-      const d = await res.json();
+      try {
+        const res = await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "login", pin }) });
+        const d = await res.json();
 
-      if(d.status === "success" && d.data) {
-        const u = d.data;
-        localStorage.setItem("ebendahara_session", JSON.stringify(u));
-        location.reload();
-      } else {
-        Swal.fire('Gagal', 'PIN/NISN tidak terdaftar!', 'error');
-        btn.disabled = false; btn.innerText = 'MASUK KE SISTEM';
+        if(d.status === "success" && d.data) {
+          localStorage.setItem("ebendahara_session", JSON.stringify(d.data));
+          location.reload();
+        } else {
+          Swal.fire('Gagal', 'PIN atau NISN salah!', 'error');
+          btn.disabled = false; btn.innerText = 'MASUK KE SISTEM';
+        }
+      } catch (e) {
+        Swal.fire('Error', 'Gagal terhubung ke server', 'error');
+        btn.disabled = false;
       }
     }
 
@@ -146,19 +156,59 @@
         document.getElementById('navAdmin').classList.add('hidden');
         document.getElementById('tabInput').classList.add('hidden');
         document.getElementById('panelSiswa').classList.remove('hidden');
-        loadRekap(); // Langsung load data tagihan siswa
+        loadDataSiswa(); 
       } else {
         initAdminData();
       }
     }
 
+    // FUNGSI KHUSUS SISWA: Tampilan List Tagihan
+    async function loadDataSiswa() {
+      const container = document.getElementById('siswaResultContainer');
+      container.innerHTML = '<div class="text-center p-5"><div class="spinner-border text-primary"></div><p>Mengambil data...</p></div>';
+      
+      const res = await fetch(GAS_URL, { 
+        method: "POST", 
+        body: JSON.stringify({ action: "rekap", role: "SISWA", absen: userAbsen }) 
+      });
+      const d = await res.json();
+      
+      if(d.status === "success" && d.data.rekap.length > 0) {
+        const data = d.data.rekap[0]; // Data milik siswa itu sendiri
+        let html = `
+          <div class="card p-3 mb-4 text-center bg-primary text-white shadow">
+            <p class="small mb-1">Total Sudah Dibayar</p>
+            <h2 class="fw-bold">Rp ${data.totalBayar.toLocaleString()}</h2>
+          </div>
+        `;
+        
+        data.rincian.forEach(item => {
+          const isLunas = item.status === "LUNAS";
+          html += `
+            <div class="card-siswa shadow-sm">
+              <div>
+                <p class="mb-0 small text-muted">${item.kategori}</p>
+                <h6 class="mb-0 fw-bold">Rp ${item.bayar.toLocaleString()} / <span class="text-secondary">Rp ${item.target.toLocaleString()}</span></h6>
+              </div>
+              <span class="status-badge ${isLunas ? 'bg-lunas' : 'bg-sisa'}">${item.status}</span>
+            </div>
+          `;
+        });
+        container.innerHTML = html;
+      }
+    }
+
+    // FUNGSI BENDAHARA: Inisialisasi Form
     async function initAdminData() {
       const cats = ["KAS", "GALON", "KARTU PELAJAR", "TALI ASIH", "LAIN 1", "LAIN 2"];
-      let h = "";
-      cats.forEach(k => h += `<tr><td>${k}</td><td><input type="number" class="form-control form-control-sm iuran-input" data-kat="${k}"></td></tr>`);
-      document.getElementById('inputTableBody').innerHTML = h;
+      document.getElementById('inputTableBody').innerHTML = cats.map(k => `
+        <tr>
+          <td class="fw-bold">${k}</td>
+          <td><input type="number" class="form-control form-control-sm iuran-input" data-kat="${k}" placeholder="0"></td>
+        </tr>
+      `).join('');
 
-      const res = await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "getInitialData" }) });
+      const res = await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "getInitialData", role: role }) });
       const d = await res.json();
       if(d.data) document.getElementById('siswaSelect').innerHTML = d.data.siswa.map(s => `<option value="${s[0]}">${s[1]}</option>`).join('');
     }
@@ -166,28 +216,115 @@
     async function loadRekap() {
       showTab('rekap');
       const t = document.getElementById('tableRekap');
-      t.innerHTML = '<tr><td class="p-4 text-center">Memuat...</td></tr>';
+      t.innerHTML = '<tr><td class="p-4 text-center"><div class="spinner-border spinner-border-sm text-primary"></div></td></tr>';
       
-      const res = await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "rekap", filterAbsen: userAbsen }) });
+      const res = await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "rekap", role: role }) });
       const d = await res.json();
       
       if(d.data) {
         let h = `<thead class="table-light"><tr><th class="ps-3">Siswa</th>` + d.data.kategori.map(k => `<th class="text-center">${k}</th>`).join('') + `</tr></thead><tbody>`;
         d.data.rekap.forEach(r => {
           h += `<tr><td class="ps-3 fw-bold">${r.nama}</td>`;
-          d.data.kategori.forEach(k => h += `<td class="text-center"><span class="status-badge ${r.iuran[k]==='LUNAS'?'bg-lunas':'bg-sisa'}">${r.iuran[k]}</span></td>`);
+          // Mengambil status dari array rincian untuk admin
+          r.rincian.forEach(rin => {
+            h += `<td class="text-center"><span class="status-badge ${rin.status === 'LUNAS'?'bg-lunas':'bg-sisa'}">${rin.status}</span></td>`;
+          });
           h += `</tr>`;
         });
         t.innerHTML = h + "</tbody>";
       }
     }
 
+    async function loadTotalDana() {
+      showTab('total');
+      const container = document.getElementById('totalDanaContainer');
+      container.innerHTML = '<div class="text-center p-3"><div class="spinner-border"></div></div>';
+      
+      const res = await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "totalDana" }) });
+      const d = await res.json();
+      
+      if(d.data) {
+        let html = '<div class="row g-2">';
+        let totalSeluruh = 0;
+        for (let kat in d.data) {
+          if (kat !== "SETOR KESISWAAN") totalSeluruh += d.data[kat];
+          if (kat === "SETOR KESISWAAN") totalSeluruh -= d.data[kat];
+
+          html += `
+            <div class="col-6">
+              <div class="card p-3 text-center">
+                <p class="small text-muted mb-1">${kat}</p>
+                <h6 class="fw-bold mb-0">Rp ${d.data[kat].toLocaleString()}</h6>
+              </div>
+            </div>
+          `;
+        }
+        html += `
+          <div class="col-12 mt-3">
+            <div class="card p-3 text-center bg-dark text-white">
+              <p class="small mb-1">TOTAL SALDO BERSIH (DI TANGAN)</p>
+              <h3 class="fw-bold mb-0">Rp ${totalSeluruh.toLocaleString()}</h3>
+            </div>
+          </div>
+        </div>`;
+        container.innerHTML = html;
+      }
+    }
+
+    async function prosesSimpan() {
+      const btn = document.getElementById('btnSimpan');
+      const payload = {
+        role: role, namaUser: namaUser,
+        absenSiswa: document.getElementById('siswaSelect').value,
+        namaSiswa: document.getElementById('siswaSelect').options[document.getElementById('siswaSelect').selectedIndex].text,
+        items: []
+      };
+
+      if (currentMode === 'iuran') {
+        document.querySelectorAll('.iuran-input').forEach(inp => {
+          payload.items.push({ kategori: inp.getAttribute('data-kat'), jumlah: inp.value || 0 });
+        });
+      } else {
+        payload.items.push({ kategori: "SETOR KESISWAAN", jumlah: document.getElementById('nominalSetor').value || 0 });
+        payload.namaSiswa = "KESISWAAN";
+      }
+
+      if (payload.items.every(i => i.jumlah == 0)) return Swal.fire('Opps', 'Isi nominal dulu!', 'warning');
+
+      btn.disabled = true; btn.innerText = 'Menyimpan...';
+      const res = await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "saveMulti", data: payload }) });
+      const d = await res.json();
+
+      if(d.status === "success") {
+        Swal.fire('Berhasil', d.data, 'success').then(() => location.reload());
+      } else {
+        Swal.fire('Gagal', d.message, 'error');
+        btn.disabled = false; btn.innerText = 'SIMPAN TRANSAKSI';
+      }
+    }
+
+    function switchMode(m) {
+      currentMode = m;
+      document.getElementById('areaIuran').classList.toggle('hidden', m !== 'iuran');
+      document.getElementById('areaSetor').classList.toggle('hidden', m !== 'setor');
+      document.getElementById('modeIuran').classList.toggle('btn-primary', m === 'iuran');
+      document.getElementById('modeIuran').classList.toggle('btn-outline-primary', m !== 'iuran');
+      document.getElementById('modeSetor').classList.toggle('btn-danger', m === 'setor');
+      document.getElementById('modeSetor').classList.toggle('btn-outline-danger', m !== 'setor');
+    }
+
     function showTab(t) {
-      ['tabInput','tabRekap','tabTotal'].forEach(id => document.getElementById(id).classList.toggle('hidden', id !== 'tab'+t.charAt(0).toUpperCase()+t.slice(1)));
+      ['tabInput','tabRekap','tabTotal'].forEach(id => {
+        document.getElementById(id).classList.toggle('hidden', id !== 'tab'+t.charAt(0).toUpperCase()+t.slice(1));
+      });
+      // Update nav link active
+      document.querySelectorAll('#navAdmin .nav-link').forEach(btn => btn.classList.remove('active'));
+      if(t === 'input') document.getElementById('tabInBtn').classList.add('active');
+      if(t === 'rekap') document.getElementById('tabRekapBtn').classList.add('active');
+      if(t === 'total') document.getElementById('tabTotalBtn').classList.add('active');
     }
 
     function logout() { localStorage.removeItem("ebendahara_session"); location.reload(); }
-    // Tambahkan fungsi pendukung lainnya (switchMode, prosesSimpan, loadTotalDana) sesuai kebutuhan...
   </script>
 </body>
 </html>
