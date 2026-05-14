@@ -21,7 +21,6 @@
     .bg-lunas { background-color: #dcfce7; color: #15803d; }
     .bg-sisa { background-color: #fee2e2; color: #b91c1c; }
     .footer { text-align: center; padding: 20px; font-size: 0.75rem; color: #94a3b8; }
-    /* Style khusus Siswa */
     .card-siswa { background: white; border-left: 5px solid #4f46e5; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
   </style>
 </head>
@@ -29,7 +28,7 @@
 
   <div class="header-app">
     <h3 class="mb-0">💰 E-Bendahara 7H</h3>
-    <p class="small opacity-75 mb-0" id="headerSub">Digital Classroom Management</p>
+    <p class="small opacity-75 mb-0">Sistem Kas Digital Terintegrasi</p>
   </div>
 
   <div class="container">
@@ -53,7 +52,7 @@
         <button onclick="logout()" class="btn btn-outline-danger btn-sm rounded-pill px-3">Keluar</button>
       </div>
 
-      <!-- NAVIGASI ADMIN (Bendahara/Wali Kelas/Tamu) -->
+      <!-- NAVIGASI ADMIN -->
       <ul id="navAdmin" class="nav nav-pills nav-fill mb-4 card p-2 flex-row shadow-sm bg-white">
         <li class="nav-item"><button class="nav-link active" id="tabInBtn" onclick="showTab('input')">Input</button></li>
         <li class="nav-item"><button class="nav-link" id="tabRekapBtn" onclick="loadRekap()">Rekap</button></li>
@@ -62,7 +61,6 @@
 
       <!-- PANEL KHUSUS SISWA -->
       <div id="panelSiswa" class="hidden">
-        <div class="alert alert-primary mb-3 small">Berikut adalah rincian pembayaran iuran kamu:</div>
         <div id="siswaResultContainer"></div>
       </div>
 
@@ -90,7 +88,7 @@
         <button onclick="prosesSimpan()" id="btnSimpan" class="btn btn-primary w-100 mt-3">SIMPAN TRANSAKSI</button>
       </div>
 
-      <!-- TAB REKAP (ADMIN/BENDAHARA) -->
+      <!-- TAB REKAP -->
       <div id="tabRekap" class="hidden">
         <div class="card p-0 overflow-hidden">
           <div class="table-responsive">
@@ -99,7 +97,7 @@
         </div>
       </div>
 
-      <!-- TAB TOTAL (SALDO) -->
+      <!-- TAB SALDO -->
       <div id="tabTotal" class="hidden">
         <div id="totalDanaContainer"></div>
       </div>
@@ -109,7 +107,9 @@
   <div class="footer">Apps by MB © 2026 - Digitalizing 7H</div>
 
   <script>
-    const GAS_URL = "URL_GAS_ANDA"; // GANTI DENGAN URL WEB APP ANDA
+    // MASUKKAN URL GOOGLE APPS SCRIPT ANDA DI SINI
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbyt3p4O8Wbjwlg1ILlq7PMvYUA2na3TWcaMB54PEH11zHw9rBRoKOI4nnTRFz8pdURNZQ/exec";
+    
     let role = "", namaUser = "", sessionID = "", userAbsen = "", currentMode = "iuran";
 
     window.onload = checkSession;
@@ -127,17 +127,21 @@
       const pin = document.getElementById('pinInput').value;
       if(!pin) return;
       const btn = document.getElementById('btnLogin');
-      btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Verifikasi...';
+      btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
 
       try {
-        const res = await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "login", pin }) });
+        const res = await fetch(GAS_URL, { 
+          method: "POST", 
+          body: JSON.stringify({ action: "login", pin: pin }) 
+        });
         const d = await res.json();
 
         if(d.status === "success" && d.data) {
           localStorage.setItem("ebendahara_session", JSON.stringify(d.data));
+          renderUI(d.data);
           location.reload();
         } else {
-          Swal.fire('Gagal', 'PIN atau NISN salah!', 'error');
+          Swal.fire('Gagal', 'PIN/NISN tidak ditemukan', 'error');
           btn.disabled = false; btn.innerText = 'MASUK KE SISTEM';
         }
       } catch (e) {
@@ -162,10 +166,9 @@
       }
     }
 
-    // FUNGSI KHUSUS SISWA: Tampilan List Tagihan
     async function loadDataSiswa() {
       const container = document.getElementById('siswaResultContainer');
-      container.innerHTML = '<div class="text-center p-5"><div class="spinner-border text-primary"></div><p>Mengambil data...</p></div>';
+      container.innerHTML = '<div class="text-center p-5"><div class="spinner-border text-primary"></div></div>';
       
       const res = await fetch(GAS_URL, { 
         method: "POST", 
@@ -174,7 +177,7 @@
       const d = await res.json();
       
       if(d.status === "success" && d.data.rekap.length > 0) {
-        const data = d.data.rekap[0]; // Data milik siswa itu sendiri
+        const data = d.data.rekap[0];
         let html = `
           <div class="card p-3 mb-4 text-center bg-primary text-white shadow">
             <p class="small mb-1">Total Sudah Dibayar</p>
@@ -198,7 +201,6 @@
       }
     }
 
-    // FUNGSI BENDAHARA: Inisialisasi Form
     async function initAdminData() {
       const cats = ["KAS", "GALON", "KARTU PELAJAR", "TALI ASIH", "LAIN 1", "LAIN 2"];
       document.getElementById('inputTableBody').innerHTML = cats.map(k => `
@@ -208,26 +210,36 @@
         </tr>
       `).join('');
 
-      const res = await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "getInitialData", role: role }) });
+      const res = await fetch(GAS_URL, { 
+        method: "POST", 
+        body: JSON.stringify({ action: "getInitialData", role: role }) 
+      });
       const d = await res.json();
-      if(d.data) document.getElementById('siswaSelect').innerHTML = d.data.siswa.map(s => `<option value="${s[0]}">${s[1]}</option>`).join('');
+      if(d.data) {
+        document.getElementById('siswaSelect').innerHTML = d.data.siswa
+          .filter(s => s[1])
+          .map(s => `<option value="${s[0]}">${s[1]}</option>`).join('');
+      }
     }
 
     async function loadRekap() {
       showTab('rekap');
       const t = document.getElementById('tableRekap');
-      t.innerHTML = '<tr><td class="p-4 text-center"><div class="spinner-border spinner-border-sm text-primary"></div></td></tr>';
+      t.innerHTML = '<tr><td class="p-4 text-center"><div class="spinner-border spinner-border-sm"></div></td></tr>';
       
-      const res = await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "rekap", role: role }) });
+      const res = await fetch(GAS_URL, { 
+        method: "POST", 
+        body: JSON.stringify({ action: "rekap", role: role }) 
+      });
       const d = await res.json();
       
       if(d.data) {
-        let h = `<thead class="table-light"><tr><th class="ps-3">Siswa</th>` + d.data.kategori.map(k => `<th class="text-center">${k}</th>`).join('') + `</tr></thead><tbody>`;
+        let h = `<thead class="table-light"><tr><th class="ps-3">Nama Siswa</th>` + d.data.kategori.map(k => `<th class="text-center">${k}</th>`).join('') + `</tr></thead><tbody>`;
         d.data.rekap.forEach(r => {
           h += `<tr><td class="ps-3 fw-bold">${r.nama}</td>`;
-          // Mengambil status dari array rincian untuk admin
           r.rincian.forEach(rin => {
-            h += `<td class="text-center"><span class="status-badge ${rin.status === 'LUNAS'?'bg-lunas':'bg-sisa'}">${rin.status}</span></td>`;
+            const isLunas = rin.status === 'LUNAS';
+            h += `<td class="text-center"><span class="status-badge ${isLunas?'bg-lunas':'bg-sisa'}">${isLunas ? '✔' : '✘'}</span></td>`;
           });
           h += `</tr>`;
         });
@@ -245,14 +257,14 @@
       
       if(d.data) {
         let html = '<div class="row g-2">';
-        let totalSeluruh = 0;
+        let totalNet = 0;
         for (let kat in d.data) {
-          if (kat !== "SETOR KESISWAAN") totalSeluruh += d.data[kat];
-          if (kat === "SETOR KESISWAAN") totalSeluruh -= d.data[kat];
+          if (kat !== "SETOR KESISWAAN") totalNet += d.data[kat];
+          else totalNet -= d.data[kat];
 
           html += `
             <div class="col-6">
-              <div class="card p-3 text-center">
+              <div class="card p-3 text-center shadow-sm">
                 <p class="small text-muted mb-1">${kat}</p>
                 <h6 class="fw-bold mb-0">Rp ${d.data[kat].toLocaleString()}</h6>
               </div>
@@ -261,9 +273,9 @@
         }
         html += `
           <div class="col-12 mt-3">
-            <div class="card p-3 text-center bg-dark text-white">
+            <div class="card p-3 text-center bg-dark text-white shadow">
               <p class="small mb-1">TOTAL SALDO BERSIH (DI TANGAN)</p>
-              <h3 class="fw-bold mb-0">Rp ${totalSeluruh.toLocaleString()}</h3>
+              <h3 class="fw-bold mb-0">Rp ${totalNet.toLocaleString()}</h3>
             </div>
           </div>
         </div>`;
@@ -273,33 +285,48 @@
 
     async function prosesSimpan() {
       const btn = document.getElementById('btnSimpan');
-      const payload = {
-        role: role, namaUser: namaUser,
-        absenSiswa: document.getElementById('siswaSelect').value,
-        namaSiswa: document.getElementById('siswaSelect').options[document.getElementById('siswaSelect').selectedIndex].text,
-        items: []
-      };
+      const items = [];
 
       if (currentMode === 'iuran') {
         document.querySelectorAll('.iuran-input').forEach(inp => {
-          payload.items.push({ kategori: inp.getAttribute('data-kat'), jumlah: inp.value || 0 });
+          if(inp.value && inp.value != 0) {
+            items.push({ kategori: inp.getAttribute('data-kat'), jumlah: inp.value });
+          }
         });
       } else {
-        payload.items.push({ kategori: "SETOR KESISWAAN", jumlah: document.getElementById('nominalSetor').value || 0 });
-        payload.namaSiswa = "KESISWAAN";
+        const nominal = document.getElementById('nominalSetor').value;
+        if(nominal && nominal != 0) {
+          items.push({ kategori: "SETOR KESISWAAN", jumlah: nominal });
+        }
       }
 
-      if (payload.items.every(i => i.jumlah == 0)) return Swal.fire('Opps', 'Isi nominal dulu!', 'warning');
+      if (items.length === 0) return Swal.fire('Opps', 'Isi nominal dulu!', 'warning');
+
+      const payload = {
+        action: "saveMulti",
+        role: role,
+        namaUser: namaUser,
+        data: {
+          absenSiswa: currentMode === 'iuran' ? document.getElementById('siswaSelect').value : "0",
+          namaSiswa: currentMode === 'iuran' ? document.getElementById('siswaSelect').options[document.getElementById('siswaSelect').selectedIndex].text : "KESISWAAN",
+          items: items
+        }
+      };
 
       btn.disabled = true; btn.innerText = 'Menyimpan...';
-      const res = await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "saveMulti", data: payload }) });
-      const d = await res.json();
+      try {
+        const res = await fetch(GAS_URL, { method: "POST", body: JSON.stringify(payload) });
+        const d = await res.json();
 
-      if(d.status === "success") {
-        Swal.fire('Berhasil', d.data, 'success').then(() => location.reload());
-      } else {
-        Swal.fire('Gagal', d.message, 'error');
-        btn.disabled = false; btn.innerText = 'SIMPAN TRANSAKSI';
+        if(d.status === "success") {
+          Swal.fire('Berhasil', d.data, 'success').then(() => location.reload());
+        } else {
+          Swal.fire('Gagal', d.message, 'error');
+          btn.disabled = false; btn.innerText = 'SIMPAN TRANSAKSI';
+        }
+      } catch (e) {
+        Swal.fire('Error', 'Gagal kirim data', 'error');
+        btn.disabled = false;
       }
     }
 
@@ -307,24 +334,24 @@
       currentMode = m;
       document.getElementById('areaIuran').classList.toggle('hidden', m !== 'iuran');
       document.getElementById('areaSetor').classList.toggle('hidden', m !== 'setor');
-      document.getElementById('modeIuran').classList.toggle('btn-primary', m === 'iuran');
-      document.getElementById('modeIuran').classList.toggle('btn-outline-primary', m !== 'iuran');
-      document.getElementById('modeSetor').classList.toggle('btn-danger', m === 'setor');
-      document.getElementById('modeSetor').classList.toggle('btn-outline-danger', m !== 'setor');
+      document.getElementById('modeIuran').className = m === 'iuran' ? 'btn btn-sm btn-primary flex-fill rounded-pill' : 'btn btn-sm btn-outline-primary flex-fill rounded-pill';
+      document.getElementById('modeSetor').className = m === 'setor' ? 'btn btn-sm btn-danger flex-fill rounded-pill' : 'btn btn-sm btn-outline-danger flex-fill rounded-pill';
     }
 
     function showTab(t) {
       ['tabInput','tabRekap','tabTotal'].forEach(id => {
         document.getElementById(id).classList.toggle('hidden', id !== 'tab'+t.charAt(0).toUpperCase()+t.slice(1));
       });
-      // Update nav link active
       document.querySelectorAll('#navAdmin .nav-link').forEach(btn => btn.classList.remove('active'));
       if(t === 'input') document.getElementById('tabInBtn').classList.add('active');
       if(t === 'rekap') document.getElementById('tabRekapBtn').classList.add('active');
       if(t === 'total') document.getElementById('tabTotalBtn').classList.add('active');
     }
 
-    function logout() { localStorage.removeItem("ebendahara_session"); location.reload(); }
+    function logout() {
+      localStorage.removeItem("ebendahara_session");
+      location.reload();
+    }
   </script>
 </body>
 </html>
