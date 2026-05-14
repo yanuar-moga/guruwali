@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-Bendahara Kelas 7H</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  <style>
+    body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; color: #334155; min-height: 100vh; display: flex; flex-direction: column; }
+    .header-app { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: white; padding: 35px 20px; text-align: center; border-radius: 0 0 30px 30px; box-shadow: 0 4px 15px rgba(79,70,229,0.3); }
+    .container { max-width: 700px; padding: 20px; flex: 1; }
+    .card { border: none; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.03); margin-bottom: 20px; }
+    .btn-primary { background: #4f46e5; border: none; padding: 12px; border-radius: 12px; font-weight: 600; }
+    .hidden { display: none !important; }
+    .pin-input { letter-spacing: 8px; text-align: center; font-size: 1.5rem; font-weight: bold; border-radius: 12px; }
+    .status-badge { font-size: 0.75rem; padding: 5px 12px; border-radius: 12px; font-weight: 600; }
+    .bg-lunas { background-color: #dcfce7; color: #15803d; }
+    .bg-sisa { background-color: #fee2e2; color: #b91c1c; }
+    .footer { text-align: center; padding: 20px; font-size: 0.75rem; color: #94a3b8; }
+  </style>
+</head>
+<body>
+
+  <div class="header-app">
+    <h3 class="mb-0">💰 E-Bendahara 7H</h3>
+    <p class="small opacity-75 mb-0" id="headerSub">Digital Classroom Management</p>
+  </div>
+
+  <div class="container">
+    <!-- LOGIN SECTION -->
+    <div id="loginSection" class="card p-4">
+      <div class="text-center mb-4">
+        <h5 class="fw-bold">Selamat Datang</h5>
+        <p class="text-muted small">Bendahara: Masukkan PIN<br>Siswa: Masukkan NISN</p>
+      </div>
+      <input type="password" id="pinInput" class="form-control pin-input mb-3" placeholder="••••••" inputmode="numeric">
+      <button onclick="login()" id="btnLogin" class="btn btn-primary w-100">MASUK KE SISTEM</button>
+    </div>
+
+    <!-- MAIN PANEL -->
+    <div id="mainSection" class="hidden">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <span class="badge bg-primary-subtle text-primary mb-1" id="roleLabel"></span>
+          <h5 class="fw-bold mb-0" id="userNameLabel"></h5>
+        </div>
+        <button onclick="logout()" class="btn btn-outline-danger btn-sm rounded-pill px-3">Keluar</button>
+      </div>
+
+      <!-- NAVIGASI (Hanya muncul untuk Pengurus) -->
+      <ul id="navAdmin" class="nav nav-pills nav-fill mb-4 card p-2 flex-row shadow-sm bg-white">
+        <li class="nav-item"><button class="nav-link active" id="tabInBtn" onclick="showTab('input')">Input</button></li>
+        <li class="nav-item"><button class="nav-link" id="tabRekapBtn" onclick="loadRekap()">Rekap</button></li>
+        <li class="nav-item"><button class="nav-link" id="tabTotalBtn" onclick="loadTotalDana()">Saldo</button></li>
+      </ul>
+
+      <!-- PANEL SISWA (Hanya muncul untuk Siswa) -->
+      <div id="panelSiswa" class="hidden text-center mb-4">
+        <div class="alert alert-info py-2 small">Kamu sedang melihat tagihan pribadimu.</div>
+      </div>
+
+      <!-- CONTENT AREAS -->
+      <div id="tabInput" class="card p-3 shadow-sm">
+        <div class="d-flex gap-2 mb-3">
+          <button id="modeIuran" onclick="switchMode('iuran')" class="btn btn-sm btn-primary flex-fill rounded-pill">Iuran</button>
+          <button id="modeSetor" onclick="switchMode('setor')" class="btn btn-sm btn-outline-danger flex-fill rounded-pill">Setor</button>
+        </div>
+        
+        <div id="areaIuran">
+          <select id="siswaSelect" class="form-select mb-3 border-0 bg-light"></select>
+          <div class="table-responsive">
+            <table class="table table-borderless align-middle small">
+              <tbody id="inputTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="areaSetor" class="hidden py-3 text-center">
+          <label class="small fw-bold">Nominal Setor ke Kesiswaan</label>
+          <input type="number" id="nominalSetor" class="form-control form-control-lg text-center mt-2" placeholder="Rp 0">
+        </div>
+
+        <button onclick="prosesSimpan()" id="btnSimpan" class="btn btn-primary w-100 mt-3">SIMPAN TRANSAKSI</button>
+      </div>
+
+      <div id="tabRekap" class="hidden">
+        <div class="card p-0 overflow-hidden">
+          <div class="table-responsive">
+            <table class="table align-middle mb-0" id="tableRekap" style="font-size: 0.8rem;"></table>
+          </div>
+        </div>
+      </div>
+
+      <div id="tabTotal" class="hidden"><div id="totalDanaContainer"></div></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Apps by MB © 2026 - Digitalizing 7H
+  </div>
+
+  <script>
+    const GAS_URL = "URL_GAS_ANDA_DI_SINI"; // GANTI DENGAN URL GAS ANDA
+    let role = "", namaUser = "", sessionID = "", userAbsen = "", currentMode = "iuran";
+
+    window.onload = checkSession;
+
+    function checkSession() {
+      const saved = localStorage.getItem("ebendahara_session");
+      if (saved) {
+        const d = JSON.parse(saved);
+        role = d.role; namaUser = d.nama; sessionID = d.sessionID; userAbsen = d.absen;
+        renderUI();
+      }
+    }
+
+    async function login() {
+      const pin = document.getElementById('pinInput').value;
+      if(!pin) return;
+      const btn = document.getElementById('btnLogin');
+      btn.disabled = true; btn.innerHTML = 'Verifikasi...';
+
+      const res = await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "login", pin }) });
+      const d = await res.json();
+
+      if(d.status === "success" && d.data) {
+        const u = d.data;
+        localStorage.setItem("ebendahara_session", JSON.stringify(u));
+        location.reload();
+      } else {
+        Swal.fire('Gagal', 'PIN/NISN tidak terdaftar!', 'error');
+        btn.disabled = false; btn.innerText = 'MASUK KE SISTEM';
+      }
+    }
+
+    function renderUI() {
+      document.getElementById('loginSection').classList.add('hidden');
+      document.getElementById('mainSection').classList.remove('hidden');
+      document.getElementById('roleLabel').innerText = role;
+      document.getElementById('userNameLabel').innerText = namaUser;
+
+      if (role === "SISWA") {
+        document.getElementById('navAdmin').classList.add('hidden');
+        document.getElementById('tabInput').classList.add('hidden');
+        document.getElementById('panelSiswa').classList.remove('hidden');
+        loadRekap(); // Langsung load data tagihan siswa
+      } else {
+        initAdminData();
+      }
+    }
+
+    async function initAdminData() {
+      const cats = ["KAS", "GALON", "KARTU PELAJAR", "TALI ASIH", "LAIN 1", "LAIN 2"];
+      let h = "";
+      cats.forEach(k => h += `<tr><td>${k}</td><td><input type="number" class="form-control form-control-sm iuran-input" data-kat="${k}"></td></tr>`);
+      document.getElementById('inputTableBody').innerHTML = h;
+
+      const res = await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "getInitialData" }) });
+      const d = await res.json();
+      if(d.data) document.getElementById('siswaSelect').innerHTML = d.data.siswa.map(s => `<option value="${s[0]}">${s[1]}</option>`).join('');
+    }
+
+    async function loadRekap() {
+      showTab('rekap');
+      const t = document.getElementById('tableRekap');
+      t.innerHTML = '<tr><td class="p-4 text-center">Memuat...</td></tr>';
+      
+      const res = await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "rekap", filterAbsen: userAbsen }) });
+      const d = await res.json();
+      
+      if(d.data) {
+        let h = `<thead class="table-light"><tr><th class="ps-3">Siswa</th>` + d.data.kategori.map(k => `<th class="text-center">${k}</th>`).join('') + `</tr></thead><tbody>`;
+        d.data.rekap.forEach(r => {
+          h += `<tr><td class="ps-3 fw-bold">${r.nama}</td>`;
+          d.data.kategori.forEach(k => h += `<td class="text-center"><span class="status-badge ${r.iuran[k]==='LUNAS'?'bg-lunas':'bg-sisa'}">${r.iuran[k]}</span></td>`);
+          h += `</tr>`;
+        });
+        t.innerHTML = h + "</tbody>";
+      }
+    }
+
+    function showTab(t) {
+      ['tabInput','tabRekap','tabTotal'].forEach(id => document.getElementById(id).classList.toggle('hidden', id !== 'tab'+t.charAt(0).toUpperCase()+t.slice(1)));
+    }
+
+    function logout() { localStorage.removeItem("ebendahara_session"); location.reload(); }
+    // Tambahkan fungsi pendukung lainnya (switchMode, prosesSimpan, loadTotalDana) sesuai kebutuhan...
+  </script>
+</body>
+</html>
