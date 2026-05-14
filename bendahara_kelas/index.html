@@ -41,7 +41,7 @@
     }
     .btn-primary:hover { background: #5a67d8; }
     .nav-pills .nav-link.active { background-color: #764ba2; }
-    .nav-pills .nav-link { color: #764ba2; font-weight: 500; }
+    .nav-pills .nav-link { color: #764ba2; font-weight: 500; font-size: 0.9rem; }
     .hidden { display: none; }
     .pin-input {
       letter-spacing: 10px;
@@ -54,7 +54,6 @@
       padding: 4px 8px;
       border-radius: 20px;
     }
-    /* Animasi sederhana */
     .fade-in {
       animation: fadeIn 0.5s;
     }
@@ -96,31 +95,36 @@
 
       <ul class="nav nav-pills nav-fill mb-3 card p-2 flex-row shadow-sm">
         <li class="nav-item">
-          <button class="nav-link active" id="tabInBtn" onclick="showTab('input')">Input Data</button>
+          <button class="nav-link active" id="tabInBtn" onclick="showTab('input')">Input</button>
         </li>
         <li class="nav-item">
-          <button class="nav-link" id="tabRekapBtn" onclick="loadRekap()">Rekapitulasi</button>
+          <button class="nav-link" id="tabRekapBtn" onclick="loadRekap()">Rekap</button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link" id="tabTotalBtn" onclick="loadTotalDana()">Total</button>
         </li>
       </ul>
 
-      <!-- TAB INPUT -->
-      <div id="tabInput" class="card p-4 shadow-sm">
-        <div class="mb-3">
+      <!-- TAB INPUT (TABLE MODE) -->
+      <div id="tabInput" class="card p-3 shadow-sm">
+        <div class="mb-3 border-bottom pb-3">
           <label class="form-label small fw-bold">Pilih Siswa</label>
           <select id="siswaSelect" class="form-select shadow-sm"></select>
         </div>
-        <div class="mb-3">
-          <label class="form-label small fw-bold">Kategori Iuran</label>
-          <select id="katSelect" class="form-select shadow-sm"></select>
-        </div>
-        <div class="mb-3">
-          <label class="form-label small fw-bold">Nominal Pembayaran</label>
-          <div class="input-group shadow-sm">
-            <span class="input-group-text">Rp</span>
-            <input type="number" id="jumlahInput" class="form-control" placeholder="Contoh: 5000">
-          </div>
-        </div>
-        <button onclick="simpan()" id="btnSimpan" class="btn btn-primary w-100 mt-2">SIMPAN TRANSAKSI</button>
+        
+        <table class="table table-sm align-middle">
+          <thead class="table-light text-secondary">
+            <tr>
+              <th class="ps-2">Kategori</th>
+              <th style="width: 160px;">Nominal (Rp)</th>
+            </tr>
+          </thead>
+          <tbody id="inputTableBody">
+            <!-- Dinamis oleh Script -->
+          </tbody>
+        </table>
+        
+        <button onclick="simpanMulti()" id="btnSimpan" class="btn btn-primary w-100 mt-2 shadow-sm">SIMPAN SEMUA</button>
       </div>
 
       <!-- TAB REKAP -->
@@ -130,24 +134,26 @@
             <h6 class="mb-0 fw-bold text-center">Data Pelunasan (Sisa Bayar)</h6>
           </div>
           <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0" id="tableRekap" style="font-size: 0.85rem;">
-              <!-- Data Loading -->
-            </table>
+            <table class="table table-hover align-middle mb-0" id="tableRekap" style="font-size: 0.85rem;"></table>
           </div>
         </div>
+      </div>
+
+      <!-- TAB TOTAL DANA -->
+      <div id="tabTotal" class="hidden fade-in">
+        <div id="totalDanaContainer"></div>
       </div>
     </div>
   </div>
 
   <script>
-    // URL Web App GAS Anda
     const GAS_URL = "https://script.google.com/macros/s/AKfycbyt3p4O8Wbjwlg1ILlq7PMvYUA2na3TWcaMB54PEH11zHw9rBRoKOI4nnTRFz8pdURNZQ/exec";
+    const categories = ["KAS", "GALON", "KARTU PELAJAR", "TALI ASIH", "LAIN 1", "LAIN 2"];
 
     let role = "";
     let namaUser = "";
     let sessionID = "";
 
-    // Fungsi Bridge ke Google Apps Script
     async function callGAS(action, payload = {}) {
       const response = await fetch(GAS_URL, {
         method: "POST",
@@ -161,10 +167,10 @@
     async function login() {
       const pin = document.getElementById('pinInput').value;
       const btn = document.getElementById('btnLogin');
-      if(!pin) return alert("PIN tidak boleh kosong!");
+      if(!pin) return alert("Masukkan PIN!");
 
       btn.disabled = true;
-      btn.innerHTML = 'Mengecek...';
+      btn.innerText = 'Mengecek...';
 
       try {
         const res = await callGAS("login", { pin: pin });
@@ -180,62 +186,75 @@
           
           initApp();
         } else {
-          alert("PIN Salah atau Tidak Terdaftar!");
+          alert("PIN Salah!");
           btn.disabled = false;
           btn.innerText = 'MASUK KE PANEL';
         }
       } catch (e) {
-        alert("Gagal terhubung ke Server!");
+        alert("Gagal koneksi server!");
         btn.disabled = false;
-        btn.innerText = 'MASUK KE PANEL';
       }
     }
 
     async function initApp() {
+      // Build Input Table
+      let html = "";
+      categories.forEach(kat => {
+        html += `<tr>
+          <td class="ps-2 fw-bold small text-secondary">${kat}</td>
+          <td><input type="number" class="form-control form-control-sm iuran-input shadow-sm" data-kat="${kat}" placeholder="0"></td>
+        </tr>`;
+      });
+      document.getElementById('inputTableBody').innerHTML = html;
+
+      // Load Siswa
       try {
         const res = await callGAS("getInitialData");
         let sOpt = res.siswa.map(s => `<option value="${s[0]}">${s[0]}. ${s[1]}</option>`).join('');
-        let kOpt = res.target.map(k => `<option value="${k[0]}">${k[0]}</option>`).join('');
         document.getElementById('siswaSelect').innerHTML = sOpt;
-        document.getElementById('katSelect').innerHTML = kOpt;
-      } catch (e) { console.error("Gagal ambil data awal"); }
+      } catch (e) { console.error("Error data awal"); }
     }
 
-    async function simpan() {
-      const data = {
-        absen: document.getElementById('siswaSelect').value,
-        namaSiswa: document.getElementById('siswaSelect').options[document.getElementById('siswaSelect').selectedIndex].text.split('. ')[1],
-        kategori: document.getElementById('katSelect').value,
-        jumlah: document.getElementById('jumlahInput').value,
-        role: role,
-        namaUser: namaUser
-      };
-      
-      if(!data.jumlah) return alert("Isi nominal!");
-      
+    async function simpanMulti() {
+      const inputs = document.querySelectorAll('.iuran-input');
+      let items = [];
+      inputs.forEach(inp => {
+        if(inp.value > 0) items.push({ kategori: inp.dataset.kat, jumlah: inp.value });
+      });
+
+      if(items.length === 0) return alert("Isi minimal satu nominal!");
+
       const btn = document.getElementById('btnSimpan');
       btn.disabled = true;
       btn.innerText = "Mengirim...";
 
+      const payload = {
+        absen: document.getElementById('siswaSelect').value,
+        namaSiswa: document.getElementById('siswaSelect').options[document.getElementById('siswaSelect').selectedIndex].text.split('. ')[1],
+        role: role,
+        namaUser: namaUser,
+        items: items
+      };
+
       try {
-        const msg = await callGAS("save", { data: data });
+        const msg = await callGAS("saveMulti", { data: payload });
         alert(msg);
-        document.getElementById('jumlahInput').value = "";
+        inputs.forEach(inp => inp.value = "");
       } catch (e) {
-        alert("Gagal menyimpan data!");
+        alert("Gagal simpan!");
       }
       btn.disabled = false;
-      btn.innerText = "SIMPAN TRANSAKSI";
+      btn.innerText = "SIMPAN SEMUA";
     }
 
     async function loadRekap() {
       showTab('rekap');
       const table = document.getElementById('tableRekap');
-      table.innerHTML = '<tr><td colspan="5" class="p-4 text-center">Menghitung data...</td></tr>';
+      table.innerHTML = '<tr><td class="p-4 text-center">Memuat data...</td></tr>';
       
       try {
         const res = await callGAS("rekap");
-        let html = `<thead class="table-light"><tr><th class="ps-3">Siswa</th>`;
+        let html = `<thead class="table-light text-nowrap"><tr><th class="ps-3">Siswa</th>`;
         res.kategori.forEach(k => html += `<th class="text-center">${k}</th>`);
         html += `</tr></thead><tbody>`;
         
@@ -253,26 +272,46 @@
           html += `</tr>`;
         });
         table.innerHTML = html + "</tbody>";
-      } catch (e) {
-        table.innerHTML = '<tr><td class="p-4 text-center text-danger">Gagal memuat rekap.</td></tr>';
-      }
+      } catch (e) { table.innerHTML = '<tr><td class="p-4 text-center text-danger">Gagal memuat.</td></tr>'; }
+    }
+
+    async function loadTotalDana() {
+      showTab('total');
+      const container = document.getElementById('totalDanaContainer');
+      container.innerHTML = '<div class="card p-4 text-center">Memuat saldo...</div>';
+      
+      try {
+        const res = await callGAS("totalDana");
+        let html = `<div class="card p-3 shadow-sm"><ul class="list-group list-group-flush">`;
+        let grandTotal = 0;
+        for(let kat in res) {
+          grandTotal += res[kat];
+          html += `<li class="list-group-item d-flex justify-content-between align-items-center">
+            <span class="text-secondary fw-bold">${kat}</span>
+            <span class="fw-bold">Rp${res[kat].toLocaleString()}</span>
+          </li>`;
+        }
+        html += `<li class="list-group-item d-flex justify-content-between align-items-center bg-light">
+            <strong class="text-primary">TOTAL SALDO</strong>
+            <span class="badge bg-primary fs-6">Rp${grandTotal.toLocaleString()}</span>
+          </li></ul></div>`;
+        container.innerHTML = html;
+      } catch (e) { container.innerHTML = '<div class="card p-4 text-center text-danger">Gagal memuat saldo.</div>'; }
     }
 
     function showTab(t) {
       document.getElementById('tabInput').classList.toggle('hidden', t !== 'input');
       document.getElementById('tabRekap').classList.toggle('hidden', t !== 'rekap');
+      document.getElementById('tabTotal').classList.toggle('hidden', t !== 'total');
       document.getElementById('tabInBtn').classList.toggle('active', t === 'input');
       document.getElementById('tabRekapBtn').classList.toggle('active', t === 'rekap');
+      document.getElementById('tabTotalBtn').classList.toggle('active', t === 'total');
     }
 
     function logoutManual() {
       if (sessionID) callGAS("logout", { sessionID: sessionID });
       location.reload();
     }
-
-    window.addEventListener('beforeunload', () => {
-      if (sessionID) callGAS("logout", { sessionID: sessionID });
-    });
   </script>
 </body>
 </html>
