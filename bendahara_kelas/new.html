@@ -34,10 +34,6 @@ body{
   min-height:100vh;
 }
 
-/* ========================================
-HIDDEN
-======================================== */
-
 .hidden{
   display:none !important;
 }
@@ -88,9 +84,7 @@ CONTAINER
 ======================================== */
 
 .container{
-
   padding:16px;
-
 }
 
 /* ========================================
@@ -166,9 +160,7 @@ LOGIN
 ======================================== */
 
 .loginBox{
-
   margin-top:18px;
-
 }
 
 .loginTitle{
@@ -308,9 +300,7 @@ TABLE
 ======================================== */
 
 .tableWrap{
-
   overflow:auto;
-
 }
 
 table{
@@ -373,9 +363,7 @@ SALDO
 ======================================== */
 
 .saldoSection{
-
   margin-bottom:28px;
-
 }
 
 .saldoTitle{
@@ -390,7 +378,7 @@ SALDO
   display:flex;
   justify-content:space-between;
 
-  margin-bottom:22px;
+  margin-bottom:18px;
 
   font-weight:600;
 
@@ -418,9 +406,7 @@ PROFILE
 ======================================== */
 
 .profile{
-
   text-align:center;
-
 }
 
 .profile img{
@@ -502,6 +488,10 @@ POPUP
   }
 
 }
+
+/* ========================================
+MOBILE
+======================================== */
 
 @media(max-width:480px){
 
@@ -642,9 +632,13 @@ class="hidden container"
 
   </div>
 
-  <!-- MENU INPUT -->
+  <!-- ========================================
+  MENU INPUT
+  ======================================== -->
 
   <div id="menuInput">
+
+    <!-- TRANSAKSI -->
 
     <div class="card">
 
@@ -734,7 +728,9 @@ class="hidden container"
 
   </div>
 
-  <!-- MENU REKAP -->
+  <!-- ========================================
+  MENU REKAP
+  ======================================== -->
 
   <div
   id="menuRekap"
@@ -753,7 +749,9 @@ class="hidden container"
 
   </div>
 
-  <!-- MENU SALDO -->
+  <!-- ========================================
+  MENU SALDO
+  ======================================== -->
 
   <div
   id="menuSaldo"
@@ -1011,7 +1009,6 @@ async function login(){
   LOGIN_ROLE = res.user;
   LOGIN_PIN = pin;
 
-  // SIMPAN SESSION
   localStorage.setItem(
     "eb_pin",
     pin
@@ -1184,13 +1181,11 @@ async function saveTransaksi(){
 
     const nominal =
       Number(
-
         document
         .getElementById(
           "kat_" + t.kategori
         )
         .value || 0
-
       );
 
     if(nominal > 0){
@@ -1298,17 +1293,17 @@ function renderRekap(){
 
   let html = "";
 
-  DASHBOARD.rekap.forEach((r,i)=>{
+  DASHBOARD.rekap.forEach((row,index)=>{
 
     html += "<tr>";
 
-    r.forEach(c=>{
+    row.forEach((cell,col)=>{
 
       // HEADER
-      if(i == 0){
+      if(index === 0){
 
         html += `
-          <th>${c}</th>
+          <th>${cell}</th>
         `;
 
       }
@@ -1316,46 +1311,45 @@ function renderRekap(){
       // BODY
       else{
 
-        if(c == "LUNAS"){
+        // NAMA SISWA
+        if(col === 0){
 
           html += `
-
-            <td>
-
-              <span class="lunas">
-                LUNAS
-              </span>
-
+            <td style="text-align:left;font-weight:600">
+              ${cell}
             </td>
-
           `;
 
         }
 
+        // STATUS LUNAS
         else if(
-          typeof c == "number"
+          String(cell).toUpperCase()
+          === "LUNAS"
         ){
 
           html += `
-
             <td>
-
-              <span class="kurang">
-
-                Rp${c.toLocaleString('id-ID')}
-
+              <span class="lunas">
+                LUNAS
               </span>
-
             </td>
-
           `;
 
         }
 
+        // ANGKA SISA
         else{
 
+          const nominal =
+            Number(cell || 0);
+
           html += `
-            <td>${c}</td>
+            <td>
+              <span class="kurang">
+                Rp${nominal.toLocaleString('id-ID')}
+              </span>
+            </td>
           `;
 
         }
@@ -1560,6 +1554,7 @@ function showMenu(menu){
     .getElementById("btnSaldo")
     .classList.remove("active");
 
+  // INPUT
   if(menu == "input"){
 
     document
@@ -1572,6 +1567,7 @@ function showMenu(menu){
 
   }
 
+  // REKAP
   if(menu == "rekap"){
 
     document
@@ -1584,6 +1580,7 @@ function showMenu(menu){
 
   }
 
+  // SALDO
   if(menu == "saldo"){
 
     document
