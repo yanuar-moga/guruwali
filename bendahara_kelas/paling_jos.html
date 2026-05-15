@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>E-Bendahara</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:#ececec;
+max-width:500px;
+margin:auto;
+}
+
+.header{
+background:linear-gradient(135deg,#4b46e5,#7c3aed);
+padding:35px 20px;
+text-align:center;
+color:white;
+}
+
+.logo{
+font-size:42px;
+margin-bottom:5px;
+}
+
+.title{
+font-size:22px;
+font-weight:700;
+}
+
+.subtitle{
+font-size:13px;
+opacity:.9;
+}
+
+.container{
+padding:18px;
+}
+
+.card{
+background:white;
+border-radius:22px;
+padding:18px;
+margin-bottom:18px;
+box-shadow:0 4px 14px rgba(0,0,0,.08);
+}
+
+.pin-badge{
+display:inline-block;
+padding:4px 10px;
+background:#dbeafe;
+color:#2563eb;
+border-radius:8px;
+font-size:12px;
+font-weight:600;
+margin-bottom:5px;
+}
+
+.user-name{
+font-size:20px;
+font-weight:700;
+}
+
+.top-flex{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:18px;
+}
+
+.logout{
+border:1px solid red;
+color:red;
+background:white;
+padding:8px 18px;
+border-radius:30px;
+cursor:pointer;
+}
+
+.menu{
+display:flex;
+gap:10px;
+margin-bottom:15px;
+}
+
+.menu button{
+flex:1;
+padding:14px;
+border:none;
+border-radius:14px;
+background:white;
+cursor:pointer;
+font-weight:500;
+border:1px solid #ddd;
+}
+
+.menu .active{
+background:#7c3aed;
+color:white;
+box-shadow:0 4px 12px rgba(124,58,237,.4);
+}
+
+.input-group{
+margin-bottom:16px;
+}
+
+.label{
+font-size:13px;
+font-weight:600;
+margin-bottom:8px;
+display:block;
+color:#555;
+}
+
+select,input{
+width:100%;
+padding:14px;
+border-radius:12px;
+border:1px solid #ddd;
+font-size:14px;
+}
+
+.table-head{
+display:grid;
+grid-template-columns:1fr 140px;
+font-size:13px;
+font-weight:700;
+margin-bottom:10px;
+padding-top:15px;
+border-top:1px solid #ddd;
+}
+
+.row{
+display:grid;
+grid-template-columns:1fr 140px;
+gap:12px;
+margin-bottom:12px;
+align-items:center;
+}
+
+.save-btn{
+width:100%;
+padding:16px;
+border:none;
+border-radius:14px;
+background:#4f46e5;
+color:white;
+font-size:16px;
+font-weight:700;
+cursor:pointer;
+margin-top:10px;
+}
+
+.rekap-table{
+width:100%;
+border-collapse:collapse;
+font-size:12px;
+}
+
+.rekap-table th{
+padding:10px;
+text-align:left;
+border-bottom:1px solid #ddd;
+}
+
+.rekap-table td{
+padding:12px 8px;
+border-bottom:1px solid #eee;
+}
+
+.badge-lunas{
+background:#dcfce7;
+color:#15803d;
+padding:7px 10px;
+border-radius:999px;
+font-size:11px;
+font-weight:700;
+display:inline-block;
+}
+
+.badge-kurang{
+background:#fee2e2;
+color:#dc2626;
+padding:7px 10px;
+border-radius:999px;
+font-size:11px;
+font-weight:700;
+display:inline-block;
+}
+
+.saldo-row{
+display:flex;
+justify-content:space-between;
+margin-bottom:22px;
+font-weight:600;
+}
+
+.total-box{
+background:#2563eb;
+color:white;
+padding:18px;
+border-radius:16px;
+display:flex;
+justify-content:space-between;
+font-size:22px;
+font-weight:700;
+margin-top:10px;
+}
+
+.footer{
+text-align:center;
+font-size:12px;
+color:#9ca3af;
+padding:25px;
+}
+
+.hidden{
+display:none;
+}
+
+.login-card{
+margin-top:20px;
+}
+
+.login-title{
+text-align:center;
+font-size:30px;
+font-weight:700;
+margin-bottom:8px;
+}
+
+.login-sub{
+text-align:center;
+color:#777;
+margin-bottom:30px;
+}
+
+.pin-input{
+font-size:28px;
+text-align:center;
+letter-spacing:12px;
+font-weight:700;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="header">
+
+<div class="logo">💰</div>
+
+<div class="title">E-Bendahara</div>
+
+<div class="subtitle">Manajemen Keuangan Kelas Digital</div>
+
+</div>
+
+<div class="container">
+
+<!-- LOGIN -->
+
+<div id="loginPage">
+
+<div class="card login-card">
+
+<div class="login-title">
+Selamat Datang
+</div>
+
+<div class="login-sub">
+Masukkan PIN Keamanan untuk akses
+</div>
+
+<input
+type="password"
+id="pin"
+class="pin-input"
+maxlength="6"
+placeholder="••••••"
+/>
+
+<button class="save-btn" onclick="login()">
+BUKA PANEL KAS
+</button>
+
+</div>
+
+</div>
+
+<!-- DASHBOARD -->
+
+<div id="dashboard" class="hidden">
+
+<div class="top-flex">
+
+<div>
+
+<div class="pin-badge" id="roleText">
+PIN_WALIKELAS
+</div>
+
+<div class="user-name" id="userName">
+Pak Bayu
+</div>
+
+</div>
+
+<button class="logout" onclick="logout()">
+Keluar
+</button>
+
+</div>
+
+<div class="card">
+
+<div class="menu">
+
+<button class="active" onclick="showMenu('inputPage',this)">
+Input Data
+</button>
+
+<button onclick="showMenu('rekapPage',this)">
+Rekap Iuran
+</button>
+
+<button onclick="showMenu('saldoPage',this)">
+Total Saldo
+</button>
+
+</div>
+
+</div>
+
+<!-- INPUT -->
+
+<div id="inputPage">
+
+<div class="card">
+
+<div class="input-group">
+
+<label class="label">
+Pilih Nama Siswa
+</label>
+
+<select id="namaSiswa"></select>
+
+</div>
+
+<div class="table-head">
+
+<div>KATEGORI</div>
+<div>NOMINAL (RP)</div>
+
+</div>
+
+<div id="kategoriContainer"></div>
+
+<button class="save-btn" onclick="saveTransaksi()">
+SIMPAN TRANSAKSI
+</button>
+
+</div>
+
+</div>
+
+<!-- REKAP -->
+
+<div id="rekapPage" class="hidden">
+
+<div class="card">
+
+<div style="display:flex;justify-content:space-between;margin-bottom:15px;">
+
+<div style="font-size:22px;font-weight:700;">
+Monitoring Pelunasan
+</div>
+
+<div style="
+background:#f3f4f6;
+padding:6px 12px;
+border-radius:999px;
+font-size:12px;
+font-weight:700;
+color:#6b7280;
+">
+Auto-Sync
+</div>
+
+</div>
+
+<table class="rekap-table">
+
+<thead>
+
+<tr>
+<th>Nama Siswa</th>
+<th>KAS</th>
+<th>GALON</th>
+<th>KARTU</th>
+<th>TALI</th>
+<th>LAIN</th>
+</tr>
+
+</thead>
+
+<tbody id="rekapBody"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<!-- SALDO -->
+
+<div id="saldoPage" class="hidden">
+
+<div class="card">
+
+<div id="saldoList"></div>
+
+<div class="total-box">
+
+<div>TOTAL SALDO</div>
+
+<div id="grandTotal">Rp0</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="footer">
+
+Aplikasi e bendahara v 1.2 (Build 15 Mei 2026)<br>
+Apps by MB © 2026 MB All Rights Reserved
+
+</div>
+
+<script>
+
+const API_URL = "https://script.google.com/macros/s/AKfycbwm-CfRMCmbYBeEN26WMqtDpRkDHWyvEPGGEs95ZsdfIyxdpWSOqNrVkSvxyOiJmXF6IA/exec";
+
+let LOGIN_NAME = "";
+
+let MASTER = {};
+
+document
+.getElementById("pin")
+.addEventListener("keypress",function(e){
+
+if(e.key === "Enter"){
+login();
+}
+
+});
+
+async function api(action,data={}){
+
+const res = await fetch(API_URL,{
+
+method:"POST",
+
+body:JSON.stringify({
+action,
+...data
+})
+
+});
+
+return await res.json();
+
+}
+
+async function login(){
+
+const pin = document.getElementById("pin").value;
+
+const res = await api("login",{
+pin
+});
+
+if(!res.status){
+
+alert(res.message);
+
+return;
+
+}
+
+LOGIN_NAME = res.nama;
+
+document.getElementById("loginPage").classList.add("hidden");
+
+document.getElementById("dashboard").classList.remove("hidden");
+
+document.getElementById("userName").innerText = res.nama;
+
+document.getElementById("roleText").innerText = res.user;
+
+loadMaster();
+
+loadRekap();
+
+loadSaldo();
+
+}
+
+async function loadMaster(){
+
+const res = await api("master");
+
+MASTER = res;
+
+const siswa = document.getElementById("namaSiswa");
+
+siswa.innerHTML = "";
+
+res.siswa.forEach(item=>{
+
+siswa.innerHTML += `
+<option>${item}</option>
+`;
+
+});
+
+const kategori = document.getElementById("kategoriContainer");
+
+kategori.innerHTML = "";
+
+res.kategori.forEach(item=>{
+
+kategori.innerHTML += `
+
+<div class="row">
+
+<div>
+${item.kategori}
+</div>
+
+<div>
+
+<input
+type="number"
+class="nominal"
+data-kategori="${item.kategori}"
+value="0"
+/>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+async function saveTransaksi(){
+
+const items = [];
+
+document.querySelectorAll(".nominal")
+.forEach(el=>{
+
+items.push({
+kategori:el.dataset.kategori,
+nominal:el.value
+});
+
+});
+
+const nama =
+document.getElementById("namaSiswa").value;
+
+const res = await api("saveTransaksi",{
+
+nama,
+oleh:LOGIN_NAME,
+items
+
+});
+
+alert(res.message);
+
+document.querySelectorAll(".nominal")
+.forEach(el=>{
+el.value = 0;
+});
+
+loadSaldo();
+
+}
+
+async function loadRekap(){
+
+const res = await api("rekap");
+
+const body = document.getElementById("rekapBody");
+
+body.innerHTML = "";
+
+res.forEach(item=>{
+
+let row = `
+<tr>
+
+<td>
+<b>${item.nama}</b>
+</td>
+`;
+
+item.kategori.forEach(k=>{
+
+if(k.status == "LUNAS"){
+
+row += `
+<td>
+<span class="badge-lunas">
+LUNAS
+</span>
+</td>
+`;
+
+}else{
+
+row += `
+<td>
+<span class="badge-kurang">
+${k.status}
+</span>
+</td>
+`;
+
+}
+
+});
+
+row += `</tr>`;
+
+body.innerHTML += row;
+
+});
+
+}
+
+async function loadSaldo(){
+
+const res = await api("saldo");
+
+const saldo = document.getElementById("saldoList");
+
+saldo.innerHTML = "";
+
+let total = 0;
+
+Object.keys(res).forEach(key=>{
+
+total += Number(res[key]);
+
+saldo.innerHTML += `
+
+<div class="saldo-row">
+
+<div>${key}</div>
+
+<div>
+Rp${Number(res[key]).toLocaleString("id-ID")}
+</div>
+
+</div>
+
+`;
+
+});
+
+document.getElementById("grandTotal")
+.innerText =
+"Rp" + total.toLocaleString("id-ID");
+
+}
+
+function logout(){
+
+location.reload();
+
+}
+
+function showMenu(id,el){
+
+document.getElementById("inputPage")
+.classList.add("hidden");
+
+document.getElementById("rekapPage")
+.classList.add("hidden");
+
+document.getElementById("saldoPage")
+.classList.add("hidden");
+
+document.getElementById(id)
+.classList.remove("hidden");
+
+document.querySelectorAll(".menu button")
+.forEach(btn=>{
+
+btn.classList.remove("active");
+
+});
+
+el.classList.add("active");
+
+}
+
+</script>
+
+</body>
+</html>
