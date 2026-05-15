@@ -3,448 +3,433 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>E-Bendahara Multi-Layer 2026</title>
+  <title>E-Bendahara 2.0 Premium</title>
   
-  <!-- Frameworks -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <style>
     :root {
-      --primary: #4f46e5;
-      --secondary: #7c3aed;
+      --primary: #6366f1;
+      --secondary: #a855f7;
       --accent: #10b981;
-      --danger: #ef4444;
-      --bg-body: #f1f5f9;
-      --white: #ffffff;
+      --danger: #f43f5e;
+      --glass: rgba(255, 255, 255, 0.9);
+      --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
     }
 
     body {
-      font-family: 'Poppins', sans-serif;
-      background-color: var(--bg-body);
-      color: #1e293b;
-      margin: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg-gradient);
+      color: #0f172a;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    /* HEADER STYLE */
-    .header-app {
+    .app-header {
       background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
       color: white;
-      padding: 40px 20px;
+      padding: 60px 20px;
       text-align: center;
-      border-radius: 0 0 40px 40px;
-      box-shadow: 0 10px 20px rgba(79, 70, 229, 0.2);
+      border-radius: 0 0 50px 50px;
+      box-shadow: 0 20px 40px rgba(99, 102, 241, 0.2);
+      margin-bottom: -40px;
+      position: relative;
+      z-index: 2;
     }
 
-    .header-app h2 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; }
+    .app-header h1 { font-family: 'Space Grotesk', sans-serif; font-weight: 800; letter-spacing: -2px; }
 
-    .container { max-width: 650px; padding: 25px 15px; flex: 1; }
+    .main-container { max-width: 650px; margin: 0 auto; padding: 0 20px 100px; position: relative; z-index: 5; }
 
-    /* CARD STYLING */
-    .card {
-      border: none;
-      border-radius: 24px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-      background: var(--white);
+    .premium-card {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.5);
+      border-radius: 32px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+      margin-bottom: 24px;
       overflow: hidden;
-      margin-bottom: 20px;
+      transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* LAYER 1: LOGIN */
-    .pin-input {
-      letter-spacing: 10px;
+    .pin-field {
+      letter-spacing: 12px;
+      font-size: 2rem;
       text-align: center;
-      font-size: 1.8rem;
-      font-weight: 700;
-      border-radius: 15px;
+      font-weight: 800;
       border: 2px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 15px;
       background: #f8fafc;
     }
 
-    /* LAYER 3: STUDENT PORTAL SPECIFICS */
-    .student-photo-frame {
+    .btn-premium {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      padding: 18px;
+      border-radius: 20px;
+      font-weight: 700;
+      width: 100%;
+      box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+      transition: 0.3s;
+    }
+    .btn-premium:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(99, 102, 241, 0.4); opacity: 0.95; }
+
+    .profile-avatar {
       width: 120px;
       height: 120px;
       border-radius: 50%;
-      border: 4px solid var(--white);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      object-fit: cover;
+      border: 6px solid white;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
       margin-top: -60px;
-      background: #eee;
+      background: #e2e8f0;
+      object-fit: cover;
     }
 
     .finance-row {
       display: flex;
       justify-content: space-between;
-      padding: 12px 0;
-      border-bottom: 1px dashed #e2e8f0;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
     }
-
     .finance-row:last-child { border-bottom: none; }
 
-    .text-paid { color: var(--accent); font-weight: 600; }
-    .text-unpaid { color: var(--danger); font-weight: 600; }
+    .status-badge {
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 6px 12px;
+      border-radius: 12px;
+      text-transform: uppercase;
+    }
 
-    /* UTILS */
     .hidden { display: none !important; }
-    .fade-in { animation: fadeIn 0.5s ease-in-out; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-in { animation: slideUp 0.6s ease-out forwards; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-    .btn-action {
-      background: var(--primary);
-      color: white;
+    .custom-nav {
+      background: rgba(255,255,255,0.5);
+      border-radius: 20px;
+      padding: 6px;
+      display: flex;
+      gap: 5px;
+      margin-bottom: 20px;
+    }
+    .nav-btn {
+      flex: 1;
+      padding: 10px;
       border: none;
-      padding: 14px;
       border-radius: 16px;
       font-weight: 600;
-      width: 100%;
-      transition: 0.3s;
-    }
-    .btn-action:hover { opacity: 0.9; transform: scale(0.98); }
-
-    .nav-pills .nav-link {
-      border-radius: 12px;
-      font-weight: 500;
+      font-size: 0.8rem;
       color: #64748b;
-      font-size: 0.85rem;
+      background: transparent;
     }
-    .nav-pills .nav-link.active {
-      background-color: var(--secondary);
-      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
-    }
+    .nav-btn.active { background: white; color: var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
-    .footer {
-      text-align: center;
-      padding: 30px;
-      font-size: 0.75rem;
-      color: #94a3b8;
-    }
+    .footer-text { text-align: center; padding: 40px; color: #94a3b8; font-size: 0.8rem; letter-spacing: 1px; }
   </style>
 </head>
 <body>
 
-  <div class="header-app">
-    <h2 class="mb-1"><i class="fa-solid fa-wallet me-2"></i>E-Bendahara</h2>
-    <p class="small opacity-75">Sistem Transparansi Keuangan Kelas 2.0</p>
-  </div>
+  <header class="app-header">
+    <div class="mb-2"><i class="fa-solid fa-crown fa-2x"></i></div>
+    <h1>E-BENDAHARA <span style="opacity:0.8">2.0</span></h1>
+    <p class="opacity-75">Transparent Class Financial Intelligence</p>
+  </header>
 
-  <div class="container">
+  <div class="main-container">
     
-    <!-- LAYER 1: LOGIN SECTION -->
-    <div id="loginSection" class="card p-4 fade-in">
+    <div id="loginView" class="premium-card p-4 animate-in">
       <div class="text-center mb-4">
-        <h5 class="fw-bold">Akses Keamanan</h5>
-        <p class="text-muted small">Masukkan PIN atau NISN Anda</p>
+        <h5 class="fw-bold m-0">Sistem Autentikasi</h5>
+        <p class="text-muted small">Input PIN Admin atau NISN Siswa</p>
       </div>
       <div class="mb-4">
-        <input type="password" id="pinInput" class="form-control pin-input" placeholder="••••••" inputmode="numeric">
+        <input type="password" id="pinInput" class="form-control pin-field" placeholder="••••" maxlength="10" inputmode="numeric">
       </div>
-      <button onclick="handleLogin()" id="btnLogin" class="btn btn-action">MASUK KE SISTEM</button>
+      <button onclick="handleLogin()" id="btnLogin" class="btn btn-premium">MASUK KE DASHBOARD</button>
+      <div class="mt-4 text-center">
+        <p style="font-size: 0.65rem; color: #94a3b8;"><i class="fa-solid fa-shield-check me-1"></i> Data dienkripsi secara real-time via Google Cloud.</p>
+      </div>
     </div>
 
-    <!-- LAYER 2: ADMIN PANEL -->
-    <div id="adminSection" class="hidden fade-in">
-      <div class="d-flex justify-content-between align-items-center mb-4">
+    <div id="adminView" class="hidden animate-in">
+      <div class="d-flex justify-content-between align-items-center mb-4 px-2">
         <div>
-          <span class="badge bg-primary mb-1">ADMINISTRATOR</span>
-          <h5 class="fw-bold mb-0" id="adminNameLabel"></h5>
+          <span class="badge bg-white text-primary border rounded-pill mb-1">ACCESS: ADMIN</span>
+          <h4 class="fw-bold m-0" id="adminNameDisplay">---</h4>
         </div>
-        <button onclick="logout()" class="btn btn-sm btn-outline-danger rounded-pill px-3">Keluar</button>
+        <button onclick="triggerLogout()" class="btn btn-light rounded-circle shadow-sm"><i class="fa-solid fa-power-off text-danger"></i></button>
       </div>
 
-      <ul class="nav nav-pills nav-fill mb-4 card p-2 flex-row shadow-sm">
-        <li class="nav-item"><button class="nav-link active" id="tabInBtn" onclick="switchTab('input')">Input</button></li>
-        <li class="nav-item"><button class="nav-link" id="tabRekapBtn" onclick="loadAdminRekap()">Rekap</button></li>
-        <li class="nav-item"><button class="nav-link" id="tabTotalBtn" onclick="loadTotalSaldo()">Saldo</button></li>
-      </ul>
+      <div class="custom-nav">
+        <button class="nav-btn active" id="btnTabInput" onclick="switchAdminTab('input')">Transaksi</button>
+        <button class="nav-btn" id="btnTabRekap" onclick="initRekap()">Rekapitulasi</button>
+        <button class="nav-btn" id="btnTabSaldo" onclick="initSaldo()">Total Saldo</button>
+      </div>
 
-      <!-- Tab Content Admin -->
-      <div id="tabInput" class="card p-3 shadow-sm">
-        <label class="form-label small fw-bold text-secondary">Pilih Nama Siswa</label>
-        <select id="siswaSelect" class="form-select border-0 bg-light mb-3" style="border-radius:12px;"></select>
+      <div id="adminInputPanel" class="premium-card p-4">
+        <label class="form-label small fw-bold text-muted">SELECT STUDENT</label>
+        <select id="studentSelect" class="form-select border-0 bg-light py-3 rounded-4 mb-4"></select>
         
+        <div id="paymentInputsContainer">
+          <!-- Dynamically Generated -->
+        </div>
+        <button onclick="handlePaymentSave()" id="btnSaveTrans" class="btn btn-premium mt-3">SINKRONISASI DATA</button>
+      </div>
+
+      <div id="adminRekapPanel" class="hidden premium-card p-0">
         <div class="table-responsive">
-          <table class="table table-borderless align-middle">
-            <tbody id="adminInputBody"></tbody>
-          </table>
+          <table class="table table-hover mb-0" id="rekapTableBody" style="font-size: 0.75rem;"></table>
         </div>
-        <button onclick="savePayment()" id="btnSave" class="btn btn-action mt-2">SIMPAN DATA</button>
       </div>
 
-      <div id="tabRekap" class="hidden card p-0">
-         <div class="table-responsive"><table class="table table-hover mb-0" id="adminRekapTable" style="font-size: 0.8rem;"></table></div>
-      </div>
-
-      <div id="tabTotal" class="hidden card p-4 text-center">
-        <div id="saldoContent"></div>
+      <div id="adminSaldoPanel" class="hidden premium-card p-4">
+        <div id="saldoDistribution"></div>
       </div>
     </div>
 
-    <!-- LAYER 3: STUDENT DASHBOARD -->
-    <div id="studentSection" class="hidden fade-in">
-      <div class="card text-center pb-4 mb-4">
-        <div style="height: 100px; background: linear-gradient(45deg, #6366f1, #a855f7);"></div>
+    <div id="studentView" class="hidden animate-in">
+      <div class="premium-card text-center pb-4 mb-4">
+        <div style="height: 100px; background: linear-gradient(45deg, var(--primary), var(--secondary));"></div>
         <div class="d-flex justify-content-center">
-          <img id="stFoto" src="" class="student-photo-frame" onerror="this.src='https://placehold.co/150x150/e2e8f0/475569?text=User'">
+          <img id="stImg" src="" class="profile-avatar" onerror="this.src='https://placehold.co/200x200/6366f1/ffffff?text=USER'">
         </div>
-        <div class="mt-3 px-3">
-          <h4 class="fw-bold mb-0" id="stNama"></h4>
-          <p class="text-muted small mb-0" id="stNisn"></p>
-          <p class="badge bg-light text-dark border mt-2" id="stGender"></p>
-        </div>
-        <div class="px-4 mt-2">
-            <button onclick="logout()" class="btn btn-sm btn-light text-danger w-100 rounded-pill"><i class="fa-solid fa-power-off me-2"></i>Keluar Sesi</button>
+        <div class="mt-3">
+          <h3 class="fw-bold mb-1" id="stNameDisplay">---</h3>
+          <span class="badge bg-light text-dark border-0 rounded-pill" id="stNisnDisplay">NISN: ---</span>
         </div>
       </div>
 
-      <div class="card p-4">
-        <h6 class="fw-bold mb-3 text-primary"><i class="fa-solid fa-circle-check me-2"></i>Status Pembayaran (Sudah Bayar)</h6>
-        <div id="paidList"></div>
-        <div class="finance-row mt-2 pt-3 border-top border-primary">
-          <span class="fw-bold">TOTAL SUDAH DIBAYAR</span>
-          <span class="text-paid h6 mb-0" id="totalPaid"></span>
+      <div class="premium-card p-4">
+        <h6 class="fw-bold mb-3 text-primary"><i class="fa-solid fa-wallet me-2"></i>History Pembayaran</h6>
+        <div id="stPaidList"></div>
+        <div class="finance-row mt-3 pt-3 border-top fw-bold text-primary">
+          <span>TOTAL TERBAYAR</span>
+          <span id="stTotalPaid">Rp 0</span>
         </div>
       </div>
 
-      <div class="card p-4 border-start border-danger border-5">
-        <h6 class="fw-bold mb-3 text-danger"><i class="fa-solid fa-circle-exclamation me-2"></i>Kekurangan (Belum Bayar)</h6>
-        <div id="unpaidList"></div>
-        <div class="finance-row mt-2 pt-3 border-top border-danger">
-          <span class="fw-bold">TOTAL KEKURANGAN</span>
-          <span class="text-unpaid h6 mb-0" id="totalUnpaid"></span>
+      <div class="premium-card p-4 border-start border-5 border-danger">
+        <h6 class="fw-bold mb-3 text-danger"><i class="fa-solid fa-circle-exclamation me-2"></i>Tunggakan (Deficit)</h6>
+        <div id="stDeficitList"></div>
+        <div class="finance-row mt-3 pt-3 border-top fw-bold text-danger">
+          <span>SISA TUNGGAKAN</span>
+          <span id="stTotalDeficit">Rp 0</span>
         </div>
       </div>
 
-      <div class="text-center text-muted mt-2" style="font-size: 0.7rem;">
-        Terakhir diperbarui: <span id="stLastUpdate"></span>
-      </div>
+      <button onclick="triggerLogout()" class="btn btn-light w-100 rounded-4 text-muted"><i class="fa-solid fa-sign-out me-2"></i>Keluar Sesi</button>
     </div>
 
   </div>
 
-  <!-- FOOTER -->
-  <div class="footer">
-    <div>E-Bendahara v2.0 • Build 15 Mei 2026</div>
-    <div>Sistem Keamanan Berlapis & Real-time Database</div>
-    <div class="mt-2 fw-bold">Apps by MB &copy; 2026</div>
-  </div>
+  <footer class="footer-text">
+    <p class="m-0 fw-bold">E-BENDAHARA CORE 2026</p>
+    <p class="opacity-50">Enterprise Financial Transparency Solution</p>
+  </footer>
 
   <script>
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbyKNBJl0DghHMSjW-I7BcqjVncZQlO-_UwcLqAJUcL-_R_FuIYUReTaSaRmMNEpimnQ/exec";
-    const CATS = ["KAS", "GALON", "KARTU PELAJAR", "TALI ASIH", "LAIN 1", "LAIN 2"];
-    
-    let state = {
-      role: null,
-      nama: null,
-      sessionID: null,
-      absen: null
+    const CONFIG = {
+      API: "URL_GAS_ANDA", // Ganti dengan URL Deploy GAS Anda
+      CATEGORIES: ["KAS", "GALON", "KARTU PELAJAR", "TALI ASIH", "LAIN 1", "LAIN 2"]
     };
 
+    let session = { role: null, data: null };
+
     window.onload = () => {
-      const saved = localStorage.getItem("ebendahara_v2_session");
-      if(saved) {
-        state = JSON.parse(saved);
-        renderLayout();
+      const saved = localStorage.getItem("eb_v2_session");
+      if (saved) {
+        session = JSON.parse(saved);
+        renderCurrentView();
       }
     };
 
-    async function apiCall(action, data = {}) {
+    async function execApi(action, payload = {}) {
       try {
-        const response = await fetch(GAS_URL, {
+        const response = await fetch(CONFIG.API, {
           method: "POST",
-          body: JSON.stringify({ action, ...data })
+          body: JSON.stringify({ action, ...payload })
         });
-        const res = await response.json();
-        if(res.status === "success") return res.data;
-        throw new Error(res.message);
-      } catch (e) {
-        Swal.fire("Error", e.message, "error");
+        const json = await response.json();
+        if (json.status === "success") return json.data;
+        throw new Error(json.message);
+      } catch (err) {
+        Swal.fire({ icon: 'error', title: 'System Error', text: err.message });
         return null;
       }
     }
 
     async function handleLogin() {
       const pin = document.getElementById('pinInput').value;
-      if(!pin) return;
+      if (!pin) return Swal.fire("Input Required", "Masukkan PIN/NISN Anda", "warning");
 
       const btn = document.getElementById('btnLogin');
       btn.disabled = true;
-      btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Verifikasi...';
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Authenticating...';
 
-      const res = await apiCall("login", { pin });
-      if(res) {
-        state = res;
-        localStorage.setItem("ebendahara_v2_session", JSON.stringify(state));
-        Swal.fire({ icon: 'success', title: 'Berhasil', text: 'Selamat datang, ' + res.nama, timer: 2000, showConfirmButton: false });
-        renderLayout();
+      const data = await execApi("login", { pin });
+      if (data) {
+        session = { role: data.role, data: data };
+        localStorage.setItem("eb_v2_session", JSON.stringify(session));
+        Swal.fire({ icon: 'success', title: 'Access Granted', text: `Welcome, ${data.nama}`, timer: 2000, showConfirmButton: false });
+        renderCurrentView();
       } else {
-        Swal.fire("Gagal", "PIN atau NISN tidak terdaftar!", "error");
         btn.disabled = false;
-        btn.innerText = "MASUK KE SISTEM";
+        btn.innerText = "MASUK KE DASHBOARD";
       }
     }
 
-    function renderLayout() {
-      document.getElementById('loginSection').classList.add('hidden');
-      
-      if(state.role === "SISWA") {
-        document.getElementById('studentSection').classList.remove('hidden');
-        loadStudentDashboard();
-      } else {
-        document.getElementById('adminSection').classList.remove('hidden');
-        document.getElementById('adminNameLabel').innerText = state.nama;
+    function renderCurrentView() {
+      document.getElementById('loginView').classList.add('hidden');
+      if (session.role === "ADMIN") {
+        document.getElementById('adminView').classList.remove('hidden');
+        document.getElementById('adminNameDisplay').innerText = session.data.nama;
         initAdminPanel();
+      } else {
+        document.getElementById('studentView').classList.remove('hidden');
+        initStudentPortal();
       }
     }
 
-    /* --- ADMIN LOGIC --- */
     async function initAdminPanel() {
-      let html = "";
-      CATS.forEach(c => {
-        html += `<tr><td class="fw-bold small py-3">${c}</td>
-        <td><input type="number" class="form-control form-control-sm admin-pay-input" data-cat="${c}" placeholder="0"></td></tr>`;
+      let inputs = "";
+      CONFIG.CATEGORIES.forEach(c => {
+        inputs += `<div class="mb-3">
+          <label class="form-label small fw-bold text-muted">${c}</label>
+          <div class="input-group">
+            <span class="input-group-text border-0 bg-light">Rp</span>
+            <input type="number" class="form-control border-0 bg-light admin-in" data-cat="${c}" placeholder="0">
+          </div>
+        </div>`;
       });
-      document.getElementById('adminInputBody').innerHTML = html;
+      document.getElementById('paymentInputsContainer').innerHTML = inputs;
 
-      const res = await apiCall("getInitialData");
-      if(res && res.siswa) {
-        document.getElementById('siswaSelect').innerHTML = res.siswa.map(s => `<option value="${s[0]}">${s[1]}</option>`).join('');
+      const init = await execApi("getInitialData");
+      if (init) {
+        document.getElementById('studentSelect').innerHTML = init.siswa.map(s => `<option value="${s[0]}">${s[1]}</option>`).join('');
       }
     }
 
-    async function savePayment() {
-      const inputs = document.querySelectorAll('.admin-pay-input');
+    async function handlePaymentSave() {
+      const btn = document.getElementById('btnSaveTrans');
+      const inputs = document.querySelectorAll('.admin-in');
       let items = [];
-      inputs.forEach(i => { if(i.value > 0) items.push({ kategori: i.dataset.cat, jumlah: i.value }); });
-
-      if(items.length === 0) return Swal.fire("Peringatan", "Masukkan nominal!", "warning");
-
-      const btn = document.getElementById('btnSave');
-      btn.disabled = true;
       
-      const payload = {
-        absen: document.getElementById('siswaSelect').value,
-        namaSiswa: document.getElementById('siswaSelect').options[document.getElementById('siswaSelect').selectedIndex].text,
-        role: state.role,
-        namaUser: state.nama,
-        items: items
-      };
+      inputs.forEach(i => { if(i.value > 0) items.push({ kategori: i.dataset.cat, jumlah: i.value }); });
+      if (items.length === 0) return Swal.fire("Empty Input", "Nominal harus diisi.", "info");
 
-      const ok = await apiCall("saveMulti", { data: payload });
-      if(ok) {
-        Swal.fire("Berhasil", "Data tersimpan", "success");
+      btn.disabled = true;
+      btn.innerText = "Synchronizing...";
+
+      const ok = await execApi("savePayment", { 
+        data: { absen: document.getElementById('studentSelect').value, items: items } 
+      });
+
+      if (ok) {
+        Swal.fire("Saved", "Database diperbarui.", "success");
         inputs.forEach(i => i.value = "");
       }
       btn.disabled = false;
+      btn.innerText = "SINKRONISASI DATA";
     }
 
-    async function loadAdminRekap() {
-      switchTab('rekap');
-      const table = document.getElementById('adminRekapTable');
-      table.innerHTML = '<div class="p-4 text-center"><div class="spinner-border text-primary"></div></div>';
+    async function initStudentPortal() {
+      const s = session.data;
+      const detail = await execApi("getDashboard", { nisn: s.nisn });
+      if (!detail) return;
+
+      document.getElementById('stNameDisplay').innerText = s.nama;
+      document.getElementById('stNisnDisplay').innerText = "NISN: " + s.nisn;
+      document.getElementById('stImg').src = s.foto || `https://placehold.co/200x200/6366f1/ffffff?text=${s.nama.charAt(0)}`;
+
+      let pList = "", dList = "", pSum = 0, dSum = 0;
+      detail.forEach(item => {
+        pSum += item.paid; dSum += item.deficit;
+        if(item.paid > 0) pList += `<div class="finance-row"><span class="small fw-bold">${item.category}</span><span class="text-success fw-bold">Rp ${item.paid.toLocaleString()}</span></div>`;
+        if(item.deficit > 0) dList += `<div class="finance-row"><span class="small fw-bold">${item.category}</span><span class="text-danger fw-bold">- Rp ${item.deficit.toLocaleString()}</span></div>`;
+      });
+
+      document.getElementById('stPaidList').innerHTML = pList || '<p class="text-center text-muted py-2 small">Belum ada transaksi.</p>';
+      document.getElementById('stDeficitList').innerHTML = dList || '<p class="text-center text-success py-2 small">🎉 Semua iuran lunas!</p>';
+      document.getElementById('stTotalPaid').innerText = "Rp " + pSum.toLocaleString();
+      document.getElementById('stTotalDeficit').innerText = "Rp " + dSum.toLocaleString();
+    }
+
+    function switchAdminTab(t) {
+      document.getElementById('adminInputPanel').classList.toggle('hidden', t !== 'input');
+      document.getElementById('adminRekapPanel').classList.toggle('hidden', t !== 'rekap');
+      document.getElementById('adminSaldoPanel').classList.toggle('hidden', t !== 'saldo');
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      if(t==='input') document.getElementById('btnTabInput').classList.add('active');
+    }
+
+    async function initRekap() {
+      switchAdminTab('rekap');
+      document.getElementById('btnTabRekap').classList.add('active');
+      const table = document.getElementById('rekapTableBody');
+      table.innerHTML = '<tr><td class="text-center p-5"><div class="spinner-border text-primary"></div></td></tr>';
       
-      const res = await apiCall("rekap");
+      const res = await execApi("getRekap");
       if(!res) return;
 
-      let html = `<thead class="table-light"><tr><th class="ps-3">Nama</th>`;
-      res.kategori.forEach(k => html += `<th class="text-center">${k}</th>`);
+      let html = `<thead class="table-light"><tr><th class="ps-3 py-3">NAMA SISWA</th>`;
+      res.categories.slice(0,3).forEach(c => html += `<th class="text-center">${c}</th>`);
       html += `</tr></thead><tbody>`;
       
       res.rekap.forEach(r => {
-        html += `<tr><td class="ps-3 fw-bold">${r.nama}</td>`;
-        res.kategori.forEach(k => {
-          let status = r.iuran[k];
-          let color = status === "LUNAS" ? "text-success" : "text-danger";
-          html += `<td class="text-center ${color} fw-bold" style="font-size:0.6rem">${status}</td>`;
+        html += `<tr><td class="ps-3 py-2 fw-bold text-muted">${r.nama}</td>`;
+        res.categories.slice(0,3).forEach(c => {
+          const s = r.status[c];
+          const badge = s === "LUNAS" ? "bg-success" : (s === "OK" ? "bg-info" : "bg-danger");
+          html += `<td class="text-center"><span class="status-badge ${badge} text-white">${s}</span></td>`;
         });
         html += `</tr>`;
       });
       table.innerHTML = html + "</tbody>";
     }
 
-    async function loadTotalSaldo() {
-      switchTab('total');
-      const cont = document.getElementById('saldoContent');
-      cont.innerHTML = '<div class="spinner-border"></div>';
+    async function initSaldo() {
+      switchAdminTab('saldo');
+      document.getElementById('btnTabSaldo').classList.add('active');
+      const container = document.getElementById('saldoDistribution');
+      container.innerHTML = '<div class="text-center p-4"><div class="spinner-border"></div></div>';
       
-      const res = await apiCall("totalDana");
-      if(!res) return;
+      const data = await execApi("getTotalSaldo");
+      if(!data) return;
 
-      let total = 0;
-      let html = `<div class="list-group list-group-flush">`;
-      for(let k in res) {
-        total += res[k];
-        html += `<div class="list-group-item d-flex justify-content-between align-items-center">
-        <span class="small fw-bold">${k}</span><span>Rp ${res[k].toLocaleString()}</span></div>`;
+      let grand = 0, rows = `<div class="list-group list-group-flush mb-4">`;
+      for(let key in data) {
+        grand += data[key];
+        rows += `<div class="list-group-item d-flex justify-content-between border-0 px-0">
+          <span class="text-muted small">${key}</span>
+          <span class="fw-bold">Rp ${data[key].toLocaleString()}</span>
+        </div>`;
       }
-      html += `</div><div class="mt-3 p-3 bg-primary text-white rounded-4 shadow">
-      <div class="small">SALDO KELAS</div><h3 class="fw-bold mb-0">Rp ${total.toLocaleString()}</h3></div>`;
-      cont.innerHTML = html;
+      container.innerHTML = rows + `</div><div class="p-4 bg-primary text-white rounded-4 shadow-lg text-center">
+        <p class="small m-0 opacity-75">AVAILABLE GLOBAL BALANCE</p>
+        <h2 class="fw-bold m-0 mt-1">Rp ${grand.toLocaleString()}</h2>
+      </div>`;
     }
 
-    function switchTab(t) {
-      document.getElementById('tabInput').classList.toggle('hidden', t !== 'input');
-      document.getElementById('tabRekap').classList.toggle('hidden', t !== 'rekap');
-      document.getElementById('tabTotal').classList.toggle('hidden', t !== 'total');
-      document.getElementById('tabInBtn').classList.toggle('active', t === 'input');
-      document.getElementById('tabRekapBtn').classList.toggle('active', t === 'rekap');
-      document.getElementById('tabTotalBtn').classList.toggle('active', t === 'total');
-    }
-
-    /* --- STUDENT LOGIC --- */
-    async function loadStudentDashboard() {
-      const res = await apiCall("rekap", { filterAbsen: state.absen });
-      if(!res || res.rekap.length === 0) return;
-
-      const myData = res.rekap[0];
-      const detail = await apiCall("getStudentDashboard", { nisn: state.nisn }); 
-
-      document.getElementById('stNama').innerText = state.nama;
-      document.getElementById('stNisn').innerText = "NISN: " + state.nisn;
-      document.getElementById('stGender').innerText = state.gender || "Siswa";
-      document.getElementById('stFoto').src = state.foto;
-      document.getElementById('stLastUpdate').innerText = new Date().toLocaleString('id-ID');
-
-      let paidHtml = "";
-      let unpaidHtml = "";
-      let sumPaid = 0;
-      let sumUnpaid = 0;
-
-      // Handle individual category data
-      detail.forEach(item => {
-        sumPaid += item.paid;
-        sumUnpaid += item.deficit;
-
-        paidHtml += `<div class="finance-row"><span>${item.category}</span><span class="text-paid">Rp ${item.paid.toLocaleString()}</span></div>`;
-        if(item.deficit > 0) {
-           unpaidHtml += `<div class="finance-row"><span>${item.category}</span><span class="text-unpaid">Rp ${item.deficit.toLocaleString()}</span></div>`;
-        }
-      });
-
-      if(!unpaidHtml) unpaidHtml = '<div class="py-2 text-success small">Semua iuran sudah Lunas!</div>';
-
-      document.getElementById('paidList').innerHTML = paidHtml;
-      document.getElementById('unpaidList').innerHTML = unpaidHtml;
-      document.getElementById('totalPaid').innerText = "Rp " + sumPaid.toLocaleString();
-      document.getElementById('totalUnpaid').innerText = "Rp " + sumUnpaid.toLocaleString();
-    }
-
-    function logout() {
+    function triggerLogout() {
       Swal.fire({
-        title: 'Keluar?',
-        text: 'Anda akan keluar dari sesi ini.',
+        title: 'Logout?',
+        text: "Sesi Anda akan segera berakhir.",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#4f46e5',
+        confirmButtonColor: '#6366f1',
+        cancelButtonColor: '#f43f5e',
         confirmButtonText: 'Ya, Keluar'
       }).then((result) => {
-        if(result.isConfirmed) {
-          localStorage.removeItem("ebendahara_v2_session");
+        if (result.isConfirmed) {
+          localStorage.removeItem("eb_v2_session");
           location.reload();
         }
       });
