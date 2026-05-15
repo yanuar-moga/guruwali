@@ -190,6 +190,7 @@ box-shadow:0 8px 18px rgba(79,70,229,.25);
 width:100%;
 border-collapse:collapse;
 font-size:12px;
+min-width:600px;
 }
 
 .rekap-table th{
@@ -198,11 +199,13 @@ text-align:left;
 border-bottom:1px solid #e5e7eb;
 background:#f8fafc;
 font-size:11px;
+white-space:nowrap;
 }
 
 .rekap-table td{
 padding:12px 8px;
 border-bottom:1px solid #f1f5f9;
+white-space:nowrap;
 }
 
 .badge-lunas{
@@ -478,13 +481,7 @@ AUTO SYNC
 
 <div style="overflow:auto;">
 
-<table class="rekap-table">
-
-<thead id="rekapHead"></thead>
-
-<tbody id="rekapBody"></tbody>
-
-</table>
+<table class="rekap-table" id="rekapTable"></table>
 
 </div>
 
@@ -534,6 +531,10 @@ let LOGIN_NAME = "";
 let SESSION_ID = "";
 let MASTER = {};
 
+/************************************************
+ ENTER LOGIN
+************************************************/
+
 document
 .getElementById("pin")
 .addEventListener("keypress",function(e){
@@ -575,6 +576,10 @@ const res = await fetch(API_URL,{
 
 method:"POST",
 
+headers:{
+"Content-Type":"application/json"
+},
+
 body:JSON.stringify({
 
 action,
@@ -597,6 +602,14 @@ async function login(){
 const pin =
 document.getElementById("pin").value;
 
+if(pin == ""){
+
+showPopup("PIN wajib diisi");
+
+return;
+
+}
+
 const res = await api("login",{
 
 pin:pin,
@@ -613,16 +626,9 @@ return;
 
 }
 
-/*
-SIMPAN SESSION
-*/
-
 localStorage.setItem(
-
 "ebendahara_session",
-
 JSON.stringify(res)
-
 );
 
 openDashboard(res);
@@ -633,10 +639,9 @@ openDashboard(res);
  OPEN DASHBOARD
 ************************************************/
 
-function openDashboard(res){
+async function openDashboard(res){
 
 LOGIN_NAME = res.nama;
-
 SESSION_ID = res.sessionID;
 
 document
@@ -655,11 +660,9 @@ document
 .getElementById("roleText")
 .innerText = res.user;
 
-loadMaster();
-
-loadRekap();
-
-loadSaldo();
+await loadMaster();
+await loadRekap();
+await loadSaldo();
 
 }
 
@@ -798,8 +801,8 @@ el.value = 0;
 
 });
 
-loadSaldo();
-loadRekap();
+await loadSaldo();
+await loadRekap();
 
 }
 
@@ -811,38 +814,51 @@ async function loadRekap(){
 
 const res = await api("rekap");
 
-const kategoriShow =
-MASTER.kategori.map(
-x=>x.kategori
+const table =
+document.getElementById(
+"rekapTable"
 );
 
-let head = `
+table.innerHTML = "";
+
+if(!res.status){
+
+table.innerHTML = `
+<tr>
+<td>Gagal memuat data</td>
+</tr>
+`;
+
+return;
+
+}
+
+let header = `
+<thead>
 <tr>
 <th>Nama Siswa</th>
 `;
 
-kategoriShow.forEach(k=>{
+res.headers.forEach(h=>{
 
-head += `<th>${k}</th>`;
+header += `
+<th>${h}</th>
+`;
 
 });
 
-head += `</tr>`;
+header += `
+</tr>
+</thead>
+`;
 
-document
-.getElementById("rekapHead")
-.innerHTML = head;
+let body = `
+<tbody>
+`;
 
-const body =
-document.getElementById(
-"rekapBody"
-);
+res.data.forEach(item=>{
 
-body.innerHTML = "";
-
-res.forEach(item=>{
-
-let row = `
+body += `
 <tr>
 
 <td>
@@ -854,7 +870,7 @@ item.kategori.forEach(k=>{
 
 if(k.status == "LUNAS"){
 
-row += `
+body += `
 <td>
 <span class="badge-lunas">
 LUNAS
@@ -864,7 +880,7 @@ LUNAS
 
 }else{
 
-row += `
+body += `
 <td>
 <span class="badge-kurang">
 ${k.status}
@@ -876,11 +892,17 @@ ${k.status}
 
 });
 
-row += `</tr>`;
-
-body.innerHTML += row;
+body += `
+</tr>
+`;
 
 });
+
+body += `
+</tbody>
+`;
+
+table.innerHTML = header + body;
 
 }
 
