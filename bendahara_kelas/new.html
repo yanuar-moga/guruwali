@@ -1,316 +1,730 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>E-Bendahara | Manajemen Keuangan Kelas</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    
-    <style>
-        :root {
-            --primary-color: #6f42c1;
-            --secondary-color: #f8f9fa;
-            --accent-color: #007bff;
-            --text-dark: #333;
-        }
+<meta charset="UTF-8">
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+/>
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f0f2f5;
-            color: var(--text-dark);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+<title>E Bendahara</title>
 
-        /* Header Styling */
-        .header-purple {
-            background: linear-gradient(135deg, #8e44ad, #6f42c1);
-            color: white;
-            padding: 30px 0;
-            text-align: center;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-        .header-purple h2 { font-weight: 600; letter-spacing: 1px; margin-bottom: 5px; }
-        .header-purple p { font-size: 0.9rem; opacity: 0.9; }
+<style>
 
-        /* Card & UI Elements */
-        .card-custom {
-            border: none;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            background: white;
-            margin-top: -20px;
-            padding: 25px;
-        }
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
 
-        .layer { display: none; padding: 20px; flex: 1; }
-        .active { display: block; animation: fadeInUp 0.5s ease; }
+body{
+  font-family:'Poppins',sans-serif;
+  background:#0f172a;
+  color:white;
+  min-height:100vh;
+}
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+.hidden{
+  display:none;
+}
 
-        /* Login Styling */
-        .login-box { max-width: 450px; margin: 80px auto; text-align: center; background: white; border-radius: 25px; padding: 40px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
-        .pin-input {
-            letter-spacing: 15px;
-            font-size: 24px;
-            text-align: center;
-            border-radius: 15px;
-            border: 2px solid #eee;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
+.container{
+  padding:18px;
+}
 
-        /* Tab Navigation */
-        .nav-pills { background: white; border-radius: 15px; padding: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .nav-pills .nav-link { 
-            color: #888; 
-            border-radius: 12px; 
-            font-weight: 500; 
-            transition: 0.3s;
-            padding: 12px;
-        }
-        .nav-pills .nav-link.active { background-color: var(--primary-color) !important; color: white !important; }
+.card{
+  background:rgba(255,255,255,.08);
+  backdrop-filter:blur(12px);
+  border-radius:24px;
+  padding:18px;
+  margin-bottom:18px;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
+}
 
-        /* Badge Lunas/Sisa */
-        .badge-lunas { background-color: #d1e7dd; color: #0f5132; padding: 8px 15px; border-radius: 10px; font-weight: 600; font-size: 0.75rem; }
-        .badge-sisa { background-color: #f8d7da; color: #842029; padding: 8px 15px; border-radius: 10px; font-weight: 600; font-size: 0.75rem; }
+h1{
+  font-size:24px;
+  margin-bottom:10px;
+}
 
-        /* Footer */
-        footer { font-size: 0.75rem; color: #999; text-align: center; padding: 30px 0; margin-top: auto; }
-        
-        .btn-primary-custom { background-color: var(--primary-color); border: none; padding: 15px; border-radius: 15px; font-weight: 600; width: 100%; transition: 0.3s; }
-        .btn-primary-custom:hover { opacity: 0.9; transform: translateY(-2px); }
+h2{
+  margin-bottom:14px;
+}
 
-        /* Table Styling */
-        .table thead th { border-top: none; color: #555; font-size: 0.8rem; text-transform: uppercase; }
-        .table td { vertical-align: middle; padding: 15px 10px; border-bottom: 1px solid #f8f9fa; }
-    </style>
+input,button,select{
+  width:100%;
+  border:none;
+  outline:none;
+  padding:14px;
+  border-radius:16px;
+  margin-top:10px;
+  font-size:15px;
+}
+
+input,select{
+  background:white;
+  color:#111;
+}
+
+button{
+  background:linear-gradient(
+    135deg,
+    #3b82f6,
+    #06b6d4
+  );
+  color:white;
+  font-weight:600;
+}
+
+.menu{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:10px;
+}
+
+.table-wrap{
+  overflow:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th,td{
+  border:1px solid rgba(255,255,255,.1);
+  padding:10px;
+  text-align:center;
+  font-size:13px;
+}
+
+th{
+  background:#1e293b;
+}
+
+.profile{
+  text-align:center;
+}
+
+.profile img{
+  width:120px;
+  height:120px;
+  object-fit:cover;
+  border-radius:50%;
+  border:4px solid white;
+  margin-bottom:14px;
+}
+
+.popup{
+  position:fixed;
+  top:20px;
+  right:20px;
+  background:#10b981;
+  padding:14px 20px;
+  border-radius:16px;
+  z-index:999;
+  animation:slide .4s ease;
+}
+
+@keyframes slide{
+  from{
+    transform:translateX(100%);
+    opacity:0;
+  }
+  to{
+    transform:translateX(0);
+    opacity:1;
+  }
+}
+
+.footer{
+  text-align:center;
+  font-size:12px;
+  opacity:.7;
+  padding:20px;
+}
+
+</style>
 </head>
+
 <body>
 
-    <div class="header-purple">
-        <div class="container">
-            <h2>💰 E-Bendahara</h2>
-            <p>Manajemen Keuangan Kelas Digital</p>
-        </div>
+<!-- LOGIN -->
+<div id="loginPage" class="container">
+
+  <div class="card">
+
+    <h1>E Bendahara</h1>
+
+    <p>Masukkan PIN</p>
+
+    <input
+      type="password"
+      id="pin"
+      placeholder="Masukkan PIN"
+    >
+
+    <button onclick="login()">
+      LOGIN
+    </button>
+
+  </div>
+
+</div>
+
+<!-- ADMIN -->
+<div id="adminPage"
+class="hidden container">
+
+  <div class="card">
+
+    <h2 id="welcome"></h2>
+
+    <div class="menu">
+
+      <button onclick="showMenu('inputMenu')">
+        Input
+      </button>
+
+      <button onclick="showMenu('rekapMenu')">
+        Rekap
+      </button>
+
+      <button onclick="showMenu('saldoMenu')">
+        Saldo
+      </button>
+
     </div>
 
-    <div class="container">
-        <div id="layer1" class="layer active">
-            <div class="login-box">
-                <h5 class="fw-bold mb-2">Selamat Datang</h5>
-                <p class="text-muted small mb-4">Masukkan PIN Keamanan untuk akses</p>
-                <input type="password" id="pinInput" class="form-control pin-input" placeholder="••••••" inputmode="numeric">
-                <button onclick="attemptLogin()" class="btn btn-primary btn-primary-custom">BUKA PANEL KAS</button>
-            </div>
-        </div>
+  </div>
 
-        <div id="layer2" class="layer">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <span class="badge bg-primary-subtle text-primary mb-1" id="roleBadge">PIN_WALIKELAS</span>
-                    <h4 class="fw-bold mb-0" id="userNameDisplay">Memuat...</h4>
-                </div>
-                <button onclick="logout()" class="btn btn-outline-danger btn-sm rounded-pill px-4">Keluar</button>
-            </div>
+  <!-- INPUT -->
+  <div id="inputMenu">
 
-            <ul class="nav nav-pills nav-fill mb-4" id="pills-tab">
-                <li class="nav-item">
-                    <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-input">Input Data</button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-rekap" onclick="loadAdminData()">Rekap Iuran</button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-saldo">Total Saldo</button>
-                </li>
-            </ul>
+    <div class="card">
 
-            <div class="tab-content">
-                <div class="tab-pane fade show active" id="tab-input">
-                    <div class="card-custom">
-                        <label class="small fw-bold text-muted mb-2">Pilih Nama Siswa</label>
-                        <select id="selSiswa" class="form-select form-select-lg mb-4 rounded-3"></select>
-                        
-                        <div class="table-responsive">
-                            <table class="table small">
-                                <thead>
-                                    <tr><th>Kategori</th><th class="text-end">Nominal (Rp)</th></tr>
-                                </thead>
-                                <tbody id="inputListBody">
-                                    </tbody>
-                            </table>
-                        </div>
-                        <button onclick="submitAllTransactions()" class="btn btn-primary btn-primary-custom mt-3">SIMPAN TRANSAKSI</button>
-                    </div>
-                </div>
+      <h2>Input Iuran</h2>
 
-                <div class="tab-pane fade" id="tab-rekap">
-                    <div class="card-custom">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h6 class="fw-bold mb-0">Monitoring Pelunasan</h6>
-                            <span class="badge bg-light text-muted fw-normal border">Auto-Sync</span>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr><th>Nama Siswa</th><th>KAS</th><th>GALON</th><th>Status</th></tr>
-                                </thead>
-                                <tbody id="tableRekapBody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+      <select id="siswaSelect"></select>
 
-                <div class="tab-pane fade" id="tab-saldo">
-                    <div class="card-custom">
-                        <div id="saldoList" class="mb-4">
-                            </div>
-                        <div class="p-3 bg-primary text-white rounded-4 d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0 fw-bold">TOTAL SALDO</h5>
-                            <h5 class="mb-0 fw-bold" id="grandTotalSaldo">Rp0</h5>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+      <div id="kategoriBox"></div>
 
-        </div>
+      <button onclick="saveTransaksi()">
+        Simpan Transaksi
+      </button>
 
-    <footer>
-        Aplikasi e-bendahara v 1.2 (Build 15 Mei 2026)<br>
-        Apps by MB © 2026 MB All Rights Reserved
-    </footer>
+    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </div>
 
-    <script>
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbyKNBJl0DghHMSjW-I7BcqjVncZQlO-_UwcLqAJUcL-_R_FuIYUReTaSaRmMNEpimnQ/exec"; // Ganti dengan URL exec GAS Anda
+  <!-- REKAP -->
+  <div id="rekapMenu"
+  class="hidden">
 
-        // 1. TRIGGER ENTER PADA LOGIN
-        document.getElementById('pinInput').addEventListener('keyup', function(event) {
-            if (event.key === 'Enter') {
-                attemptLogin();
-            }
-        });
+    <div class="card">
 
-        // 2. LOGIKA LOGIN
-        async function attemptLogin() {
-            const pin = document.getElementById('pinInput').value;
-            if (!pin) return toast('info', 'Masukkan PIN Anda');
+      <h2>Monitoring Pelunasan</h2>
 
-            loading(true, 'Memverifikasi PIN...');
-            
-            try {
-                const response = await fetch(`${GAS_URL}?action=login&pin=${pin}`);
-                const res = await response.json();
+      <div id="updateInfo"></div>
 
-                if (res.success) {
-                    localStorage.setItem('eb_session', JSON.stringify(res));
-                    showLayer(res.layer, res);
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil Masuk',
-                        text: `Selamat Datang, ${res.name}`,
-                        timer: 1500,
-                        showConfirmButton: false,
-                        borderRadius: '20px'
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Akses Ditolak',
-                        text: 'PIN yang Anda masukkan salah!',
-                        confirmButtonColor: '#6f42c1'
-                    });
-                }
-            } catch (e) {
-                Swal.fire('Error', 'Gagal terhubung ke server', 'error');
-            } finally {
-                loading(false);
-            }
-        }
+      <div class="table-wrap">
 
-        // 3. FUNGSI UI HELPERS
-        function showLayer(layerId, data = null) {
-            document.querySelectorAll('.layer').forEach(l => l.classList.remove('active'));
-            document.getElementById('layer' + layerId).classList.add('active');
-            
-            if (data) {
-                document.getElementById('userNameDisplay').innerText = data.name;
-                document.getElementById('roleBadge').innerText = data.role;
-                loadInitialData();
-            }
-        }
+        <table id="rekapTable"></table>
 
-        async function loadInitialData() {
-            const resp = await fetch(`${GAS_URL}?action=getAdminData`);
-            const data = await resp.json();
-            
-            // Render Dropdown Siswa
-            const selSiswa = document.getElementById('selSiswa');
-            selSiswa.innerHTML = data.siswaList.map(s => `<option value="${s}">${s}</option>`).join('');
+      </div>
 
-            // Render Input List (Berdasarkan Kategori di Sheet Target)
-            const inputBody = document.getElementById('inputListBody');
-            inputBody.innerHTML = data.targets.slice(1).map(t => `
-                <tr>
-                    <td class="fw-bold text-muted">${t[0]}</td>
-                    <td><input type="number" class="form-control form-control-sm text-end border-0 bg-light rounded-3 trx-input" data-kat="${t[0]}" placeholder="0"></td>
-                </tr>
-            `).join('');
-            
-            // Render Saldo
-            renderSaldo(data);
-        }
+    </div>
 
-        function renderSaldo(data) {
-            const saldoList = document.getElementById('saldoList');
-            let total = 0;
-            // Logika hitung saldo di sini sesuai kebutuhan data rekap
-            saldoList.innerHTML = data.targets.slice(1).map(t => {
-                return `<div class="d-flex justify-content-between mb-3 border-bottom pb-2">
-                            <span class="text-muted fw-bold">${t[0]}</span>
-                            <span class="fw-bold text-primary">Rp...</span>
-                        </div>`;
-            }).join('');
-        }
+  </div>
 
-        function toast(icon, title) {
-            Swal.fire({ icon, title, toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
-        }
+  <!-- SALDO -->
+  <div id="saldoMenu"
+  class="hidden">
 
-        function loading(show, text = '') {
-            if (show) {
-                Swal.fire({ title: text, allowOutsideClick: false, didOpen: () => { Swal.showLoading() } });
-            } else {
-                Swal.close();
-            }
-        }
+    <div class="card">
 
-        function logout() {
-            localStorage.removeItem('eb_session');
-            location.reload();
-        }
+      <h2>Total Saldo</h2>
 
-        // Cek Sesi pada saat Load
-        window.onload = () => {
-            const session = localStorage.getItem('eb_session');
-            if (session) {
-                showLayer(JSON.parse(session).layer, JSON.parse(session));
-            }
-        };
-    </script>
+      <div id="saldoContent"></div>
+
+    </div>
+
+  </div>
+
+  <button onclick="logout()">
+    Logout
+  </button>
+
+</div>
+
+<!-- SISWA -->
+<div id="siswaPage"
+class="hidden container">
+
+  <div class="card profile">
+
+    <img id="fotoSiswa">
+
+    <h2 id="namaSiswa"></h2>
+
+    <p id="jkSiswa"></p>
+
+    <p id="nisnSiswa"></p>
+
+  </div>
+
+  <div class="card">
+
+    <h2>Sudah Dibayar</h2>
+
+    <div id="dibayar"></div>
+
+  </div>
+
+  <div class="card">
+
+    <h2>Belum Dibayar</h2>
+
+    <div id="belum"></div>
+
+  </div>
+
+  <div class="card">
+
+    <div id="updateSiswa"></div>
+
+  </div>
+
+  <button onclick="logout()">
+    Logout
+  </button>
+
+</div>
+
+<div class="footer">
+
+Aplikasi e bendahara v 1.2
+(Build 15 Mei 2026)
+<br>
+Apps by MB © 2026
+All Rights Reserved
+
+</div>
+
+<script>
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbyKNBJl0DghHMSjW-I7BcqjVncZQlO-_UwcLqAJUcL-_R_FuIYUReTaSaRmMNEpimnQ/exec";
+
+let LOGIN_NAME = "";
+let TARGET = [];
+
+// ======================
+// FETCH
+// ======================
+async function postData(data){
+
+  const res = await fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify(data)
+  });
+
+  return await res.json();
+}
+
+// ======================
+// POPUP
+// ======================
+function popup(text){
+
+  const div = document.createElement("div");
+
+  div.className = "popup";
+  div.innerHTML = text;
+
+  document.body.appendChild(div);
+
+  setTimeout(()=>{
+    div.remove();
+  },3000);
+}
+
+// ======================
+// ENTER LOGIN
+// ======================
+document
+.getElementById("pin")
+.addEventListener("keypress",function(e){
+
+  if(e.key === "Enter"){
+    login();
+  }
+
+});
+
+// ======================
+// LOGIN
+// ======================
+async function login(){
+
+  const pin =
+    document
+    .getElementById("pin")
+    .value;
+
+  const res = await postData({
+    action:"login",
+    pin:pin
+  });
+
+  if(!res.success){
+
+    popup(res.message);
+    return;
+  }
+
+  LOGIN_NAME = res.nama;
+
+  if(res.role === "ADMIN"){
+
+    document
+    .getElementById("loginPage")
+    .classList.add("hidden");
+
+    document
+    .getElementById("adminPage")
+    .classList.remove("hidden");
+
+    document
+    .getElementById("welcome")
+    .innerHTML =
+      "Halo, " + LOGIN_NAME;
+
+    loadSiswa();
+    loadTarget();
+
+  }else{
+
+    loadDashboardSiswa(pin);
+
+  }
+
+  popup("Login berhasil");
+}
+
+// ======================
+// SHOW MENU
+// ======================
+function showMenu(id){
+
+  document
+    .getElementById("inputMenu")
+    .classList.add("hidden");
+
+  document
+    .getElementById("rekapMenu")
+    .classList.add("hidden");
+
+  document
+    .getElementById("saldoMenu")
+    .classList.add("hidden");
+
+  document
+    .getElementById(id)
+    .classList.remove("hidden");
+
+  if(id === "rekapMenu"){
+    loadRekap();
+  }
+
+  if(id === "saldoMenu"){
+    loadSaldo();
+  }
+}
+
+// ======================
+// LOAD SISWA
+// ======================
+async function loadSiswa(){
+
+  const res = await postData({
+    action:"getSiswa"
+  });
+
+  const select =
+    document.getElementById(
+      "siswaSelect"
+    );
+
+  select.innerHTML = "";
+
+  res.data.forEach(s=>{
+
+    select.innerHTML += `
+      <option value="${s.no}|${s.nama}">
+        ${s.nama}
+      </option>
+    `;
+  });
+}
+
+// ======================
+// LOAD TARGET
+// ======================
+async function loadTarget(){
+
+  const res = await postData({
+    action:"getTarget"
+  });
+
+  TARGET = res.data;
+
+  const box =
+    document.getElementById(
+      "kategoriBox"
+    );
+
+  box.innerHTML = "";
+
+  TARGET.forEach(t=>{
+
+    box.innerHTML += `
+      <input
+      type="number"
+      id="kat_${t.kategori}"
+      placeholder="${t.kategori}"
+      >
+    `;
+  });
+
+}
+
+// ======================
+// SAVE TRANSAKSI
+// ======================
+async function saveTransaksi(){
+
+  const siswa =
+    document
+    .getElementById("siswaSelect")
+    .value
+    .split("|");
+
+  const no = siswa[0];
+  const nama = siswa[1];
+
+  for(let i=0;i<TARGET.length;i++){
+
+    const t = TARGET[i];
+
+    const nominal =
+      document.getElementById(
+        "kat_" + t.kategori
+      ).value;
+
+    if(Number(nominal) > 0){
+
+      await postData({
+        action:"saveTransaksi",
+        no:no,
+        nama:nama,
+        kategori:t.kategori,
+        jumlah:nominal,
+        oleh:LOGIN_NAME
+      });
+    }
+  }
+
+  popup("Transaksi berhasil");
+}
+
+// ======================
+// REKAP
+// ======================
+async function loadRekap(){
+
+  const res = await postData({
+    action:"getRekap"
+  });
+
+  document
+  .getElementById("updateInfo")
+  .innerHTML =
+    "Auto Sync • " +
+    new Date(res.update)
+    .toLocaleString();
+
+  let html = "";
+
+  res.data.forEach((r,i)=>{
+
+    html += "<tr>";
+
+    r.forEach(c=>{
+
+      html += i == 0
+        ? `<th>${c}</th>`
+        : `<td>${c}</td>`;
+
+    });
+
+    html += "</tr>";
+  });
+
+  document
+  .getElementById("rekapTable")
+  .innerHTML = html;
+}
+
+// ======================
+// SALDO
+// ======================
+async function loadSaldo(){
+
+  const res = await postData({
+    action:"getSaldo"
+  });
+
+  let html = "";
+
+  html += "<h3>Saldo Bendahara</h3><br>";
+
+  Object.keys(res.saldo)
+  .forEach(k=>{
+
+    html += `
+      <p>
+      ${k}
+      :
+      Rp ${res.saldo[k]}
+      </p>
+    `;
+  });
+
+  html += "<br><h3>Total Disetor</h3><br>";
+
+  Object.keys(res.setor)
+  .forEach(k=>{
+
+    html += `
+      <p>
+      ${k}
+      :
+      Rp ${res.setor[k]}
+      </p>
+    `;
+  });
+
+  document
+  .getElementById("saldoContent")
+  .innerHTML = html;
+}
+
+// ======================
+// DASHBOARD SISWA
+// ======================
+async function loadDashboardSiswa(nisn){
+
+  const res = await postData({
+    action:"getDashboardSiswa",
+    nisn:nisn
+  });
+
+  if(!res.success){
+
+    popup(res.message);
+    return;
+  }
+
+  document
+    .getElementById("loginPage")
+    .classList.add("hidden");
+
+  document
+    .getElementById("siswaPage")
+    .classList.remove("hidden");
+
+  document
+    .getElementById("fotoSiswa")
+    .src = res.siswa.foto;
+
+  document
+    .getElementById("namaSiswa")
+    .innerHTML = res.siswa.nama;
+
+  document
+    .getElementById("jkSiswa")
+    .innerHTML = res.siswa.jk;
+
+  document
+    .getElementById("nisnSiswa")
+    .innerHTML = res.siswa.nisn;
+
+  let bayar = "";
+  let kurang = "";
+
+  Object.keys(res.bayar)
+  .forEach(k=>{
+
+    bayar += `
+      <p>
+      ${k}
+      :
+      Rp ${res.bayar[k]}
+      </p>
+    `;
+  });
+
+  Object.keys(res.kurang)
+  .forEach(k=>{
+
+    kurang += `
+      <p>
+      ${k}
+      :
+      Rp ${res.kurang[k]}
+      </p>
+    `;
+  });
+
+  bayar += `
+    <hr style="margin:10px 0">
+    <b>Total : Rp ${res.totalBayar}</b>
+  `;
+
+  kurang += `
+    <hr style="margin:10px 0">
+    <b>Total : Rp ${res.totalKurang}</b>
+  `;
+
+  document
+    .getElementById("dibayar")
+    .innerHTML = bayar;
+
+  document
+    .getElementById("belum")
+    .innerHTML = kurang;
+
+  document
+    .getElementById("updateSiswa")
+    .innerHTML =
+      "Update : " +
+      new Date(res.update)
+      .toLocaleString();
+
+}
+
+// ======================
+// LOGOUT
+// ======================
+function logout(){
+
+  location.reload();
+
+}
+
+</script>
+
 </body>
 </html>
