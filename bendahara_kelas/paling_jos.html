@@ -1,1026 +1,545 @@
+<!--
+Aplikasi e bendahara v 1.2 (Build 15 Mei 2026)
+Apps by MB © 2026 MB All Rights Reserved
+URL GAS : [https://script.google.com/macros/s/AKfycbzInyHxfZl49q943l5BFpssKxi4k5BBTqeEwxj3eI-AfxaD29xqfwGwc90d1_Eox9EF/exec]
+-->
+
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
+  <base target="_top">
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>E-Bendahara</title>
+  <title>Aplikasi e bendahara</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<style>
+  <link rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Poppins',sans-serif;
-}
+  <!-- ====================== -->
+  <!-- STYLE SECTION -->
+  <!-- ====================== -->
 
-body{
-background:#eef2ff;
-max-width:500px;
-margin:auto;
-min-height:100vh;
-}
+  <style>
 
-.header{
-background:linear-gradient(135deg,#4f46e5,#7c3aed);
-padding:35px 20px;
-text-align:center;
-color:white;
-border-bottom-left-radius:30px;
-border-bottom-right-radius:30px;
-box-shadow:0 6px 20px rgba(79,70,229,.3);
-}
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:'Inter',sans-serif;
+    }
 
-.logo{
-font-size:46px;
-margin-bottom:8px;
-}
+    body{
+      background:#f4f7fb;
+      color:#222;
+    }
 
-.title{
-font-size:24px;
-font-weight:700;
-}
+    .app{
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+    }
 
-.subtitle{
-font-size:13px;
-opacity:.9;
-margin-top:4px;
-}
+    .header{
+      padding:16px;
+      background:rgba(255,255,255,.8);
+      backdrop-filter:blur(12px);
+      position:sticky;
+      top:0;
+      z-index:100;
+      box-shadow:0 2px 10px rgba(0,0,0,.05);
+    }
 
-.container{
-padding:18px;
-}
+    .title{
+      font-size:18px;
+      font-weight:700;
+    }
 
-.card{
-background:white;
-border-radius:24px;
-padding:18px;
-margin-bottom:18px;
-box-shadow:0 8px 20px rgba(0,0,0,.08);
-animation:fade .3s ease;
-}
+    .content{
+      flex:1;
+      padding:16px;
+      padding-bottom:90px;
+    }
 
-@keyframes fade{
-from{
-opacity:0;
-transform:translateY(10px);
-}
-to{
-opacity:1;
-transform:translateY(0);
-}
-}
+    .card{
+      background:rgba(255,255,255,.8);
+      backdrop-filter:blur(14px);
+      border-radius:20px;
+      padding:16px;
+      margin-bottom:16px;
+      box-shadow:0 10px 25px rgba(0,0,0,.06);
+    }
 
-.pin-badge{
-display:inline-block;
-padding:5px 12px;
-background:#dbeafe;
-color:#2563eb;
-border-radius:999px;
-font-size:12px;
-font-weight:700;
-margin-bottom:5px;
-}
+    .input{
+      width:100%;
+      padding:14px;
+      border:none;
+      border-radius:14px;
+      background:#f1f4f9;
+      margin-top:10px;
+    }
 
-.user-name{
-font-size:22px;
-font-weight:700;
-}
+    .btn{
+      width:100%;
+      padding:14px;
+      border:none;
+      border-radius:16px;
+      background:#2563eb;
+      color:white;
+      font-weight:600;
+      margin-top:14px;
+      cursor:pointer;
+      transition:.3s;
+    }
 
-.top-flex{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:18px;
-}
+    .btn:disabled{
+      opacity:.6;
+    }
 
-.logout{
-border:none;
-background:#fee2e2;
-color:#dc2626;
-padding:10px 18px;
-border-radius:999px;
-cursor:pointer;
-font-weight:700;
-}
+    .bottom-nav{
+      position:fixed;
+      bottom:0;
+      left:0;
+      width:100%;
+      background:white;
+      display:flex;
+      justify-content:space-around;
+      padding:10px;
+      box-shadow:0 -2px 20px rgba(0,0,0,.08);
+    }
 
-.menu{
-display:flex;
-gap:10px;
-overflow:auto;
-}
+    .nav-btn{
+      text-align:center;
+      font-size:12px;
+    }
 
-.menu button{
-flex:1;
-padding:14px;
-border:none;
-border-radius:16px;
-background:#f3f4f6;
-cursor:pointer;
-font-weight:600;
-font-size:13px;
-white-space:nowrap;
-}
+    .badge{
+      padding:6px 10px;
+      border-radius:30px;
+      font-size:12px;
+      font-weight:600;
+    }
 
-.menu .active{
-background:#7c3aed;
-color:white;
-box-shadow:0 6px 15px rgba(124,58,237,.35);
-}
+    .success{
+      background:#d1fae5;
+      color:#065f46;
+    }
 
-.input-group{
-margin-bottom:18px;
-}
+    .danger{
+      background:#fee2e2;
+      color:#991b1b;
+    }
 
-.label{
-font-size:13px;
-font-weight:700;
-margin-bottom:8px;
-display:block;
-color:#4b5563;
-}
+    .warning{
+      background:#fef3c7;
+      color:#92400e;
+    }
 
-select,input{
-width:100%;
-padding:14px;
-border-radius:14px;
-border:1px solid #d1d5db;
-font-size:14px;
-outline:none;
-}
+    .toast{
+      position:fixed;
+      top:20px;
+      right:20px;
+      background:#111827;
+      color:white;
+      padding:14px 18px;
+      border-radius:14px;
+      z-index:9999;
+      animation:fade .4s ease;
+    }
 
-.table-head{
-display:grid;
-grid-template-columns:1fr 140px;
-font-size:13px;
-font-weight:700;
-margin-bottom:10px;
-padding-top:15px;
-border-top:1px solid #e5e7eb;
-color:#6b7280;
-}
+    @keyframes fade{
+      from{
+        opacity:0;
+        transform:translateY(-10px);
+      }
+      to{
+        opacity:1;
+        transform:translateY(0);
+      }
+    }
 
-.row{
-display:grid;
-grid-template-columns:1fr 140px;
-gap:12px;
-margin-bottom:12px;
-align-items:center;
-}
+    .loading{
+      position:fixed;
+      inset:0;
+      background:rgba(255,255,255,.7);
+      backdrop-filter:blur(8px);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      z-index:99999;
+    }
 
-.save-btn{
-width:100%;
-padding:16px;
-border:none;
-border-radius:16px;
-background:linear-gradient(135deg,#4f46e5,#7c3aed);
-color:white;
-font-size:15px;
-font-weight:700;
-cursor:pointer;
-margin-top:12px;
-box-shadow:0 8px 18px rgba(79,70,229,.25);
-}
+    .spinner{
+      width:60px;
+      height:60px;
+      border:6px solid #ddd;
+      border-top:6px solid #2563eb;
+      border-radius:50%;
+      animation:spin 1s linear infinite;
+    }
 
-.rekap-table{
-width:100%;
-border-collapse:collapse;
-font-size:12px;
-min-width:600px;
-}
+    @keyframes spin{
+      100%{
+        transform:rotate(360deg);
+      }
+    }
 
-.rekap-table th{
-padding:12px 8px;
-text-align:left;
-border-bottom:1px solid #e5e7eb;
-background:#f8fafc;
-font-size:11px;
-white-space:nowrap;
-}
+    .footer{
+      text-align:center;
+      padding:20px;
+      font-size:12px;
+      color:#777;
+    }
 
-.rekap-table td{
-padding:12px 8px;
-border-bottom:1px solid #f1f5f9;
-white-space:nowrap;
-}
-
-.badge-lunas{
-background:#dcfce7;
-color:#15803d;
-padding:7px 12px;
-border-radius:999px;
-font-size:11px;
-font-weight:700;
-display:inline-block;
-}
-
-.badge-kurang{
-background:#fee2e2;
-color:#dc2626;
-padding:7px 12px;
-border-radius:999px;
-font-size:11px;
-font-weight:700;
-display:inline-block;
-}
-
-.saldo-row{
-display:flex;
-justify-content:space-between;
-margin-bottom:18px;
-font-weight:600;
-padding-bottom:10px;
-border-bottom:1px dashed #ddd;
-}
-
-.total-box{
-background:linear-gradient(135deg,#2563eb,#4f46e5);
-color:white;
-padding:18px;
-border-radius:18px;
-display:flex;
-justify-content:space-between;
-font-size:22px;
-font-weight:700;
-margin-top:15px;
-}
-
-.footer{
-text-align:center;
-font-size:12px;
-color:#6b7280;
-padding:25px;
-line-height:1.7;
-}
-
-.hidden{
-display:none;
-}
-
-.login-card{
-margin-top:30px;
-}
-
-.login-title{
-text-align:center;
-font-size:30px;
-font-weight:700;
-margin-bottom:8px;
-}
-
-.login-sub{
-text-align:center;
-color:#6b7280;
-margin-bottom:30px;
-font-size:14px;
-}
-
-.pin-input{
-font-size:30px;
-text-align:center;
-letter-spacing:12px;
-font-weight:700;
-}
-
-.sync-badge{
-background:#ecfeff;
-color:#0891b2;
-padding:7px 14px;
-border-radius:999px;
-font-size:11px;
-font-weight:700;
-}
-
-.info-update{
-font-size:11px;
-color:#9ca3af;
-margin-top:10px;
-}
-
-.popup{
-position:fixed;
-top:20px;
-left:50%;
-transform:translateX(-50%);
-background:#111827;
-color:white;
-padding:14px 20px;
-border-radius:14px;
-font-size:13px;
-font-weight:600;
-z-index:999;
-display:none;
-animation:fade .3s ease;
-}
-
-</style>
+  </style>
 
 </head>
+
 <body>
 
-<div class="popup" id="popup"></div>
+<div class="app">
 
-<div class="header">
+  <!-- ====================== -->
+  <!-- LOGIN PAGE -->
+  <!-- ====================== -->
 
-<div class="logo">💰</div>
+  <div id="loginPage" class="content">
 
-<div class="title">
-E-Bendahara
-</div>
+    <div class="card">
 
-<div class="subtitle">
-Manajemen Keuangan Kelas Digital
-</div>
+      <h2>Login</h2>
 
-</div>
+      <input
+      type="text"
+      id="user"
+      class="input"
+      placeholder="User">
 
-<div class="container">
+      <input
+      type="password"
+      id="pin"
+      class="input"
+      placeholder="PIN">
 
-<!-- LOGIN -->
+      <button
+      class="btn"
+      id="loginBtn"
+      onclick="login()">
+      Masuk
+      </button>
 
-<div id="loginPage">
+    </div>
 
-<div class="card login-card">
+  </div>
 
-<div class="login-title">
-Selamat Datang
-</div>
+  <!-- ====================== -->
+  <!-- DASHBOARD -->
+  <!-- ====================== -->
 
-<div class="login-sub">
-Masukkan PIN Keamanan
-</div>
+  <div id="dashboardPage" style="display:none;">
 
-<input
-type="password"
-id="pin"
-class="pin-input"
-maxlength="6"
-placeholder="••••••"
-/>
+    <div class="header">
+      <div class="title">
+        Aplikasi e bendahara
+      </div>
+      <div id="welcomeText"></div>
+    </div>
 
-<button class="save-btn" onclick="login()">
-BUKA PANEL KAS
-</button>
+    <div class="content" id="contentArea"></div>
 
-</div>
+    <div class="bottom-nav" id="bottomNav"></div>
 
-</div>
+  </div>
 
-<!-- DASHBOARD -->
+  <!-- ====================== -->
+  <!-- LOADING SCREEN -->
+  <!-- ====================== -->
 
-<div id="dashboard" class="hidden">
+  <div class="loading" id="loading" style="display:none;">
+    <div class="spinner"></div>
+  </div>
 
-<div class="top-flex">
-
-<div>
-
-<div class="pin-badge" id="roleText">
-PIN_ADMIN
-</div>
-
-<div class="user-name" id="userName">
-User
-</div>
-
-</div>
-
-<button class="logout" onclick="logout()">
-Logout
-</button>
-
-</div>
-
-<div class="card">
-
-<div class="menu">
-
-<button
-class="active"
-onclick="showMenu('inputPage',this)">
-Input
-</button>
-
-<button
-onclick="showMenu('rekapPage',this)">
-Rekap
-</button>
-
-<button
-onclick="showMenu('saldoPage',this)">
-Saldo
-</button>
+  <div class="footer">
+    <div>
+      Aplikasi e bendahara v 1.2 (Build 15 Mei 2026)
+    </div>
+    <div>
+      Apps by MB © 2026 MB All Rights Reserved
+    </div>
+  </div>
 
 </div>
 
-</div>
-
-<!-- INPUT -->
-
-<div id="inputPage">
-
-<div class="card">
-
-<div class="input-group">
-
-<label class="label">
-Nama Siswa
-</label>
-
-<select id="namaSiswa"></select>
-
-</div>
-
-<div class="table-head">
-
-<div>KATEGORI</div>
-<div>NOMINAL</div>
-
-</div>
-
-<div id="kategoriContainer"></div>
-
-<button
-class="save-btn"
-onclick="saveTransaksi()">
-SIMPAN TRANSAKSI
-</button>
-
-</div>
-
-</div>
-
-<!-- REKAP -->
-
-<div id="rekapPage" class="hidden">
-
-<div class="card">
-
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
-
-<div>
-
-<div style="font-size:22px;font-weight:700;">
-Monitoring Pelunasan
-</div>
-
-<div class="info-update" id="updateText">
-Auto Sync
-</div>
-
-</div>
-
-<div class="sync-badge">
-AUTO SYNC
-</div>
-
-</div>
-
-<div style="overflow:auto;">
-
-<table class="rekap-table" id="rekapTable"></table>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- SALDO -->
-
-<div id="saldoPage" class="hidden">
-
-<div class="card">
-
-<div id="saldoList"></div>
-
-<div class="total-box">
-
-<div>TOTAL</div>
-
-<div id="grandTotal">
-Rp0
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<div class="footer">
-
-Aplikasi e bendahara v 1.2 (Build 15 Mei 2026)<br>
-Apps by MB © 2026 MB All Rights Reserved
-
-</div>
+<!-- ====================== -->
+<!-- SCRIPT SECTION -->
+<!-- ====================== -->
 
 <script>
 
-const API_URL =
-"https://script.google.com/macros/s/AKfycbwm-CfRMCmbYBeEN26WMqtDpRkDHWyvEPGGEs95ZsdfIyxdpWSOqNrVkSvxyOiJmXF6IA/exec";
-
-let LOGIN_NAME = "";
-let SESSION_ID = "";
-let MASTER = {};
-
-/************************************************
- ENTER LOGIN
-************************************************/
-
-document
-.getElementById("pin")
-.addEventListener("keypress",function(e){
-
-if(e.key === "Enter"){
-login();
-}
-
-});
-
-/************************************************
- POPUP
-************************************************/
-
-function showPopup(text){
-
-const popup =
-document.getElementById("popup");
-
-popup.innerText = text;
-
-popup.style.display = "block";
-
-setTimeout(()=>{
-
-popup.style.display = "none";
-
-},2500);
-
-}
-
-/************************************************
- API
-************************************************/
-
-async function api(action,data={}){
-
-try{
-
-const response = await fetch(API_URL,{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-
-action,
-...data
-
-})
-
-});
-
-return await response.json();
-
-}catch(err){
-
-return {
-status:false,
-message:"Gagal koneksi server"
+const APP = {
+  user: null,
+  role: null,
+  token: null
 };
 
-}
+// ======================
+// INIT SECTION
+// ======================
+
+window.onload = () => {
+
+  checkSession();
+
+};
+
+// ======================
+// SESSION SECTION
+// ======================
+
+function checkSession(){
+
+  const session = localStorage.getItem('EB_SESSION');
+
+  if(!session) return;
+
+  const data = JSON.parse(session);
+
+  APP.user = data.user;
+  APP.role = data.role;
+  APP.token = data.token;
+
+  showDashboard();
 
 }
 
-/************************************************
- LOGIN
-************************************************/
+function saveSession(data){
 
-async function login(){
-
-const pin =
-document.getElementById("pin").value;
-
-if(pin == ""){
-
-showPopup("PIN wajib diisi");
-
-return;
+  localStorage.setItem(
+    'EB_SESSION',
+    JSON.stringify(data)
+  );
 
 }
 
-const res = await api("login",{
+function clearSession(){
 
-pin:pin,
-device:navigator.userAgent,
-ip:"UNKNOWN"
-
-});
-
-if(!res.status){
-
-showPopup(res.message);
-
-return;
+  localStorage.removeItem('EB_SESSION');
 
 }
 
-localStorage.setItem(
-"ebendahara_session",
-JSON.stringify(res)
-);
+// ======================
+// LOGIN SECTION
+// ======================
 
-await openDashboard(res);
+function login(){
 
-}
+  const btn = document.getElementById('loginBtn');
 
-/************************************************
- OPEN DASHBOARD
-************************************************/
+  btn.disabled = true;
 
-async function openDashboard(res){
+  showLoading(true);
 
-LOGIN_NAME = res.nama || "";
-SESSION_ID = res.sessionID || "";
+  google.script.run
+  .withSuccessHandler(res=>{
 
-document
-.getElementById("loginPage")
-.classList.add("hidden");
+    btn.disabled = false;
 
-document
-.getElementById("dashboard")
-.classList.remove("hidden");
+    showLoading(false);
 
-document
-.getElementById("userName")
-.innerText = res.nama || "User";
+    if(!res.success){
 
-document
-.getElementById("roleText")
-.innerText = res.user || "ADMIN";
+      toast(res.message);
 
-await loadMaster();
-await loadRekap();
-await loadSaldo();
+      return;
 
-}
+    }
 
-/************************************************
- AUTO LOGIN
-************************************************/
+    APP.user = res.user;
+    APP.role = res.role;
+    APP.token = res.token;
 
-window.onload = async function(){
+    saveSession(APP);
 
-const session =
-localStorage.getItem(
-"ebendahara_session"
-);
+    showDashboard();
 
-if(session){
+    toast('Login berhasil');
 
-const data = JSON.parse(session);
-
-await openDashboard(data);
+  })
+  .login({
+    user: document.getElementById('user').value,
+    pin: document.getElementById('pin').value
+  });
 
 }
 
-}
+function logout(){
 
-/************************************************
- MASTER
-************************************************/
+  clearSession();
 
-async function loadMaster(){
-
-const res = await api("master");
-
-if(!res.status){
-
-showPopup("Gagal load master");
-
-return;
+  location.reload();
 
 }
 
-MASTER = res;
+// ======================
+// DASHBOARD SECTION
+// ======================
 
-document
-.getElementById("updateText")
-.innerText =
-"Update : " + res.update;
+function showDashboard(){
 
-const siswa =
-document.getElementById("namaSiswa");
+  document.getElementById('loginPage').style.display='none';
+  document.getElementById('dashboardPage').style.display='block';
 
-siswa.innerHTML = "";
+  document.getElementById('welcomeText').innerHTML =
+    APP.user + ' (' + APP.role + ')';
 
-res.siswa.forEach(item=>{
-
-siswa.innerHTML += `
-<option>${item}</option>
-`;
-
-});
-
-const kategori =
-document.getElementById(
-"kategoriContainer"
-);
-
-kategori.innerHTML = "";
-
-res.kategori.forEach(item=>{
-
-kategori.innerHTML += `
-
-<div class="row">
-
-<div>
-${item.kategori}
-</div>
-
-<div>
-
-<input
-type="number"
-class="nominal"
-data-kategori="${item.kategori}"
-value="0"
-/>
-
-</div>
-
-</div>
-
-`;
-
-});
+  loadDashboard();
 
 }
 
-/************************************************
- SAVE TRANSAKSI
-************************************************/
+function loadDashboard(){
 
-async function saveTransaksi(){
+  showLoading(true);
 
-const items = [];
+  google.script.run
+  .withSuccessHandler(res=>{
 
-document
-.querySelectorAll(".nominal")
-.forEach(el=>{
+    showLoading(false);
 
-items.push({
+    renderDashboard(res);
 
-kategori:el.dataset.kategori,
-nominal:el.value
-
-});
-
-});
-
-const nama =
-document.getElementById(
-"namaSiswa"
-).value;
-
-const res = await api(
-
-"saveTransaksi",
-
-{
-
-nama:nama,
-oleh:LOGIN_NAME,
-items:items
+  })
+  .getDashboardData({
+    user: APP.user,
+    role: APP.role
+  });
 
 }
 
-);
+function renderDashboard(data){
 
-showPopup(res.message);
+  const area = document.getElementById('contentArea');
 
-document
-.querySelectorAll(".nominal")
-.forEach(el=>{
+  if(APP.role === 'ADMIN'){
 
-el.value = 0;
+    area.innerHTML = `
+      <div class="card">
+        <h3>Total Transaksi</h3>
+        <h1>${data.statistik.totalTransaksi}</h1>
+      </div>
 
-});
+      <div class="card">
+        <h3>Total Saldo</h3>
+        <h1>${formatRupiah(data.statistik.totalSaldo)}</h1>
+      </div>
+    `;
 
-await loadSaldo();
-await loadRekap();
+  }
 
-}
+  else if(APP.role === 'SISWA'){
 
-/************************************************
- LOAD REKAP
-************************************************/
+    const s = data.siswa;
 
-async function loadRekap(){
+    area.innerHTML = `
+      <div class="card">
 
-const res = await api("rekap");
+        <img
+        src="${s['Link Foto'] || 'https://i.pravatar.cc/200'}"
+        style="
+        width:100px;
+        height:100px;
+        border-radius:50%;
+        object-fit:cover;
+        ">
 
-const table =
-document.getElementById(
-"rekapTable"
-);
+        <h2>${s['Nama Siswa']}</h2>
 
-table.innerHTML = "";
+        <p>${s['NISN']}</p>
 
-if(!res.status){
+        <p>${s['Jenis Kelamin']}</p>
 
-table.innerHTML = `
-<tr>
-<td>Gagal memuat data</td>
-</tr>
-`;
+      </div>
 
-return;
+      <div class="card">
+        <h3>Total Bayar</h3>
+        <h1>${formatRupiah(data.totalBayar)}</h1>
+      </div>
 
-}
+      <div class="card">
+        <h3>Kekurangan</h3>
+        <h1>${formatRupiah(data.totalKekurangan)}</h1>
+      </div>
+    `;
 
-let html = `
-<thead>
-<tr>
-<th>Nama Siswa</th>
-`;
+  }
 
-res.headers.forEach(h=>{
-
-html += `
-<th>${h}</th>
-`;
-
-});
-
-html += `
-</tr>
-</thead>
-<tbody>
-`;
-
-res.data.forEach(item=>{
-
-html += `
-<tr>
-
-<td>
-<b>${item.nama}</b>
-</td>
-`;
-
-item.kategori.forEach(k=>{
-
-if(k.status === "LUNAS"){
-
-html += `
-<td>
-<span class="badge-lunas">
-LUNAS
-</span>
-</td>
-`;
-
-}else{
-
-html += `
-<td>
-<span class="badge-kurang">
-${k.status}
-</span>
-</td>
-`;
+  renderBottomNav();
 
 }
 
-});
+// ======================
+// NAVIGATION SECTION
+// ======================
 
-html += `
-</tr>
-`;
+function renderBottomNav(){
 
-});
+  document.getElementById('bottomNav').innerHTML = `
+    <div class="nav-btn" onclick="loadDashboard()">
+      <i class="fa-solid fa-house"></i>
+      <div>Home</div>
+    </div>
 
-html += `
-</tbody>
-`;
+    <div class="nav-btn" onclick="loadDashboard()">
+      <i class="fa-solid fa-rotate"></i>
+      <div>Refresh</div>
+    </div>
 
-table.innerHTML = html;
-
-}
-
-/************************************************
- LOAD SALDO
-************************************************/
-
-async function loadSaldo(){
-
-const res = await api("saldo");
-
-const saldo =
-document.getElementById(
-"saldoList"
-);
-
-saldo.innerHTML = "";
-
-let total = 0;
-
-Object.keys(res).forEach(key=>{
-
-total += Number(res[key]);
-
-saldo.innerHTML += `
-
-<div class="saldo-row">
-
-<div>${key}</div>
-
-<div>
-Rp${Number(
-res[key]
-).toLocaleString("id-ID")}
-</div>
-
-</div>
-
-`;
-
-});
-
-document
-.getElementById("grandTotal")
-.innerText =
-
-"Rp" +
-total.toLocaleString("id-ID");
+    <div class="nav-btn" onclick="logout()">
+      <i class="fa-solid fa-right-from-bracket"></i>
+      <div>Logout</div>
+    </div>
+  `;
 
 }
 
-/************************************************
- LOGOUT
-************************************************/
+// ======================
+// HELPER SECTION
+// ======================
 
-async function logout(){
+function formatRupiah(angka){
 
-await api("logout",{
-
-sessionID:SESSION_ID
-
-});
-
-localStorage.removeItem(
-"ebendahara_session"
-);
-
-location.reload();
+  return new Intl.NumberFormat(
+    'id-ID',
+    {
+      style:'currency',
+      currency:'IDR',
+      minimumFractionDigits:0
+    }
+  ).format(angka);
 
 }
 
-/************************************************
- MENU
-************************************************/
+function toast(text){
 
-function showMenu(id,el){
+  const div = document.createElement('div');
 
-document
-.getElementById("inputPage")
-.classList.add("hidden");
+  div.className='toast';
 
-document
-.getElementById("rekapPage")
-.classList.add("hidden");
+  div.innerText=text;
 
-document
-.getElementById("saldoPage")
-.classList.add("hidden");
+  document.body.appendChild(div);
 
-document
-.getElementById(id)
-.classList.remove("hidden");
+  setTimeout(()=>{
+    div.remove();
+  },3000);
 
-document
-.querySelectorAll(".menu button")
-.forEach(btn=>{
+}
 
-btn.classList.remove("active");
+function showLoading(show){
 
-});
-
-el.classList.add("active");
+  document.getElementById('loading').style.display =
+    show ? 'flex' : 'none';
 
 }
 
