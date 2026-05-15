@@ -159,19 +159,6 @@ button{
 
   cursor:pointer;
 
-  transition:.2s;
-
-}
-
-button:hover{
-
-  transform:translateY(-1px);
-
-}
-
-button:disabled{
-  opacity:.7;
-  cursor:not-allowed;
 }
 
 /* ========================================
@@ -403,40 +390,27 @@ SALDO
   display:flex;
   justify-content:space-between;
 
-  margin-bottom:16px;
+  margin-bottom:22px;
 
   font-weight:600;
 
 }
 
-.totalCard{
+.totalSaldo{
 
-  border-radius:18px;
-
-  padding:18px;
+  background:#2563eb;
 
   color:white;
 
-  margin-top:16px;
+  border-radius:16px;
+
+  padding:16px;
 
   display:flex;
   justify-content:space-between;
-  align-items:center;
 
   font-weight:700;
 
-}
-
-.totalMasuk{
-  background:linear-gradient(135deg,#16a34a,#22c55e);
-}
-
-.totalKeluar{
-  background:linear-gradient(135deg,#dc2626,#ef4444);
-}
-
-.totalSaldoAkhir{
-  background:linear-gradient(135deg,#2563eb,#3b82f6);
 }
 
 /* ========================================
@@ -505,10 +479,6 @@ POPUP
 
   animation:popupShow .3s ease;
 
-}
-
-.popup.error{
-  background:#dc2626;
 }
 
 @keyframes popupShow{
@@ -609,13 +579,9 @@ class="container"
       type="password"
       id="pin"
       placeholder="••••••"
-      autocomplete="off"
     >
 
-    <button
-      id="btnLogin"
-      onclick="login()"
-    >
+    <button onclick="login()">
       BUKA PANEL KAS
     </button>
 
@@ -632,6 +598,8 @@ id="adminPage"
 class="hidden container"
 >
 
+  <!-- USER -->
+
   <div class="userBox">
 
     <div>
@@ -646,8 +614,8 @@ class="hidden container"
     </div>
 
     <button
-      class="logout"
-      onclick="logout()"
+    class="logout"
+    onclick="logout()"
     >
       Keluar
     </button>
@@ -661,23 +629,23 @@ class="hidden container"
     <div class="menu">
 
       <button
-        id="btnInput"
-        class="active"
-        onclick="showMenu('input')"
+      id="btnInput"
+      class="active"
+      onclick="showMenu('input')"
       >
         Input Data
       </button>
 
       <button
-        id="btnRekap"
-        onclick="showMenu('rekap')"
+      id="btnRekap"
+      onclick="showMenu('rekap')"
       >
         Rekap Iuran
       </button>
 
       <button
-        id="btnSaldo"
-        onclick="showMenu('saldo')"
+      id="btnSaldo"
+      onclick="showMenu('saldo')"
       >
         Total Saldo
       </button>
@@ -687,10 +655,12 @@ class="hidden container"
   </div>
 
   <!-- ========================================
-  INPUT
+  MENU INPUT
   ======================================== -->
 
   <div id="menuInput">
+
+    <!-- TRANSAKSI -->
 
     <div class="card">
 
@@ -744,12 +714,34 @@ class="hidden container"
         Setor Ke Kesiswaan
       </h3>
 
-      <div id="setorBox"></div>
+      <input
+      type="number"
+      id="setorKAS"
+      placeholder="KAS"
+      >
 
       <input
-        type="text"
-        id="penerima"
-        placeholder="Nama Penerima"
+      type="number"
+      id="setorGALON"
+      placeholder="GALON"
+      >
+
+      <input
+      type="number"
+      id="setorKARTU"
+      placeholder="Kartu Pelajar"
+      >
+
+      <input
+      type="number"
+      id="setorTALI"
+      placeholder="Tali Asih"
+      >
+
+      <input
+      type="text"
+      id="penerima"
+      placeholder="Nama Penerima"
       >
 
       <button onclick="saveSetor()">
@@ -761,7 +753,7 @@ class="hidden container"
   </div>
 
   <!-- ========================================
-  REKAP
+  MENU REKAP
   ======================================== -->
 
   <div
@@ -797,7 +789,9 @@ class="hidden container"
       </div>
 
       <div class="tableWrap">
+
         <table id="rekapTable"></table>
+
       </div>
 
     </div>
@@ -805,7 +799,7 @@ class="hidden container"
   </div>
 
   <!-- ========================================
-  SALDO
+  MENU SALDO
   ======================================== -->
 
   <div
@@ -814,7 +808,9 @@ class="hidden container"
   >
 
     <div class="card">
+
       <div id="saldoContent"></div>
+
     </div>
 
   </div>
@@ -882,7 +878,7 @@ FOOTER
 
 <div class="footer">
 
-  Aplikasi e bendahara v 1.3
+  Aplikasi e bendahara v 1.2
   (Build 15 Mei 2026)
 
   <br>
@@ -902,102 +898,56 @@ let DASHBOARD = {};
 
 let LOGIN_NAME = "";
 let LOGIN_ROLE = "";
-let LOGIN_PIN = "";
-let LOGIN_TYPE = "";
 
-/* ========================================
-FETCH
-======================================== */
-
+// ========================================
+// FETCH
+// ========================================
 async function postData(data){
 
   const res = await fetch(API_URL,{
+
     method:"POST",
+
     body:JSON.stringify(data)
+
   });
 
   return await res.json();
 
 }
 
-/* ========================================
-POPUP
-======================================== */
-
-function popup(text,type="success"){
+// ========================================
+// POPUP
+// ========================================
+function popup(text){
 
   const div =
     document.createElement("div");
 
-  div.className =
-    type == "error"
-    ? "popup error"
-    : "popup";
+  div.className = "popup";
 
   div.innerHTML = text;
 
   document.body.appendChild(div);
 
   setTimeout(()=>{
+
     div.remove();
+
   },2500);
 
 }
 
-/* ========================================
-AUTO LOGIN SESSION
-======================================== */
-
-window.addEventListener(
-  "load",
-  async function(){
-
-    const session =
-      localStorage.getItem(
-        "ebendahara_session"
-      );
-
-    if(!session) return;
-
-    try{
-
-      const data =
-        JSON.parse(session);
-
-      if(data.pin){
-
-        document
-          .getElementById("pin")
-          .value = data.pin;
-
-        await login(true);
-
-      }
-
-    }catch(err){
-
-      localStorage.removeItem(
-        "ebendahara_session"
-      );
-
-    }
-
-  }
-);
-
-/* ========================================
-ENTER LOGIN
-======================================== */
-
+// ========================================
+// ENTER LOGIN
+// ========================================
 document
 .getElementById("pin")
 .addEventListener(
-  "keydown",
+  "keypress",
   function(e){
 
     if(e.key === "Enter"){
-
-      e.preventDefault();
 
       login();
 
@@ -1006,178 +956,96 @@ document
   }
 );
 
-/* ========================================
-LOGIN
-======================================== */
-
-async function login(auto=false){
+// ========================================
+// LOGIN
+// ========================================
+async function login(){
 
   const pin =
     document
     .getElementById("pin")
-    .value
-    .trim();
+    .value;
 
   if(pin == ""){
 
-    popup(
-      "PIN wajib diisi",
-      "error"
-    );
-
+    popup("PIN wajib diisi");
     return;
 
   }
 
-  const btn =
-    document.getElementById(
-      "btnLogin"
-    );
+  const res = await postData({
 
-  btn.disabled = true;
-  btn.innerHTML = "MEMPROSES...";
+    action:"login",
+    pin:pin
 
-  try{
+  });
 
-    const res = await postData({
+  if(!res.success){
 
-      action:"login",
-      pin:pin
-
-    });
-
-    if(!res.success){
-
-      popup(
-        res.message || "Login gagal",
-        "error"
-      );
-
-      localStorage.removeItem(
-        "ebendahara_session"
-      );
-
-      btn.disabled = false;
-      btn.innerHTML = "BUKA PANEL KAS";
-
-      return;
-
-    }
-
-    LOGIN_NAME = res.nama || "";
-    LOGIN_ROLE = res.user || "";
-    LOGIN_PIN = pin;
-    LOGIN_TYPE = res.role || "";
-
-    localStorage.setItem(
-      "ebendahara_session",
-      JSON.stringify({
-        pin:pin
-      })
-    );
-
-    // SISWA
-
-    if(res.role == "SISWA"){
-
-      await loadSiswaDashboard(pin);
-
-      btn.disabled = false;
-      btn.innerHTML = "BUKA PANEL KAS";
-
-      return;
-
-    }
-
-    // ADMIN
-
-    document
-      .getElementById("loginPage")
-      .classList.add("hidden");
-
-    document
-      .getElementById("adminPage")
-      .classList.remove("hidden");
-
-    document
-      .getElementById("namaAdmin")
-      .innerHTML = LOGIN_NAME;
-
-    document
-      .getElementById("roleText")
-      .innerHTML = LOGIN_ROLE;
-
-    await loadDashboard();
-
-    if(!auto){
-      popup("Login berhasil");
-    }
-
-  }catch(err){
-
-    console.log(err);
-
-    popup(
-      "Gagal terhubung server",
-      "error"
-    );
+    popup(res.message);
+    return;
 
   }
 
-  btn.disabled = false;
-  btn.innerHTML = "BUKA PANEL KAS";
+  LOGIN_NAME = res.nama;
+  LOGIN_ROLE = res.user;
+
+  // SISWA
+  if(res.role == "SISWA"){
+
+    loadSiswaDashboard(pin);
+    return;
+
+  }
+
+  // ADMIN
+  document
+    .getElementById("loginPage")
+    .classList.add("hidden");
+
+  document
+    .getElementById("adminPage")
+    .classList.remove("hidden");
+
+  document
+    .getElementById("namaAdmin")
+    .innerHTML = LOGIN_NAME;
+
+  document
+    .getElementById("roleText")
+    .innerHTML = LOGIN_ROLE;
+
+  await loadDashboard();
+
+  popup("Login berhasil");
 
 }
 
-/* ========================================
-LOAD DASHBOARD
-======================================== */
-
+// ========================================
+// LOAD DASHBOARD
+// ========================================
 async function loadDashboard(){
 
-  try{
+  const res = await postData({
 
-    const res = await postData({
-      action:"getDashboard"
-    });
+    action:"getDashboard"
 
-    DASHBOARD = res || {};
+  });
 
-    TARGET =
-      (res.target || []).filter(t=>{
+  DASHBOARD = res;
 
-        const tampil =
-          String(t.tampil)
-          .toLowerCase();
+  TARGET = res.target;
 
-        return (
-          tampil == "true" ||
-          tampil == "1"
-        );
-
-      });
-
-    renderSiswa();
-    renderKategori();
-    renderSetor();
-    renderRekap();
-    renderSaldo();
-
-  }catch(err){
-
-    popup(
-      "Gagal load dashboard",
-      "error"
-    );
-
-  }
+  renderSiswa();
+  renderKategori();
+  renderRekap();
+  renderSaldo();
 
 }
 
-/* ========================================
-RENDER SISWA
-======================================== */
-
+// ========================================
+// RENDER SISWA
+// ========================================
 function renderSiswa(){
 
   const select =
@@ -1187,26 +1055,27 @@ function renderSiswa(){
 
   select.innerHTML = "";
 
-  if(!DASHBOARD.siswa) return;
-
   DASHBOARD.siswa.forEach(s=>{
 
     select.innerHTML += `
+
       <option
       value="${s.no}|${s.nama}"
       >
+
         ${s.nama}
+
       </option>
+
     `;
 
   });
 
 }
 
-/* ========================================
-RENDER KATEGORI
-======================================== */
-
+// ========================================
+// RENDER KATEGORI
+// ========================================
 function renderKategori(){
 
   const box =
@@ -1219,6 +1088,7 @@ function renderKategori(){
   TARGET.forEach(t=>{
 
     box.innerHTML += `
+
       <div class="kategoriRow">
 
         <div class="kategoriLabel">
@@ -1226,50 +1096,23 @@ function renderKategori(){
         </div>
 
         <input
-          type="number"
-          id="kat_${t.kategori}"
-          value="0"
-          class="kategoriInput"
+        type="number"
+        id="kat_${t.kategori}"
+        value="0"
+        class="kategoriInput"
         >
 
       </div>
+
     `;
 
   });
 
 }
 
-/* ========================================
-RENDER SETOR
-======================================== */
-
-function renderSetor(){
-
-  const box =
-    document.getElementById(
-      "setorBox"
-    );
-
-  box.innerHTML = "";
-
-  TARGET.forEach(t=>{
-
-    box.innerHTML += `
-      <input
-        type="number"
-        id="setor_${t.kategori}"
-        placeholder="${t.kategori}"
-      >
-    `;
-
-  });
-
-}
-
-/* ========================================
-SAVE TRANSAKSI
-======================================== */
-
+// ========================================
+// SAVE TRANSAKSI
+// ========================================
 async function saveTransaksi(){
 
   const siswa =
@@ -1280,164 +1123,117 @@ async function saveTransaksi(){
 
   let adaInput = false;
 
-  try{
+  for(let i=0;i<TARGET.length;i++){
 
-    for(let i=0;i<TARGET.length;i++){
+    const t = TARGET[i];
 
-      const t = TARGET[i];
+    const nominal =
+      document
+      .getElementById(
+        "kat_" + t.kategori
+      )
+      .value;
 
-      const nominal =
-        Number(
-          document
-          .getElementById(
-            "kat_" + t.kategori
-          )
-          .value || 0
-        );
+    if(Number(nominal) > 0){
 
-      if(nominal > 0){
+      adaInput = true;
 
-        adaInput = true;
+      await postData({
 
-        await postData({
+        action:"saveTransaksi",
 
-          action:"saveTransaksi",
+        no:siswa[0],
 
-          no:siswa[0],
+        nama:siswa[1],
 
-          nama:siswa[1],
+        kategori:t.kategori,
 
-          kategori:t.kategori,
+        jumlah:nominal,
 
-          jumlah:nominal,
-
-          oleh:LOGIN_NAME
-
-        });
-
-      }
-
-    }
-
-    if(!adaInput){
-
-      popup(
-        "Isi minimal 1 nominal",
-        "error"
-      );
-
-      return;
-
-    }
-
-    await loadDashboard();
-
-    renderKategori();
-
-    popup("Transaksi berhasil");
-
-  }catch(err){
-
-    popup(
-      "Gagal simpan transaksi",
-      "error"
-    );
-
-  }
-
-}
-
-/* ========================================
-SAVE SETOR
-======================================== */
-
-async function saveSetor(){
-
-  try{
-
-    const dataSetor = {};
-
-    TARGET.forEach(t=>{
-
-      dataSetor[t.kategori] =
-        Number(
-          document
-          .getElementById(
-            "setor_" + t.kategori
-          ).value || 0
-        );
-
-    });
-
-    const res = await postData({
-
-      action:"saveSetor",
-
-      data:dataSetor,
-
-      penerima:
-        document
-        .getElementById("penerima")
-        .value
-
-    });
-
-    if(res.success){
-
-      TARGET.forEach(t=>{
-
-        document
-        .getElementById(
-          "setor_" + t.kategori
-        ).value = "";
+        oleh:LOGIN_NAME
 
       });
 
-      document
-        .getElementById("penerima")
-        .value = "";
-
-      await loadDashboard();
-
-      popup("Setoran berhasil");
-
-    }else{
-
-      popup(
-        "Setoran gagal",
-        "error"
-      );
-
     }
 
-  }catch(err){
+  }
 
-    popup(
-      "Gagal menyimpan setoran",
-      "error"
-    );
+  if(!adaInput){
+
+    popup("Isi minimal 1 nominal");
+    return;
+
+  }
+
+  await loadDashboard();
+
+  renderKategori();
+
+  popup("Transaksi berhasil");
+
+}
+
+// ========================================
+// SAVE SETOR
+// ========================================
+async function saveSetor(){
+
+  const res = await postData({
+
+    action:"saveSetor",
+
+    KAS:
+      document
+      .getElementById("setorKAS")
+      .value || 0,
+
+    GALON:
+      document
+      .getElementById("setorGALON")
+      .value || 0,
+
+    KARTU:
+      document
+      .getElementById("setorKARTU")
+      .value || 0,
+
+    TALI:
+      document
+      .getElementById("setorTALI")
+      .value || 0,
+
+    penerima:
+      document
+      .getElementById("penerima")
+      .value
+
+  });
+
+  if(res.success){
+
+    document.getElementById("setorKAS").value = "";
+    document.getElementById("setorGALON").value = "";
+    document.getElementById("setorKARTU").value = "";
+    document.getElementById("setorTALI").value = "";
+    document.getElementById("penerima").value = "";
+
+    await loadDashboard();
+
+    popup("Setoran berhasil");
 
   }
 
 }
 
-/* ========================================
-RENDER REKAP
-======================================== */
-
+// ========================================
+// RENDER REKAP
+// ========================================
 function renderRekap(){
 
   const table =
     document.getElementById(
       "rekapTable"
     );
-
-  if(!DASHBOARD.rekap){
-
-    table.innerHTML = "";
-    return;
-
-  }
 
   let html = "";
 
@@ -1447,6 +1243,7 @@ function renderRekap(){
 
     r.forEach(c=>{
 
+      // HEADER
       if(i == 0){
 
         html += `
@@ -1455,16 +1252,21 @@ function renderRekap(){
 
       }
 
+      // BODY
       else{
 
         if(c == "LUNAS"){
 
           html += `
+
             <td>
+
               <span class="lunas">
                 LUNAS
               </span>
+
             </td>
+
           `;
 
         }
@@ -1474,11 +1276,17 @@ function renderRekap(){
         ){
 
           html += `
+
             <td>
+
               <span class="kurang">
+
                 Rp${c.toLocaleString('id-ID')}
+
               </span>
+
             </td>
+
           `;
 
         }
@@ -1503,35 +1311,10 @@ function renderRekap(){
 
 }
 
-/* ========================================
-RENDER SALDO
-======================================== */
-
+// ========================================
+// RENDER SALDO
+// ========================================
 function renderSaldo(){
-
-  const wrap =
-    document.getElementById(
-      "saldoContent"
-    );
-
-  if(
-    !DASHBOARD.saldo ||
-    DASHBOARD.saldo.length == 0
-  ){
-
-    wrap.innerHTML = `
-      <div style="
-        text-align:center;
-        color:#6b7280;
-        padding:20px
-      ">
-        Data saldo belum tersedia
-      </div>
-    `;
-
-    return;
-
-  }
 
   const saldo =
     DASHBOARD.saldo;
@@ -1561,7 +1344,9 @@ function renderSaldo(){
     totalKeluar += keluar;
     totalSaldo += akhir;
 
+    // PEMASUKAN
     pemasukanHTML += `
+
       <div class="saldoItem">
 
         <div>
@@ -1573,9 +1358,12 @@ function renderSaldo(){
         </div>
 
       </div>
+
     `;
 
+    // SETOR
     setorHTML += `
+
       <div class="saldoItem">
 
         <div>
@@ -1587,9 +1375,12 @@ function renderSaldo(){
         </div>
 
       </div>
+
     `;
 
+    // SALDO
     saldoHTML += `
+
       <div class="saldoItem">
 
         <div>
@@ -1601,86 +1392,88 @@ function renderSaldo(){
         </div>
 
       </div>
+
     `;
 
   });
 
-  wrap.innerHTML = `
+  document
+    .getElementById("saldoContent")
+    .innerHTML = `
 
-    <div class="saldoSection">
+      <div class="saldoSection">
 
-      <h3 class="saldoTitle">
-        🟢 Total Pemasukan
-      </h3>
+        <h3 class="saldoTitle">
+          Total Pemasukan
+        </h3>
 
-      ${pemasukanHTML}
+        ${pemasukanHTML}
 
-      <div class="totalCard totalMasuk">
+        <div class="totalSaldo">
 
-        <div>
-          TOTAL MASUK
-        </div>
+          <div>
+            TOTAL MASUK
+          </div>
 
-        <div>
-          Rp${totalMasuk.toLocaleString('id-ID')}
-        </div>
+          <div>
+            Rp${totalMasuk.toLocaleString('id-ID')}
+          </div>
 
-      </div>
-
-    </div>
-
-    <div class="saldoSection">
-
-      <h3 class="saldoTitle">
-        🔴 Sudah Disetor Ke Kesiswaan
-      </h3>
-
-      ${setorHTML}
-
-      <div class="totalCard totalKeluar">
-
-        <div>
-          TOTAL SETOR
-        </div>
-
-        <div>
-          Rp${totalKeluar.toLocaleString('id-ID')}
         </div>
 
       </div>
 
-    </div>
+      <div class="saldoSection">
 
-    <div class="saldoSection">
+        <h3 class="saldoTitle">
+          Sudah Disetor Ke Kesiswaan
+        </h3>
 
-      <h3 class="saldoTitle">
-        🔵 Saldo Bendahara
-      </h3>
+        ${setorHTML}
 
-      ${saldoHTML}
+        <div class="totalSaldo">
 
-      <div class="totalCard totalSaldoAkhir">
+          <div>
+            TOTAL SETOR
+          </div>
 
-        <div>
-          TOTAL SALDO
-        </div>
+          <div>
+            Rp${totalKeluar.toLocaleString('id-ID')}
+          </div>
 
-        <div>
-          Rp${totalSaldo.toLocaleString('id-ID')}
         </div>
 
       </div>
 
-    </div>
+      <div class="saldoSection">
 
-  `;
+        <h3 class="saldoTitle">
+          Saldo Bendahara
+        </h3>
+
+        ${saldoHTML}
+
+        <div class="totalSaldo">
+
+          <div>
+            TOTAL SALDO
+          </div>
+
+          <div>
+            Rp${totalSaldo.toLocaleString('id-ID')}
+          </div>
+
+        </div>
+
+      </div>
+
+    `;
 
 }
 
-/* ========================================
-MENU
-======================================== */
-
+// ========================================
+// MENU
+// ========================================
 function showMenu(menu){
 
   document
@@ -1707,6 +1500,7 @@ function showMenu(menu){
     .getElementById("btnSaldo")
     .classList.remove("active");
 
+  // INPUT
   if(menu == "input"){
 
     document
@@ -1719,6 +1513,7 @@ function showMenu(menu){
 
   }
 
+  // REKAP
   if(menu == "rekap"){
 
     document
@@ -1731,6 +1526,7 @@ function showMenu(menu){
 
   }
 
+  // SALDO
   if(menu == "saldo"){
 
     document
@@ -1745,146 +1541,145 @@ function showMenu(menu){
 
 }
 
-/* ========================================
-SISWA DASHBOARD
-======================================== */
-
+// ========================================
+// SISWA DASHBOARD
+// ========================================
 async function loadSiswaDashboard(nisn){
 
-  try{
+  const res = await postData({
 
-    const res = await postData({
+    action:"getSiswaDashboard",
 
-      action:"getSiswaDashboard",
+    nisn:nisn
 
-      nisn:nisn
+  });
 
-    });
+  if(!res.success){
 
-    if(!res.success){
-
-      popup(
-        "Data tidak ditemukan",
-        "error"
-      );
-
-      return;
-
-    }
-
-    document
-      .getElementById("loginPage")
-      .classList.add("hidden");
-
-    document
-      .getElementById("siswaPage")
-      .classList.remove("hidden");
-
-    document
-      .getElementById("fotoSiswa")
-      .src = res.siswa.foto;
-
-    document
-      .getElementById("namaSiswa")
-      .innerHTML = res.siswa.nama;
-
-    document
-      .getElementById("jkSiswa")
-      .innerHTML = res.siswa.jk;
-
-    document
-      .getElementById("nisnSiswa")
-      .innerHTML = res.siswa.nisn;
-
-    let bayar = "";
-    let kurang = "";
-
-    Object.keys(res.bayar)
-    .forEach(k=>{
-
-      bayar += `
-        <div class="saldoItem">
-
-          <div>${k}</div>
-
-          <div>
-            Rp${Number(
-              res.bayar[k]
-            ).toLocaleString('id-ID')}
-          </div>
-
-        </div>
-      `;
-
-    });
-
-    Object.keys(res.kurang)
-    .forEach(k=>{
-
-      kurang += `
-        <div class="saldoItem">
-
-          <div>${k}</div>
-
-          <div>
-            Rp${Number(
-              res.kurang[k]
-            ).toLocaleString('id-ID')}
-          </div>
-
-        </div>
-      `;
-
-    });
-
-    bayar += `
-      <hr style="margin:14px 0">
-
-      <b>
-        Total :
-        Rp${res.totalBayar
-        .toLocaleString('id-ID')}
-      </b>
-    `;
-
-    kurang += `
-      <hr style="margin:14px 0">
-
-      <b>
-        Total :
-        Rp${res.totalKurang
-        .toLocaleString('id-ID')}
-      </b>
-    `;
-
-    document
-      .getElementById("sudahBayar")
-      .innerHTML = bayar;
-
-    document
-      .getElementById("belumBayar")
-      .innerHTML = kurang;
-
-  }catch(err){
-
-    popup(
-      "Gagal load data siswa",
-      "error"
-    );
+    popup("Data tidak ditemukan");
+    return;
 
   }
 
+  document
+    .getElementById("loginPage")
+    .classList.add("hidden");
+
+  document
+    .getElementById("siswaPage")
+    .classList.remove("hidden");
+
+  document
+    .getElementById("fotoSiswa")
+    .src = res.siswa.foto;
+
+  document
+    .getElementById("namaSiswa")
+    .innerHTML = res.siswa.nama;
+
+  document
+    .getElementById("jkSiswa")
+    .innerHTML = res.siswa.jk;
+
+  document
+    .getElementById("nisnSiswa")
+    .innerHTML = res.siswa.nisn;
+
+  let bayar = "";
+  let kurang = "";
+
+  // SUDAH BAYAR
+  Object.keys(res.bayar)
+  .forEach(k=>{
+
+    bayar += `
+
+      <div class="saldoItem">
+
+        <div>${k}</div>
+
+        <div>
+
+          Rp${Number(
+            res.bayar[k]
+          ).toLocaleString('id-ID')}
+
+        </div>
+
+      </div>
+
+    `;
+
+  });
+
+  // BELUM BAYAR
+  Object.keys(res.kurang)
+  .forEach(k=>{
+
+    kurang += `
+
+      <div class="saldoItem">
+
+        <div>${k}</div>
+
+        <div>
+
+          Rp${Number(
+            res.kurang[k]
+          ).toLocaleString('id-ID')}
+
+        </div>
+
+      </div>
+
+    `;
+
+  });
+
+  bayar += `
+
+    <hr style="margin:14px 0">
+
+    <b>
+
+      Total :
+
+      Rp${res.totalBayar
+      .toLocaleString('id-ID')}
+
+    </b>
+
+  `;
+
+  kurang += `
+
+    <hr style="margin:14px 0">
+
+    <b>
+
+      Total :
+
+      Rp${res.totalKurang
+      .toLocaleString('id-ID')}
+
+    </b>
+
+  `;
+
+  document
+    .getElementById("sudahBayar")
+    .innerHTML = bayar;
+
+  document
+    .getElementById("belumBayar")
+    .innerHTML = kurang;
+
 }
 
-/* ========================================
-LOGOUT
-======================================== */
-
+// ========================================
+// LOGOUT
+// ========================================
 function logout(){
-
-  localStorage.removeItem(
-    "ebendahara_session"
-  );
 
   location.reload();
 
