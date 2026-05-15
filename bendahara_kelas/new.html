@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-Bendahara Multi-Layer 2026</title>
+  
+  <!-- Frameworks -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --secondary: #7c3aed;
+      --accent: #10b981;
+      --danger: #ef4444;
+      --bg-body: #f1f5f9;
+      --white: #ffffff;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--bg-body);
+      color: #1e293b;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* HEADER STYLE */
+    .header-app {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      padding: 40px 20px;
+      text-align: center;
+      border-radius: 0 0 40px 40px;
+      box-shadow: 0 10px 20px rgba(79, 70, 229, 0.2);
+    }
+
+    .header-app h2 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; }
+
+    .container { max-width: 650px; padding: 25px 15px; flex: 1; }
+
+    /* CARD STYLING */
+    .card {
+      border: none;
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      background: var(--white);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    /* LAYER 1: LOGIN */
+    .pin-input {
+      letter-spacing: 10px;
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: 700;
+      border-radius: 15px;
+      border: 2px solid #e2e8f0;
+      background: #f8fafc;
+    }
+
+    /* LAYER 3: STUDENT PORTAL SPECIFICS */
+    .student-photo-frame {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 4px solid var(--white);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      object-fit: cover;
+      margin-top: -60px;
+      background: #eee;
+    }
+
+    .finance-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px dashed #e2e8f0;
+    }
+
+    .finance-row:last-child { border-bottom: none; }
+
+    .text-paid { color: var(--accent); font-weight: 600; }
+    .text-unpaid { color: var(--danger); font-weight: 600; }
+
+    /* UTILS */
+    .hidden { display: none !important; }
+    .fade-in { animation: fadeIn 0.5s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .btn-action {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 16px;
+      font-weight: 600;
+      width: 100%;
+      transition: 0.3s;
+    }
+    .btn-action:hover { opacity: 0.9; transform: scale(0.98); }
+
+    .nav-pills .nav-link {
+      border-radius: 12px;
+      font-weight: 500;
+      color: #64748b;
+      font-size: 0.85rem;
+    }
+    .nav-pills .nav-link.active {
+      background-color: var(--secondary);
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+    }
+
+    .footer {
+      text-align: center;
+      padding: 30px;
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header-app">
+    <h2 class="mb-1"><i class="fa-solid fa-wallet me-2"></i>E-Bendahara</h2>
+    <p class="small opacity-75">Sistem Transparansi Keuangan Kelas 2.0</p>
+  </div>
+
+  <div class="container">
+    
+    <!-- LAYER 1: LOGIN SECTION -->
+    <div id="loginSection" class="card p-4 fade-in">
+      <div class="text-center mb-4">
+        <h5 class="fw-bold">Akses Keamanan</h5>
+        <p class="text-muted small">Masukkan PIN atau NISN Anda</p>
+      </div>
+      <div class="mb-4">
+        <input type="password" id="pinInput" class="form-control pin-input" placeholder="••••••" inputmode="numeric">
+      </div>
+      <button onclick="handleLogin()" id="btnLogin" class="btn btn-action">MASUK KE SISTEM</button>
+    </div>
+
+    <!-- LAYER 2: ADMIN PANEL -->
+    <div id="adminSection" class="hidden fade-in">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <span class="badge bg-primary mb-1">ADMINISTRATOR</span>
+          <h5 class="fw-bold mb-0" id="adminNameLabel"></h5>
+        </div>
+        <button onclick="logout()" class="btn btn-sm btn-outline-danger rounded-pill px-3">Keluar</button>
+      </div>
+
+      <ul class="nav nav-pills nav-fill mb-4 card p-2 flex-row shadow-sm">
+        <li class="nav-item"><button class="nav-link active" id="tabInBtn" onclick="switchTab('input')">Input</button></li>
+        <li class="nav-item"><button class="nav-link" id="tabRekapBtn" onclick="loadAdminRekap()">Rekap</button></li>
+        <li class="nav-item"><button class="nav-link" id="tabTotalBtn" onclick="loadTotalSaldo()">Saldo</button></li>
+      </ul>
+
+      <!-- Tab Content Admin -->
+      <div id="tabInput" class="card p-3 shadow-sm">
+        <label class="form-label small fw-bold text-secondary">Pilih Nama Siswa</label>
+        <select id="siswaSelect" class="form-select border-0 bg-light mb-3" style="border-radius:12px;"></select>
+        
+        <div class="table-responsive">
+          <table class="table table-borderless align-middle">
+            <tbody id="adminInputBody"></tbody>
+          </table>
+        </div>
+        <button onclick="savePayment()" id="btnSave" class="btn btn-action mt-2">SIMPAN DATA</button>
+      </div>
+
+      <div id="tabRekap" class="hidden card p-0">
+         <div class="table-responsive"><table class="table table-hover mb-0" id="adminRekapTable" style="font-size: 0.8rem;"></table></div>
+      </div>
+
+      <div id="tabTotal" class="hidden card p-4 text-center">
+        <div id="saldoContent"></div>
+      </div>
+    </div>
+
+    <!-- LAYER 3: STUDENT DASHBOARD -->
+    <div id="studentSection" class="hidden fade-in">
+      <div class="card text-center pb-4 mb-4">
+        <div style="height: 100px; background: linear-gradient(45deg, #6366f1, #a855f7);"></div>
+        <div class="d-flex justify-content-center">
+          <img id="stFoto" src="" class="student-photo-frame" onerror="this.src='https://placehold.co/150x150/e2e8f0/475569?text=User'">
+        </div>
+        <div class="mt-3 px-3">
+          <h4 class="fw-bold mb-0" id="stNama"></h4>
+          <p class="text-muted small mb-0" id="stNisn"></p>
+          <p class="badge bg-light text-dark border mt-2" id="stGender"></p>
+        </div>
+        <div class="px-4 mt-2">
+            <button onclick="logout()" class="btn btn-sm btn-light text-danger w-100 rounded-pill"><i class="fa-solid fa-power-off me-2"></i>Keluar Sesi</button>
+        </div>
+      </div>
+
+      <div class="card p-4">
+        <h6 class="fw-bold mb-3 text-primary"><i class="fa-solid fa-circle-check me-2"></i>Status Pembayaran (Sudah Bayar)</h6>
+        <div id="paidList"></div>
+        <div class="finance-row mt-2 pt-3 border-top border-primary">
+          <span class="fw-bold">TOTAL SUDAH DIBAYAR</span>
+          <span class="text-paid h6 mb-0" id="totalPaid"></span>
+        </div>
+      </div>
+
+      <div class="card p-4 border-start border-danger border-5">
+        <h6 class="fw-bold mb-3 text-danger"><i class="fa-solid fa-circle-exclamation me-2"></i>Kekurangan (Belum Bayar)</h6>
+        <div id="unpaidList"></div>
+        <div class="finance-row mt-2 pt-3 border-top border-danger">
+          <span class="fw-bold">TOTAL KEKURANGAN</span>
+          <span class="text-unpaid h6 mb-0" id="totalUnpaid"></span>
+        </div>
+      </div>
+
+      <div class="text-center text-muted mt-2" style="font-size: 0.7rem;">
+        Terakhir diperbarui: <span id="stLastUpdate"></span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div>E-Bendahara v2.0 • Build 15 Mei 2026</div>
+    <div>Sistem Keamanan Berlapis & Real-time Database</div>
+    <div class="mt-2 fw-bold">Apps by MB &copy; 2026</div>
+  </div>
+
+  <script>
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbyKNBJl0DghHMSjW-I7BcqjVncZQlO-_UwcLqAJUcL-_R_FuIYUReTaSaRmMNEpimnQ/exec";
+    const CATS = ["KAS", "GALON", "KARTU PELAJAR", "TALI ASIH", "LAIN 1", "LAIN 2"];
+    
+    let state = {
+      role: null,
+      nama: null,
+      sessionID: null,
+      absen: null
+    };
+
+    window.onload = () => {
+      const saved = localStorage.getItem("ebendahara_v2_session");
+      if(saved) {
+        state = JSON.parse(saved);
+        renderLayout();
+      }
+    };
+
+    async function apiCall(action, data = {}) {
+      try {
+        const response = await fetch(GAS_URL, {
+          method: "POST",
+          body: JSON.stringify({ action, ...data })
+        });
+        const res = await response.json();
+        if(res.status === "success") return res.data;
+        throw new Error(res.message);
+      } catch (e) {
+        Swal.fire("Error", e.message, "error");
+        return null;
+      }
+    }
+
+    async function handleLogin() {
+      const pin = document.getElementById('pinInput').value;
+      if(!pin) return;
+
+      const btn = document.getElementById('btnLogin');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Verifikasi...';
+
+      const res = await apiCall("login", { pin });
+      if(res) {
+        state = res;
+        localStorage.setItem("ebendahara_v2_session", JSON.stringify(state));
+        Swal.fire({ icon: 'success', title: 'Berhasil', text: 'Selamat datang, ' + res.nama, timer: 2000, showConfirmButton: false });
+        renderLayout();
+      } else {
+        Swal.fire("Gagal", "PIN atau NISN tidak terdaftar!", "error");
+        btn.disabled = false;
+        btn.innerText = "MASUK KE SISTEM";
+      }
+    }
+
+    function renderLayout() {
+      document.getElementById('loginSection').classList.add('hidden');
+      
+      if(state.role === "SISWA") {
+        document.getElementById('studentSection').classList.remove('hidden');
+        loadStudentDashboard();
+      } else {
+        document.getElementById('adminSection').classList.remove('hidden');
+        document.getElementById('adminNameLabel').innerText = state.nama;
+        initAdminPanel();
+      }
+    }
+
+    /* --- ADMIN LOGIC --- */
+    async function initAdminPanel() {
+      let html = "";
+      CATS.forEach(c => {
+        html += `<tr><td class="fw-bold small py-3">${c}</td>
+        <td><input type="number" class="form-control form-control-sm admin-pay-input" data-cat="${c}" placeholder="0"></td></tr>`;
+      });
+      document.getElementById('adminInputBody').innerHTML = html;
+
+      const res = await apiCall("getInitialData");
+      if(res && res.siswa) {
+        document.getElementById('siswaSelect').innerHTML = res.siswa.map(s => `<option value="${s[0]}">${s[1]}</option>`).join('');
+      }
+    }
+
+    async function savePayment() {
+      const inputs = document.querySelectorAll('.admin-pay-input');
+      let items = [];
+      inputs.forEach(i => { if(i.value > 0) items.push({ kategori: i.dataset.cat, jumlah: i.value }); });
+
+      if(items.length === 0) return Swal.fire("Peringatan", "Masukkan nominal!", "warning");
+
+      const btn = document.getElementById('btnSave');
+      btn.disabled = true;
+      
+      const payload = {
+        absen: document.getElementById('siswaSelect').value,
+        namaSiswa: document.getElementById('siswaSelect').options[document.getElementById('siswaSelect').selectedIndex].text,
+        role: state.role,
+        namaUser: state.nama,
+        items: items
+      };
+
+      const ok = await apiCall("saveMulti", { data: payload });
+      if(ok) {
+        Swal.fire("Berhasil", "Data tersimpan", "success");
+        inputs.forEach(i => i.value = "");
+      }
+      btn.disabled = false;
+    }
+
+    async function loadAdminRekap() {
+      switchTab('rekap');
+      const table = document.getElementById('adminRekapTable');
+      table.innerHTML = '<div class="p-4 text-center"><div class="spinner-border text-primary"></div></div>';
+      
+      const res = await apiCall("rekap");
+      if(!res) return;
+
+      let html = `<thead class="table-light"><tr><th class="ps-3">Nama</th>`;
+      res.kategori.forEach(k => html += `<th class="text-center">${k}</th>`);
+      html += `</tr></thead><tbody>`;
+      
+      res.rekap.forEach(r => {
+        html += `<tr><td class="ps-3 fw-bold">${r.nama}</td>`;
+        res.kategori.forEach(k => {
+          let status = r.iuran[k];
+          let color = status === "LUNAS" ? "text-success" : "text-danger";
+          html += `<td class="text-center ${color} fw-bold" style="font-size:0.6rem">${status}</td>`;
+        });
+        html += `</tr>`;
+      });
+      table.innerHTML = html + "</tbody>";
+    }
+
+    async function loadTotalSaldo() {
+      switchTab('total');
+      const cont = document.getElementById('saldoContent');
+      cont.innerHTML = '<div class="spinner-border"></div>';
+      
+      const res = await apiCall("totalDana");
+      if(!res) return;
+
+      let total = 0;
+      let html = `<div class="list-group list-group-flush">`;
+      for(let k in res) {
+        total += res[k];
+        html += `<div class="list-group-item d-flex justify-content-between align-items-center">
+        <span class="small fw-bold">${k}</span><span>Rp ${res[k].toLocaleString()}</span></div>`;
+      }
+      html += `</div><div class="mt-3 p-3 bg-primary text-white rounded-4 shadow">
+      <div class="small">SALDO KELAS</div><h3 class="fw-bold mb-0">Rp ${total.toLocaleString()}</h3></div>`;
+      cont.innerHTML = html;
+    }
+
+    function switchTab(t) {
+      document.getElementById('tabInput').classList.toggle('hidden', t !== 'input');
+      document.getElementById('tabRekap').classList.toggle('hidden', t !== 'rekap');
+      document.getElementById('tabTotal').classList.toggle('hidden', t !== 'total');
+      document.getElementById('tabInBtn').classList.toggle('active', t === 'input');
+      document.getElementById('tabRekapBtn').classList.toggle('active', t === 'rekap');
+      document.getElementById('tabTotalBtn').classList.toggle('active', t === 'total');
+    }
+
+    /* --- STUDENT LOGIC --- */
+    async function loadStudentDashboard() {
+      const res = await apiCall("rekap", { filterAbsen: state.absen });
+      if(!res || res.rekap.length === 0) return;
+
+      const myData = res.rekap[0];
+      const detail = await apiCall("getStudentDashboard", { nisn: state.nisn }); 
+
+      document.getElementById('stNama').innerText = state.nama;
+      document.getElementById('stNisn').innerText = "NISN: " + state.nisn;
+      document.getElementById('stGender').innerText = state.gender || "Siswa";
+      document.getElementById('stFoto').src = state.foto;
+      document.getElementById('stLastUpdate').innerText = new Date().toLocaleString('id-ID');
+
+      let paidHtml = "";
+      let unpaidHtml = "";
+      let sumPaid = 0;
+      let sumUnpaid = 0;
+
+      // Handle individual category data
+      detail.forEach(item => {
+        sumPaid += item.paid;
+        sumUnpaid += item.deficit;
+
+        paidHtml += `<div class="finance-row"><span>${item.category}</span><span class="text-paid">Rp ${item.paid.toLocaleString()}</span></div>`;
+        if(item.deficit > 0) {
+           unpaidHtml += `<div class="finance-row"><span>${item.category}</span><span class="text-unpaid">Rp ${item.deficit.toLocaleString()}</span></div>`;
+        }
+      });
+
+      if(!unpaidHtml) unpaidHtml = '<div class="py-2 text-success small">Semua iuran sudah Lunas!</div>';
+
+      document.getElementById('paidList').innerHTML = paidHtml;
+      document.getElementById('unpaidList').innerHTML = unpaidHtml;
+      document.getElementById('totalPaid').innerText = "Rp " + sumPaid.toLocaleString();
+      document.getElementById('totalUnpaid').innerText = "Rp " + sumUnpaid.toLocaleString();
+    }
+
+    function logout() {
+      Swal.fire({
+        title: 'Keluar?',
+        text: 'Anda akan keluar dari sesi ini.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#4f46e5',
+        confirmButtonText: 'Ya, Keluar'
+      }).then((result) => {
+        if(result.isConfirmed) {
+          localStorage.removeItem("ebendahara_v2_session");
+          location.reload();
+        }
+      });
+    }
+  </script>
+</body>
+</html>
