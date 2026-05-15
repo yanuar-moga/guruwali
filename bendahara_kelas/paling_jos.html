@@ -572,7 +572,9 @@ popup.style.display = "none";
 
 async function api(action,data={}){
 
-const res = await fetch(API_URL,{
+try{
+
+const response = await fetch(API_URL,{
 
 method:"POST",
 
@@ -589,7 +591,16 @@ action,
 
 });
 
-return await res.json();
+return await response.json();
+
+}catch(err){
+
+return {
+status:false,
+message:"Gagal koneksi server"
+};
+
+}
 
 }
 
@@ -631,7 +642,7 @@ localStorage.setItem(
 JSON.stringify(res)
 );
 
-openDashboard(res);
+await openDashboard(res);
 
 }
 
@@ -641,8 +652,8 @@ openDashboard(res);
 
 async function openDashboard(res){
 
-LOGIN_NAME = res.nama;
-SESSION_ID = res.sessionID;
+LOGIN_NAME = res.nama || "";
+SESSION_ID = res.sessionID || "";
 
 document
 .getElementById("loginPage")
@@ -654,11 +665,11 @@ document
 
 document
 .getElementById("userName")
-.innerText = res.nama;
+.innerText = res.nama || "User";
 
 document
 .getElementById("roleText")
-.innerText = res.user;
+.innerText = res.user || "ADMIN";
 
 await loadMaster();
 await loadRekap();
@@ -670,7 +681,7 @@ await loadSaldo();
  AUTO LOGIN
 ************************************************/
 
-window.onload = function(){
+window.onload = async function(){
 
 const session =
 localStorage.getItem(
@@ -681,7 +692,7 @@ if(session){
 
 const data = JSON.parse(session);
 
-openDashboard(data);
+await openDashboard(data);
 
 }
 
@@ -694,6 +705,14 @@ openDashboard(data);
 async function loadMaster(){
 
 const res = await api("master");
+
+if(!res.status){
+
+showPopup("Gagal load master");
+
+return;
+
+}
 
 MASTER = res;
 
@@ -833,7 +852,7 @@ return;
 
 }
 
-let header = `
+let html = `
 <thead>
 <tr>
 <th>Nama Siswa</th>
@@ -841,24 +860,21 @@ let header = `
 
 res.headers.forEach(h=>{
 
-header += `
+html += `
 <th>${h}</th>
 `;
 
 });
 
-header += `
+html += `
 </tr>
 </thead>
-`;
-
-let body = `
 <tbody>
 `;
 
 res.data.forEach(item=>{
 
-body += `
+html += `
 <tr>
 
 <td>
@@ -868,9 +884,9 @@ body += `
 
 item.kategori.forEach(k=>{
 
-if(k.status == "LUNAS"){
+if(k.status === "LUNAS"){
 
-body += `
+html += `
 <td>
 <span class="badge-lunas">
 LUNAS
@@ -880,7 +896,7 @@ LUNAS
 
 }else{
 
-body += `
+html += `
 <td>
 <span class="badge-kurang">
 ${k.status}
@@ -892,17 +908,17 @@ ${k.status}
 
 });
 
-body += `
+html += `
 </tr>
 `;
 
 });
 
-body += `
+html += `
 </tbody>
 `;
 
-table.innerHTML = header + body;
+table.innerHTML = html;
 
 }
 
