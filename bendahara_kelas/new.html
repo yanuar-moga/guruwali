@@ -503,29 +503,19 @@ POPUP
 
 }
 
-/* ========================================
-MOBILE
-======================================== */
-
 @media(max-width:480px){
 
   .menu{
-
     gap:8px;
-
   }
 
   .menu button{
-
     font-size:12px;
     padding:12px 8px;
-
   }
 
   .kategoriInput{
-
     width:100px !important;
-
   }
 
 }
@@ -572,17 +562,17 @@ class="container"
     </h2>
 
     <div class="loginDesc">
-      Masukkan PIN Keamanan untuk akses
+      Masukkan PIN Keamanan
     </div>
 
     <input
-      type="password"
-      id="pin"
-      placeholder="••••••"
+    type="password"
+    id="pin"
+    placeholder="••••••"
     >
 
     <button onclick="login()">
-      BUKA PANEL KAS
+      BUKA PANEL
     </button>
 
   </div>
@@ -597,8 +587,6 @@ ADMIN PAGE
 id="adminPage"
 class="hidden container"
 >
-
-  <!-- USER -->
 
   <div class="userBox">
 
@@ -633,44 +621,39 @@ class="hidden container"
       class="active"
       onclick="showMenu('input')"
       >
-        Input Data
+        Input
       </button>
 
       <button
       id="btnRekap"
       onclick="showMenu('rekap')"
       >
-        Rekap Iuran
+        Rekap
       </button>
 
       <button
       id="btnSaldo"
       onclick="showMenu('saldo')"
       >
-        Total Saldo
+        Saldo
       </button>
 
     </div>
 
   </div>
 
-  <!-- ========================================
-  MENU INPUT
-  ======================================== -->
+  <!-- MENU INPUT -->
 
   <div id="menuInput">
-
-    <!-- TRANSAKSI -->
 
     <div class="card">
 
       <div
       style="
       margin-bottom:10px;
-      font-weight:600;
-      font-size:14px
+      font-weight:600
       ">
-        Pilih Nama Siswa
+        Pilih Siswa
       </div>
 
       <select id="siswaSelect"></select>
@@ -693,8 +676,7 @@ class="hidden container"
       ">
 
         <div>KATEGORI</div>
-
-        <div>NOMINAL (RP)</div>
+        <div>NOMINAL</div>
 
       </div>
 
@@ -752,9 +734,7 @@ class="hidden container"
 
   </div>
 
-  <!-- ========================================
-  MENU REKAP
-  ======================================== -->
+  <!-- MENU REKAP -->
 
   <div
   id="menuRekap"
@@ -762,31 +742,6 @@ class="hidden container"
   >
 
     <div class="card">
-
-      <div
-      style="
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom:12px
-      ">
-
-        <h3>
-          Monitoring Pelunasan
-        </h3>
-
-        <div
-        style="
-        background:#f3f4f6;
-        padding:6px 10px;
-        border-radius:10px;
-        font-size:11px;
-        color:#6b7280
-        ">
-          Auto-Sync
-        </div>
-
-      </div>
 
       <div class="tableWrap">
 
@@ -798,9 +753,7 @@ class="hidden container"
 
   </div>
 
-  <!-- ========================================
-  MENU SALDO
-  ======================================== -->
+  <!-- MENU SALDO -->
 
   <div
   id="menuSaldo"
@@ -878,17 +831,19 @@ FOOTER
 
 <div class="footer">
 
-  Aplikasi e bendahara v 1.2
-  (Build 15 Mei 2026)
+  Aplikasi e bendahara v1.3
 
   <br>
 
   Apps by MB © 2026
-  MB All Rights Reserved
 
 </div>
 
 <script>
+
+// ========================================
+// CONFIG
+// ========================================
 
 const API_URL =
 "https://script.google.com/macros/s/AKfycbyKNBJl0DghHMSjW-I7BcqjVncZQlO-_UwcLqAJUcL-_R_FuIYUReTaSaRmMNEpimnQ/exec";
@@ -898,10 +853,12 @@ let DASHBOARD = {};
 
 let LOGIN_NAME = "";
 let LOGIN_ROLE = "";
+let LOGIN_PIN = "";
 
 // ========================================
 // FETCH
 // ========================================
+
 async function postData(data){
 
   const res = await fetch(API_URL,{
@@ -919,6 +876,7 @@ async function postData(data){
 // ========================================
 // POPUP
 // ========================================
+
 function popup(text){
 
   const div =
@@ -941,6 +899,7 @@ function popup(text){
 // ========================================
 // ENTER LOGIN
 // ========================================
+
 document
 .getElementById("pin")
 .addEventListener(
@@ -957,14 +916,74 @@ document
 );
 
 // ========================================
+// AUTO LOGIN
+// ========================================
+
+window.onload = async function(){
+
+  const pin =
+    localStorage.getItem("eb_pin");
+
+  const role =
+    localStorage.getItem("eb_role");
+
+  const nama =
+    localStorage.getItem("eb_nama");
+
+  const user =
+    localStorage.getItem("eb_user");
+
+  if(!pin){
+    return;
+  }
+
+  LOGIN_PIN = pin;
+  LOGIN_NAME = nama || "";
+  LOGIN_ROLE = user || "";
+
+  // SISWA
+  if(role == "SISWA"){
+
+    await loadSiswaDashboard(pin);
+
+  }
+
+  // ADMIN
+  else{
+
+    document
+      .getElementById("loginPage")
+      .classList.add("hidden");
+
+    document
+      .getElementById("adminPage")
+      .classList.remove("hidden");
+
+    document
+      .getElementById("namaAdmin")
+      .innerHTML = LOGIN_NAME;
+
+    document
+      .getElementById("roleText")
+      .innerHTML = LOGIN_ROLE;
+
+    await loadDashboard();
+
+  }
+
+};
+
+// ========================================
 // LOGIN
 // ========================================
+
 async function login(){
 
   const pin =
     document
     .getElementById("pin")
-    .value;
+    .value
+    .trim();
 
   if(pin == ""){
 
@@ -976,6 +995,7 @@ async function login(){
   const res = await postData({
 
     action:"login",
+
     pin:pin
 
   });
@@ -989,11 +1009,36 @@ async function login(){
 
   LOGIN_NAME = res.nama;
   LOGIN_ROLE = res.user;
+  LOGIN_PIN = pin;
+
+  // SIMPAN SESSION
+  localStorage.setItem(
+    "eb_pin",
+    pin
+  );
+
+  localStorage.setItem(
+    "eb_role",
+    res.role
+  );
+
+  localStorage.setItem(
+    "eb_nama",
+    res.nama
+  );
+
+  localStorage.setItem(
+    "eb_user",
+    res.user
+  );
 
   // SISWA
   if(res.role == "SISWA"){
 
-    loadSiswaDashboard(pin);
+    await loadSiswaDashboard(pin);
+
+    popup("Login berhasil");
+
     return;
 
   }
@@ -1024,6 +1069,7 @@ async function login(){
 // ========================================
 // LOAD DASHBOARD
 // ========================================
+
 async function loadDashboard(){
 
   const res = await postData({
@@ -1032,8 +1078,14 @@ async function loadDashboard(){
 
   });
 
-  DASHBOARD = res;
+  if(!res.success){
 
+    popup("Gagal load dashboard");
+    return;
+
+  }
+
+  DASHBOARD = res;
   TARGET = res.target;
 
   renderSiswa();
@@ -1046,6 +1098,7 @@ async function loadDashboard(){
 // ========================================
 // RENDER SISWA
 // ========================================
+
 function renderSiswa(){
 
   const select =
@@ -1076,6 +1129,7 @@ function renderSiswa(){
 // ========================================
 // RENDER KATEGORI
 // ========================================
+
 function renderKategori(){
 
   const box =
@@ -1113,6 +1167,7 @@ function renderKategori(){
 // ========================================
 // SAVE TRANSAKSI
 // ========================================
+
 async function saveTransaksi(){
 
   const siswa =
@@ -1128,13 +1183,17 @@ async function saveTransaksi(){
     const t = TARGET[i];
 
     const nominal =
-      document
-      .getElementById(
-        "kat_" + t.kategori
-      )
-      .value;
+      Number(
 
-    if(Number(nominal) > 0){
+        document
+        .getElementById(
+          "kat_" + t.kategori
+        )
+        .value || 0
+
+      );
+
+    if(nominal > 0){
 
       adaInput = true;
 
@@ -1176,6 +1235,7 @@ async function saveTransaksi(){
 // ========================================
 // SAVE SETOR
 // ========================================
+
 async function saveSetor(){
 
   const res = await postData({
@@ -1228,6 +1288,7 @@ async function saveSetor(){
 // ========================================
 // RENDER REKAP
 // ========================================
+
 function renderRekap(){
 
   const table =
@@ -1314,6 +1375,7 @@ function renderRekap(){
 // ========================================
 // RENDER SALDO
 // ========================================
+
 function renderSaldo(){
 
   const saldo =
@@ -1344,7 +1406,6 @@ function renderSaldo(){
     totalKeluar += keluar;
     totalSaldo += akhir;
 
-    // PEMASUKAN
     pemasukanHTML += `
 
       <div class="saldoItem">
@@ -1361,7 +1422,6 @@ function renderSaldo(){
 
     `;
 
-    // SETOR
     setorHTML += `
 
       <div class="saldoItem">
@@ -1378,7 +1438,6 @@ function renderSaldo(){
 
     `;
 
-    // SALDO
     saldoHTML += `
 
       <div class="saldoItem">
@@ -1426,7 +1485,7 @@ function renderSaldo(){
       <div class="saldoSection">
 
         <h3 class="saldoTitle">
-          Sudah Disetor Ke Kesiswaan
+          Sudah Disetor
         </h3>
 
         ${setorHTML}
@@ -1474,6 +1533,7 @@ function renderSaldo(){
 // ========================================
 // MENU
 // ========================================
+
 function showMenu(menu){
 
   document
@@ -1500,7 +1560,6 @@ function showMenu(menu){
     .getElementById("btnSaldo")
     .classList.remove("active");
 
-  // INPUT
   if(menu == "input"){
 
     document
@@ -1513,7 +1572,6 @@ function showMenu(menu){
 
   }
 
-  // REKAP
   if(menu == "rekap"){
 
     document
@@ -1526,7 +1584,6 @@ function showMenu(menu){
 
   }
 
-  // SALDO
   if(menu == "saldo"){
 
     document
@@ -1542,8 +1599,9 @@ function showMenu(menu){
 }
 
 // ========================================
-// SISWA DASHBOARD
+// DASHBOARD SISWA
 // ========================================
+
 async function loadSiswaDashboard(nisn){
 
   const res = await postData({
@@ -1588,7 +1646,6 @@ async function loadSiswaDashboard(nisn){
   let bayar = "";
   let kurang = "";
 
-  // SUDAH BAYAR
   Object.keys(res.bayar)
   .forEach(k=>{
 
@@ -1612,7 +1669,6 @@ async function loadSiswaDashboard(nisn){
 
   });
 
-  // BELUM BAYAR
   Object.keys(res.kurang)
   .forEach(k=>{
 
@@ -1636,36 +1692,6 @@ async function loadSiswaDashboard(nisn){
 
   });
 
-  bayar += `
-
-    <hr style="margin:14px 0">
-
-    <b>
-
-      Total :
-
-      Rp${res.totalBayar
-      .toLocaleString('id-ID')}
-
-    </b>
-
-  `;
-
-  kurang += `
-
-    <hr style="margin:14px 0">
-
-    <b>
-
-      Total :
-
-      Rp${res.totalKurang
-      .toLocaleString('id-ID')}
-
-    </b>
-
-  `;
-
   document
     .getElementById("sudahBayar")
     .innerHTML = bayar;
@@ -1679,7 +1705,25 @@ async function loadSiswaDashboard(nisn){
 // ========================================
 // LOGOUT
 // ========================================
-function logout(){
+
+async function logout(){
+
+  try{
+
+    await postData({
+
+      action:"logout",
+
+      user:LOGIN_ROLE
+
+    });
+
+  }catch(err){}
+
+  localStorage.removeItem("eb_pin");
+  localStorage.removeItem("eb_role");
+  localStorage.removeItem("eb_nama");
+  localStorage.removeItem("eb_user");
 
   location.reload();
 
