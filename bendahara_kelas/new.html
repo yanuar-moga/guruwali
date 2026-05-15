@@ -901,6 +901,7 @@ let DASHBOARD = {};
 
 let LOGIN_NAME = "";
 let LOGIN_ROLE = "";
+let LOGIN_PIN = "";
 
 // ========================================
 // FETCH
@@ -945,21 +946,39 @@ function popup(text,type="success"){
 }
 
 // ========================================
+// AUTO LOGIN
+// ========================================
+window.onload = async function(){
+
+  const savedPin =
+    localStorage.getItem("EBENDAHARA_PIN");
+
+  if(savedPin){
+
+    document
+      .getElementById("pin")
+      .value = savedPin;
+
+    await login(true);
+
+  }
+
+};
+
+// ========================================
 // ENTER LOGIN
 // ========================================
 document
 .getElementById("pin")
 .addEventListener(
   "keydown",
-  function(e){
+  async function(e){
 
     if(e.key === "Enter"){
 
       e.preventDefault();
 
-      document
-      .getElementById("btnLogin")
-      .click();
+      await login();
 
     }
 
@@ -969,7 +988,7 @@ document
 // ========================================
 // LOGIN
 // ========================================
-async function login(){
+async function login(auto=false){
 
   const pin =
     document
@@ -1012,6 +1031,10 @@ async function login(){
         "error"
       );
 
+      localStorage.removeItem(
+        "EBENDAHARA_PIN"
+      );
+
       btn.disabled = false;
       btn.innerHTML = "BUKA PANEL KAS";
 
@@ -1021,11 +1044,18 @@ async function login(){
 
     LOGIN_NAME = res.nama;
     LOGIN_ROLE = res.user;
+    LOGIN_PIN = pin;
+
+    // SAVE SESSION
+    localStorage.setItem(
+      "EBENDAHARA_PIN",
+      pin
+    );
 
     // SISWA
     if(res.role == "SISWA"){
 
-      loadSiswaDashboard(pin);
+      await loadSiswaDashboard(pin);
 
       btn.disabled = false;
       btn.innerHTML = "BUKA PANEL KAS";
@@ -1053,7 +1083,11 @@ async function login(){
 
     await loadDashboard();
 
-    popup("Login berhasil");
+    if(!auto){
+
+      popup("Login berhasil");
+
+    }
 
   }catch(err){
 
@@ -1082,10 +1116,26 @@ async function loadDashboard(){
 
   DASHBOARD = res;
 
-  TARGET =
-    res.target.filter(t=>
-      t.tampil == true
-    );
+  // ====================================
+  // FILTER KATEGORI TAMPIL
+  // ====================================
+
+  TARGET = [];
+
+  res.target.forEach(t=>{
+
+    // DEFAULT TRUE
+    if(
+      t.tampil === false
+    ){
+
+      return;
+
+    }
+
+    TARGET.push(t);
+
+  });
 
   renderSiswa();
   renderKategori();
@@ -1253,8 +1303,6 @@ async function saveTransaksi(){
 
   await loadDashboard();
 
-  renderKategori();
-
   popup("Transaksi berhasil");
 
 }
@@ -1332,7 +1380,6 @@ function renderRekap(){
 
     r.forEach(c=>{
 
-      // HEADER
       if(i == 0){
 
         html += `
@@ -1341,7 +1388,6 @@ function renderRekap(){
 
       }
 
-      // BODY
       else{
 
         if(c == "LUNAS"){
@@ -1408,9 +1454,7 @@ function renderSaldo(){
   const saldo =
     DASHBOARD.saldo;
 
-  let pemasukanHTML = "";
-  let setorHTML = "";
-  let saldoHTML = "";
+  let html = "";
 
   let totalMasuk = 0;
   let totalKeluar = 0;
@@ -1433,48 +1477,11 @@ function renderSaldo(){
     totalKeluar += keluar;
     totalSaldo += akhir;
 
-    // PEMASUKAN
-    pemasukanHTML += `
+    html += `
 
       <div class="saldoItem">
 
-        <div>
-          ${kategori}
-        </div>
-
-        <div>
-          Rp${masuk.toLocaleString('id-ID')}
-        </div>
-
-      </div>
-
-    `;
-
-    // SETOR
-    setorHTML += `
-
-      <div class="saldoItem">
-
-        <div>
-          ${kategori}
-        </div>
-
-        <div>
-          Rp${keluar.toLocaleString('id-ID')}
-        </div>
-
-      </div>
-
-    `;
-
-    // SALDO
-    saldoHTML += `
-
-      <div class="saldoItem">
-
-        <div>
-          ${kategori}
-        </div>
+        <div>${kategori}</div>
 
         <div>
           Rp${akhir.toLocaleString('id-ID')}
@@ -1486,77 +1493,23 @@ function renderSaldo(){
 
   });
 
+  html += `
+
+    <div class="totalCard totalSaldoAkhir">
+
+      <div>TOTAL SALDO</div>
+
+      <div>
+        Rp${totalSaldo.toLocaleString('id-ID')}
+      </div>
+
+    </div>
+
+  `;
+
   document
     .getElementById("saldoContent")
-    .innerHTML = `
-
-      <div class="saldoSection">
-
-        <h3 class="saldoTitle">
-          🟢 Total Pemasukan
-        </h3>
-
-        ${pemasukanHTML}
-
-        <div class="totalCard totalMasuk">
-
-          <div>
-            TOTAL MASUK
-          </div>
-
-          <div>
-            Rp${totalMasuk.toLocaleString('id-ID')}
-          </div>
-
-        </div>
-
-      </div>
-
-      <div class="saldoSection">
-
-        <h3 class="saldoTitle">
-          🔴 Sudah Disetor Ke Kesiswaan
-        </h3>
-
-        ${setorHTML}
-
-        <div class="totalCard totalKeluar">
-
-          <div>
-            TOTAL SETOR
-          </div>
-
-          <div>
-            Rp${totalKeluar.toLocaleString('id-ID')}
-          </div>
-
-        </div>
-
-      </div>
-
-      <div class="saldoSection">
-
-        <h3 class="saldoTitle">
-          🔵 Saldo Bendahara
-        </h3>
-
-        ${saldoHTML}
-
-        <div class="totalCard totalSaldoAkhir">
-
-          <div>
-            TOTAL SALDO
-          </div>
-
-          <div>
-            Rp${totalSaldo.toLocaleString('id-ID')}
-          </div>
-
-        </div>
-
-      </div>
-
-    `;
+    .innerHTML = html;
 
 }
 
@@ -1589,7 +1542,6 @@ function showMenu(menu){
     .getElementById("btnSaldo")
     .classList.remove("active");
 
-  // INPUT
   if(menu == "input"){
 
     document
@@ -1602,7 +1554,6 @@ function showMenu(menu){
 
   }
 
-  // REKAP
   if(menu == "rekap"){
 
     document
@@ -1615,7 +1566,6 @@ function showMenu(menu){
 
   }
 
-  // SALDO
   if(menu == "saldo"){
 
     document
@@ -1678,101 +1628,16 @@ async function loadSiswaDashboard(nisn){
     .getElementById("nisnSiswa")
     .innerHTML = res.siswa.nisn;
 
-  let bayar = "";
-  let kurang = "";
-
-  // SUDAH BAYAR
-  Object.keys(res.bayar)
-  .forEach(k=>{
-
-    bayar += `
-
-      <div class="saldoItem">
-
-        <div>${k}</div>
-
-        <div>
-
-          Rp${Number(
-            res.bayar[k]
-          ).toLocaleString('id-ID')}
-
-        </div>
-
-      </div>
-
-    `;
-
-  });
-
-  // BELUM BAYAR
-  Object.keys(res.kurang)
-  .forEach(k=>{
-
-    kurang += `
-
-      <div class="saldoItem">
-
-        <div>${k}</div>
-
-        <div>
-
-          Rp${Number(
-            res.kurang[k]
-          ).toLocaleString('id-ID')}
-
-        </div>
-
-      </div>
-
-    `;
-
-  });
-
-  bayar += `
-
-    <hr style="margin:14px 0">
-
-    <b>
-
-      Total :
-
-      Rp${res.totalBayar
-      .toLocaleString('id-ID')}
-
-    </b>
-
-  `;
-
-  kurang += `
-
-    <hr style="margin:14px 0">
-
-    <b>
-
-      Total :
-
-      Rp${res.totalKurang
-      .toLocaleString('id-ID')}
-
-    </b>
-
-  `;
-
-  document
-    .getElementById("sudahBayar")
-    .innerHTML = bayar;
-
-  document
-    .getElementById("belumBayar")
-    .innerHTML = kurang;
-
 }
 
 // ========================================
 // LOGOUT
 // ========================================
 function logout(){
+
+  localStorage.removeItem(
+    "EBENDAHARA_PIN"
+  );
 
   location.reload();
 
