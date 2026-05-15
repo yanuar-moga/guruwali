@@ -1,22 +1,25 @@
 <!--
 Aplikasi e bendahara v 1.2 (Build 15 Mei 2026)
 Apps by MB © 2026 MB All Rights Reserved
-URL GAS : [https://script.google.com/macros/s/AKfycbzInyHxfZl49q943l5BFpssKxi4k5BBTqeEwxj3eI-AfxaD29xqfwGwc90d1_Eox9EF/exec]
+URL GAS :
+https://script.google.com/macros/s/AKfycbzInyHxfZl49q943l5BFpssKxi4k5BBTqeEwxj3eI-AfxaD29xqfwGwc90d1_Eox9EF/exec
 -->
 
 <!DOCTYPE html>
 <html>
+
 <head>
+
   <base target="_top">
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Aplikasi e bendahara</title>
+  <title>E-Bendahara</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
 
   <!-- ====================== -->
   <!-- STYLE SECTION -->
@@ -28,131 +31,229 @@ URL GAS : [https://script.google.com/macros/s/AKfycbzInyHxfZl49q943l5BFpssKxi4k5
       margin:0;
       padding:0;
       box-sizing:border-box;
-      font-family:'Inter',sans-serif;
+      font-family:'Poppins',sans-serif;
     }
 
     body{
-      background:#f4f7fb;
-      color:#222;
+      background:#eef1f6;
+      color:#111827;
+    }
+
+    img{
+      max-width:100%;
+    }
+
+    button{
+      border:none;
+      outline:none;
+      cursor:pointer;
     }
 
     .app{
+      width:100%;
+      max-width:520px;
+      margin:auto;
+      min-height:100vh;
+      background:#eef1f6;
+      position:relative;
+      overflow:hidden;
+    }
+
+    /* ====================== */
+    /* LOGIN PAGE */
+    /* ====================== */
+
+    .login-page{
       min-height:100vh;
       display:flex;
-      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
     }
 
-    .header{
-      padding:16px;
-      background:rgba(255,255,255,.8);
-      backdrop-filter:blur(12px);
-      position:sticky;
-      top:0;
-      z-index:100;
-      box-shadow:0 2px 10px rgba(0,0,0,.05);
+    .login-card{
+      width:100%;
+      background:#fff;
+      border-radius:28px;
+      padding:28px;
+      box-shadow:0 10px 35px rgba(0,0,0,.08);
     }
 
-    .title{
-      font-size:18px;
+    .login-title{
+      font-size:28px;
       font-weight:700;
+      margin-bottom:8px;
     }
 
-    .content{
-      flex:1;
-      padding:16px;
-      padding-bottom:90px;
+    .login-subtitle{
+      color:#6b7280;
+      margin-bottom:24px;
+      font-size:14px;
     }
 
-    .card{
-      background:rgba(255,255,255,.8);
-      backdrop-filter:blur(14px);
-      border-radius:20px;
-      padding:16px;
+    .input-group{
       margin-bottom:16px;
-      box-shadow:0 10px 25px rgba(0,0,0,.06);
+    }
+
+    .input-label{
+      font-size:13px;
+      font-weight:600;
+      margin-bottom:8px;
     }
 
     .input{
       width:100%;
-      padding:14px;
+      height:54px;
       border:none;
-      border-radius:14px;
-      background:#f1f4f9;
-      margin-top:10px;
+      background:#f3f4f6;
+      border-radius:16px;
+      padding:0 18px;
+      font-size:14px;
     }
 
-    .btn{
+    .login-btn{
       width:100%;
-      padding:14px;
-      border:none;
-      border-radius:16px;
-      background:#2563eb;
-      color:white;
+      height:56px;
+      border-radius:18px;
+      background:linear-gradient(135deg,#4f46e5,#9333ea);
+      color:#fff;
+      font-weight:700;
+      margin-top:10px;
+      font-size:15px;
+      box-shadow:0 8px 20px rgba(124,58,237,.3);
+    }
+
+    /* ====================== */
+    /* HEADER */
+    /* ====================== */
+
+    .top-header{
+      background:linear-gradient(135deg,#4f46e5,#7c3aed);
+      padding:38px 24px 34px;
+      text-align:center;
+      color:#fff;
+      position:relative;
+    }
+
+    .logo-circle{
+      width:62px;
+      height:62px;
+      border-radius:50%;
+      background:rgba(255,255,255,.18);
+      margin:auto;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:28px;
+      backdrop-filter:blur(10px);
+    }
+
+    .top-header h1{
+      margin-top:12px;
+      font-size:34px;
+      font-weight:800;
+      letter-spacing:.5px;
+    }
+
+    .top-header p{
+      margin-top:4px;
+      font-size:13px;
+      opacity:.9;
+    }
+
+    /* ====================== */
+    /* PROFILE */
+    /* ====================== */
+
+    .profile-section{
+      padding:18px 22px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+
+    .role-badge{
+      display:inline-block;
+      background:#dbeafe;
+      color:#2563eb;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:10px;
+      font-weight:700;
+      margin-bottom:8px;
+    }
+
+    .profile-name{
+      font-size:30px;
+      font-weight:800;
+      line-height:1.1;
+    }
+
+    .logout-btn{
+      border:1.8px solid #ef4444;
+      background:#fff;
+      color:#ef4444;
+      border-radius:999px;
+      padding:10px 18px;
+      font-size:13px;
       font-weight:600;
-      margin-top:14px;
-      cursor:pointer;
+    }
+
+    /* ====================== */
+    /* TAB */
+    /* ====================== */
+
+    .tab-wrapper{
+      padding:0 18px;
+    }
+
+    .tab-container{
+      background:#fff;
+      padding:10px;
+      border-radius:24px;
+      display:flex;
+      gap:10px;
+      box-shadow:0 6px 18px rgba(0,0,0,.05);
+    }
+
+    .tab-btn{
+      flex:1;
+      height:52px;
+      border-radius:16px;
+      background:#fff;
+      color:#6b7280;
+      font-size:13px;
+      font-weight:600;
       transition:.3s;
     }
 
-    .btn:disabled{
-      opacity:.6;
+    .tab-btn.active{
+      background:linear-gradient(135deg,#4f46e5,#9333ea);
+      color:#fff;
+      box-shadow:0 6px 15px rgba(124,58,237,.3);
     }
 
-    .bottom-nav{
-      position:fixed;
-      bottom:0;
-      left:0;
-      width:100%;
-      background:white;
-      display:flex;
-      justify-content:space-around;
-      padding:10px;
-      box-shadow:0 -2px 20px rgba(0,0,0,.08);
+    /* ====================== */
+    /* CONTENT */
+    /* ====================== */
+
+    .content{
+      padding:18px;
+      padding-bottom:120px;
     }
 
-    .nav-btn{
-      text-align:center;
-      font-size:12px;
-    }
-
-    .badge{
-      padding:6px 10px;
-      border-radius:30px;
-      font-size:12px;
-      font-weight:600;
-    }
-
-    .success{
-      background:#d1fae5;
-      color:#065f46;
-    }
-
-    .danger{
-      background:#fee2e2;
-      color:#991b1b;
-    }
-
-    .warning{
-      background:#fef3c7;
-      color:#92400e;
-    }
-
-    .toast{
-      position:fixed;
-      top:20px;
-      right:20px;
-      background:#111827;
-      color:white;
-      padding:14px 18px;
-      border-radius:14px;
-      z-index:9999;
-      animation:fade .4s ease;
+    .main-card{
+      background:#fff;
+      border-radius:28px;
+      padding:20px;
+      box-shadow:0 10px 28px rgba(0,0,0,.05);
+      animation:fade .3s ease;
     }
 
     @keyframes fade{
       from{
         opacity:0;
-        transform:translateY(-10px);
+        transform:translateY(10px);
       }
       to{
         opacity:1;
@@ -160,23 +261,191 @@ URL GAS : [https://script.google.com/macros/s/AKfycbzInyHxfZl49q943l5BFpssKxi4k5
       }
     }
 
+    .section-title{
+      font-size:20px;
+      font-weight:700;
+      margin-bottom:18px;
+    }
+
+    .select{
+      width:100%;
+      height:54px;
+      border:none;
+      background:#f3f4f6;
+      border-radius:16px;
+      padding:0 16px;
+      font-size:14px;
+      margin-bottom:22px;
+    }
+
+    .kategori-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:16px;
+      gap:12px;
+    }
+
+    .kategori-name{
+      font-size:14px;
+      font-weight:700;
+    }
+
+    .nominal-input{
+      width:120px;
+      height:42px;
+      border:none;
+      background:#f3f4f6;
+      border-radius:12px;
+      padding:0 12px;
+      text-align:right;
+      font-weight:600;
+    }
+
+    .save-btn{
+      width:100%;
+      height:58px;
+      border-radius:18px;
+      background:linear-gradient(135deg,#4f46e5,#9333ea);
+      color:#fff;
+      font-size:15px;
+      font-weight:700;
+      margin-top:20px;
+    }
+
+    /* ====================== */
+    /* STATUS */
+    /* ====================== */
+
+    .badge{
+      padding:7px 12px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:700;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .badge-success{
+      background:#dcfce7;
+      color:#16a34a;
+    }
+
+    .badge-danger{
+      background:#fee2e2;
+      color:#dc2626;
+    }
+
+    .badge-warning{
+      background:#fef3c7;
+      color:#ca8a04;
+    }
+
+    /* ====================== */
+    /* SALDO */
+    /* ====================== */
+
+    .saldo-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:22px;
+    }
+
+    .saldo-label{
+      font-size:15px;
+      font-weight:700;
+    }
+
+    .saldo-value{
+      font-size:15px;
+      font-weight:700;
+    }
+
+    .total-box{
+      background:#2563eb;
+      color:#fff;
+      border-radius:18px;
+      padding:18px;
+      margin-top:26px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-weight:700;
+    }
+
+    /* ====================== */
+    /* TABLE MONITORING */
+    /* ====================== */
+
+    .student-row{
+      border-bottom:1px solid #e5e7eb;
+      padding:14px 0;
+    }
+
+    .student-name{
+      font-size:14px;
+      font-weight:700;
+      margin-bottom:12px;
+    }
+
+    .status-grid{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+
+    /* ====================== */
+    /* TOAST */
+    /* ====================== */
+
+    .toast{
+      position:fixed;
+      top:20px;
+      left:50%;
+      transform:translateX(-50%);
+      background:#111827;
+      color:#fff;
+      padding:14px 20px;
+      border-radius:16px;
+      z-index:99999;
+      font-size:13px;
+      animation:toast .3s ease;
+    }
+
+    @keyframes toast{
+      from{
+        opacity:0;
+        transform:translate(-50%,-10px);
+      }
+      to{
+        opacity:1;
+        transform:translate(-50%,0);
+      }
+    }
+
+    /* ====================== */
+    /* LOADING */
+    /* ====================== */
+
     .loading{
       position:fixed;
       inset:0;
-      background:rgba(255,255,255,.7);
-      backdrop-filter:blur(8px);
+      background:rgba(255,255,255,.6);
+      backdrop-filter:blur(6px);
+      z-index:999999;
       display:flex;
-      justify-content:center;
       align-items:center;
-      z-index:99999;
+      justify-content:center;
     }
 
     .spinner{
       width:60px;
       height:60px;
-      border:6px solid #ddd;
-      border-top:6px solid #2563eb;
       border-radius:50%;
+      border:6px solid #ddd;
+      border-top:6px solid #7c3aed;
       animation:spin 1s linear infinite;
     }
 
@@ -186,11 +455,16 @@ URL GAS : [https://script.google.com/macros/s/AKfycbzInyHxfZl49q943l5BFpssKxi4k5
       }
     }
 
+    /* ====================== */
+    /* FOOTER */
+    /* ====================== */
+
     .footer{
       text-align:center;
-      padding:20px;
-      font-size:12px;
-      color:#777;
+      padding:28px 20px;
+      font-size:11px;
+      color:#9ca3af;
+      line-height:1.7;
     }
 
   </style>
@@ -205,29 +479,51 @@ URL GAS : [https://script.google.com/macros/s/AKfycbzInyHxfZl49q943l5BFpssKxi4k5
   <!-- LOGIN PAGE -->
   <!-- ====================== -->
 
-  <div id="loginPage" class="content">
+  <div id="loginPage" class="login-page">
 
-    <div class="card">
+    <div class="login-card">
 
-      <h2>Login</h2>
+      <div class="login-title">
+        E-Bendahara
+      </div>
 
-      <input
-      type="text"
-      id="user"
-      class="input"
-      placeholder="User">
+      <div class="login-subtitle">
+        Manajemen Keuangan Kelas Digital
+      </div>
 
-      <input
-      type="password"
-      id="pin"
-      class="input"
-      placeholder="PIN">
+      <div class="input-group">
+
+        <div class="input-label">
+          Username
+        </div>
+
+        <input
+        type="text"
+        id="user"
+        class="input"
+        placeholder="Masukkan username">
+
+      </div>
+
+      <div class="input-group">
+
+        <div class="input-label">
+          PIN
+        </div>
+
+        <input
+        type="password"
+        id="pin"
+        class="input"
+        placeholder="Masukkan PIN">
+
+      </div>
 
       <button
-      class="btn"
+      class="login-btn"
       id="loginBtn"
       onclick="login()">
-      Masuk
+        Masuk
       </button>
 
     </div>
@@ -240,34 +536,111 @@ URL GAS : [https://script.google.com/macros/s/AKfycbzInyHxfZl49q943l5BFpssKxi4k5
 
   <div id="dashboardPage" style="display:none;">
 
-    <div class="header">
-      <div class="title">
-        Aplikasi e bendahara
+    <!-- HEADER -->
+
+    <div class="top-header">
+
+      <div class="logo-circle">
+        💰
       </div>
-      <div id="welcomeText"></div>
+
+      <h1>E-Bendahara</h1>
+
+      <p>Manajemen Keuangan Kelas Digital</p>
+
     </div>
 
-    <div class="content" id="contentArea"></div>
+    <!-- PROFILE -->
 
-    <div class="bottom-nav" id="bottomNav"></div>
+    <div class="profile-section">
+
+      <div>
+
+        <div
+        class="role-badge"
+        id="roleBadge">
+        ROLE
+        </div>
+
+        <div
+        class="profile-name"
+        id="namaUser">
+        User
+        </div>
+
+      </div>
+
+      <button
+      class="logout-btn"
+      onclick="logout()">
+        Keluar
+      </button>
+
+    </div>
+
+    <!-- TAB -->
+
+    <div class="tab-wrapper">
+
+      <div class="tab-container">
+
+        <button
+        class="tab-btn active"
+        onclick="switchTab('input',this)">
+          Input Data
+        </button>
+
+        <button
+        class="tab-btn"
+        onclick="switchTab('rekap',this)">
+          Rekap Iuran
+        </button>
+
+        <button
+        class="tab-btn"
+        onclick="switchTab('saldo',this)">
+          Total Saldo
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- CONTENT -->
+
+    <div class="content">
+
+      <div id="contentArea"></div>
+
+    </div>
+
+    <!-- FOOTER -->
+
+    <div class="footer">
+
+      <div>
+        Aplikasi e bendahara v 1.2 (Build 15 Mei 2026)
+      </div>
+
+      <div>
+        Apps by MB © 2026 MB All Rights Reserved
+      </div>
+
+    </div>
 
   </div>
 
   <!-- ====================== -->
-  <!-- LOADING SCREEN -->
+  <!-- LOADING -->
   <!-- ====================== -->
 
-  <div class="loading" id="loading" style="display:none;">
+  <div
+  class="loading"
+  id="loading"
+  style="display:none;">
+
     <div class="spinner"></div>
-  </div>
 
-  <div class="footer">
-    <div>
-      Aplikasi e bendahara v 1.2 (Build 15 Mei 2026)
-    </div>
-    <div>
-      Apps by MB © 2026 MB All Rights Reserved
-    </div>
   </div>
 
 </div>
@@ -279,9 +652,12 @@ URL GAS : [https://script.google.com/macros/s/AKfycbzInyHxfZl49q943l5BFpssKxi4k5
 <script>
 
 const APP = {
-  user: null,
-  role: null,
-  token: null
+  user : null,
+  nama : null,
+  role : null,
+  token : null,
+  dashboard : null,
+  activeTab : 'input'
 };
 
 // ======================
@@ -298,27 +674,11 @@ window.onload = () => {
 // SESSION SECTION
 // ======================
 
-function checkSession(){
-
-  const session = localStorage.getItem('EB_SESSION');
-
-  if(!session) return;
-
-  const data = JSON.parse(session);
-
-  APP.user = data.user;
-  APP.role = data.role;
-  APP.token = data.token;
-
-  showDashboard();
-
-}
-
-function saveSession(data){
+function saveSession(){
 
   localStorage.setItem(
     'EB_SESSION',
-    JSON.stringify(data)
+    JSON.stringify(APP)
   );
 
 }
@@ -329,13 +689,46 @@ function clearSession(){
 
 }
 
+function checkSession(){
+
+  const session =
+    localStorage.getItem('EB_SESSION');
+
+  if(!session) return;
+
+  const data = JSON.parse(session);
+
+  APP.user = data.user;
+  APP.nama = data.nama;
+  APP.role = data.role;
+  APP.token = data.token;
+
+  showDashboard();
+
+}
+
 // ======================
 // LOGIN SECTION
 // ======================
 
 function login(){
 
-  const btn = document.getElementById('loginBtn');
+  const user =
+    document.getElementById('user').value;
+
+  const pin =
+    document.getElementById('pin').value;
+
+  if(!user || !pin){
+
+    toast('Lengkapi login');
+
+    return;
+
+  }
+
+  const btn =
+    document.getElementById('loginBtn');
 
   btn.disabled = true;
 
@@ -357,10 +750,11 @@ function login(){
     }
 
     APP.user = res.user;
+    APP.nama = res.nama;
     APP.role = res.role;
     APP.token = res.token;
 
-    saveSession(APP);
+    saveSession();
 
     showDashboard();
 
@@ -368,8 +762,8 @@ function login(){
 
   })
   .login({
-    user: document.getElementById('user').value,
-    pin: document.getElementById('pin').value
+    user:user,
+    pin:pin
   });
 
 }
@@ -389,10 +783,14 @@ function logout(){
 function showDashboard(){
 
   document.getElementById('loginPage').style.display='none';
+
   document.getElementById('dashboardPage').style.display='block';
 
-  document.getElementById('welcomeText').innerHTML =
-    APP.user + ' (' + APP.role + ')';
+  document.getElementById('namaUser').innerHTML =
+    APP.nama;
+
+  document.getElementById('roleBadge').innerHTML =
+    APP.role;
 
   loadDashboard();
 
@@ -407,98 +805,231 @@ function loadDashboard(){
 
     showLoading(false);
 
-    renderDashboard(res);
+    APP.dashboard = res;
+
+    renderTab();
 
   })
   .getDashboardData({
-    user: APP.user,
-    role: APP.role
+    user:APP.user,
+    role:APP.role
   });
 
 }
 
-function renderDashboard(data){
+// ======================
+// TAB SECTION
+// ======================
 
-  const area = document.getElementById('contentArea');
+function switchTab(tab,el){
 
-  if(APP.role === 'ADMIN'){
+  APP.activeTab = tab;
 
-    area.innerHTML = `
-      <div class="card">
-        <h3>Total Transaksi</h3>
-        <h1>${data.statistik.totalTransaksi}</h1>
-      </div>
+  document
+  .querySelectorAll('.tab-btn')
+  .forEach(btn=>btn.classList.remove('active'));
 
-      <div class="card">
-        <h3>Total Saldo</h3>
-        <h1>${formatRupiah(data.statistik.totalSaldo)}</h1>
-      </div>
-    `;
+  el.classList.add('active');
 
-  }
+  renderTab();
 
-  else if(APP.role === 'SISWA'){
+}
 
-    const s = data.siswa;
+function renderTab(){
 
-    area.innerHTML = `
-      <div class="card">
+  if(APP.activeTab === 'input'){
 
-        <img
-        src="${s['Link Foto'] || 'https://i.pravatar.cc/200'}"
-        style="
-        width:100px;
-        height:100px;
-        border-radius:50%;
-        object-fit:cover;
-        ">
-
-        <h2>${s['Nama Siswa']}</h2>
-
-        <p>${s['NISN']}</p>
-
-        <p>${s['Jenis Kelamin']}</p>
-
-      </div>
-
-      <div class="card">
-        <h3>Total Bayar</h3>
-        <h1>${formatRupiah(data.totalBayar)}</h1>
-      </div>
-
-      <div class="card">
-        <h3>Kekurangan</h3>
-        <h1>${formatRupiah(data.totalKekurangan)}</h1>
-      </div>
-    `;
+    renderInputTab();
 
   }
 
-  renderBottomNav();
+  else if(APP.activeTab === 'rekap'){
+
+    renderRekapTab();
+
+  }
+
+  else if(APP.activeTab === 'saldo'){
+
+    renderSaldoTab();
+
+  }
 
 }
 
 // ======================
-// NAVIGATION SECTION
+// INPUT TAB
 // ======================
 
-function renderBottomNav(){
+function renderInputTab(){
 
-  document.getElementById('bottomNav').innerHTML = `
-    <div class="nav-btn" onclick="loadDashboard()">
-      <i class="fa-solid fa-house"></i>
-      <div>Home</div>
+  const area =
+    document.getElementById('contentArea');
+
+  area.innerHTML = `
+
+    <div class="main-card">
+
+      <div class="section-title">
+        Input Pembayaran
+      </div>
+
+      <select class="select">
+
+        <option>
+          Ahmad Al Irsyad
+        </option>
+
+      </select>
+
+      <div class="kategori-row">
+        <div class="kategori-name">KAS</div>
+        <input class="nominal-input" value="0">
+      </div>
+
+      <div class="kategori-row">
+        <div class="kategori-name">GALON</div>
+        <input class="nominal-input" value="0">
+      </div>
+
+      <div class="kategori-row">
+        <div class="kategori-name">KARTU PELAJAR</div>
+        <input class="nominal-input" value="0">
+      </div>
+
+      <div class="kategori-row">
+        <div class="kategori-name">TALI ASIH</div>
+        <input class="nominal-input" value="0">
+      </div>
+
+      <button class="save-btn">
+        SIMPAN TRANSAKSI
+      </button>
+
     </div>
 
-    <div class="nav-btn" onclick="loadDashboard()">
-      <i class="fa-solid fa-rotate"></i>
-      <div>Refresh</div>
+  `;
+
+}
+
+// ======================
+// REKAP TAB
+// ======================
+
+function renderRekapTab(){
+
+  const area =
+    document.getElementById('contentArea');
+
+  area.innerHTML = `
+
+    <div class="main-card">
+
+      <div class="section-title">
+        Monitoring Pelunasan
+      </div>
+
+      ${renderStudent('AHMAD AL IRSYAD')}
+      ${renderStudent('ATINA AZZAH HAYATI')}
+      ${renderStudent('AULIA IZZATUNNISA')}
+      ${renderStudent('CAMELIA AZAHRA')}
+
     </div>
 
-    <div class="nav-btn" onclick="logout()">
-      <i class="fa-solid fa-right-from-bracket"></i>
-      <div>Logout</div>
+  `;
+
+}
+
+function renderStudent(nama){
+
+  return `
+
+    <div class="student-row">
+
+      <div class="student-name">
+        ${nama}
+      </div>
+
+      <div class="status-grid">
+
+        <span class="badge badge-success">
+          LUNAS
+        </span>
+
+        <span class="badge badge-danger">
+          Rp25.000
+        </span>
+
+        <span class="badge badge-success">
+          LUNAS
+        </span>
+
+        <span class="badge badge-warning">
+          CICILAN
+        </span>
+
+      </div>
+
     </div>
+
+  `;
+
+}
+
+// ======================
+// SALDO TAB
+// ======================
+
+function renderSaldoTab(){
+
+  const area =
+    document.getElementById('contentArea');
+
+  area.innerHTML = `
+
+    <div class="main-card">
+
+      ${saldoRow('KAS','Rp71.000')}
+      ${saldoRow('GALON','Rp855.000')}
+      ${saldoRow('KARTU PELAJAR','Rp0')}
+      ${saldoRow('TALI ASIH','Rp0')}
+      ${saldoRow('LAIN 1','Rp0')}
+      ${saldoRow('LAIN 2','Rp0')}
+
+      <div class="total-box">
+
+        <div>
+          TOTAL SALDO
+        </div>
+
+        <div>
+          Rp926.000
+        </div>
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+function saldoRow(label,value){
+
+  return `
+
+    <div class="saldo-row">
+
+      <div class="saldo-label">
+        ${label}
+      </div>
+
+      <div class="saldo-value">
+        ${value}
+      </div>
+
+    </div>
+
   `;
 
 }
@@ -507,7 +1038,31 @@ function renderBottomNav(){
 // HELPER SECTION
 // ======================
 
-function formatRupiah(angka){
+function toast(text){
+
+  const div =
+    document.createElement('div');
+
+  div.className='toast';
+
+  div.innerHTML=text;
+
+  document.body.appendChild(div);
+
+  setTimeout(()=>{
+    div.remove();
+  },2500);
+
+}
+
+function showLoading(show){
+
+  document.getElementById('loading').style.display =
+    show ? 'flex' : 'none';
+
+}
+
+function formatRupiah(number){
 
   return new Intl.NumberFormat(
     'id-ID',
@@ -516,30 +1071,7 @@ function formatRupiah(angka){
       currency:'IDR',
       minimumFractionDigits:0
     }
-  ).format(angka);
-
-}
-
-function toast(text){
-
-  const div = document.createElement('div');
-
-  div.className='toast';
-
-  div.innerText=text;
-
-  document.body.appendChild(div);
-
-  setTimeout(()=>{
-    div.remove();
-  },3000);
-
-}
-
-function showLoading(show){
-
-  document.getElementById('loading').style.display =
-    show ? 'flex' : 'none';
+  ).format(number);
 
 }
 
