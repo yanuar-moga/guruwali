@@ -1144,9 +1144,18 @@ async function loadDashboard(){
     DASHBOARD = res || {};
 
     TARGET =
-      (res.target || []).filter(t=>
-        t.tampil == true
-      );
+      (res.target || []).filter(t=>{
+
+        const tampil =
+          String(t.tampil)
+          .toLowerCase();
+
+        return (
+          tampil == "true" ||
+          tampil == "1"
+        );
+
+      });
 
     renderSiswa();
     renderKategori();
