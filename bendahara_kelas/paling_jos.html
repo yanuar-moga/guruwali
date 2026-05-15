@@ -19,31 +19,36 @@ font-family:'Poppins',sans-serif;
 }
 
 body{
-background:#ececec;
+background:#eef2ff;
 max-width:500px;
 margin:auto;
+min-height:100vh;
 }
 
 .header{
-background:linear-gradient(135deg,#4b46e5,#7c3aed);
+background:linear-gradient(135deg,#4f46e5,#7c3aed);
 padding:35px 20px;
 text-align:center;
 color:white;
+border-bottom-left-radius:30px;
+border-bottom-right-radius:30px;
+box-shadow:0 6px 20px rgba(79,70,229,.3);
 }
 
 .logo{
-font-size:42px;
-margin-bottom:5px;
+font-size:46px;
+margin-bottom:8px;
 }
 
 .title{
-font-size:22px;
+font-size:24px;
 font-weight:700;
 }
 
 .subtitle{
 font-size:13px;
 opacity:.9;
+margin-top:4px;
 }
 
 .container{
@@ -52,25 +57,37 @@ padding:18px;
 
 .card{
 background:white;
-border-radius:22px;
+border-radius:24px;
 padding:18px;
 margin-bottom:18px;
-box-shadow:0 4px 14px rgba(0,0,0,.08);
+box-shadow:0 8px 20px rgba(0,0,0,.08);
+animation:fade .3s ease;
+}
+
+@keyframes fade{
+from{
+opacity:0;
+transform:translateY(10px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
 }
 
 .pin-badge{
 display:inline-block;
-padding:4px 10px;
+padding:5px 12px;
 background:#dbeafe;
 color:#2563eb;
-border-radius:8px;
+border-radius:999px;
 font-size:12px;
-font-weight:600;
+font-weight:700;
 margin-bottom:5px;
 }
 
 .user-name{
-font-size:20px;
+font-size:22px;
 font-weight:700;
 }
 
@@ -82,55 +99,58 @@ margin-bottom:18px;
 }
 
 .logout{
-border:1px solid red;
-color:red;
-background:white;
-padding:8px 18px;
-border-radius:30px;
+border:none;
+background:#fee2e2;
+color:#dc2626;
+padding:10px 18px;
+border-radius:999px;
 cursor:pointer;
+font-weight:700;
 }
 
 .menu{
 display:flex;
 gap:10px;
-margin-bottom:15px;
+overflow:auto;
 }
 
 .menu button{
 flex:1;
 padding:14px;
 border:none;
-border-radius:14px;
-background:white;
+border-radius:16px;
+background:#f3f4f6;
 cursor:pointer;
-font-weight:500;
-border:1px solid #ddd;
+font-weight:600;
+font-size:13px;
+white-space:nowrap;
 }
 
 .menu .active{
 background:#7c3aed;
 color:white;
-box-shadow:0 4px 12px rgba(124,58,237,.4);
+box-shadow:0 6px 15px rgba(124,58,237,.35);
 }
 
 .input-group{
-margin-bottom:16px;
+margin-bottom:18px;
 }
 
 .label{
 font-size:13px;
-font-weight:600;
+font-weight:700;
 margin-bottom:8px;
 display:block;
-color:#555;
+color:#4b5563;
 }
 
 select,input{
 width:100%;
 padding:14px;
-border-radius:12px;
-border:1px solid #ddd;
+border-radius:14px;
+border:1px solid #d1d5db;
 font-size:14px;
+outline:none;
 }
 
 .table-head{
@@ -140,7 +160,8 @@ font-size:13px;
 font-weight:700;
 margin-bottom:10px;
 padding-top:15px;
-border-top:1px solid #ddd;
+border-top:1px solid #e5e7eb;
+color:#6b7280;
 }
 
 .row{
@@ -155,13 +176,14 @@ align-items:center;
 width:100%;
 padding:16px;
 border:none;
-border-radius:14px;
-background:#4f46e5;
+border-radius:16px;
+background:linear-gradient(135deg,#4f46e5,#7c3aed);
 color:white;
-font-size:16px;
+font-size:15px;
 font-weight:700;
 cursor:pointer;
-margin-top:10px;
+margin-top:12px;
+box-shadow:0 8px 18px rgba(79,70,229,.25);
 }
 
 .rekap-table{
@@ -171,20 +193,22 @@ font-size:12px;
 }
 
 .rekap-table th{
-padding:10px;
+padding:12px 8px;
 text-align:left;
-border-bottom:1px solid #ddd;
+border-bottom:1px solid #e5e7eb;
+background:#f8fafc;
+font-size:11px;
 }
 
 .rekap-table td{
 padding:12px 8px;
-border-bottom:1px solid #eee;
+border-bottom:1px solid #f1f5f9;
 }
 
 .badge-lunas{
 background:#dcfce7;
 color:#15803d;
-padding:7px 10px;
+padding:7px 12px;
 border-radius:999px;
 font-size:11px;
 font-weight:700;
@@ -194,7 +218,7 @@ display:inline-block;
 .badge-kurang{
 background:#fee2e2;
 color:#dc2626;
-padding:7px 10px;
+padding:7px 12px;
 border-radius:999px;
 font-size:11px;
 font-weight:700;
@@ -204,27 +228,30 @@ display:inline-block;
 .saldo-row{
 display:flex;
 justify-content:space-between;
-margin-bottom:22px;
+margin-bottom:18px;
 font-weight:600;
+padding-bottom:10px;
+border-bottom:1px dashed #ddd;
 }
 
 .total-box{
-background:#2563eb;
+background:linear-gradient(135deg,#2563eb,#4f46e5);
 color:white;
 padding:18px;
-border-radius:16px;
+border-radius:18px;
 display:flex;
 justify-content:space-between;
 font-size:22px;
 font-weight:700;
-margin-top:10px;
+margin-top:15px;
 }
 
 .footer{
 text-align:center;
 font-size:12px;
-color:#9ca3af;
+color:#6b7280;
 padding:25px;
+line-height:1.7;
 }
 
 .hidden{
@@ -232,7 +259,7 @@ display:none;
 }
 
 .login-card{
-margin-top:20px;
+margin-top:30px;
 }
 
 .login-title{
@@ -244,15 +271,47 @@ margin-bottom:8px;
 
 .login-sub{
 text-align:center;
-color:#777;
+color:#6b7280;
 margin-bottom:30px;
+font-size:14px;
 }
 
 .pin-input{
-font-size:28px;
+font-size:30px;
 text-align:center;
 letter-spacing:12px;
 font-weight:700;
+}
+
+.sync-badge{
+background:#ecfeff;
+color:#0891b2;
+padding:7px 14px;
+border-radius:999px;
+font-size:11px;
+font-weight:700;
+}
+
+.info-update{
+font-size:11px;
+color:#9ca3af;
+margin-top:10px;
+}
+
+.popup{
+position:fixed;
+top:20px;
+left:50%;
+transform:translateX(-50%);
+background:#111827;
+color:white;
+padding:14px 20px;
+border-radius:14px;
+font-size:13px;
+font-weight:600;
+z-index:999;
+display:none;
+animation:fade .3s ease;
 }
 
 </style>
@@ -260,13 +319,19 @@ font-weight:700;
 </head>
 <body>
 
+<div class="popup" id="popup"></div>
+
 <div class="header">
 
 <div class="logo">💰</div>
 
-<div class="title">E-Bendahara</div>
+<div class="title">
+E-Bendahara
+</div>
 
-<div class="subtitle">Manajemen Keuangan Kelas Digital</div>
+<div class="subtitle">
+Manajemen Keuangan Kelas Digital
+</div>
 
 </div>
 
@@ -283,7 +348,7 @@ Selamat Datang
 </div>
 
 <div class="login-sub">
-Masukkan PIN Keamanan untuk akses
+Masukkan PIN Keamanan
 </div>
 
 <input
@@ -311,17 +376,17 @@ BUKA PANEL KAS
 <div>
 
 <div class="pin-badge" id="roleText">
-PIN_WALIKELAS
+PIN_ADMIN
 </div>
 
 <div class="user-name" id="userName">
-Pak Bayu
+User
 </div>
 
 </div>
 
 <button class="logout" onclick="logout()">
-Keluar
+Logout
 </button>
 
 </div>
@@ -330,16 +395,20 @@ Keluar
 
 <div class="menu">
 
-<button class="active" onclick="showMenu('inputPage',this)">
-Input Data
+<button
+class="active"
+onclick="showMenu('inputPage',this)">
+Input
 </button>
 
-<button onclick="showMenu('rekapPage',this)">
-Rekap Iuran
+<button
+onclick="showMenu('rekapPage',this)">
+Rekap
 </button>
 
-<button onclick="showMenu('saldoPage',this)">
-Total Saldo
+<button
+onclick="showMenu('saldoPage',this)">
+Saldo
 </button>
 
 </div>
@@ -355,7 +424,7 @@ Total Saldo
 <div class="input-group">
 
 <label class="label">
-Pilih Nama Siswa
+Nama Siswa
 </label>
 
 <select id="namaSiswa"></select>
@@ -365,13 +434,15 @@ Pilih Nama Siswa
 <div class="table-head">
 
 <div>KATEGORI</div>
-<div>NOMINAL (RP)</div>
+<div>NOMINAL</div>
 
 </div>
 
 <div id="kategoriContainer"></div>
 
-<button class="save-btn" onclick="saveTransaksi()">
+<button
+class="save-btn"
+onclick="saveTransaksi()">
 SIMPAN TRANSAKSI
 </button>
 
@@ -385,43 +456,37 @@ SIMPAN TRANSAKSI
 
 <div class="card">
 
-<div style="display:flex;justify-content:space-between;margin-bottom:15px;">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
+
+<div>
 
 <div style="font-size:22px;font-weight:700;">
 Monitoring Pelunasan
 </div>
 
-<div style="
-background:#f3f4f6;
-padding:6px 12px;
-border-radius:999px;
-font-size:12px;
-font-weight:700;
-color:#6b7280;
-">
-Auto-Sync
+<div class="info-update" id="updateText">
+Auto Sync
 </div>
 
 </div>
+
+<div class="sync-badge">
+AUTO SYNC
+</div>
+
+</div>
+
+<div style="overflow:auto;">
 
 <table class="rekap-table">
 
-<thead>
-
-<tr>
-<th>Nama Siswa</th>
-<th>KAS</th>
-<th>GALON</th>
-<th>KARTU</th>
-<th>TALI</th>
-<th>LAIN</th>
-</tr>
-
-</thead>
+<thead id="rekapHead"></thead>
 
 <tbody id="rekapBody"></tbody>
 
 </table>
+
+</div>
 
 </div>
 
@@ -437,9 +502,11 @@ Auto-Sync
 
 <div class="total-box">
 
-<div>TOTAL SALDO</div>
+<div>TOTAL</div>
 
-<div id="grandTotal">Rp0</div>
+<div id="grandTotal">
+Rp0
+</div>
 
 </div>
 
@@ -460,10 +527,11 @@ Apps by MB © 2026 MB All Rights Reserved
 
 <script>
 
-const API_URL = "https://script.google.com/macros/s/AKfycbwm-CfRMCmbYBeEN26WMqtDpRkDHWyvEPGGEs95ZsdfIyxdpWSOqNrVkSvxyOiJmXF6IA/exec";
+const API_URL =
+"https://script.google.com/macros/s/AKfycbwm-CfRMCmbYBeEN26WMqtDpRkDHWyvEPGGEs95ZsdfIyxdpWSOqNrVkSvxyOiJmXF6IA/exec";
 
 let LOGIN_NAME = "";
-
+let SESSION_ID = "";
 let MASTER = {};
 
 document
@@ -476,6 +544,31 @@ login();
 
 });
 
+/************************************************
+ POPUP
+************************************************/
+
+function showPopup(text){
+
+const popup =
+document.getElementById("popup");
+
+popup.innerText = text;
+
+popup.style.display = "block";
+
+setTimeout(()=>{
+
+popup.style.display = "none";
+
+},2500);
+
+}
+
+/************************************************
+ API
+************************************************/
+
 async function api(action,data={}){
 
 const res = await fetch(API_URL,{
@@ -483,8 +576,10 @@ const res = await fetch(API_URL,{
 method:"POST",
 
 body:JSON.stringify({
+
 action,
 ...data
+
 })
 
 });
@@ -493,31 +588,72 @@ return await res.json();
 
 }
 
+/************************************************
+ LOGIN
+************************************************/
+
 async function login(){
 
-const pin = document.getElementById("pin").value;
+const pin =
+document.getElementById("pin").value;
 
 const res = await api("login",{
-pin
+
+pin:pin,
+device:navigator.userAgent,
+ip:"UNKNOWN"
+
 });
 
 if(!res.status){
 
-alert(res.message);
+showPopup(res.message);
 
 return;
 
 }
 
+/*
+SIMPAN SESSION
+*/
+
+localStorage.setItem(
+
+"ebendahara_session",
+
+JSON.stringify(res)
+
+);
+
+openDashboard(res);
+
+}
+
+/************************************************
+ OPEN DASHBOARD
+************************************************/
+
+function openDashboard(res){
+
 LOGIN_NAME = res.nama;
 
-document.getElementById("loginPage").classList.add("hidden");
+SESSION_ID = res.sessionID;
 
-document.getElementById("dashboard").classList.remove("hidden");
+document
+.getElementById("loginPage")
+.classList.add("hidden");
 
-document.getElementById("userName").innerText = res.nama;
+document
+.getElementById("dashboard")
+.classList.remove("hidden");
 
-document.getElementById("roleText").innerText = res.user;
+document
+.getElementById("userName")
+.innerText = res.nama;
+
+document
+.getElementById("roleText")
+.innerText = res.user;
 
 loadMaster();
 
@@ -527,13 +663,44 @@ loadSaldo();
 
 }
 
+/************************************************
+ AUTO LOGIN
+************************************************/
+
+window.onload = function(){
+
+const session =
+localStorage.getItem(
+"ebendahara_session"
+);
+
+if(session){
+
+const data = JSON.parse(session);
+
+openDashboard(data);
+
+}
+
+}
+
+/************************************************
+ MASTER
+************************************************/
+
 async function loadMaster(){
 
 const res = await api("master");
 
 MASTER = res;
 
-const siswa = document.getElementById("namaSiswa");
+document
+.getElementById("updateText")
+.innerText =
+"Update : " + res.update;
+
+const siswa =
+document.getElementById("namaSiswa");
 
 siswa.innerHTML = "";
 
@@ -545,7 +712,10 @@ siswa.innerHTML += `
 
 });
 
-const kategori = document.getElementById("kategoriContainer");
+const kategori =
+document.getElementById(
+"kategoriContainer"
+);
 
 kategori.innerHTML = "";
 
@@ -578,47 +748,95 @@ value="0"
 
 }
 
+/************************************************
+ SAVE TRANSAKSI
+************************************************/
+
 async function saveTransaksi(){
 
 const items = [];
 
-document.querySelectorAll(".nominal")
+document
+.querySelectorAll(".nominal")
 .forEach(el=>{
 
 items.push({
+
 kategori:el.dataset.kategori,
 nominal:el.value
+
 });
 
 });
 
 const nama =
-document.getElementById("namaSiswa").value;
+document.getElementById(
+"namaSiswa"
+).value;
 
-const res = await api("saveTransaksi",{
+const res = await api(
 
-nama,
+"saveTransaksi",
+
+{
+
+nama:nama,
 oleh:LOGIN_NAME,
-items
+items:items
 
-});
+}
 
-alert(res.message);
+);
 
-document.querySelectorAll(".nominal")
+showPopup(res.message);
+
+document
+.querySelectorAll(".nominal")
 .forEach(el=>{
+
 el.value = 0;
+
 });
 
 loadSaldo();
+loadRekap();
 
 }
+
+/************************************************
+ LOAD REKAP
+************************************************/
 
 async function loadRekap(){
 
 const res = await api("rekap");
 
-const body = document.getElementById("rekapBody");
+const kategoriShow =
+MASTER.kategori.map(
+x=>x.kategori
+);
+
+let head = `
+<tr>
+<th>Nama Siswa</th>
+`;
+
+kategoriShow.forEach(k=>{
+
+head += `<th>${k}</th>`;
+
+});
+
+head += `</tr>`;
+
+document
+.getElementById("rekapHead")
+.innerHTML = head;
+
+const body =
+document.getElementById(
+"rekapBody"
+);
 
 body.innerHTML = "";
 
@@ -666,11 +884,18 @@ body.innerHTML += row;
 
 }
 
+/************************************************
+ LOAD SALDO
+************************************************/
+
 async function loadSaldo(){
 
 const res = await api("saldo");
 
-const saldo = document.getElementById("saldoList");
+const saldo =
+document.getElementById(
+"saldoList"
+);
 
 saldo.innerHTML = "";
 
@@ -687,7 +912,9 @@ saldo.innerHTML += `
 <div>${key}</div>
 
 <div>
-Rp${Number(res[key]).toLocaleString("id-ID")}
+Rp${Number(
+res[key]
+).toLocaleString("id-ID")}
 </div>
 
 </div>
@@ -696,33 +923,59 @@ Rp${Number(res[key]).toLocaleString("id-ID")}
 
 });
 
-document.getElementById("grandTotal")
+document
+.getElementById("grandTotal")
 .innerText =
-"Rp" + total.toLocaleString("id-ID");
+
+"Rp" +
+total.toLocaleString("id-ID");
 
 }
 
-function logout(){
+/************************************************
+ LOGOUT
+************************************************/
+
+async function logout(){
+
+await api("logout",{
+
+sessionID:SESSION_ID
+
+});
+
+localStorage.removeItem(
+"ebendahara_session"
+);
 
 location.reload();
 
 }
 
+/************************************************
+ MENU
+************************************************/
+
 function showMenu(id,el){
 
-document.getElementById("inputPage")
+document
+.getElementById("inputPage")
 .classList.add("hidden");
 
-document.getElementById("rekapPage")
+document
+.getElementById("rekapPage")
 .classList.add("hidden");
 
-document.getElementById("saldoPage")
+document
+.getElementById("saldoPage")
 .classList.add("hidden");
 
-document.getElementById(id)
+document
+.getElementById(id)
 .classList.remove("hidden");
 
-document.querySelectorAll(".menu button")
+document
+.querySelectorAll(".menu button")
 .forEach(btn=>{
 
 btn.classList.remove("active");
