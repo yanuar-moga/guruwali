@@ -159,6 +159,14 @@ button{
 
   cursor:pointer;
 
+  transition:.2s;
+
+}
+
+button:hover{
+
+  transform:translateY(-1px);
+
 }
 
 /* ========================================
@@ -390,27 +398,40 @@ SALDO
   display:flex;
   justify-content:space-between;
 
-  margin-bottom:22px;
+  margin-bottom:16px;
 
   font-weight:600;
 
 }
 
-.totalSaldo{
+.totalCard{
 
-  background:#2563eb;
+  border-radius:18px;
+
+  padding:18px;
 
   color:white;
 
-  border-radius:16px;
-
-  padding:16px;
+  margin-top:16px;
 
   display:flex;
   justify-content:space-between;
+  align-items:center;
 
   font-weight:700;
 
+}
+
+.totalMasuk{
+  background:linear-gradient(135deg,#16a34a,#22c55e);
+}
+
+.totalKeluar{
+  background:linear-gradient(135deg,#dc2626,#ef4444);
+}
+
+.totalSaldoAkhir{
+  background:linear-gradient(135deg,#2563eb,#3b82f6);
 }
 
 /* ========================================
@@ -479,6 +500,10 @@ POPUP
 
   animation:popupShow .3s ease;
 
+}
+
+.popup.error{
+  background:#dc2626;
 }
 
 @keyframes popupShow{
@@ -579,9 +604,13 @@ class="container"
       type="password"
       id="pin"
       placeholder="••••••"
+      autocomplete="off"
     >
 
-    <button onclick="login()">
+    <button
+    id="btnLogin"
+    onclick="login()"
+    >
       BUKA PANEL KAS
     </button>
 
@@ -597,8 +626,6 @@ ADMIN PAGE
 id="adminPage"
 class="hidden container"
 >
-
-  <!-- USER -->
 
   <div class="userBox">
 
@@ -655,12 +682,10 @@ class="hidden container"
   </div>
 
   <!-- ========================================
-  MENU INPUT
+  INPUT
   ======================================== -->
 
   <div id="menuInput">
-
-    <!-- TRANSAKSI -->
 
     <div class="card">
 
@@ -714,29 +739,7 @@ class="hidden container"
         Setor Ke Kesiswaan
       </h3>
 
-      <input
-      type="number"
-      id="setorKAS"
-      placeholder="KAS"
-      >
-
-      <input
-      type="number"
-      id="setorGALON"
-      placeholder="GALON"
-      >
-
-      <input
-      type="number"
-      id="setorKARTU"
-      placeholder="Kartu Pelajar"
-      >
-
-      <input
-      type="number"
-      id="setorTALI"
-      placeholder="Tali Asih"
-      >
+      <div id="setorBox"></div>
 
       <input
       type="text"
@@ -753,7 +756,7 @@ class="hidden container"
   </div>
 
   <!-- ========================================
-  MENU REKAP
+  REKAP
   ======================================== -->
 
   <div
@@ -799,7 +802,7 @@ class="hidden container"
   </div>
 
   <!-- ========================================
-  MENU SALDO
+  SALDO
   ======================================== -->
 
   <div
@@ -878,7 +881,7 @@ FOOTER
 
 <div class="footer">
 
-  Aplikasi e bendahara v 1.2
+  Aplikasi e bendahara v 1.3
   (Build 15 Mei 2026)
 
   <br>
@@ -919,12 +922,15 @@ async function postData(data){
 // ========================================
 // POPUP
 // ========================================
-function popup(text){
+function popup(text,type="success"){
 
   const div =
     document.createElement("div");
 
-  div.className = "popup";
+  div.className =
+    type == "error"
+    ? "popup error"
+    : "popup";
 
   div.innerHTML = text;
 
@@ -944,12 +950,16 @@ function popup(text){
 document
 .getElementById("pin")
 .addEventListener(
-  "keypress",
+  "keydown",
   function(e){
 
     if(e.key === "Enter"){
 
-      login();
+      e.preventDefault();
+
+      document
+      .getElementById("btnLogin")
+      .click();
 
     }
 
@@ -964,60 +974,98 @@ async function login(){
   const pin =
     document
     .getElementById("pin")
-    .value;
+    .value
+    .trim();
 
   if(pin == ""){
 
-    popup("PIN wajib diisi");
+    popup(
+      "PIN wajib diisi",
+      "error"
+    );
+
     return;
 
   }
 
-  const res = await postData({
+  const btn =
+    document.getElementById(
+      "btnLogin"
+    );
 
-    action:"login",
-    pin:pin
+  btn.disabled = true;
+  btn.innerHTML = "MEMPROSES...";
 
-  });
+  try{
 
-  if(!res.success){
+    const res = await postData({
 
-    popup(res.message);
-    return;
+      action:"login",
+      pin:pin
+
+    });
+
+    if(!res.success){
+
+      popup(
+        res.message,
+        "error"
+      );
+
+      btn.disabled = false;
+      btn.innerHTML = "BUKA PANEL KAS";
+
+      return;
+
+    }
+
+    LOGIN_NAME = res.nama;
+    LOGIN_ROLE = res.user;
+
+    // SISWA
+    if(res.role == "SISWA"){
+
+      loadSiswaDashboard(pin);
+
+      btn.disabled = false;
+      btn.innerHTML = "BUKA PANEL KAS";
+
+      return;
+
+    }
+
+    // ADMIN
+    document
+      .getElementById("loginPage")
+      .classList.add("hidden");
+
+    document
+      .getElementById("adminPage")
+      .classList.remove("hidden");
+
+    document
+      .getElementById("namaAdmin")
+      .innerHTML = LOGIN_NAME;
+
+    document
+      .getElementById("roleText")
+      .innerHTML = LOGIN_ROLE;
+
+    await loadDashboard();
+
+    popup("Login berhasil");
+
+  }catch(err){
+
+    popup(
+      "Gagal terhubung server",
+      "error"
+    );
 
   }
 
-  LOGIN_NAME = res.nama;
-  LOGIN_ROLE = res.user;
-
-  // SISWA
-  if(res.role == "SISWA"){
-
-    loadSiswaDashboard(pin);
-    return;
-
-  }
-
-  // ADMIN
-  document
-    .getElementById("loginPage")
-    .classList.add("hidden");
-
-  document
-    .getElementById("adminPage")
-    .classList.remove("hidden");
-
-  document
-    .getElementById("namaAdmin")
-    .innerHTML = LOGIN_NAME;
-
-  document
-    .getElementById("roleText")
-    .innerHTML = LOGIN_ROLE;
-
-  await loadDashboard();
-
-  popup("Login berhasil");
+  btn.disabled = false;
+  btn.innerHTML = "BUKA PANEL KAS";
 
 }
 
@@ -1034,10 +1082,14 @@ async function loadDashboard(){
 
   DASHBOARD = res;
 
-  TARGET = res.target;
+  TARGET =
+    res.target.filter(t=>
+      t.tampil == true
+    );
 
   renderSiswa();
   renderKategori();
+  renderSetor();
   renderRekap();
   renderSaldo();
 
@@ -1111,6 +1163,34 @@ function renderKategori(){
 }
 
 // ========================================
+// RENDER SETOR
+// ========================================
+function renderSetor(){
+
+  const box =
+    document.getElementById(
+      "setorBox"
+    );
+
+  box.innerHTML = "";
+
+  TARGET.forEach(t=>{
+
+    box.innerHTML += `
+
+      <input
+      type="number"
+      id="setor_${t.kategori}"
+      placeholder="${t.kategori}"
+      >
+
+    `;
+
+  });
+
+}
+
+// ========================================
 // SAVE TRANSAKSI
 // ========================================
 async function saveTransaksi(){
@@ -1128,13 +1208,15 @@ async function saveTransaksi(){
     const t = TARGET[i];
 
     const nominal =
-      document
-      .getElementById(
-        "kat_" + t.kategori
-      )
-      .value;
+      Number(
+        document
+        .getElementById(
+          "kat_" + t.kategori
+        )
+        .value || 0
+      );
 
-    if(Number(nominal) > 0){
+    if(nominal > 0){
 
       adaInput = true;
 
@@ -1160,7 +1242,11 @@ async function saveTransaksi(){
 
   if(!adaInput){
 
-    popup("Isi minimal 1 nominal");
+    popup(
+      "Isi minimal 1 nominal",
+      "error"
+    );
+
     return;
 
   }
@@ -1178,29 +1264,25 @@ async function saveTransaksi(){
 // ========================================
 async function saveSetor(){
 
+  const dataSetor = {};
+
+  TARGET.forEach(t=>{
+
+    dataSetor[t.kategori] =
+      Number(
+        document
+        .getElementById(
+          "setor_" + t.kategori
+        ).value || 0
+      );
+
+  });
+
   const res = await postData({
 
     action:"saveSetor",
 
-    KAS:
-      document
-      .getElementById("setorKAS")
-      .value || 0,
-
-    GALON:
-      document
-      .getElementById("setorGALON")
-      .value || 0,
-
-    KARTU:
-      document
-      .getElementById("setorKARTU")
-      .value || 0,
-
-    TALI:
-      document
-      .getElementById("setorTALI")
-      .value || 0,
+    data:dataSetor,
 
     penerima:
       document
@@ -1211,11 +1293,18 @@ async function saveSetor(){
 
   if(res.success){
 
-    document.getElementById("setorKAS").value = "";
-    document.getElementById("setorGALON").value = "";
-    document.getElementById("setorKARTU").value = "";
-    document.getElementById("setorTALI").value = "";
-    document.getElementById("penerima").value = "";
+    TARGET.forEach(t=>{
+
+      document
+      .getElementById(
+        "setor_" + t.kategori
+      ).value = "";
+
+    });
+
+    document
+      .getElementById("penerima")
+      .value = "";
 
     await loadDashboard();
 
@@ -1404,12 +1493,12 @@ function renderSaldo(){
       <div class="saldoSection">
 
         <h3 class="saldoTitle">
-          Total Pemasukan
+          🟢 Total Pemasukan
         </h3>
 
         ${pemasukanHTML}
 
-        <div class="totalSaldo">
+        <div class="totalCard totalMasuk">
 
           <div>
             TOTAL MASUK
@@ -1426,12 +1515,12 @@ function renderSaldo(){
       <div class="saldoSection">
 
         <h3 class="saldoTitle">
-          Sudah Disetor Ke Kesiswaan
+          🔴 Sudah Disetor Ke Kesiswaan
         </h3>
 
         ${setorHTML}
 
-        <div class="totalSaldo">
+        <div class="totalCard totalKeluar">
 
           <div>
             TOTAL SETOR
@@ -1448,12 +1537,12 @@ function renderSaldo(){
       <div class="saldoSection">
 
         <h3 class="saldoTitle">
-          Saldo Bendahara
+          🔵 Saldo Bendahara
         </h3>
 
         ${saldoHTML}
 
-        <div class="totalSaldo">
+        <div class="totalCard totalSaldoAkhir">
 
           <div>
             TOTAL SALDO
@@ -1556,7 +1645,11 @@ async function loadSiswaDashboard(nisn){
 
   if(!res.success){
 
-    popup("Data tidak ditemukan");
+    popup(
+      "Data tidak ditemukan",
+      "error"
+    );
+
     return;
 
   }
