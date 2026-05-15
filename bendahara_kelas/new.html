@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+
 <meta charset="UTF-8">
+
 <meta
 name="viewport"
 content="width=device-width, initial-scale=1.0"
 />
 
-<title>E Bendahara</title>
+<title>E-Bendahara</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
@@ -21,61 +23,94 @@ content="width=device-width, initial-scale=1.0"
 
 body{
   font-family:'Poppins',sans-serif;
-  background:#0f172a;
-  color:white;
+  background:#f1f3f6;
+  color:#111827;
+  max-width:600px;
+  margin:auto;
   min-height:100vh;
 }
 
 .hidden{
-  display:none;
+  display:none !important;
 }
+
+/* HEADER */
+
+.header{
+  background:linear-gradient(
+    135deg,
+    #4f46e5,
+    #7c3aed
+  );
+
+  padding:28px 20px;
+  text-align:center;
+  color:white;
+}
+
+.logo{
+  font-size:42px;
+  margin-bottom:6px;
+}
+
+.title{
+  font-size:18px;
+  font-weight:700;
+}
+
+.subtitle{
+  font-size:12px;
+  opacity:.9;
+}
+
+/* CONTAINER */
 
 .container{
-  padding:18px;
+  padding:16px;
 }
+
+/* CARD */
 
 .card{
-  background:rgba(255,255,255,.08);
-  backdrop-filter:blur(12px);
-  border-radius:24px;
+  background:white;
+  border-radius:22px;
   padding:18px;
-  margin-bottom:18px;
-  box-shadow:0 10px 30px rgba(0,0,0,.25);
+  margin-bottom:16px;
+  box-shadow:0 4px 14px rgba(0,0,0,.08);
 }
 
-h1{
-  font-size:24px;
-  margin-bottom:10px;
-}
+/* INPUT */
 
-h2{
-  margin-bottom:14px;
-}
-
-input,button,select{
+input,
+button,
+select{
   width:100%;
   border:none;
   outline:none;
+  border-radius:14px;
   padding:14px;
-  border-radius:16px;
-  margin-top:10px;
-  font-size:15px;
+  font-size:14px;
 }
 
-input,select{
-  background:white;
-  color:#111;
+input,
+select{
+  background:#f3f4f6;
+  margin-top:10px;
 }
 
 button{
   background:linear-gradient(
     135deg,
-    #3b82f6,
-    #06b6d4
+    #4f46e5,
+    #7c3aed
   );
+
   color:white;
-  font-weight:600;
+  font-weight:700;
+  margin-top:14px;
 }
+
+/* MENU */
 
 .menu{
   display:grid;
@@ -83,7 +118,54 @@ button{
   gap:10px;
 }
 
-.table-wrap{
+.menu button{
+
+  background:white;
+  color:#6b7280;
+  border:1px solid #e5e7eb;
+}
+
+.menu button.active{
+
+  background:linear-gradient(
+    135deg,
+    #7c3aed,
+    #6d28d9
+  );
+
+  color:white;
+}
+
+/* USER */
+
+.userBox{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:16px;
+}
+
+.role{
+  background:#dbeafe;
+  color:#2563eb;
+  font-size:11px;
+  padding:4px 10px;
+  border-radius:8px;
+  display:inline-block;
+  margin-bottom:6px;
+}
+
+.logout{
+  width:auto;
+  padding:10px 16px;
+  background:white;
+  color:#ef4444;
+  border:1px solid #ef4444;
+}
+
+/* TABLE */
+
+.tableWrap{
   overflow:auto;
 }
 
@@ -93,15 +175,64 @@ table{
 }
 
 th,td{
-  border:1px solid rgba(255,255,255,.1);
-  padding:10px;
+  padding:12px 8px;
+  border-bottom:1px solid #e5e7eb;
+  font-size:12px;
   text-align:center;
-  font-size:13px;
 }
 
 th{
-  background:#1e293b;
+  color:#111827;
+  background:#fafafa;
 }
+
+.lunas{
+  background:#dcfce7;
+  color:#16a34a;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:700;
+}
+
+.kurang{
+  background:#fee2e2;
+  color:#dc2626;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:700;
+}
+
+/* SALDO */
+
+.saldoItem{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:22px;
+  font-weight:600;
+}
+
+.totalSaldo{
+  background:#2563eb;
+  color:white;
+  padding:16px;
+  border-radius:16px;
+  display:flex;
+  justify-content:space-between;
+  font-weight:700;
+}
+
+/* FOOTER */
+
+.footer{
+  text-align:center;
+  font-size:12px;
+  color:#9ca3af;
+  padding:30px 10px;
+}
+
+/* PROFILE */
 
 .profile{
   text-align:center;
@@ -110,39 +241,39 @@ th{
 .profile img{
   width:120px;
   height:120px;
-  object-fit:cover;
   border-radius:50%;
+  object-fit:cover;
   border:4px solid white;
   margin-bottom:14px;
 }
 
+/* POPUP */
+
 .popup{
   position:fixed;
   top:20px;
-  right:20px;
-  background:#10b981;
+  left:50%;
+  transform:translateX(-50%);
+  background:#16a34a;
+  color:white;
   padding:14px 20px;
-  border-radius:16px;
+  border-radius:14px;
   z-index:999;
-  animation:slide .4s ease;
+  animation:show .3s ease;
 }
 
-@keyframes slide{
+@keyframes show{
+
   from{
-    transform:translateX(100%);
     opacity:0;
+    transform:translate(-50%,-20px);
   }
-  to{
-    transform:translateX(0);
-    opacity:1;
-  }
-}
 
-.footer{
-  text-align:center;
-  font-size:12px;
-  opacity:.7;
-  padding:20px;
+  to{
+    opacity:1;
+    transform:translate(-50%,0);
+  }
+
 }
 
 </style>
@@ -150,23 +281,57 @@ th{
 
 <body>
 
+<!-- HEADER -->
+
+<div class="header">
+
+  <div class="logo">💰</div>
+
+  <div class="title">
+    E-Bendahara
+  </div>
+
+  <div class="subtitle">
+    Manajemen Keuangan Kelas Digital
+  </div>
+
+</div>
+
 <!-- LOGIN -->
-<div id="loginPage" class="container">
+
+<div
+id="loginPage"
+class="container"
+>
 
   <div class="card">
 
-    <h1>E Bendahara</h1>
+    <h2
+    style="
+    text-align:center;
+    margin-bottom:10px
+    ">
+      Selamat Datang
+    </h2>
 
-    <p>Masukkan PIN</p>
+    <p
+    style="
+    text-align:center;
+    color:#6b7280;
+    margin-bottom:20px;
+    font-size:14px
+    ">
+      Masukkan PIN Keamanan untuk akses
+    </p>
 
     <input
       type="password"
       id="pin"
-      placeholder="Masukkan PIN"
+      placeholder="••••••"
     >
 
     <button onclick="login()">
-      LOGIN
+      BUKA PANEL KAS
     </button>
 
   </div>
@@ -174,25 +339,60 @@ th{
 </div>
 
 <!-- ADMIN -->
-<div id="adminPage"
-class="hidden container">
+
+<div
+id="adminPage"
+class="hidden container"
+>
+
+  <div class="userBox">
+
+    <div>
+
+      <div
+      class="role"
+      id="roleText"
+      ></div>
+
+      <h2 id="namaAdmin"></h2>
+
+    </div>
+
+    <button
+    class="logout"
+    onclick="logout()"
+    >
+      Keluar
+    </button>
+
+  </div>
+
+  <!-- MENU -->
 
   <div class="card">
 
-    <h2 id="welcome"></h2>
-
     <div class="menu">
 
-      <button onclick="showMenu('inputMenu')">
-        Input
+      <button
+      class="active"
+      id="btnInput"
+      onclick="showMenu('input')"
+      >
+        Input Data
       </button>
 
-      <button onclick="showMenu('rekapMenu')">
-        Rekap
+      <button
+      id="btnRekap"
+      onclick="showMenu('rekap')"
+      >
+        Rekap Iuran
       </button>
 
-      <button onclick="showMenu('saldoMenu')">
-        Saldo
+      <button
+      id="btnSaldo"
+      onclick="showMenu('saldo')"
+      >
+        Total Saldo
       </button>
 
     </div>
@@ -200,18 +400,89 @@ class="hidden container">
   </div>
 
   <!-- INPUT -->
-  <div id="inputMenu">
+
+  <div id="menuInput">
 
     <div class="card">
 
-      <h2>Input Iuran</h2>
+      <div
+      style="
+      margin-bottom:10px;
+      font-weight:600;
+      font-size:14px
+      ">
+        Pilih Nama Siswa
+      </div>
 
       <select id="siswaSelect"></select>
+
+      <hr
+      style="
+      margin:16px 0;
+      border:none;
+      border-top:1px solid #e5e7eb
+      ">
+
+      <div
+      style="
+      display:flex;
+      justify-content:space-between;
+      margin-bottom:16px;
+      font-size:12px;
+      font-weight:700
+      ">
+        <div>KATEGORI</div>
+        <div>NOMINAL (RP)</div>
+      </div>
 
       <div id="kategoriBox"></div>
 
       <button onclick="saveTransaksi()">
-        Simpan Transaksi
+        SIMPAN TRANSAKSI
+      </button>
+
+    </div>
+
+    <!-- SETOR -->
+
+    <div class="card">
+
+      <h3 style="margin-bottom:14px">
+        Setor Ke Kesiswaan
+      </h3>
+
+      <input
+      type="number"
+      id="setorKAS"
+      placeholder="KAS"
+      >
+
+      <input
+      type="number"
+      id="setorGALON"
+      placeholder="GALON"
+      >
+
+      <input
+      type="number"
+      id="setorKARTU"
+      placeholder="Kartu Pelajar"
+      >
+
+      <input
+      type="number"
+      id="setorTALI"
+      placeholder="Tali Asih"
+      >
+
+      <input
+      type="text"
+      id="penerima"
+      placeholder="Nama Penerima"
+      >
+
+      <button onclick="saveSetor()">
+        SIMPAN SETORAN
       </button>
 
     </div>
@@ -219,16 +490,40 @@ class="hidden container">
   </div>
 
   <!-- REKAP -->
-  <div id="rekapMenu"
-  class="hidden">
+
+  <div
+  id="menuRekap"
+  class="hidden"
+  >
 
     <div class="card">
 
-      <h2>Monitoring Pelunasan</h2>
+      <div
+      style="
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:10px
+      ">
 
-      <div id="updateInfo"></div>
+        <h3>
+          Monitoring Pelunasan
+        </h3>
 
-      <div class="table-wrap">
+        <div
+        style="
+        background:#f3f4f6;
+        padding:6px 10px;
+        border-radius:10px;
+        font-size:11px;
+        color:#6b7280
+        ">
+          Auto-Sync
+        </div>
+
+      </div>
+
+      <div class="tableWrap">
 
         <table id="rekapTable"></table>
 
@@ -239,12 +534,13 @@ class="hidden container">
   </div>
 
   <!-- SALDO -->
-  <div id="saldoMenu"
-  class="hidden">
+
+  <div
+  id="menuSaldo"
+  class="hidden"
+  >
 
     <div class="card">
-
-      <h2>Total Saldo</h2>
 
       <div id="saldoContent"></div>
 
@@ -252,15 +548,14 @@ class="hidden container">
 
   </div>
 
-  <button onclick="logout()">
-    Logout
-  </button>
-
 </div>
 
 <!-- SISWA -->
-<div id="siswaPage"
-class="hidden container">
+
+<div
+id="siswaPage"
+class="hidden container"
+>
 
   <div class="card profile">
 
@@ -276,39 +571,44 @@ class="hidden container">
 
   <div class="card">
 
-    <h2>Sudah Dibayar</h2>
+    <h3>Jumlah Sudah Dibayar</h3>
 
-    <div id="dibayar"></div>
+    <br>
 
-  </div>
-
-  <div class="card">
-
-    <h2>Belum Dibayar</h2>
-
-    <div id="belum"></div>
+    <div id="sudahBayar"></div>
 
   </div>
 
   <div class="card">
 
-    <div id="updateSiswa"></div>
+    <h3>Jumlah Belum Dibayar</h3>
+
+    <br>
+
+    <div id="belumBayar"></div>
 
   </div>
 
-  <button onclick="logout()">
-    Logout
+  <button
+  class="logout"
+  style="width:100%"
+  onclick="logout()"
+  >
+    Keluar
   </button>
 
 </div>
 
+<!-- FOOTER -->
+
 <div class="footer">
 
-Aplikasi e bendahara v 1.2
-(Build 15 Mei 2026)
-<br>
-Apps by MB © 2026
-All Rights Reserved
+  Aplikasi e bendahara v 1.2
+  (Build 15 Mei 2026)
+  <br>
+
+  Apps by MB © 2026
+  MB All Rights Reserved
 
 </div>
 
@@ -317,12 +617,14 @@ All Rights Reserved
 const API_URL =
 "https://script.google.com/macros/s/AKfycbyKNBJl0DghHMSjW-I7BcqjVncZQlO-_UwcLqAJUcL-_R_FuIYUReTaSaRmMNEpimnQ/exec";
 
-let LOGIN_NAME = "";
 let TARGET = [];
+let DASHBOARD = {};
+let LOGIN_NAME = "";
+let LOGIN_ROLE = "";
 
-// ======================
+// ========================================
 // FETCH
-// ======================
+// ========================================
 async function postData(data){
 
   const res = await fetch(API_URL,{
@@ -333,12 +635,13 @@ async function postData(data){
   return await res.json();
 }
 
-// ======================
+// ========================================
 // POPUP
-// ======================
+// ========================================
 function popup(text){
 
-  const div = document.createElement("div");
+  const div =
+    document.createElement("div");
 
   div.className = "popup";
   div.innerHTML = text;
@@ -346,26 +649,33 @@ function popup(text){
   document.body.appendChild(div);
 
   setTimeout(()=>{
+
     div.remove();
-  },3000);
+
+  },2500);
 }
 
-// ======================
+// ========================================
 // ENTER LOGIN
-// ======================
+// ========================================
 document
 .getElementById("pin")
-.addEventListener("keypress",function(e){
+.addEventListener(
+  "keypress",
+  function(e){
 
-  if(e.key === "Enter"){
-    login();
+    if(e.key === "Enter"){
+
+      login();
+
+    }
+
   }
+);
 
-});
-
-// ======================
+// ========================================
 // LOGIN
-// ======================
+// ========================================
 async function login(){
 
   const pin =
@@ -374,8 +684,10 @@ async function login(){
     .value;
 
   const res = await postData({
+
     action:"login",
     pin:pin
+
   });
 
   if(!res.success){
@@ -385,72 +697,62 @@ async function login(){
   }
 
   LOGIN_NAME = res.nama;
+  LOGIN_ROLE = res.user;
 
-  if(res.role === "ADMIN"){
+  // SISWA
+  if(res.role == "SISWA"){
 
-    document
+    loadSiswaDashboard(pin);
+    return;
+  }
+
+  // ADMIN
+  document
     .getElementById("loginPage")
     .classList.add("hidden");
 
-    document
+  document
     .getElementById("adminPage")
     .classList.remove("hidden");
 
-    document
-    .getElementById("welcome")
-    .innerHTML =
-      "Halo, " + LOGIN_NAME;
+  document
+    .getElementById("namaAdmin")
+    .innerHTML = LOGIN_NAME;
 
-    loadSiswa();
-    loadTarget();
+  document
+    .getElementById("roleText")
+    .innerHTML = LOGIN_ROLE;
 
-  }else{
-
-    loadDashboardSiswa(pin);
-
-  }
+  await loadDashboard();
 
   popup("Login berhasil");
 }
 
-// ======================
-// SHOW MENU
-// ======================
-function showMenu(id){
-
-  document
-    .getElementById("inputMenu")
-    .classList.add("hidden");
-
-  document
-    .getElementById("rekapMenu")
-    .classList.add("hidden");
-
-  document
-    .getElementById("saldoMenu")
-    .classList.add("hidden");
-
-  document
-    .getElementById(id)
-    .classList.remove("hidden");
-
-  if(id === "rekapMenu"){
-    loadRekap();
-  }
-
-  if(id === "saldoMenu"){
-    loadSaldo();
-  }
-}
-
-// ======================
-// LOAD SISWA
-// ======================
-async function loadSiswa(){
+// ========================================
+// LOAD DASHBOARD
+// ========================================
+async function loadDashboard(){
 
   const res = await postData({
-    action:"getSiswa"
+
+    action:"getDashboard"
+
   });
+
+  DASHBOARD = res;
+
+  TARGET = res.target;
+
+  renderSiswa();
+  renderKategori();
+  renderRekap();
+  renderSaldo();
+}
+
+// ========================================
+// SISWA
+// ========================================
+function renderSiswa(){
 
   const select =
     document.getElementById(
@@ -459,26 +761,27 @@ async function loadSiswa(){
 
   select.innerHTML = "";
 
-  res.data.forEach(s=>{
+  DASHBOARD.siswa.forEach(s=>{
 
     select.innerHTML += `
-      <option value="${s.no}|${s.nama}">
+
+      <option
+      value="${s.no}|${s.nama}"
+      >
+
         ${s.nama}
+
       </option>
+
     `;
   });
+
 }
 
-// ======================
-// LOAD TARGET
-// ======================
-async function loadTarget(){
-
-  const res = await postData({
-    action:"getTarget"
-  });
-
-  TARGET = res.data;
+// ========================================
+// KATEGORI
+// ========================================
+function renderKategori(){
 
   const box =
     document.getElementById(
@@ -490,19 +793,44 @@ async function loadTarget(){
   TARGET.forEach(t=>{
 
     box.innerHTML += `
-      <input
-      type="number"
-      id="kat_${t.kategori}"
-      placeholder="${t.kategori}"
-      >
+
+      <div
+      style="
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:16px
+      ">
+
+        <div
+        style="
+        font-weight:700;
+        font-size:13px
+        ">
+          ${t.kategori}
+        </div>
+
+        <input
+        type="number"
+        id="kat_${t.kategori}"
+        value="0"
+        style="
+        width:110px;
+        margin:0;
+        text-align:right
+        "
+        >
+
+      </div>
+
     `;
   });
 
 }
 
-// ======================
+// ========================================
 // SAVE TRANSAKSI
-// ======================
+// ========================================
 async function saveTransaksi(){
 
   const siswa =
@@ -511,129 +839,288 @@ async function saveTransaksi(){
     .value
     .split("|");
 
-  const no = siswa[0];
-  const nama = siswa[1];
-
   for(let i=0;i<TARGET.length;i++){
 
     const t = TARGET[i];
 
     const nominal =
-      document.getElementById(
+      document
+      .getElementById(
         "kat_" + t.kategori
-      ).value;
+      )
+      .value;
 
     if(Number(nominal) > 0){
 
       await postData({
+
         action:"saveTransaksi",
-        no:no,
-        nama:nama,
+
+        no:siswa[0],
+        nama:siswa[1],
         kategori:t.kategori,
         jumlah:nominal,
         oleh:LOGIN_NAME
+
       });
+
     }
+
   }
+
+  await loadDashboard();
 
   popup("Transaksi berhasil");
 }
 
-// ======================
-// REKAP
-// ======================
-async function loadRekap(){
+// ========================================
+// SAVE SETOR
+// ========================================
+async function saveSetor(){
 
   const res = await postData({
-    action:"getRekap"
+
+    action:"saveSetor",
+
+    KAS:
+      document
+      .getElementById("setorKAS")
+      .value || 0,
+
+    GALON:
+      document
+      .getElementById("setorGALON")
+      .value || 0,
+
+    KARTU:
+      document
+      .getElementById("setorKARTU")
+      .value || 0,
+
+    TALI:
+      document
+      .getElementById("setorTALI")
+      .value || 0,
+
+    penerima:
+      document
+      .getElementById("penerima")
+      .value
+
   });
 
-  document
-  .getElementById("updateInfo")
-  .innerHTML =
-    "Auto Sync • " +
-    new Date(res.update)
-    .toLocaleString();
+  if(res.success){
+
+    await loadDashboard();
+
+    popup("Setoran berhasil");
+
+  }
+
+}
+
+// ========================================
+// REKAP
+// ========================================
+function renderRekap(){
+
+  const table =
+    document.getElementById(
+      "rekapTable"
+    );
 
   let html = "";
 
-  res.data.forEach((r,i)=>{
+  DASHBOARD.rekap.forEach((r,i)=>{
 
     html += "<tr>";
 
     r.forEach(c=>{
 
-      html += i == 0
-        ? `<th>${c}</th>`
-        : `<td>${c}</td>`;
+      if(i == 0){
+
+        html += `
+          <th>${c}</th>
+        `;
+
+      }else{
+
+        if(c == "LUNAS"){
+
+          html += `
+            <td>
+              <span class="lunas">
+                LUNAS
+              </span>
+            </td>
+          `;
+
+        }else if(
+          typeof c == "number"
+        ){
+
+          html += `
+            <td>
+              <span class="kurang">
+                Rp${c.toLocaleString('id-ID')}
+              </span>
+            </td>
+          `;
+
+        }else{
+
+          html += `
+            <td>${c}</td>
+          `;
+        }
+
+      }
 
     });
 
     html += "</tr>";
   });
 
-  document
-  .getElementById("rekapTable")
-  .innerHTML = html;
+  table.innerHTML = html;
 }
 
-// ======================
+// ========================================
 // SALDO
-// ======================
-async function loadSaldo(){
+// ========================================
+function renderSaldo(){
 
-  const res = await postData({
-    action:"getSaldo"
-  });
+  const saldo =
+    DASHBOARD.saldo;
 
   let html = "";
 
-  html += "<h3>Saldo Bendahara</h3><br>";
+  let total = 0;
 
-  Object.keys(res.saldo)
-  .forEach(k=>{
+  saldo.slice(1).forEach(s=>{
+
+    total += Number(s[3]);
 
     html += `
-      <p>
-      ${k}
-      :
-      Rp ${res.saldo[k]}
-      </p>
+
+      <div class="saldoItem">
+
+        <div>
+          ${s[0]}
+        </div>
+
+        <div>
+          Rp${Number(s[3])
+          .toLocaleString('id-ID')}
+        </div>
+
+      </div>
+
     `;
   });
 
-  html += "<br><h3>Total Disetor</h3><br>";
+  html += `
 
-  Object.keys(res.setor)
-  .forEach(k=>{
+    <div class="totalSaldo">
 
-    html += `
-      <p>
-      ${k}
-      :
-      Rp ${res.setor[k]}
-      </p>
-    `;
-  });
+      <div>
+        TOTAL SALDO
+      </div>
+
+      <div>
+        Rp${total.toLocaleString('id-ID')}
+      </div>
+
+    </div>
+
+  `;
 
   document
-  .getElementById("saldoContent")
-  .innerHTML = html;
+    .getElementById("saldoContent")
+    .innerHTML = html;
 }
 
-// ======================
-// DASHBOARD SISWA
-// ======================
-async function loadDashboardSiswa(nisn){
+// ========================================
+// MENU
+// ========================================
+function showMenu(menu){
+
+  document
+    .getElementById("menuInput")
+    .classList.add("hidden");
+
+  document
+    .getElementById("menuRekap")
+    .classList.add("hidden");
+
+  document
+    .getElementById("menuSaldo")
+    .classList.add("hidden");
+
+  document
+    .getElementById("btnInput")
+    .classList.remove("active");
+
+  document
+    .getElementById("btnRekap")
+    .classList.remove("active");
+
+  document
+    .getElementById("btnSaldo")
+    .classList.remove("active");
+
+  if(menu == "input"){
+
+    document
+      .getElementById("menuInput")
+      .classList.remove("hidden");
+
+    document
+      .getElementById("btnInput")
+      .classList.add("active");
+
+  }
+
+  if(menu == "rekap"){
+
+    document
+      .getElementById("menuRekap")
+      .classList.remove("hidden");
+
+    document
+      .getElementById("btnRekap")
+      .classList.add("active");
+
+  }
+
+  if(menu == "saldo"){
+
+    document
+      .getElementById("menuSaldo")
+      .classList.remove("hidden");
+
+    document
+      .getElementById("btnSaldo")
+      .classList.add("active");
+
+  }
+
+}
+
+// ========================================
+// SISWA DASHBOARD
+// ========================================
+async function loadSiswaDashboard(nisn){
 
   const res = await postData({
-    action:"getDashboardSiswa",
+
+    action:"getSiswaDashboard",
     nisn:nisn
+
   });
 
   if(!res.success){
 
-    popup(res.message);
+    popup("Data tidak ditemukan");
     return;
   }
 
@@ -668,56 +1155,62 @@ async function loadDashboardSiswa(nisn){
   .forEach(k=>{
 
     bayar += `
-      <p>
-      ${k}
-      :
-      Rp ${res.bayar[k]}
-      </p>
+      <div class="saldoItem">
+        <div>${k}</div>
+        <div>
+          Rp${Number(res.bayar[k])
+          .toLocaleString('id-ID')}
+        </div>
+      </div>
     `;
+
   });
 
   Object.keys(res.kurang)
   .forEach(k=>{
 
     kurang += `
-      <p>
-      ${k}
-      :
-      Rp ${res.kurang[k]}
-      </p>
+      <div class="saldoItem">
+        <div>${k}</div>
+        <div>
+          Rp${Number(res.kurang[k])
+          .toLocaleString('id-ID')}
+        </div>
+      </div>
     `;
+
   });
 
   bayar += `
-    <hr style="margin:10px 0">
-    <b>Total : Rp ${res.totalBayar}</b>
+    <hr style="margin:14px 0">
+    <b>
+      Total :
+      Rp${res.totalBayar
+      .toLocaleString('id-ID')}
+    </b>
   `;
 
   kurang += `
-    <hr style="margin:10px 0">
-    <b>Total : Rp ${res.totalKurang}</b>
+    <hr style="margin:14px 0">
+    <b>
+      Total :
+      Rp${res.totalKurang
+      .toLocaleString('id-ID')}
+    </b>
   `;
 
   document
-    .getElementById("dibayar")
+    .getElementById("sudahBayar")
     .innerHTML = bayar;
 
   document
-    .getElementById("belum")
+    .getElementById("belumBayar")
     .innerHTML = kurang;
-
-  document
-    .getElementById("updateSiswa")
-    .innerHTML =
-      "Update : " +
-      new Date(res.update)
-      .toLocaleString();
-
 }
 
-// ======================
+// ========================================
 // LOGOUT
-// ======================
+// ========================================
 function logout(){
 
   location.reload();
