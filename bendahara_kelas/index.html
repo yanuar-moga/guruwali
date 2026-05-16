@@ -431,7 +431,7 @@ MOBILE
 </div>
 
 <div class="footer">
-  Aplikasi e bendahara v1.3<br>
+  Aplikasi e bendahara v1.5<br>
   Apps by MB © 2026
 </div>
 
@@ -451,15 +451,15 @@ let LOGIN_PIN = "";
 // Helper untuk membaca informasi Device pengguna secara otomatis
 function getClientDevice() {
   if (navigator.userAgentData && navigator.userAgentData.platform) {
-    return navigator.userAgentData.platform + " (" + navigator.appName + ")";
+    return navigator.userAgentData.platform;
   }
   const userAgent = navigator.userAgent;
-  if (userAgent.match(/Android/i)) return "Android Device";
+  if (userAgent.match(/Android/i)) return "Android Phone";
   if (userAgent.match(/iPhone|iPad|iPod/i)) return "iOS Device";
   if (userAgent.match(/Windows/i)) return "Windows PC";
-  if (userAgent.match(/Macintosh/i)) return "Mac Extended";
+  if (userAgent.match(/Macintosh/i)) return "Mac Computer";
   if (userAgent.match(/Linux/i)) return "Linux PC";
-  return "Unknown Device";
+  return "Perangkat Web";
 }
 
 // Helper untuk membaca IP Publik secara dinamis via API ipify
@@ -909,17 +909,10 @@ async function loadSiswaDashboard(nisn){
 // LOGOUT WITH LOG CONSTRAINTS
 // ========================================
 async function logout(){
-  const userIP = await getClientIP();
-  const userDevice = getClientDevice();
-
   try{
     await postData({
       action:"logout",
-      user:LOGIN_ROLE,
-      nama:LOGIN_NAME,
-      sessionId: localStorage.getItem("eb_session_id") || "-",
-      ip: userIP,
-      device: userDevice
+      sessionId: localStorage.getItem("eb_session_id") || "-"
     });
   }catch(err){}
 
