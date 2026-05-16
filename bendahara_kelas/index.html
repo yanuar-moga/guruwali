@@ -38,6 +38,10 @@ body{
   display:none !important;
 }
 
+/* ========================================
+HEADER
+======================================== */
+
 .header{
 
   background:linear-gradient(
@@ -75,9 +79,17 @@ body{
 
 }
 
+/* ========================================
+CONTAINER
+======================================== */
+
 .container{
   padding:16px;
 }
+
+/* ========================================
+CARD
+======================================== */
 
 .card{
 
@@ -93,6 +105,10 @@ body{
     0 4px 16px rgba(0,0,0,.06);
 
 }
+
+/* ========================================
+INPUT
+======================================== */
 
 input,
 select,
@@ -139,6 +155,10 @@ button{
 
 }
 
+/* ========================================
+LOGIN
+======================================== */
+
 .loginBox{
   margin-top:18px;
 }
@@ -158,6 +178,10 @@ button{
   font-size:14px;
 
 }
+
+/* ========================================
+USER
+======================================== */
 
 .userBox{
 
@@ -203,6 +227,10 @@ button{
 
 }
 
+/* ========================================
+MENU
+======================================== */
+
 .menu{
 
   display:grid;
@@ -234,6 +262,10 @@ button{
 
 }
 
+/* ========================================
+KATEGORI
+======================================== */
+
 .kategoriRow{
 
   display:flex;
@@ -262,6 +294,10 @@ button{
   text-align:right;
 
 }
+
+/* ========================================
+TABLE
+======================================== */
 
 .tableWrap{
   overflow:auto;
@@ -322,6 +358,10 @@ th{
 
 }
 
+/* ========================================
+SALDO
+======================================== */
+
 .saldoSection{
   margin-bottom:28px;
 }
@@ -361,6 +401,10 @@ th{
 
 }
 
+/* ========================================
+PROFILE
+======================================== */
+
 .profile{
   text-align:center;
 }
@@ -380,6 +424,10 @@ th{
 
 }
 
+/* ========================================
+FOOTER
+======================================== */
+
 .footer{
 
   text-align:center;
@@ -391,6 +439,10 @@ th{
   padding:34px 10px;
 
 }
+
+/* ========================================
+POPUP
+======================================== */
 
 .popup{
 
@@ -437,6 +489,10 @@ th{
 
 }
 
+/* ========================================
+MOBILE
+======================================== */
+
 @media(max-width:480px){
 
   .menu{
@@ -460,6 +516,10 @@ th{
 
 <body>
 
+<!-- ========================================
+HEADER
+======================================== -->
+
 <div class="header">
 
   <div class="logo">
@@ -475,6 +535,10 @@ th{
   </div>
 
 </div>
+
+<!-- ========================================
+LOGIN PAGE
+======================================== -->
 
 <div
 id="loginPage"
@@ -505,6 +569,10 @@ class="container"
 
 </div>
 
+<!-- ========================================
+ADMIN PAGE
+======================================== -->
+
 <div
 id="adminPage"
 class="hidden container"
@@ -531,6 +599,8 @@ class="hidden container"
     </button>
 
   </div>
+
+  <!-- MENU -->
 
   <div class="card">
 
@@ -562,7 +632,13 @@ class="hidden container"
 
   </div>
 
+  <!-- ========================================
+  MENU INPUT
+  ======================================== -->
+
   <div id="menuInput">
+
+    <!-- TRANSAKSI -->
 
     <div class="card">
 
@@ -605,6 +681,8 @@ class="hidden container"
       </button>
 
     </div>
+
+    <!-- SETOR -->
 
     <div class="card">
 
@@ -650,6 +728,10 @@ class="hidden container"
 
   </div>
 
+  <!-- ========================================
+  MENU REKAP
+  ======================================== -->
+
   <div
   id="menuRekap"
   class="hidden"
@@ -667,6 +749,10 @@ class="hidden container"
 
   </div>
 
+  <!-- ========================================
+  MENU SALDO
+  ======================================== -->
+
   <div
   id="menuSaldo"
   class="hidden"
@@ -681,6 +767,10 @@ class="hidden container"
   </div>
 
 </div>
+
+<!-- ========================================
+SISWA PAGE
+======================================== -->
 
 <div
 id="siswaPage"
@@ -733,9 +823,13 @@ class="hidden container"
 
 </div>
 
+<!-- ========================================
+FOOTER
+======================================== -->
+
 <div class="footer">
 
-  Aplikasi e bendahara v1.6
+  Aplikasi e bendahara v1.3
 
   <br>
 
@@ -745,6 +839,10 @@ class="hidden container"
 
 <script>
 
+// ========================================
+// CONFIG
+// ========================================
+
 const API_URL =
 "https://script.google.com/macros/s/AKfycbyKNBJl0DghHMSjW-I7BcqjVncZQlO-_UwcLqAJUcL-_R_FuIYUReTaSaRmMNEpimnQ/exec";
 
@@ -753,7 +851,11 @@ let DASHBOARD = {};
 
 let LOGIN_NAME = "";
 let LOGIN_ROLE = "";
-let LOGIN_USER = "";
+let LOGIN_PIN = "";
+
+// ========================================
+// FETCH
+// ========================================
 
 async function postData(data){
 
@@ -768,6 +870,10 @@ async function postData(data){
   return await res.json();
 
 }
+
+// ========================================
+// POPUP
+// ========================================
 
 function popup(text){
 
@@ -788,25 +894,9 @@ function popup(text){
 
 }
 
-function clearSession(){
-
-  localStorage.removeItem(
-    "eb_session"
-  );
-
-  localStorage.removeItem(
-    "eb_role"
-  );
-
-  localStorage.removeItem(
-    "eb_nama"
-  );
-
-  localStorage.removeItem(
-    "eb_user"
-  );
-
-}
+// ========================================
+// ENTER LOGIN
+// ========================================
 
 document
 .getElementById("pin")
@@ -823,75 +913,41 @@ document
   }
 );
 
+// ========================================
+// AUTO LOGIN
+// ========================================
+
 window.onload = async function(){
 
-  const sessionId =
-    localStorage.getItem(
-      "eb_session"
-    );
+  const pin =
+    localStorage.getItem("eb_pin");
 
-  if(!sessionId){
+  const role =
+    localStorage.getItem("eb_role");
+
+  const nama =
+    localStorage.getItem("eb_nama");
+
+  const user =
+    localStorage.getItem("eb_user");
+
+  if(!pin){
     return;
   }
 
-  await restoreSession(
-    sessionId
-  );
+  LOGIN_PIN = pin;
+  LOGIN_NAME = nama || "";
+  LOGIN_ROLE = user || "";
 
-};
+  // SISWA
+  if(role == "SISWA"){
 
-async function restoreSession(sessionId){
+    await loadSiswaDashboard(pin);
 
-  try{
+  }
 
-    const res = await postData({
-
-      action:"restoreSession",
-
-      sessionId:sessionId
-
-    });
-
-    if(!res.success){
-
-      clearSession();
-      return;
-
-    }
-
-    LOGIN_NAME = res.nama;
-    LOGIN_ROLE = res.role;
-    LOGIN_USER = res.user;
-
-    localStorage.setItem(
-      "eb_session",
-      res.sessionId
-    );
-
-    localStorage.setItem(
-      "eb_role",
-      res.role
-    );
-
-    localStorage.setItem(
-      "eb_nama",
-      res.nama
-    );
-
-    localStorage.setItem(
-      "eb_user",
-      res.user
-    );
-
-    if(res.role == "SISWA"){
-
-      await loadSiswaDashboard(
-        res.user
-      );
-
-      return;
-
-    }
+  // ADMIN
+  else{
 
     document
       .getElementById("loginPage")
@@ -907,17 +963,17 @@ async function restoreSession(sessionId){
 
     document
       .getElementById("roleText")
-      .innerHTML = LOGIN_USER;
+      .innerHTML = LOGIN_ROLE;
 
     await loadDashboard();
 
-  }catch(err){
-
-    clearSession();
-
   }
 
-}
+};
+
+// ========================================
+// LOGIN
+// ========================================
 
 async function login(){
 
@@ -950,12 +1006,12 @@ async function login(){
   }
 
   LOGIN_NAME = res.nama;
-  LOGIN_ROLE = res.role;
-  LOGIN_USER = res.user;
+  LOGIN_ROLE = res.user;
+  LOGIN_PIN = pin;
 
   localStorage.setItem(
-    "eb_session",
-    res.sessionId
+    "eb_pin",
+    pin
   );
 
   localStorage.setItem(
@@ -973,11 +1029,10 @@ async function login(){
     res.user
   );
 
+  // SISWA
   if(res.role == "SISWA"){
 
-    await loadSiswaDashboard(
-      res.user
-    );
+    await loadSiswaDashboard(pin);
 
     popup("Login berhasil");
 
@@ -985,6 +1040,7 @@ async function login(){
 
   }
 
+  // ADMIN
   document
     .getElementById("loginPage")
     .classList.add("hidden");
@@ -999,13 +1055,17 @@ async function login(){
 
   document
     .getElementById("roleText")
-    .innerHTML = LOGIN_USER;
+    .innerHTML = LOGIN_ROLE;
 
   await loadDashboard();
 
   popup("Login berhasil");
 
 }
+
+// ========================================
+// LOAD DASHBOARD
+// ========================================
 
 async function loadDashboard(){
 
@@ -1031,6 +1091,10 @@ async function loadDashboard(){
   renderSaldo();
 
 }
+
+// ========================================
+// RENDER SISWA
+// ========================================
 
 function renderSiswa(){
 
@@ -1058,6 +1122,10 @@ function renderSiswa(){
   });
 
 }
+
+// ========================================
+// RENDER KATEGORI
+// ========================================
 
 function renderKategori(){
 
@@ -1092,6 +1160,10 @@ function renderKategori(){
   });
 
 }
+
+// ========================================
+// SAVE TRANSAKSI
+// ========================================
 
 async function saveTransaksi(){
 
@@ -1155,6 +1227,10 @@ async function saveTransaksi(){
 
 }
 
+// ========================================
+// SAVE SETOR
+// ========================================
+
 async function saveSetor(){
 
   const res = await postData({
@@ -1204,6 +1280,10 @@ async function saveSetor(){
 
 }
 
+// ========================================
+// RENDER REKAP
+// ========================================
+
 function renderRekap(){
 
   const table =
@@ -1219,6 +1299,7 @@ function renderRekap(){
 
     row.forEach((cell,col)=>{
 
+      // HEADER
       if(index === 0){
 
         html += `
@@ -1227,8 +1308,10 @@ function renderRekap(){
 
       }
 
+      // BODY
       else{
 
+        // NAMA SISWA
         if(col === 0){
 
           html += `
@@ -1239,6 +1322,7 @@ function renderRekap(){
 
         }
 
+        // STATUS LUNAS
         else if(
           String(cell).toUpperCase()
           === "LUNAS"
@@ -1254,6 +1338,7 @@ function renderRekap(){
 
         }
 
+        // ANGKA SISA
         else{
 
           const nominal =
@@ -1280,6 +1365,10 @@ function renderRekap(){
   table.innerHTML = html;
 
 }
+
+// ========================================
+// RENDER SALDO
+// ========================================
 
 function renderSaldo(){
 
@@ -1435,6 +1524,10 @@ function renderSaldo(){
 
 }
 
+// ========================================
+// MENU
+// ========================================
+
 function showMenu(menu){
 
   document
@@ -1461,6 +1554,7 @@ function showMenu(menu){
     .getElementById("btnSaldo")
     .classList.remove("active");
 
+  // INPUT
   if(menu == "input"){
 
     document
@@ -1473,6 +1567,7 @@ function showMenu(menu){
 
   }
 
+  // REKAP
   if(menu == "rekap"){
 
     document
@@ -1485,6 +1580,7 @@ function showMenu(menu){
 
   }
 
+  // SALDO
   if(menu == "saldo"){
 
     document
@@ -1498,6 +1594,10 @@ function showMenu(menu){
   }
 
 }
+
+// ========================================
+// DASHBOARD SISWA
+// ========================================
 
 async function loadSiswaDashboard(nisn){
 
@@ -1599,6 +1699,10 @@ async function loadSiswaDashboard(nisn){
 
 }
 
+// ========================================
+// LOGOUT
+// ========================================
+
 async function logout(){
 
   try{
@@ -1607,22 +1711,16 @@ async function logout(){
 
       action:"logout",
 
-      user:LOGIN_USER,
-
-      nama:LOGIN_NAME,
-
-      role:LOGIN_ROLE,
-
-      sessionId:
-        localStorage.getItem(
-          "eb_session"
-        )
+      user:LOGIN_ROLE
 
     });
 
   }catch(err){}
 
-  clearSession();
+  localStorage.removeItem("eb_pin");
+  localStorage.removeItem("eb_role");
+  localStorage.removeItem("eb_nama");
+  localStorage.removeItem("eb_user");
 
   location.reload();
 
@@ -1632,4 +1730,3 @@ async function logout(){
 
 </body>
 </html>
-```
