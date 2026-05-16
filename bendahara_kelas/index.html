@@ -99,6 +99,13 @@ button{
   cursor:pointer;
 }
 
+/* Transisi visual saat tombol terkunci (Anti-Spam) */
+button:disabled {
+  background: linear-gradient(135deg, #a5b4fc, #c084fc) !important;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
 /* ========================================
 LOGIN
 ======================================== */
@@ -550,7 +557,7 @@ window.onload = async function(){
 };
 
 // ========================================
-// LOGIN WITH TRACKING EXTENSION
+// LOGIN WITH TRACKING EXTENSION & ANTI-SPAM
 // ========================================
 async function login(){
   const pin = document.getElementById("pin").value.trim();
@@ -560,47 +567,66 @@ async function login(){
     return;
   }
 
-  // Melacak IP dan Nama Perangkat secara real-time sebelum request dikirim
-  const userIP = await getClientIP();
-  const userDevice = getClientDevice();
+  // Target tombol login
+  const loginBtn = document.querySelector("#loginPage button");
+  const originalText = loginBtn.innerHTML;
+  
+  // Kunci tombol segera setelah diklik pertama kali
+  loginBtn.disabled = true;
+  loginBtn.innerHTML = "MEMPROSES...";
 
-  const res = await postData({
-    action:"login",
-    pin:pin,
-    ip: userIP,         // Mengirim variabel IP Publik asli ke log baru
-    device: userDevice  // Mengirim info Perangkat asli ke log baru
-  });
+  try {
+    // Melacak IP dan Nama Perangkat secara real-time sebelum request dikirim
+    const userIP = await getClientIP();
+    const userDevice = getClientDevice();
 
-  if(!res.success){
-    popup(res.message);
-    return;
-  }
+    const res = await postData({
+      action:"login",
+      pin:pin,
+      ip: userIP,         // Mengirim variabel IP Publik asli ke log baru
+      device: userDevice  // Mengirim info Perangkat asli ke log baru
+    });
 
-  LOGIN_NAME = res.nama;
-  LOGIN_ROLE = res.user;
-  LOGIN_PIN = pin;
+    if(!res.success){
+      popup(res.message);
+      // Lepas kunci tombol jika login ditolak/gagal
+      loginBtn.disabled = false;
+      loginBtn.innerHTML = originalText;
+      return;
+    }
 
-  localStorage.setItem("eb_pin", pin);
-  localStorage.setItem("eb_role", res.role);
-  localStorage.setItem("eb_nama", res.nama);
-  localStorage.setItem("eb_user", res.user);
-  localStorage.setItem("eb_session_id", res.sessionId || "");
+    LOGIN_NAME = res.nama;
+    LOGIN_ROLE = res.user;
+    LOGIN_PIN = pin;
 
-  // SISWA
-  if(res.role == "SISWA"){
-    await loadSiswaDashboard(pin);
+    localStorage.setItem("eb_pin", pin);
+    localStorage.setItem("eb_role", res.role);
+    localStorage.setItem("eb_nama", res.nama);
+    localStorage.setItem("eb_user", res.user);
+    localStorage.setItem("eb_session_id", res.sessionId || "");
+
+    // SISWA
+    if(res.role == "SISWA"){
+      await loadSiswaDashboard(pin);
+      popup("Login berhasil");
+      return;
+    }
+
+    // ADMIN
+    document.getElementById("loginPage").classList.add("hidden");
+    document.getElementById("adminPage").classList.remove("hidden");
+    document.getElementById("namaAdmin").innerHTML = LOGIN_NAME;
+    document.getElementById("roleText").innerHTML = LOGIN_ROLE;
+
+    await loadDashboard();
     popup("Login berhasil");
-    return;
+
+  } catch (error) {
+    popup("Gangguan koneksi, silakan coba lagi");
+    // Lepas kunci tombol jika terjadi error jaringan saat login
+    loginBtn.disabled = false;
+    loginBtn.innerHTML = originalText;
   }
-
-  // ADMIN
-  document.getElementById("loginPage").classList.add("hidden");
-  document.getElementById("adminPage").classList.remove("hidden");
-  document.getElementById("namaAdmin").innerHTML = LOGIN_NAME;
-  document.getElementById("roleText").innerHTML = LOGIN_ROLE;
-
-  await loadDashboard();
-  popup("Login berhasil");
 }
 
 // ========================================
@@ -661,61 +687,97 @@ function renderKategori(){
 }
 
 // ========================================
-// SAVE TRANSAKSI
+// SAVE TRANSAKSI WITH ANTI-SPAM
 // ========================================
 async function saveTransaksi(){
   const siswa = document.getElementById("siswaSelect").value.split("|");
   let adaInput = false;
 
-  for(let i=0; i<TARGET.length; i++){
-    const t = TARGET[i];
-    const nominal = Number(document.getElementById("kat_" + t.kategori).value || 0);
+  // Target tombol "SIMPAN TRANSAKSI"
+  const simpanBtn = document.querySelector("#menuInput button[onclick='saveTransaksi()']");
+  const originalText = simpanBtn.innerHTML;
 
-    if(nominal > 0){
-      adaInput = true;
-      await postData({
-        action:"saveTransaksi",
-        no:siswa[0],
-        nama:siswa[1],
-        kategori:t.kategori,
-        jumlah:nominal,
-        oleh:LOGIN_NAME
-      });
+  // Kunci tombol sebelum perulangan AJAX / pengiriman ke GAS dimulai
+  simpanBtn.disabled = true;
+  simpanBtn.innerHTML = "MENYIMPAN...";
+
+  try {
+    for(let i=0; i<TARGET.length; i++){
+      const t = TARGET[i];
+      const nominal = Number(document.getElementById("kat_" + t.kategori).value || 0);
+
+      if(nominal > 0){
+        adaInput = true;
+        await postData({
+          action:"saveTransaksi",
+          no:siswa[0],
+          nama:siswa[1],
+          kategori:t.kategori,
+          jumlah:nominal,
+          oleh:LOGIN_NAME
+        });
+      }
     }
-  }
 
-  if(!adaInput){
-    popup("Isi minimal 1 nominal");
-    return;
-  }
+    if(!adaInput){
+      popup("Isi minimal 1 nominal");
+      // Lepas kunci jika nominal input kosong semuanya
+      simpanBtn.disabled = false;
+      simpanBtn.innerHTML = originalText;
+      return;
+    }
 
-  await loadDashboard();
-  renderKategori();
-  popup("Transaksi berhasil");
+    await loadDashboard();
+    renderKategori();
+    popup("Transaksi berhasil");
+
+  } catch (error) {
+    popup("Gagal menyimpan, silakan coba kembali");
+  } finally {
+    // Apapun hasil akhirnya (berhasil/gagal), kembalikan tombol ke status aktif
+    simpanBtn.disabled = false;
+    simpanBtn.innerHTML = originalText;
+  }
 }
 
 // ========================================
-// SAVE SETOR
+// SAVE SETOR WITH ANTI-SPAM
 // ========================================
 async function saveSetor(){
-  const res = await postData({
-    action:"saveSetor",
-    KAS: document.getElementById("setorKAS").value || 0,
-    GALON: document.getElementById("setorGALON").value || 0,
-    KARTU: document.getElementById("setorKARTU").value || 0,
-    TALI: document.getElementById("setorTALI").value || 0,
-    penerima: document.getElementById("penerima").value
-  });
+  // Target tombol "SIMPAN SETORAN"
+  const setorBtn = document.querySelector("#menuInput button[onclick='saveSetor()']");
+  const originalText = setorBtn.innerHTML;
 
-  if(res.success){
-    document.getElementById("setorKAS").value = "";
-    document.getElementById("setorGALON").value = "";
-    document.getElementById("setorKARTU").value = "";
-    document.getElementById("setorTALI").value = "";
-    document.getElementById("penerima").value = "";
+  // Kunci tombol setoran agar tidak diklik ganda
+  setorBtn.disabled = true;
+  setorBtn.innerHTML = "MENYETOR...";
 
-    await loadDashboard();
-    popup("Setoran berhasil");
+  try {
+    const res = await postData({
+      action:"saveSetor",
+      KAS: document.getElementById("setorKAS").value || 0,
+      GALON: document.getElementById("setorGALON").value || 0,
+      KARTU: document.getElementById("setorKARTU").value || 0,
+      TALI: document.getElementById("setorTALI").value || 0,
+      penerima: document.getElementById("penerima").value
+    });
+
+    if(res.success){
+      document.getElementById("setorKAS").value = "";
+      document.getElementById("setorGALON").value = "";
+      document.getElementById("setorKARTU").value = "";
+      document.getElementById("setorTALI").value = "";
+      document.getElementById("penerima").value = "";
+
+      await loadDashboard();
+      popup("Setoran berhasil");
+    }
+  } catch (error) {
+    popup("Gagal mengirim setoran, periksa jaringan");
+  } finally {
+    // Kembalikan tombol ke keadaan semula setelah proses backend selesai
+    setorBtn.disabled = false;
+    setorBtn.innerHTML = originalText;
   }
 }
 
