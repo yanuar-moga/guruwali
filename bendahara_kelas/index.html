@@ -271,6 +271,48 @@ SALDO
 }
 
 /* ========================================
+INFO TERAKHIR (UPDATE FITUR BARU)
+======================================== */
+.infoTerakhirWrap {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 14px;
+  margin-top: 14px;
+  text-align: left;
+}
+
+.infoTerakhirTitle {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.infoTerakhirGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.infoTerakhirItem {
+  font-size: 12px;
+}
+
+.infoTerakhirLabel {
+  color: #64748b;
+  font-size: 11px;
+}
+
+.infoTerakhirValue {
+  font-weight: 600;
+  color: #334155;
+  margin-top: 2px;
+}
+
+/* ========================================
 PROFILE
 ======================================== */
 .profile{
@@ -414,12 +456,28 @@ MOBILE
   </div>
 </div>
 
+<!-- DASHBOARD VIEW SISWA -->
 <div id="siswaPage" class="hidden container">
   <div class="card profile">
     <img id="fotoSiswa">
     <h2 id="namaSiswa"></h2>
     <p id="jkSiswa"></p>
     <p id="nisnSiswa"></p>
+    
+    <!-- Blok visual baru pencatatan transaksi terakhir -->
+    <div class="infoTerakhirWrap">
+      <div class="infoTerakhirTitle">Riwayat Transaksi Terakhir</div>
+      <div class="infoTerakhirGrid">
+        <div class="infoTerakhirItem">
+          <div class="infoTerakhirLabel">Waktu Pembayaran</div>
+          <div class="infoTerakhirValue" id="lastPaymentTime">-</div>
+        </div>
+        <div class="infoTerakhirItem">
+          <div class="infoTerakhirLabel">Diterima Oleh</div>
+          <div class="infoTerakhirValue" id="lastPaymentOperator">-</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="card">
@@ -455,7 +513,6 @@ let LOGIN_NAME = "";
 let LOGIN_ROLE = "";
 let LOGIN_PIN = "";
 
-// Helper untuk membaca informasi Device pengguna secara otomatis
 function getClientDevice() {
   if (navigator.userAgentData && navigator.userAgentData.platform) {
     return navigator.userAgentData.platform;
@@ -469,7 +526,6 @@ function getClientDevice() {
   return "Perangkat Web";
 }
 
-// Helper untuk membaca IP Publik secara dinamis via API ipify
 async function getClientIP() {
   try {
     const res = await fetch("https://api.ipify.org?format=json");
@@ -528,11 +584,9 @@ window.onload = async function(){
   LOGIN_NAME = nama || "";
   LOGIN_ROLE = user || "";
 
-  // Ambil data tracking saat auto-login dijalankan
   const currentIP = await getClientIP();
   const currentDevice = getClientDevice();
 
-  // Kirim data restore session ke Apps Script
   try {
     await postData({
       action: "restoreSession",
@@ -542,11 +596,9 @@ window.onload = async function(){
     });
   } catch (e) {}
 
-  // SISWA
   if(role == "SISWA"){
     await loadSiswaDashboard(pin);
   }
-  // ADMIN
   else{
     document.getElementById("loginPage").classList.add("hidden");
     document.getElementById("adminPage").classList.remove("hidden");
@@ -567,29 +619,25 @@ async function login(){
     return;
   }
 
-  // Target tombol login
   const loginBtn = document.querySelector("#loginPage button");
   const originalText = loginBtn.innerHTML;
   
-  // Kunci tombol segera setelah diklik pertama kali
   loginBtn.disabled = true;
   loginBtn.innerHTML = "MEMPROSES...";
 
   try {
-    // Melacak IP dan Nama Perangkat secara real-time sebelum request dikirim
     const userIP = await getClientIP();
     const userDevice = getClientDevice();
 
     const res = await postData({
       action:"login",
       pin:pin,
-      ip: userIP,         // Mengirim variabel IP Publik asli ke log baru
-      device: userDevice  // Mengirim info Perangkat asli ke log baru
+      ip: userIP,
+      device: userDevice
     });
 
     if(!res.success){
       popup(res.message);
-      // Lepas kunci tombol jika login ditolak/gagal
       loginBtn.disabled = false;
       loginBtn.innerHTML = originalText;
       return;
@@ -605,14 +653,12 @@ async function login(){
     localStorage.setItem("eb_user", res.user);
     localStorage.setItem("eb_session_id", res.sessionId || "");
 
-    // SISWA
     if(res.role == "SISWA"){
       await loadSiswaDashboard(pin);
       popup("Login berhasil");
       return;
     }
 
-    // ADMIN
     document.getElementById("loginPage").classList.add("hidden");
     document.getElementById("adminPage").classList.remove("hidden");
     document.getElementById("namaAdmin").innerHTML = LOGIN_NAME;
@@ -623,7 +669,6 @@ async function login(){
 
   } catch (error) {
     popup("Gangguan koneksi, silakan coba lagi");
-    // Lepas kunci tombol jika terjadi error jaringan saat login
     loginBtn.disabled = false;
     loginBtn.innerHTML = originalText;
   }
@@ -693,11 +738,9 @@ async function saveTransaksi(){
   const siswa = document.getElementById("siswaSelect").value.split("|");
   let adaInput = false;
 
-  // Target tombol "SIMPAN TRANSAKSI"
   const simpanBtn = document.querySelector("#menuInput button[onclick='saveTransaksi()']");
   const originalText = simpanBtn.innerHTML;
 
-  // Kunci tombol sebelum perulangan AJAX / pengiriman ke GAS dimulai
   simpanBtn.disabled = true;
   simpanBtn.innerHTML = "MENYIMPAN...";
 
@@ -721,7 +764,6 @@ async function saveTransaksi(){
 
     if(!adaInput){
       popup("Isi minimal 1 nominal");
-      // Lepas kunci jika nominal input kosong semuanya
       simpanBtn.disabled = false;
       simpanBtn.innerHTML = originalText;
       return;
@@ -734,7 +776,6 @@ async function saveTransaksi(){
   } catch (error) {
     popup("Gagal menyimpan, silakan coba kembali");
   } finally {
-    // Apapun hasil akhirnya (berhasil/gagal), kembalikan tombol ke status aktif
     simpanBtn.disabled = false;
     simpanBtn.innerHTML = originalText;
   }
@@ -744,11 +785,9 @@ async function saveTransaksi(){
 // SAVE SETOR WITH ANTI-SPAM
 // ========================================
 async function saveSetor(){
-  // Target tombol "SIMPAN SETORAN"
   const setorBtn = document.querySelector("#menuInput button[onclick='saveSetor()']");
   const originalText = setorBtn.innerHTML;
 
-  // Kunci tombol setoran agar tidak diklik ganda
   setorBtn.disabled = true;
   setorBtn.innerHTML = "MENYETOR...";
 
@@ -775,7 +814,6 @@ async function saveSetor(){
   } catch (error) {
     popup("Gagal mengirim setoran, periksa jaringan");
   } finally {
-    // Kembalikan tombol ke keadaan semula setelah proses backend selesai
     setorBtn.disabled = false;
     setorBtn.innerHTML = originalText;
   }
@@ -791,21 +829,16 @@ function renderRekap(){
   DASHBOARD.rekap.forEach((row,index)=>{
     html += "<tr>";
     row.forEach((cell,col)=>{
-      // HEADER
       if(index === 0){
         html += `<th>${cell}</th>`;
       }
-      // BODY
       else{
-        // NAMA SISWA
         if(col === 0){
           html += `<td style="text-align:left; font-weight:600">${cell}</td>`;
         }
-        // STATUS LUNAS
         else if(String(cell).toUpperCase() === "LUNAS"){
           html += `<td><span class="lunas">LUNAS</span></td>`;
         }
-        // ANGKA SISA
         else{
           const nominal = Number(cell || 0);
           html += `<td><span class="kurang">Rp${nominal.toLocaleString('id-ID')}</span></td>`;
@@ -921,7 +954,7 @@ function showMenu(menu){
 }
 
 // ========================================
-// DASHBOARD SISWA VIEW
+// DASHBOARD SISWA VIEW (DISESUAIKAN UNTUK AMBIL DATA BARU)
 // ========================================
 async function loadSiswaDashboard(nisn){
   const res = await postData({
@@ -941,6 +974,10 @@ async function loadSiswaDashboard(nisn){
   document.getElementById("namaSiswa").innerHTML = res.siswa.nama;
   document.getElementById("jkSiswa").innerHTML = res.siswa.jk;
   document.getElementById("nisnSiswa").innerHTML = res.siswa.nisn;
+
+  // Injeksi data riwayat transaksi terakhir yang ditarik mundur dari sheet log
+  document.getElementById("lastPaymentTime").innerHTML = res.lastPaymentTime || "-";
+  document.getElementById("lastPaymentOperator").innerHTML = res.lastPaymentOperator || "-";
 
   let bayar = "";
   let kurang = "";
