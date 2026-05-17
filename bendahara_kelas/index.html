@@ -1,6 +1,3 @@
-# FILE HTML LENGKAP E‑BENDAHARA (SUDAH DITAMBAHKAN INFO LAST UPDATE)
-
-```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -482,25 +479,3 @@ function logout(){
 </script>
 </body>
 </html>
-```
-
-# TAMBAHAN APPS SCRIPT WAJIB
-
-Tambahkan pada response `getSiswaDashboard`:
-
-```javascript
-const trx = ss.getSheetByName('Transaksi').getDataRange().getValues();
-const lastRow = trx[trx.length - 1];
-
-const lastTanggal = lastRow[0];
-const lastOleh = lastRow[5];
-
-return ContentService.createTextOutput(JSON.stringify({
-  success:true,
-  siswa:siswa,
-  bayar:bayar,
-  kurang:kurang,
-  lastUpdate:lastTanggal,
-  lastUpdateBy:lastOleh
-})).setMimeType(ContentService.MimeType.JSON);
-```
