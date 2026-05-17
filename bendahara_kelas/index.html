@@ -286,6 +286,24 @@ PROFILE
   margin-bottom:14px;
 }
 
+/* Style Tambahan untuk Info Last Update */
+.infoUpdateBox {
+  background: #fdf2f8;
+  border: 1px dashed #f472b6;
+  border-radius: 16px;
+  padding: 12px;
+  margin-bottom: 16px;
+  font-size: 11px;
+  color: #db2777;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.infoUpdateItem {
+  display: flex;
+  justify-content: space-between;
+}
+
 /* ========================================
 FOOTER
 ======================================== */
@@ -420,6 +438,17 @@ MOBILE
     <h2 id="namaSiswa"></h2>
     <p id="jkSiswa"></p>
     <p id="nisnSiswa"></p>
+  </div>
+
+  <div class="infoUpdateBox">
+    <div class="infoUpdateItem">
+      <strong>📅 Update Terakhir:</strong>
+      <span id="lastUpdateTanggal">-</span>
+    </div>
+    <div class="infoUpdateItem">
+      <strong>👤 Petugas Input:</strong>
+      <span id="lastUpdateOleh">-</span>
+    </div>
   </div>
 
   <div class="card">
@@ -921,7 +950,7 @@ function showMenu(menu){
 }
 
 // ========================================
-// DASHBOARD SISWA VIEW
+// DASHBOARD SISWA VIEW (DENGAN INFO UPDATE)
 // ========================================
 async function loadSiswaDashboard(nisn){
   const res = await postData({
@@ -941,6 +970,10 @@ async function loadSiswaDashboard(nisn){
   document.getElementById("namaSiswa").innerHTML = res.siswa.nama;
   document.getElementById("jkSiswa").innerHTML = res.siswa.jk;
   document.getElementById("nisnSiswa").innerHTML = res.siswa.nisn;
+
+  // Menampilkan Info Last Update dari properti Apps Script ke Element HTML
+  document.getElementById("lastUpdateTanggal").innerHTML = res.lastUpdateDate || "-";
+  document.getElementById("lastUpdateOleh").innerHTML = res.lastUpdateBy || "-";
 
   let bayar = "";
   let kurang = "";
