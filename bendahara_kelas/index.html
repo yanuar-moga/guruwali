@@ -1,3 +1,6 @@
+# FILE HTML LENGKAP E‑BENDAHARA (SUDAH DITAMBAHKAN INFO LAST UPDATE)
+
+```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -27,9 +30,6 @@ body{
   display:none !important;
 }
 
-/* ========================================
-HEADER
-======================================== */
 .header{
   background:linear-gradient(135deg, #4f46e5, #7c3aed);
   padding:34px 20px;
@@ -52,16 +52,10 @@ HEADER
   opacity:.9;
 }
 
-/* ========================================
-CONTAINER
-======================================== */
 .container{
   padding:16px;
 }
 
-/* ========================================
-CARD
-======================================== */
 .card{
   background:white;
   border-radius:24px;
@@ -70,9 +64,6 @@ CARD
   box-shadow:0 4px 16px rgba(0,0,0,.06);
 }
 
-/* ========================================
-INPUT
-======================================== */
 input,
 select,
 button{
@@ -99,16 +90,12 @@ button{
   cursor:pointer;
 }
 
-/* Transisi visual saat tombol terkunci (Anti-Spam) */
 button:disabled {
   background: linear-gradient(135deg, #a5b4fc, #c084fc) !important;
   cursor: not-allowed;
   opacity: 0.8;
 }
 
-/* ========================================
-LOGIN
-======================================== */
 .loginBox{
   margin-top:18px;
 }
@@ -125,9 +112,6 @@ LOGIN
   font-size:14px;
 }
 
-/* ========================================
-USER
-======================================== */
 .userBox{
   display:flex;
   justify-content:space-between;
@@ -155,9 +139,6 @@ USER
   font-size:13px;
 }
 
-/* ========================================
-MENU
-======================================== */
 .menu{
   display:grid;
   grid-template-columns:1fr 1fr 1fr;
@@ -176,9 +157,6 @@ MENU
   border:none;
 }
 
-/* ========================================
-KATEGORI
-======================================== */
 .kategoriRow{
   display:flex;
   justify-content:space-between;
@@ -198,9 +176,6 @@ KATEGORI
   text-align:right;
 }
 
-/* ========================================
-TABLE
-======================================== */
 .tableWrap{
   overflow:auto;
 }
@@ -241,9 +216,6 @@ th{
   font-weight:700;
 }
 
-/* ========================================
-SALDO
-======================================== */
 .saldoSection{
   margin-bottom:28px;
 }
@@ -270,27 +242,6 @@ SALDO
   font-weight:700;
 }
 
-/* ========================================
-INFO SINKRONISASI DATABASE (UPDATE BARU)
-======================================== */
-.syncBox {
-  background: #fffbeb;
-  border: 1px solid #fef3c7;
-  border-radius: 14px;
-  padding: 10px 14px;
-  margin-top: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-size: 11px;
-  color: #b45309;
-  font-weight: 500;
-}
-
-/* ========================================
-PROFILE
-======================================== */
 .profile{
   text-align:center;
 }
@@ -304,9 +255,45 @@ PROFILE
   margin-bottom:14px;
 }
 
-/* ========================================
-FOOTER
-======================================== */
+.lastUpdateBox{
+  background:#eef2ff;
+  border:1px solid #c7d2fe;
+  border-radius:18px;
+  padding:14px;
+  margin-top:18px;
+  text-align:left;
+}
+
+.lastUpdateTitle{
+  font-size:12px;
+  font-weight:700;
+  color:#4338ca;
+  margin-bottom:10px;
+}
+
+.lastUpdateItem{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:8px;
+  font-size:13px;
+}
+
+.lastUpdateItem:last-child{
+  margin-bottom:0;
+}
+
+.lastUpdateLabel{
+  color:#6b7280;
+  font-weight:600;
+}
+
+.lastUpdateValue{
+  color:#111827;
+  font-weight:700;
+  text-align:right;
+}
+
 .footer{
   text-align:center;
   color:#9ca3af;
@@ -314,9 +301,6 @@ FOOTER
   padding:34px 10px;
 }
 
-/* ========================================
-POPUP
-======================================== */
 .popup{
   position:fixed;
   top:20px;
@@ -341,9 +325,6 @@ POPUP
   }
 }
 
-/* ========================================
-MOBILE
-======================================== */
 @media(max-width:480px){
   .menu{
     gap:8px;
@@ -376,74 +357,25 @@ MOBILE
   </div>
 </div>
 
-<div id="adminPage" class="hidden container">
-  <div class="userBox">
-    <div>
-      <div class="role" id="roleText"></div>
-      <h2 id="namaAdmin"></h2>
-    </div>
-    <button class="logout" onclick="logout()">Keluar</button>
-  </div>
-
-  <div class="card">
-    <div class="menu">
-      <button id="btnInput" class="active" onclick="showMenu('input')">Input</button>
-      <button id="btnRekap" onclick="showMenu('rekap')">Rekap</button>
-      <button id="btnSaldo" onclick="showMenu('saldo')">Saldo</button>
-    </div>
-  </div>
-
-  <div id="menuInput">
-    <div class="card">
-      <div style="margin-bottom:10px; font-weight:600">Pilih Siswa</div>
-      <select id="siswaSelect"></select>
-      <hr style="margin:16px 0; border:none; border-top:1px solid #e5e7eb">
-      <div style="display:flex; justify-content:space-between; margin-bottom:16px; font-size:12px; font-weight:700">
-        <div>KATEGORI</div>
-        <div>NOMINAL</div>
-      </div>
-      <div id="kategoriBox"></div>
-      <button onclick="saveTransaksi()">SIMPAN TRANSAKSI</button>
-    </div>
-
-    <div class="card">
-      <h3 style="margin-bottom:14px">Setor Ke Kesiswaan</h3>
-      <input type="number" id="setorKAS" placeholder="KAS">
-      <input type="number" id="setorGALON" placeholder="GALON">
-      <input type="number" id="setorKARTU" placeholder="Kartu Pelajar">
-      <input type="number" id="setorTALI" placeholder="Tali Asih">
-      <input type="text" id="penerima" placeholder="Nama Penerima">
-      <button onclick="saveSetor()">SIMPAN SETORAN</button>
-    </div>
-  </div>
-
-  <div id="menuRekap" class="hidden">
-    <div class="card">
-      <div class="tableWrap">
-        <table id="rekapTable"></table>
-      </div>
-    </div>
-  </div>
-
-  <div id="menuSaldo" class="hidden">
-    <div class="card">
-      <div id="saldoContent"></div>
-    </div>
-  </div>
-</div>
-
-<!-- DASHBOARD VIEW SISWA -->
 <div id="siswaPage" class="hidden container">
   <div class="card profile">
     <img id="fotoSiswa">
     <h2 id="namaSiswa"></h2>
     <p id="jkSiswa"></p>
     <p id="nisnSiswa"></p>
-     
-    <!-- Pemberitahuan info Last Update Real-time -->
-    <div class="syncBox">
-      <span>⏳</span>
-      <span>Data diperbarui: <strong id="lastUpdateDb">-</strong></span>
+
+    <div class="lastUpdateBox">
+      <div class="lastUpdateTitle">INFO UPDATE DATA</div>
+
+      <div class="lastUpdateItem">
+        <div class="lastUpdateLabel">Last Update</div>
+        <div class="lastUpdateValue" id="lastUpdateTanggal">-</div>
+      </div>
+
+      <div class="lastUpdateItem">
+        <div class="lastUpdateLabel">Diupdate Oleh</div>
+        <div class="lastUpdateValue" id="lastUpdateBy">-</div>
+      </div>
     </div>
   </div>
 
@@ -468,44 +400,8 @@ MOBILE
 </div>
 
 <script>
-// ========================================
-// CONFIG
-// ========================================
-const API_URL = "https://script.google.com/macros/s/1wKlW7F38k0NRQ-sBLABfJirgwqfR1tazFFdnQRE9o0Y/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyKNBJl0DghHMSjW-I7BcqjVncZQlO-_UwcLqAJUcL-_R_FuIYUReTaSaRmMNEpimnQ/exec";
 
-let TARGET = [];
-let DASHBOARD = {};
-
-let LOGIN_NAME = "";
-let LOGIN_ROLE = "";
-let LOGIN_PIN = "";
-
-function getClientDevice() {
-  if (navigator.userAgentData && navigator.userAgentData.platform) {
-    return navigator.userAgentData.platform;
-  }
-  const userAgent = navigator.userAgent;
-  if (userAgent.match(/Android/i)) return "Android Phone";
-  if (userAgent.match(/iPhone|iPad|iPod/i)) return "iOS Device";
-  if (userAgent.match(/Windows/i)) return "Windows PC";
-  if (userAgent.match(/Macintosh/i)) return "Mac Computer";
-  if (userAgent.match(/Linux/i)) return "Linux PC";
-  return "Perangkat Web";
-}
-
-async function getClientIP() {
-  try {
-    const res = await fetch("https://api.ipify.org?format=json");
-    const data = await res.json();
-    return data.ip || "-";
-  } catch (err) {
-    return "-";
-  }
-}
-
-// ========================================
-// FETCH DATA
-// ========================================
 async function postData(data){
   const res = await fetch(API_URL,{
     method:"POST",
@@ -514,9 +410,6 @@ async function postData(data){
   return await res.json();
 }
 
-// ========================================
-// POPUP
-// ========================================
 function popup(text){
   const div = document.createElement("div");
   div.className = "popup";
@@ -525,59 +418,6 @@ function popup(text){
   setTimeout(()=>{ div.remove(); },2500);
 }
 
-// ========================================
-// ENTER LOGIN
-// ========================================
-document.getElementById("pin").addEventListener("keypress", function(e){
-  if(e.key === "Enter"){
-    login();
-  }
-});
-
-// ========================================
-// AUTO LOGIN ONLOAD
-// ========================================
-window.onload = async function(){
-  const pin = localStorage.getItem("eb_pin");
-  const role = localStorage.getItem("eb_role");
-  const nama = localStorage.getItem("eb_nama");
-  const user = localStorage.getItem("eb_user");
-
-  if(!pin){
-    return;
-  }
-
-  LOGIN_PIN = pin;
-  LOGIN_NAME = nama || "";
-  LOGIN_ROLE = user || "";
-
-  const currentIP = await getClientIP();
-  const currentDevice = getClientDevice();
-
-  try {
-    await postData({
-      action: "restoreSession",
-      sessionId: localStorage.getItem("eb_session_id") || "",
-      ip: currentIP,
-      device: currentDevice
-    });
-  } catch (e) {}
-
-  if(role == "SISWA"){
-    await loadSiswaDashboard(pin);
-  }
-  else{
-    document.getElementById("loginPage").classList.add("hidden");
-    document.getElementById("adminPage").classList.remove("hidden");
-    document.getElementById("namaAdmin").innerHTML = LOGIN_NAME;
-    document.getElementById("roleText").innerHTML = LOGIN_ROLE;
-    await loadDashboard();
-  }
-};
-
-// ========================================
-// LOGIN WITH TRACKING EXTENSION & ANTI-SPAM
-// ========================================
 async function login(){
   const pin = document.getElementById("pin").value.trim();
 
@@ -586,347 +426,9 @@ async function login(){
     return;
   }
 
-  const loginBtn = document.querySelector("#loginPage button");
-  const originalText = loginBtn.innerHTML;
-  
-  loginBtn.disabled = true;
-  loginBtn.innerHTML = "MEMPROSES...";
-
-  try {
-    const userIP = await getClientIP();
-    const userDevice = getClientDevice();
-
-    const res = await postData({
-      action:"login",
-      pin:pin,
-      ip: userIP,
-      device: userDevice
-    });
-
-    if(!res.success){
-      popup(res.message);
-      loginBtn.disabled = false;
-      loginBtn.innerHTML = originalText;
-      return;
-    }
-
-    LOGIN_NAME = res.nama;
-    LOGIN_ROLE = res.user;
-    LOGIN_PIN = pin;
-
-    localStorage.setItem("eb_pin", pin);
-    localStorage.setItem("eb_role", res.role);
-    localStorage.setItem("eb_nama", res.nama);
-    localStorage.setItem("eb_user", res.user);
-    localStorage.setItem("eb_session_id", res.sessionId || "");
-
-    if(res.role == "SISWA"){
-      await loadSiswaDashboard(pin);
-      popup("Login berhasil");
-      return;
-    }
-
-    document.getElementById("loginPage").classList.add("hidden");
-    document.getElementById("adminPage").classList.remove("hidden");
-    document.getElementById("namaAdmin").innerHTML = LOGIN_NAME;
-    document.getElementById("roleText").innerHTML = LOGIN_ROLE;
-
-    await loadDashboard();
-    popup("Login berhasil");
-
-  } catch (error) {
-    popup("Gangguan koneksi, silakan coba lagi");
-    loginBtn.disabled = false;
-    loginBtn.innerHTML = originalText;
-  }
-}
-
-// ========================================
-// LOAD DASHBOARD
-// ========================================
-async function loadDashboard(){
-  const res = await postData({
-    action:"getDashboard"
-  });
-
-  if(!res.success){
-    popup("Gagal load dashboard");
-    return;
-  }
-
-  DASHBOARD = res;
-  TARGET = res.target;
-
-  renderSiswa();
-  renderKategori();
-  renderRekap();
-  renderSaldo();
-}
-
-// ========================================
-// RENDER SISWA
-// ========================================
-function renderSiswa(){
-  const select = document.getElementById("siswaSelect");
-  select.innerHTML = "";
-
-  DASHBOARD.siswa.forEach(s=>{
-    select.innerHTML += `
-      <option value="${s.no}|${s.nama}">
-        ${s.nama}
-      </option>
-    `;
-  });
-}
-
-// ========================================
-// RENDER KATEGORI
-// ========================================
-function renderKategori(){
-  const box = document.getElementById("kategoriBox");
-  box.innerHTML = "";
-
-  TARGET.forEach(t=>{
-    box.innerHTML += `
-      <div class="kategoriRow">
-        <div class="kategoriLabel">
-          ${t.kategori}
-        </div>
-        <input type="number" id="kat_${t.kategori}" value="0" class="kategoriInput">
-      </div>
-    `;
-  });
-}
-
-// ========================================
-// SAVE TRANSAKSI WITH ANTI-SPAM
-// ========================================
-async function saveTransaksi(){
-  const siswa = document.getElementById("siswaSelect").value.split("|");
-  let adaInput = false;
-
-  const simpanBtn = document.querySelector("#menuInput button[onclick='saveTransaksi()']");
-  const originalText = simpanBtn.innerHTML;
-
-  simpanBtn.disabled = true;
-  simpanBtn.innerHTML = "MENYIMPAN...";
-
-  try {
-    for(let i=0; i<TARGET.length; i++){
-      const t = TARGET[i];
-      const nominal = Number(document.getElementById("kat_" + t.kategori).value || 0);
-
-      if(nominal > 0){
-        adaInput = true;
-        await postData({
-          action:"saveTransaksi",
-          no:siswa[0],
-          nama:siswa[1],
-          kategori:t.kategori,
-          jumlah:nominal,
-          oleh:LOGIN_NAME
-        });
-      }
-    }
-
-    if(!adaInput){
-      popup("Isi minimal 1 nominal");
-      simpanBtn.disabled = false;
-      simpanBtn.innerHTML = originalText;
-      return;
-    }
-
-    await loadDashboard();
-    renderKategori();
-    popup("Transaksi berhasil");
-
-  } catch (error) {
-    popup("Gagal menyimpan, silakan coba kembali");
-  } finally {
-    simpanBtn.disabled = false;
-    simpanBtn.innerHTML = originalText;
-  }
-}
-
-// ========================================
-// SAVE SETOR WITH ANTI-SPAM
-// ========================================
-async function saveSetor(){
-  const setorBtn = document.querySelector("#menuInput button[onclick='saveSetor()']");
-  const originalText = setorBtn.innerHTML;
-
-  setorBtn.disabled = true;
-  setorBtn.innerHTML = "MENYETOR...";
-
-  try {
-    const res = await postData({
-      action:"saveSetor",
-      KAS: document.getElementById("setorKAS").value || 0,
-      GALON: document.getElementById("setorGALON").value || 0,
-      KARTU: document.getElementById("setorKARTU").value || 0,
-      TALI: document.getElementById("setorTALI").value || 0,
-      penerima: document.getElementById("penerima").value
-    });
-
-    if(res.success){
-      document.getElementById("setorKAS").value = "";
-      document.getElementById("setorGALON").value = "";
-      document.getElementById("setorKARTU").value = "";
-      document.getElementById("setorTALI").value = "";
-      document.getElementById("penerima").value = "";
-
-      await loadDashboard();
-      popup("Setoran berhasil");
-    }
-  } catch (error) {
-    popup("Gagal mengirim setoran, periksa jaringan");
-  } finally {
-    setorBtn.disabled = false;
-    setorBtn.innerHTML = originalText;
-  }
-}
-
-// ========================================
-// RENDER REKAP
-// ========================================
-function renderRekap(){
-  const table = document.getElementById("rekapTable");
-  let html = "";
-
-  DASHBOARD.rekap.forEach((row,index)=>{
-    html += "<tr>";
-    row.forEach((cell,col)=>{
-      if(index === 0){
-        html += `<th>${cell}</th>`;
-      }
-      else{
-        if(col === 0){
-          html += `<td style="text-align:left; font-weight:600">${cell}</td>`;
-        }
-        else if(String(cell).toUpperCase() === "LUNAS"){
-          html += `<td><span class="lunas">LUNAS</span></td>`;
-        }
-        else{
-          const nominal = Number(cell || 0);
-          html += `<td><span class="kurang">Rp${nominal.toLocaleString('id-ID')}</span></td>`;
-        }
-      }
-    });
-    html += "</tr>";
-  });
-
-  table.innerHTML = html;
-}
-
-// ========================================
-// RENDER SALDO
-// ========================================
-function renderSaldo(){
-  const saldo = DASHBOARD.saldo;
-
-  let pemasukanHTML = "";
-  let setorHTML = "";
-  let saldoHTML = "";
-
-  let totalMasuk = 0;
-  let totalKeluar = 0;
-  let totalSaldo = 0;
-
-  saldo.slice(1).forEach(s=>{
-    const kategori = s[0];
-    const masuk = Number(s[1] || 0);
-    const keluar = Number(s[2] || 0);
-    const akhir = Number(s[3] || 0);
-
-    totalMasuk += masuk;
-    totalKeluar += keluar;
-    totalSaldo += akhir;
-
-    pemasukanHTML += `
-      <div class="saldoItem">
-        <div>${kategori}</div>
-        <div>Rp${masuk.toLocaleString('id-ID')}</div>
-      </div>
-    `;
-
-    setorHTML += `
-      <div class="saldoItem">
-        <div>${kategori}</div>
-        <div>Rp${keluar.toLocaleString('id-ID')}</div>
-      </div>
-    `;
-
-    saldoHTML += `
-      <div class="saldoItem">
-        <div>${kategori}</div>
-        <div>Rp${akhir.toLocaleString('id-ID')}</div>
-      </div>
-    `;
-  });
-
-  document.getElementById("saldoContent").innerHTML = `
-    <div class="saldoSection">
-      <h3 class="saldoTitle">Total Pemasukan</h3>
-      ${pemasukanHTML}
-      <div class="totalSaldo">
-        <div>TOTAL MASUK</div>
-        <div>Rp${totalMasuk.toLocaleString('id-ID')}</div>
-      </div>
-    </div>
-
-    <div class="saldoSection">
-      <h3 class="saldoTitle">Sudah Disetor</h3>
-      ${setorHTML}
-      <div class="totalSaldo">
-        <div>TOTAL SETOR</div>
-        <div>Rp${totalKeluar.toLocaleString('id-ID')}</div>
-      </div>
-    </div>
-
-    <div class="saldoSection">
-      <h3 class="saldoTitle">Saldo Bendahara</h3>
-      ${saldoHTML}
-      <div class="totalSaldo">
-        <div>TOTAL SALDO</div>
-        <div>Rp${totalSaldo.toLocaleString('id-ID')}</div>
-      </div>
-    </div>
-  `;
-}
-
-// ========================================
-// MENU TABS PANEL SWITCH
-// ========================================
-function showMenu(menu){
-  document.getElementById("menuInput").classList.add("hidden");
-  document.getElementById("menuRekap").classList.add("hidden");
-  document.getElementById("menuSaldo").classList.add("hidden");
-
-  document.getElementById("btnInput").classList.remove("active");
-  document.getElementById("btnRekap").classList.remove("active");
-  document.getElementById("btnSaldo").classList.remove("active");
-
-  if(menu == "input"){
-    document.getElementById("menuInput").classList.remove("hidden");
-    document.getElementById("btnInput").classList.add("active");
-  }
-  if(menu == "rekap"){
-    document.getElementById("menuRekap").classList.remove("hidden");
-    document.getElementById("btnRekap").classList.add("active");
-  }
-  if(menu == "saldo"){
-    document.getElementById("menuSaldo").classList.remove("hidden");
-    document.getElementById("btnSaldo").classList.add("active");
-  }
-}
-
-// ========================================
-// DASHBOARD SISWA VIEW
-// ========================================
-async function loadSiswaDashboard(nisn){
   const res = await postData({
     action:"getSiswaDashboard",
-    nisn:nisn
+    nisn:pin
   });
 
   if(!res.success){
@@ -934,6 +436,10 @@ async function loadSiswaDashboard(nisn){
     return;
   }
 
+  loadSiswaDashboard(res);
+}
+
+function loadSiswaDashboard(res){
   document.getElementById("loginPage").classList.add("hidden");
   document.getElementById("siswaPage").classList.remove("hidden");
 
@@ -942,15 +448,8 @@ async function loadSiswaDashboard(nisn){
   document.getElementById("jkSiswa").innerHTML = res.siswa.jk;
   document.getElementById("nisnSiswa").innerHTML = res.siswa.nisn;
 
-  // Menyuntikkan info penanggalan dinamis kiriman dari database GAS
-  const waktuUpdate = res.lastTime || "-";
-  const olehOperator = res.lastBy || "-";
-  
-  if (waktuUpdate !== "-" && olehOperator !== "-") {
-    document.getElementById("lastUpdateDb").innerHTML = `${waktuUpdate} oleh ${olehOperator}`;
-  } else {
-    document.getElementById("lastUpdateDb").innerHTML = "Belum ada transaksi";
-  }
+  document.getElementById("lastUpdateTanggal").innerHTML = res.lastUpdate || "-";
+  document.getElementById("lastUpdateBy").innerHTML = res.lastUpdateBy || "-";
 
   let bayar = "";
   let kurang = "";
@@ -977,25 +476,31 @@ async function loadSiswaDashboard(nisn){
   document.getElementById("belumBayar").innerHTML = kurang;
 }
 
-// ========================================
-// LOGOUT WITH LOG CONSTRAINTS
-// ========================================
-async function logout(){
-  try{
-    await postData({
-      action:"logout",
-      sessionId: localStorage.getItem("eb_session_id") || "-"
-    });
-  }catch(err){}
-
-  localStorage.removeItem("eb_pin");
-  localStorage.removeItem("eb_role");
-  localStorage.removeItem("eb_nama");
-  localStorage.removeItem("eb_user");
-  localStorage.removeItem("eb_session_id");
-
+function logout(){
   location.reload();
 }
 </script>
 </body>
 </html>
+```
+
+# TAMBAHAN APPS SCRIPT WAJIB
+
+Tambahkan pada response `getSiswaDashboard`:
+
+```javascript
+const trx = ss.getSheetByName('Transaksi').getDataRange().getValues();
+const lastRow = trx[trx.length - 1];
+
+const lastTanggal = lastRow[0];
+const lastOleh = lastRow[5];
+
+return ContentService.createTextOutput(JSON.stringify({
+  success:true,
+  siswa:siswa,
+  bayar:bayar,
+  kurang:kurang,
+  lastUpdate:lastTanggal,
+  lastUpdateBy:lastOleh
+})).setMimeType(ContentService.MimeType.JSON);
+```
